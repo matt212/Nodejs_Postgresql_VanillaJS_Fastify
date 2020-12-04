@@ -1,4 +1,4 @@
-const { resolve } = require("bluebird");
+
 let dep = require("./utils/dependentVariables.js");
 let mod = Object.assign(
   {},
