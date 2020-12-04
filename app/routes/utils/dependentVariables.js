@@ -1760,7 +1760,7 @@ let routeUrls = {
   exportexcel: "/api/exportexcel",
   uploadcontent: "/api/uploadcontent",
   update: "/api/update",
-  searchtype: ["/api/load", "/api/searchtype"],
+  searchtype: ["/api/load/", "/api/searchtype/"],
   searchtypegroupby: "/api/searchtypegroupby",
   searchtypegroupbyId: "/api/searchtypegroupbyId",
   delete: "/api/delete",

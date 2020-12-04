@@ -22,7 +22,7 @@ paths:
              $ref: "#/definitions/employeesSearchtypeResponseDefinitions"
       security:
         - api_accessToken: []
-  /employees/api/searchtype/:
+  /employees/api/searchtype:
     post:
       tags:
         - employees
