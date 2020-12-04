@@ -5,8 +5,6 @@ var path = require("path");
 var session = require("express-session");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
-
-
 var swig= require("swig");
 var compression = require("compression");
 var routes = require("../routes/index");
@@ -213,9 +211,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.disable('x-powered-by');
 //uncomment to apply column modifications
-var models=require("../models/")
-models.sequelize.sync({alter:true}).then(function() {
-})
+// var models=require("../models/")
+// models.sequelize.sync({alter:true}).then(function() {
+// })
 /*models.sequelize.sync({alter:true}).then(function() {*/
 app.set("port", process.env.PORT || 3009);
 var server = app.listen(app.get("port"), function () {
