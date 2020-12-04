@@ -1,11 +1,36 @@
 const pinoInspector = require('pino-inspector')
 const fastify = require('fastify')({
-   logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector } 
+  logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
 })
 
 fastify.register(require('fastify-cors'))
+fastify.register(require('fastify-jwt'), {
+  secret: 'superSecret',
+  trusted: validateToken
+})
+async function validateToken(request, decodedToken) {
+  const blacklist = ['token1', 'token2']
+
+  return blacklist.includes(decodedToken.jti)
+}
+fastify.addHook('onRequest', (request) => request.jwtVerify())
 fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
 
+fastify.post('/getToken', function (request, reply) {
+  var buildin = req.body.appkey;
+  var options = {
+    expiresIn: "1h"
+  };
+  var red = {};
+  red.base = buildin;
+  var token = fastify.jwt.sign(
+    red,
+    app.get("superSecret"),
+    options
+  );
+
+  reply.send({ token: token })
+})
 // Run the server!
 fastify.listen(3011, function (err, address) {
   if (err) {

@@ -121,9 +121,6 @@ app.post("/authenticate/", function (req, res) {
       red,
       app.get("superSecret"),
       options
-      /*{
-                     expiresIn: 86400 // expires in 24 hours
-                   }*/
     );
 
     res.json({
