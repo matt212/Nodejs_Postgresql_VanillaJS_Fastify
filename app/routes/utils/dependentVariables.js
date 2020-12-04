@@ -918,9 +918,11 @@ let pageRender = (req, res, validationConfig) => {
 };
 
 let searchtype = (req, res, a) => {
+   return promise = new Promise((resolve, reject) => {
+     
+   
+    searchparampayload(req).then(arg => {
 
-  searchparampayload(req).then(arg => {
-console.log(arg)
     var fieldnames = Object.keys(models[mod.Name].tableAttributes).toString();
 
     let sqlConstructParams = {
@@ -931,12 +933,17 @@ console.log(arg)
 
     //searchtypeExplain(res, sqlConstructParams, a)
     /* do not delete function since it fallback to Conventional count*/
-    searchtypeConventional(res, sqlConstructParams, a)
+    searchtypeConventional(res, sqlConstructParams, a).then(arg => {
+       resolve(arg)
+     })
     //caching only count since delete of records in any b2b apps is meh !
     //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
-  }).catch(function (error) {
-    res.json(error)
+  })
+  .catch(function (error) {
+    console.log(error)
+    return error
   });
+})
 };
 let searchtypePerf = (req, res, a) => {
 
@@ -1057,8 +1064,9 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
   );
 };
 let searchtypeConventional = (res, sqlConstructParams, a) => {
-
-
+   return promise = new Promise((resolve, reject) => {
+    
+  
   let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
     sqlConstructParams
   );
@@ -1112,11 +1120,13 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
     },
     (err, results) => {
       if (err) {
-        res.json(err);
+        console.log(err)
+        reject(err);
       }
-      res.json(results);
-    }
-  );
+      
+      resolve(results);
+    });
+  })
 };
 let getCount = (sqlstatementsecondary) => {
   return new Promise((resolve, reject) => {
@@ -1750,7 +1760,7 @@ let routeUrls = {
   exportexcel: "/api/exportexcel",
   uploadcontent: "/api/uploadcontent",
   update: "/api/update",
-  searchtype: ["/api/load", "/api/searchtype"],
+  searchtype: ["/api/load/", "/api/searchtype/"],
   searchtypegroupby: "/api/searchtypegroupby",
   searchtypegroupbyId: "/api/searchtypegroupbyId",
   delete: "/api/delete",
