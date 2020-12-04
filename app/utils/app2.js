@@ -1,35 +1,74 @@
 const pinoInspector = require('pino-inspector')
+const path = require('path')
+
 const fastify = require('fastify')({
   logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
 })
 
-fastify.register(require('fastify-cors'))
+fastify.register(require('fastify-cors'),{
+  allowedHeaders:true,
+  exposedHeaders:true,
+  credentials:true,
+  origin: false,
+  methods: ['GET', 'PUT', 'POST']
+})
 fastify.register(require('fastify-jwt'), {
-  secret: 'superSecret',
-  trusted: validateToken
+  secret: 'supersecret',
 })
 async function validateToken(request, decodedToken) {
   const blacklist = ['token1', 'token2']
 
   return blacklist.includes(decodedToken.jti)
 }
-fastify.addHook('onRequest', (request) => request.jwtVerify())
+
+fastify.register(require('fastify-static'), {
+  root: path.join(__dirname, '../') + "/public",
+   // optional: default '/'
+})
+
+fastify.get('/getAccessToken', function (req, reply) {
+  return reply.sendFile('admin/html/accessTokenlisting.html'); // serving path.join(__dirname, 'public', 'myHtml.html') directly
+})
 fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
 
 fastify.post('/getToken', function (request, reply) {
-  var buildin = req.body.appkey;
-  var options = {
-    expiresIn: "1h"
-  };
+  
   var red = {};
-  red.base = buildin;
-  var token = fastify.jwt.sign(
-    red,
-    app.get("superSecret"),
-    options
-  );
+  red.base =request.body.appkey;
+  var token = fastify.jwt.sign("abc123");
 
   reply.send({ token: token })
+})
+fastify.addHook("onRequest", (request, reply, done) =>
+{
+  
+  if(request.url.toString().includes('api'))
+  {
+    let token = request.headers["x-access-token"];
+    
+    //request.jwtVerify()
+    console.log(token)
+    if (token) {
+      request.jwtVerify(token, function (err, decoded) {
+        if (err) {
+          console.log(err)
+          // return ({
+          //   success: false,
+          //   message: "Failed to authenticate token."
+          // });
+        } else {
+          // if everything is good, save to request for use in other routes
+          request.decoded = decoded;
+          done();
+        }
+      });
+    }
+    
+  }
+  else
+  {
+    done()
+  }  
 })
 // Run the server!
 fastify.listen(3011, function (err, address) {
@@ -44,7 +83,7 @@ var express = require("express");
 var Swaggerapp = express();
 const swaggerSpec = require('./configuration/swagger');
 const swaggerUi = require("swagger-ui-express");
-Swaggerapp.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+Swaggerapp.use('/documentations', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 Swaggerapp.listen(3012, function () {
   console.log("Express server listening on port 3012");
 });
