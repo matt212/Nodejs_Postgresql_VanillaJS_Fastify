@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta >
+  <link rel="shortcut icon" href="/img/favicon-gamepad.ico" type="image/x-icon"/>
+  <title>Fun yeah !</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+ <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="/css/main.css">
+<script src="../../admin/js/angular.min.js"></script>
+  <script  async src="../../admin/js/app_shitgotdeep-website.js"></script>
+
+
+  <!-- http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+      <![endif]-->
+
+
+</head>
+
+
+</head>
+<input type="hidden" id="idhdnvalue" name="user" value="texens">
+
+<body class="hold-transition skin-blue sidebar-mini" ng-app="scotch">
+
+
+
+ <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="slide-nav">
+
+  <div class="container">
+
+   <div class="navbar-header">
+
+    <a class="navbar-toggle"> 
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+     </a>
+    <a class="navbar-brand"  href="../">Shitgotdeep</a>
+   </div>
+   <div id="slidemenu">
+     
+          <form class="navbar-form navbar-right" role="form">
+            <div class="form-group" style="display:none;">
+              <input type="search" placeholder="search" class="form-control">
+            </div>
+            <button type="submit" style="display:none;" class="btn btn-primary">Search</button>
+          </form>
+     
+    <ul class="nav navbar-nav">
+     <li  id="home" ><div class="gps_ring1"></div><a  href="../">Home</a></li>
+
+   <li><a href="javascript:void(0);" id="btn" class="on" onclick="toggleState(this);"><span id="sicon" class="glyphicon glyphicon-th"></span></a></li>
+<li><div class="gps_ring1"></div><a href="../meme">Meme</a></li>
+<li><div class="gps_ring1"></div><a href="../world">Scenic</a></li>
+<li><div class="gps_ring1"></div><a href="../celebs">Celebs</a></li>
+  <li class="dropdown"><div class="gps_ring1"></div> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Eat<b class="caret"></b></a>
+      <ul class="dropdown-menu">
+   
+   
+       <li><a  href="../food">Food</a></li>
+       <li><a href="../pizza">Pizza</a></li>
+       
+      </ul>
+     </li>
+    
+      <li class="dropdown"><div class="gps_ring1"></div> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pop Culture<b class="caret"></b></a>
+      <ul class="dropdown-menu">
+      <li><a href="../videogames">Videogames</a></li>
+      <li><a href="../Anime">Anime</a></li>
+     <li><a href="../batman">Batman</a></li>
+       <li><a href="../starwars">Starwars</a></li>
+       <li><a href="../marvel">Marvel</a></li>
+       <li><a href="../deadpool">Deadpool</a></li>
+      <li><a href="../lotr">Lord of the rings</a></li>
+      </ul>
+     </li>
+          <li class="dropdown"> <div class="gps_ring1"></div><a href="#" class="dropdown-toggle" data-toggle="dropdown">Pop Culture(tv)<b class="caret"></b></a>
+      <ul class="dropdown-menu">
+      <li><a href="../xfiles">X-Files</a></li>
+      <li><a href="../topgear">Topgear</a></li>
+       <!-- <li><a href="../that70show">That 70's Show</a></li> -->
+       <li><a href="../Scrubs">scrubs</a></li>
+
+      </ul>
+       <li class="dropdown"><div class="gps_ring1"></div> <a href="#" class="dropdown-toggle" data-toggle="dropdown">More Funs<b class="caret"></b></a>
+      <ul class="dropdown-menu">
+      <li><a href="../guns">Guns</a></li>
+       <li><a href="../car">Cars</a></li>
+       <li><a href="../travel">travel</a></li>
+       
+        
+       <li><a href="../history">History</a></li>
+       <li><a href="../soccer">Soccer</a></li>
+      <li><a href="../room">Interior design</a></li>
+       <li><a href="../space">Space</a></li>
+      
+      </ul>
+     </li>
+     <li><div class="gps_ring2"></div></li>
+     </li>
+    </ul>
+
+   </div>
+     
+  </div>
+
+ </div>
+ 
+  <!--wrap the page content do not style this
+  /*
+  */-->
+  
+ <div id="base-ang" class="page-content" ng-controller="baseController" ng-init="load()" style="display:none;">
+  <div class="container" >
+    <div class="inner" id="datamining"  ng-repeat="enums in shitgotdeep">
+          
+            <article class="box post post-excerpt">
+             <header><h2><a>[{ enums.imagetitle }] </a></h2>    
+             </header>
+             <section style="width:60%">
+             <a class="image featured" href="javacript:void(0)" target="_blank"><img id="BR1gb3A" 
+             src='//i.imgur.com/[{ enums.imagename }]' alt="Glad they clarified"></a></section>
+
+             </article>
+
+              
+
+            </div>
+    
+    
+   </div>
+   </div>
+ {% for base in basedata %}
+ <div id="base-templates" class="page-content">
+  
+  <div class="container" >
+  
+    <div class="inner" id="datamining">
+          
+            <article class="box post post-excerpt">
+             <header><h2><a>{{ base.imagetitle }} </a></h2>    
+             </header>
+             <section style="width:60%">
+             <a class="image featured" href="javacript:void(0)" target="_blank"><img id="BR1gb3A" 
+             src='//i.imgur.com/{{ base.imagename }}' alt="Glad they clarified"></a></section>
+
+             </article>
+
+              
+
+            </div>
+    
+    
+   </div>
+ 
+
+  <!-- /.container -->
+  
+ </div>
+   
+  <script async src="../../admin/bootstrap/js/ui-bootstrap-tpls-1.3.2.min.js"></script>
+
+
+  <script  src="../../admin/js/jQuery-2.1.4.min.js"></script>
+  <script async  src="../js/bluebird.js"></script>
+
+  <script language="javascript">
+
+
+$(document).ready(function () {
+
+    //stick in the fixed 100% height behind the navbar but don't wrap it
+    $('#slide-nav.navbar .container').append($('<div id="navbar-height-col"></div>'));
+
+    // Enter your ids or classes
+    var toggler = '.navbar-toggle';
+    var pagewrapper = '#page-content';
+    var navigationwrapper = '.navbar-header';
+    var menuwidth = '100%'; // the menu inside the slide menu itself
+    var slidewidth = '80%';
+    var menuneg = '-100%';
+    var slideneg = '-80%';
+
+
+    $("#slide-nav").on("click", toggler, function (e) {
+
+        var selected = $(this).hasClass('slide-active');
+
+        $('#slidemenu').stop().animate({
+            left: selected ? menuneg : '0px'
+        });
+
+        $('#navbar-height-col').stop().animate({
+            left: selected ? slideneg : '0px'
+        });
+
+        $(pagewrapper).stop().animate({
+            left: selected ? '0px' : slidewidth
+        });
+
+        $(navigationwrapper).stop().animate({
+            left: selected ? '0px' : slidewidth
+        });
+
+
+        $(this).toggleClass('slide-active', !selected);
+        $('#slidemenu').toggleClass('slide-active');
+
+
+        $('#page-content, .navbar, body, .navbar-header').toggleClass('slide-active');
+
+
+    });
+
+
+    var selected = '#slidemenu, #page-content, body, .navbar, .navbar-header';
+
+
+    $(window).on("resize", function () {
+
+        if ($(window).width() > 767 && $('.navbar-toggle').is(':hidden')) {
+            $(selected).removeClass('slide-active');
+        }
+
+
+    });
+
+
+
+
+});
+</script>
+ 
+<script type="text/javascript">
+ pageIndex=2;
+ var ready = true; //Assign the flag here
+ $(window).scroll(function () {
+
+	 if (ready && $(window).scrollTop() == $(document).height() - $(window).height()) {
+	 	   ready = false; //Set the flag here
+             pageIndex = parseInt(pageIndex) + 1;
+             console.log(pageIndex);
+           
+             var data = angular
+        .element(document.querySelector('[ng-controller="baseController"]'))
+        .scope()
+        .pageChangeHandler(pageIndex);
+$('html, body').animate({scrollTop: '0px'}, 300);
+  //Reset the flag here
+ }
+})
+</script>
+
+</body>
+</html>

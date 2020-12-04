@@ -1,0 +1,563 @@
+Droplet Name: ubuntu-512mb-blr1-01
+IP Address: 139.59.29.135
+Username: root
+
+password:admin@1234
+password:ba6c3cd059cc768f63d1
+
+
+pm2 start app.js --name="Node-postgres-server" --max-memory-restart 100M
+
+http://shitgotdeep.com/gigga/8abe984cd21660c7086c0151adf20e483d35
+*************postgresql ful text search **********
+https://www.compose.com/articles/indexing-for-full-text-search-in-postgresql/
+
+CREATE INDEX event_birth_date_idx ON employees ((birth_date::DATE));
+
+CREATE INDEX event_created_date_idx ON employees ((created_date::DATE));
+
+select * from employees
+limit 10
+ALTER TABLE employees  
+ADD COLUMN weighted_tsv tsvector  
+
+UPDATE employees SET  
+    weighted_tsv = x.weighted_tsv
+FROM (  
+    SELECT employeesid,
+           setweight(to_tsvector('english', COALESCE(first_name,'')), 'A') ||
+           setweight(to_tsvector('english', COALESCE(last_name,'')), 'B') ||
+           setweight(to_tsvector('english', COALESCE(gender,'')), 'C')
+           AS weighted_tsv
+     FROM employees
+) AS x
+WHERE x.employeesid = employees.employeesid;  
+
+
+CREATE INDEX weighted_tsv_idx ON employees USING GIST (weighted_tsv); 
+
+postgres aws pwc prototype password
+c9f5d6f29d8f300a30c77567e34a1543
+
+SELECT uuid_in(md5(random()::text || now()::text)::cstring);
+
+*********************UPDATE DATATYPE COLUMNS POSTGRES**************
+
+
+ALTER TABLE public.employees ALTER COLUMN recordstate TYPE BOOLEAN USING recordstate::BOOLEAN ;
+ALTER TABLE public.employees ALTER COLUMN recordstate SET DEFAULT 'true' ;
+ALTER TABLE employees 
+    ALTER COLUMN recordstate DROP DEFAULT,
+ ALTER TABLE employees ALTER COLUMN recordstate TYPE BOOLEAN USING recordstate::BOOLEAN ;
+  ALTER TABLE employees    ALTER COLUMN recordstate SET DEFAULT TRUE;
+
+**********remove and install new node version*****************
+
+sudo rm -rf /usr/local/lib/node*
+
+sudo rm -rf /usr/local/include/node*
+
+sudo rm -rf /usr/local/bin/node*
+
+
+
+ sudo apt-get update
+    sudo apt-get --purge remove node -y
+    sudo apt-get --purge remove nodejs -y
+    sudo apt-get --purge remove legacy-node -y
+    sudo rm  /usr/bin/node
+    curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+    sudo apt-get install nodejs -y
+    node -v
+
+
+sudo ln -s /usr/bin/nodejs /usr/local/bin/node --force
+
+
+
+
+to create symblox link
+sudo apt-get install nodejs
+sudo apt-get install npm
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+mysql password:ba6c3cd059cc768f63d1
+
+SELECT SUBSTR(CONCAT(MD5(RAND()),MD5(RAND())),1,36)
+parseserver mysql password 
+2ac2eb8e3f74f626f81a
+
+
+
+connect bash line
+psql -h localhost -U postgres -W
+
+
+
+to fix pivot function isssue
+$ sudo apt-get install postgresql-contrib
+CREATE EXTENSION tablefunc
+
+postgres aws dev password
+2ac2eb8e3f74f626f81a
+
+psql -U postgres -h 54.196.16.15.1 -W -d demodb 
+psql -h localhost -U postgres -W -d demodb 
+***remote access postgres from aws**************
+google "what is my ip"
+then gets ipaddress from google like this 14.141.53.106
+
+
+1.psql -h localhost -U postgres -W -d demodb 
+2.SHOW hba file path
+  SHOW hba_file;
+
+2.a)[/etc/postgresql/9.6/main/pg_hba.conf]
+ host    all         all         14.141.53.106/32   trust
+2.b.)[/etc/postgresql/9.6/main/postgresql.conf]
+from listen_addresses = 'localhost' to listen_addresses = '*'
+2.c.)sudo service postgresql restart
+
+
+
+---for setting password after postgres installation
+To set the default password:
+
+Run the psql command from the postgres user account:
+
+sudo -u postgres psql postgres
+Set the password:
+
+\password postgres
+Enter a password.
+Close psql.
+
+\q
+
+
+
+--------------for postgres
+
+change 
+D:\rizwan\projects\geezsourcetree\nodejs_postgres\node_modules\sequelize\lib\model.js
+createdAt, updatedAt
+
+
+ab -p ./app/utils/post_param.txt -T application/json -H 'x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoibG9jYWxob3N0OjMwMDkiLCJpYXQiOjE1NTExNzEwNjQsImV4cCI6MTU1MTE3NDY2NH0.bJv57qNRwiPiLyj53NOt1YX3whgpcNNfRR-pF4fZC8M' -c 100 -n 2000 http://localhost:3009/employees/api/searchtype/
+
+
+
+ab -p pivot_param.txt -T application/json -H 'x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoiNTQuMTk2LjE2LjE1IiwiaWF0IjoxNDk0Mzk1ODc2LCJleHAiOjE0OTQzOTk0NzZ9.F_rZNvvelrhedkDnU6mzIe5EOoyiijFLUnfKlTrEwEo' -c 10 -n 200 -s 120 http://54.196.16.15/employees/api/searchtypepivot/ > pivot_endresult.txt
+
+
+
+https://graph.facebook.com/oauth/access_token?             
+    client_id=721697074552638&
+    client_secret=f968bcf8ab7aedd6995ff2e13036402d&
+grant_type=fb_exchange_token&fb_exchange_token=EAAKQYTHDnz4BAGhZA7dUQSDglC63abn41Opf7WYYW4NN4ARjc7wep29W7WAReITIuLlfpFBneQxM84uKl4uJFUO5UJ8G2wMZBxG3l20qbUfZA2G9JtU8tVPpj6rXUxjg2sFMaRE3UOMY3uFJXQcuQIA7oTnGhwWUxVZBTKaqTQZDZD
+
+
+
+
+https://graph.facebook.com/oauth/access_token?             
+    client_id=721697074552638&
+    client_secret=f968bcf8ab7aedd6995ff2e13036402d&
+grant_type=fb_exchange_token&fb_exchange_token=EAAKQYTHDnz4BAIIHeezKCC1CeDqcvlvT6kLVb25uHCu9U5HmYsAIqVMiXuZCLggGv4iIlZBRYoUU7lAemjhKaVe92EQEwjE7USwrwo8Mz4kGPbyXZCK1jpIBb6txmUNRnXN8PCqSVhUZBbTQjIzZALOLnNt0ls1BKgXt7oQWLGAZDZD
+
+shitgotdeep/facebook/8abe984cd21660c7086c0151adf20e483d35
+
+
+
+***********************************generate models from mysql script ********************
+sequelize-auto -o "./models" -d shitgotdeep -t employees -h localhost -u root -p 3306 -x abc123 -e mysql
+
+
+
+*****************************************************add standard column to table with values*****
+
+ALTER TABLE `shitgotdeep`.`employees` 
+
+ALTER TABLE `shitgotdeep`.`employees` 
+CHANGE COLUMN `hire_date` `createdAt` DATETIME NOT NULL DEFAULT NOW() ;
+
+ALTER TABLE `shitgotdeep`.`employees` 
+CHANGE COLUMN `emp_no` `employeesID` INT(11) NOT NULL ;
+
+
+ADD COLUMN `recordstate` VARCHAR(45) NULL DEFAULT 'active' AFTER `createAt`,
+ADD COLUMN `updatedAt` DATETIME NULL AFTER `recordstate`,
+
+
+
+
+
+
+
+
+
+
+
+SET SQL_SAFE_UPDATES = 0;
+update shitgotdeep.employees
+set recordstate='active'
+
+
+--for mysql conf
+sudo nano /etc/mysql/my.cnf
+
+--for error 
+ cat /var/log/mysql/error.log
+--for restart 
+sudo /etc/init.d/mysql restart
+
+sql_mode = "STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION"
+            
+
+source /root/app/routes/up.sql
+
+
+
+SET GLOBAL sql_mode = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION,ALLOW_INVALID_DATES';
+SHOW VARIABLES LIKE "%version%";
+select @@global.sql_mode;
+
+
+SET SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ALLOW_INVALID_DATES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+ALTER TABLE `demodb`.`muser` 
+CHANGE COLUMN `createdAt` `createdAt` DATETIME NOT NULL DEFAULT NOW() ;
+
+
+---get current day recordset
+SELECT * FROM jokes WHERE date > DATE_SUB(NOW(), INTERVAL 1 DAY)
+
+----------------------------
+reset primary key
+SET @newid=0;
+UPDATE tablename SET primary_key_id=(@newid:=@newid+1) ORDER BY primary_key_id;
+
+---------------------------------------
+SELECT SUBSTRING(MD5(RAND()) FROM 1 FOR 20) AS password
+
+source /root/shitgotdeep.sql
+
+http://putlocker-hd.com/tv-show/watch-community-2009-season-1-episode-3-online-free-putlocker.html
+
+
+
+select * from 
+(
+select SUBSTRING_INDEX(imagetitle, '[', 1) as con, ISNULL(NULLIF(SUBSTRING_INDEX(imagetitle, '[', 1),'')) as cl,imagetitle from shitgotdeep
+WHERE imagetitle like '%[%'
+order by shitgotdeepID DESC 
+) as b
+ where cl=1
+
+remove content from within braces
+
+REPLACE(imagetitle, SUBSTRING(imagetitle, LOCATE('[', imagetitle), LENGTH(imagetitle) - LOCATE(']', REVERSE(imagetitle)) - LOCATE('[', imagetitle) + 2), '')
+
+
+
+14.141.53.106
+
+GRANT ALL ON *.* to root@'14.141.53.106' IDENTIFIED BY '2ac2eb8e3f74f626f81a'; 
+
+
+***********************************for remote access **********************
+$ mysql -u root -p
+Enter password:
+
+mysql> use mysql
+
+mysql> GRANT ALL ON *.* to root@'192.168.1.4' IDENTIFIED BY 'your-root-password'; 
+
+mysql> FLUSH PRIVILEGES;
+
+GRANT ALL ON *.* to root@'14.141.53.106' IDENTIFIED BY '2ac2eb8e3f74f626f81a'; 
+
+
+
+
+****************************************non expire tokens******************************************
+Having found that it is possible to generate a Facebook Page Access Token that does not expire, here is a clear, step-by-step quide for all those looking to the same:
+
+Make sure you are the admin of the FB page you wish to pull info from
+Create a FB App (should be with the same user account that is the page admin)
+Head over to the Facebook Graph API Explorer
+On the top right, select the FB App you created from the "Application" drop down list
+Click "Get Access Token"
+Make sure you add the manage_pages permission
+Convert this short-lived access token into a long-lived one by making this Graph API call: https://graph.facebook.com/oauth/access_token?client_id=<your FB App ID >&client_secret=<your FB App secret>&grant_type=fb_exchange_token&fb_exchange_token=<your short-lived access token>
+for eg:-
+https://graph.facebook.com/oauth/access_token?client_id=721697074552638&client_secret=f968bcf8ab7aedd6995ff2e13036402d&grant_type=fb_exchange_token&fb_exchange_token=EAACEdEose0cBAMQwNHVMVVkVOnQvxg9XLZC5WGZA4xakmAClmp2meQf81dTQwEwXquyHAdNElQ4MZBgmxyusIk1LyjmgJ7VfrBFDsvhunvF9wYZAFBgn5zLaNmxqawR2BXkh0UvOExUTaOkjrdbufjyH1h2QZAktesj8ZBlKC3X0YRtS7EOeeQOJ6hoyJzXxHgJ1WcG03DUwZDZD
+
+
+
+grab the long live token 
+and place in {Access Token: field} with both application dropndown and token dropdown as app"shitgotdeep"
+https://developers.facebook.com/tools/explorer/
+and then click [question mark tag] "debug/accesstoken" 
+and then click debug we would get below viola "extended token !"
+
+
+
+
+Grab the new long-lived access token returned back
+for eg:-
+{"access_token":"EAAKQYTHDnz4BANMFonI2BXMVAgwRWRBquRgIZAisCDQ4ZAsItsDsiVbdUMeXgrkb3kHAN2Ec5QuvZBZBslVfHZBhAURXTpxKgNIpyJwP22ZCxtNDZCeMllNqFBiVL9F6IJFUa0Clp8RTECKcjzKkFuFL1QfZCVapLEAHupBMtowEQINXsAOi4cG3","token_type":"bearer","expires_in":5184000}
+Make a Graph API call to see your accounts using the new long-lived access token: https://graph.facebook.com/me/accounts?access_token=<your long-lived access token>
+
+https://graph.facebook.com/me/accounts?access_token=EAAKQYTHDnz4BAPpOR7nl0pjTrLxGjl9GCZBpKaVHVFhhJZCgH1aPJIOn8gGZBz2c5ZAZCZADlaKi2QFAhcTXDS0ReRvs61CVLhHpBele95L9AaTR9Y0tugYAabXtfx2eHKhiBEcX1V0dP5VmThtSrMxcBOAUEPxZAUAXzDx2a7fZCwZDZD
+
+Grab the access_token for the page you'll be pulling info from
+Lint the token to see that it is set to Expires: Never!
+
+final
+EAAKQYTHDnz4BAD1DvPVKIcEvLb2owfX5qRS3DYxrsacTvElgd8xJ66ASU7l5OMcMjvtJgwrZCD3PIuSIF6KBRC1mQXYZBfd8UGKVufkbRlyLvk7AOyvE3u8wsak6ZApqEABXEAMMB67X8eKLAhVesXLa2ai5pKfroZA7n2ZBGpe2ZBkT53uTLE
+
+That should do it. You should now have a Facebook Page Access Token that doesn't expire!
+
+************to find service 
+ps aux | grep nodeapp
+
+
+*************************************for nar file 
+
+
+a.nar create --executable
+b.sudo chmod +x {filename}
+c.sudo ./{newfilename} start 
+
+
+1.cp filename {ect/init.d}
+2.mv filename to {newfilename}
+3.sudo chmod +x {newfilename}
+4.sudo chown root:root {newfilename}
+5.sudo service {newfilename} start
+6.sudo update-rc.d {newfilename} defaults
+7.sudo update-rc.d {newfilename} enable
+
+
+#!/bin/bash
+/home/ubuntu/published/nodeapp.nar 
+# content of your script
+
+
+chmod 755 foo.sh
+
+*************************************pm2
+sudo pm2 startup ubuntu14
+
+ sudo pm2 start /home/ubuntu/Nodejsdemo/app.js --name="Node-Mysql" --node-args="harmony"
+ sudo pm2 start /home/ubuntu/nodepostgres/app.js --name="Node-postgres" --node-args="harmony"   
+ sudo pm2 save
+
+
+********************for removing broken package 
+https://askubuntu.com/questions/122699/how-to-remove-package-in-bad-state-software-center-freezes-no-synaptic
+
+************************postgres************
+
+select  to_char(birth_date ,'yyyy') as yr,ltrim(to_char(birth_date ,'month')) as mnth,count(*)::int as cnt   from 
+employees
+where to_char(birth_date ,'yyyy') ='1952'
+and  trim(both ' ' from to_char(birth_date ,'month')) = 'august'
+group by mnth, yr
+order by  1,2
+
+SELECT *
+FROM   crosstab(
+        'select  to_char(birth_date ,''yyyy'') as yr,to_char(birth_date ,''month'') as mnth,count(*)::int as cnt   from 
+employees
+group by mnth, yr
+order by  1,2
+')
+AS orders(
+    yr text,
+    april int,
+    august int);
+
+
+   
+   **************removing postgres ubuntu
+   sudo apt-get --purge remove postgresql
+   dpkg -l | grep postgres
+   sudo apt-get --purge remove postgresql postgresql-doc postgresql-common
+   *************install postgres on ubunutu 14.04
+   sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install postgresql-9.6
+
+
+
+
+ou need to add the latest PostgreSQL repository for the latest version.
+
+sudo add-apt-repository "deb https://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
+Update and Install PostgreSQL 9.6:
+
+sudo apt-get update
+sudo apt-get install postgresql-9.6
+Default postgres super user and postgres database is created. You need to set a password for the postgres super user.
+
+ubuntu@:~$ sudo passwd postgres
+Enter new UNIX password:****
+Retype new UNIX password:****
+passwd: password updated successfully
+If service is not started, you can start the PostgreSQL service.
+--digitalocean password 2ac2eb8e3f74f626f81a
+sudo service postgresql start
+Connect PostgreSQL server using postgres user:
+
+ubuntu@:~$ su postgres
+Password:****
+Create a sample database:
+
+createdb database_name
+Connect to that database:
+
+psql -d database_name
+
+remove column and add column 
+
+ALTER TABLE role ADD COLUMN roleid SERIAL PRIMARY KEY;
+ALTER TABLE mrole ADD COLUMN mroleid SERIAL PRIMARY KEY;
+*******************
+
+***************************after table migration setting primary keys 
+
+create sequence measures_measure_id_seq 
+   owned by modname.modnameid;
+
+alter table modname
+   alter column modnameid set default nextval('measures_measure_id_seq');
+
+
+
+'alter table' || v.table_name::text ||  'alter column' || v.column_default::text  
+|| 'set default ' || v.column_default::text';
+
+   
+select setval('measures_measure_id_seq', (select max(modnameid)+1 from modname), false)
+***********************************
+
+
+create sequence employees_employees_id_seq 
+   owned by employees.employeesid;
+
+alter table employees
+   alter column employeesid set default nextval('employees_employees_id_seq');
+   
+select setval('employees_employees_id_seq', (select max(employeesid)+1 from employees), false)
+
+****************************full flegdeg operations priamry key retention applied
+
+select * from modnames
+
+--create new column to create sequences
+alter table modnames add id serial; 
+---update new column serial column with existing value
+UPDATE modnames m
+SET    id = m0.modnameid
+FROM   modnames m0
+where m.modnameid=m0.modnameid
+---now tricky part is to tell new serial to start from max(existingid) for referential integrity
+--scenarios
+---to figure out your serial sequence and apply new set of serial sequences
+select setval('modnames_id_seq', (select max(modnameid)+1 from modname), false)
+--test you applications
+INSERT INTO public.modnames
+(mname, modnameid, createdat, updatedat, recordstate)
+VALUES('new entry set ', 0, now(), now(), 'active'::character varying);
+--to find serial sequences
+--delete old column and rename the older to new one 
+ALTER TABLE modnames RENAME COLUMN id TO modnameid;
+
+
+
+
+-------------------------postgres-------
+select 'create sequence' ||v.column_default::text || ' owned by ' || v.table_name::text || '.' ||v.column_name::text AS  createscript, 
+'alter table ' || v.table_name::text ||  ' alter column ' || v.column_default::text  
+|| ' set default ' || v.column_default::text as altercolumnscript,
+
+v.table_name, v.column_name, v.column_default from
+information_schema.columns v 
+ INNER JOIN
+(
+SELECT table_name FROM information_schema.tables WHERE table_schema='public'
+)a 
+on  a.table_name=v.table_name
+where column_default is not null
+and column_default like '%next%'
+
+
+1. routes rules for  pages without login for all people --done
+2. routes rules for pages with login --done
+3. routes rules with access token  --done
+
+
+
+
+This should work:
+
+nvm install NEW_VERSION --reinstall-packages-from=OLD_VERSION
+For example:
+
+nvm install 8.0.0 --reinstall-packages-from=8.3.0
+
+
+ffmpeg -i a.webm -vcodec libx264 -qscale 0 movie.mp4
+
+
+----- 
+a.)facebook, gmail + normal login
+optional(email verfication /otp)
+b.)normal pages navigations without login --done
+make new page  filename(for e.g:-empployees.js) and basic redirect codebase
+c.) admin login for all modules (superadmin) --in progress 
+c.)file upload stream progress
+
+http://stackabuse.com/testing-node-js-code-with-mocha-and-chai/
+
+
+
+password send to your mail
+1. password generate
+2. change password
+
+
+
+
+create admin user
+
+INSERT INTO public.muser
+(email, username, "password", isactive, recordstate, created_date, updated_date)
+VALUES('node_postgres@a.com', 'node_postgres', 'abc123', true, true, now(), now());
+
+
+INSERT INTO public.modname
+(mname, recordstate, created_date, updated_date)
+VALUES('employees', 'active'::character varying, now(), now());
+
+
+
+INSERT INTO public."role"
+(rolename, recordstate)
+VALUES('superadmin', 'active'::character varying);
+
+
+INSERT INTO public.mrole
+(rolename, modulename, accesstype, recordstate, created_date, updated_date)
+VALUES(1, 1, 'VO', true, now(), now());
+
+
+
+INSERT INTO public.mrole
+(rolename, modulename, accesstype, recordstate, created_date, updated_date)
+VALUES(1, 1, 'AA', true, now(), now());
+
+
+INSERT INTO public.userrolemapping
+(roleid, muserid, isactive, created_date, updated_date, recordstate)
+VALUES(1, 1, true, now(), now(), true);

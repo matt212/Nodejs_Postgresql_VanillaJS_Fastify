@@ -1,0 +1,164 @@
+securityDefinitions:
+  api_accessToken:
+    type: apiKey
+    name: x-access-token
+    in: header
+definitions:    
+  rowCount:
+   type: object
+   properties:
+    pageno:
+      type: integer
+      format: int64
+      example: 2000
+  basePayLoad:
+    type: object
+    properties:
+      daterange:
+        $ref: "#/definitions/dateRange"
+      colsearch:
+        type: string
+        format: string
+        example: createdAt
+      datecolsearch:
+        type: string
+        format: string
+        example: created_date
+      pageno:
+        type: integer
+        format: int64
+        example: 0
+      pageSize:
+        type: integer
+        format: int64
+        example: 20
+  searchTypeCol:
+    type: object
+    properties:
+      searchtype:
+        type: string
+        format: string
+        example: "Columnwise"      
+  dateRange:
+    type: object
+    properties:
+      startdate:
+        type: string
+        format: string
+        example: "1982-12-30"
+      enddate:
+        type: string
+        format: string
+        example: "2019-01-29"
+    xml:
+      name: dateRange
+  groupByModule:
+    type: object
+    properties:
+      searchparam:
+        $ref: "#/definitions/searchParamBase"
+      searchparamkey:
+        type: string
+        format: string
+        example: gender
+      searchtype:
+        type: string
+        format: string
+        example: Columnwise
+      searchparammetafilter:
+        type: array
+        format: string
+        items: {}
+        example: []
+  searchParamBase:
+    type: array
+    items:
+      type: object
+      properties:
+        gender:
+          type: string
+          format: string
+          example: "f"
+  groupByModuleCol:
+    type: object
+    properties:
+      searchparam:
+        $ref: "#/definitions/searchParamCol"        
+  searchParamCol:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+      example:
+        - gender: ["f"]
+        - last_name: ["lyonns"]
+  searchType:
+           type: string
+           format: string
+           example: "Columnwise"      
+  groupByDefinitions:
+      allOf:
+              - $ref: "#/definitions/groupByModule"
+              - $ref: "#/definitions/basePayLoad"
+  loadDefinitions:
+      allOf:
+              - $ref: "#/definitions/searchBase"
+              - $ref: "#/definitions/basePayLoad"
+  SearchDefinitions:
+      allOf:
+              - $ref: "#/definitions/groupByModuleCol"
+              - $ref: "#/definitions/basePayLoad"
+              - $ref: "#/definitions/searchTypeCol"
+  pivotDefinitions:
+      allOf:
+              - $ref: "#/definitions/searchBase"
+              - $ref: "#/definitions/basePayLoad"
+              - $ref: "#/definitions/pivotResponse"
+  pivotResponse:
+      type: object
+      properties:
+        ispaginate:
+           type: boolean
+           format: boolean
+           example: true
+        pivotparamXaxis:
+            type: string
+            format: string
+            example: "birth_date"
+        pivotparamYaxis:
+           type: string
+           format: string
+           example: "gender"
+        timeinternprimary:
+           type: string
+           format: string
+           example: ""
+        timeinternsecondary:
+           type: string
+           format: string
+           example: "yyyy"
+        XpageSize:
+           type: integer
+           format: int32
+           example: 40
+        Xpageno:
+           type: integer
+           format: int32
+           example: 0
+        YpageSize:
+           type: integer
+           format: int32
+           example: 20
+        Ypageno:
+           type: integer
+           format: int32
+           example: 0   
+  searchBase:
+    type: object
+    properties:
+      searchparam:
+        type: string
+        format: string
+        example: NA

@@ -1,0 +1,144 @@
+
+<button id="plain" class="chartbuttons">Plain</button>
+<button id="inverted" class="chartbuttons">Inverted</button>
+<button id="polar" class="chartbuttons">Polar</button>
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<script>
+    var chartbase=""
+function initcharts(xAxis, yaxisarray) {
+    $("#tabchart").show()
+    Highcharts.setOptions({
+        lang: {
+            decimalPoint: '.',
+            thousandsSep: ', '
+        }
+    });
+     chartbase = Highcharts.chart('container', {
+        chart: {
+            type: 'spline',
+            events: {
+                redraw: function() {
+                    this.hideLoading();
+                },
+                load: function() {
+
+
+                    this.hideLoading();
+                }
+            }
+        },
+        title: {
+            text: 'Yearly cross monthly segration '
+        },
+        subtitle: {
+            text: 'Pivot recordset'
+        },
+        xAxis: {
+            categories: xAxis
+        },
+        yAxis: {
+            title: {
+                text: ''
+            }
+        },
+        tooltip: {
+            crosshairs: true,
+            shared: true
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    radius: 4,
+                    lineColor: '#666666',
+                    lineWidth: 1
+                }
+            },
+
+            line: {
+                dataLabels: {
+                    enabled: true
+                },
+                enableMouseTracking: false
+            }
+        },
+        series: yaxisarray
+    });
+
+}
+
+function renderall() {
+    var chart = $('#container').highcharts();
+
+
+    var series = chart.series;
+    for (i = 0; i < chart.series.length; i++) {
+    var baseinternstr=series[i].name;
+        if(!baseinternstr.match(/Total/i))
+        {
+        //if (series[i].name != 'Total') {
+            series[i].setVisible(true, false);
+        } else {
+            series[i].setVisible(false, false);
+        }
+    }
+
+
+    chart.redraw();
+
+}
+
+function renderconsolidated() {
+    var chart = $('#container').highcharts();
+    var series = chart.series;
+    for (i = 0; i < chart.series.length; i++) {
+        var baseinternstr=series[i].name;
+        if(baseinternstr.match(/Total/i))
+        {
+            series[i].setVisible(true, false);
+        
+        } else {
+            series[i].setVisible(false, false);
+        }
+    }
+
+
+    chart.redraw();
+};
+
+$('#plain').click(function () {
+    chartbase.update({
+        chart: {
+            inverted: false,
+            polar: false
+        },
+        subtitle: {
+            text: 'Plain'
+        }
+    });
+});
+
+$('#inverted').click(function () {
+    chartbase.update({
+        chart: {
+            inverted: true,
+            polar: false
+        },
+        subtitle: {
+            text: 'Inverted'
+        }
+    });
+});
+
+$('#polar').click(function () {
+    chartbase.update({
+        chart: {
+            inverted: false,
+            polar: true
+        },
+        subtitle: {
+            text: 'Polar'
+        }
+    });
+});
+</script>

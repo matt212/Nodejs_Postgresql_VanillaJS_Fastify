@@ -1,0 +1,489 @@
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>MaterialAdminLTE 2 | Dashboard</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<!-- Bootstrap 3.3.7 -->
+<link rel="stylesheet" href="../../vdashboard/bower_components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="../../vdashboard/bower_components/font-awesome/css/font-awesome.min.css">
+<!-- Ionicons -->
+<!-- <link rel="stylesheet" href="../../vdashboard/bower_components/Ionicons/css/ionicons.min.css"> -->
+<!-- Theme style -->
+<link rel="stylesheet" href="../../vdashboard/dist/css/AdminLTE.min.css">
+<!-- Material Design -->
+<link rel="stylesheet" href="../../vdashboard/dist/css/bootstrap-material-design.min.css">
+<link rel="stylesheet" href="
+https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.1.3/material.min.css">
+<link rel="stylesheet" href="../../vdashboard/dist/css/ripples.min.css">
+<link rel="stylesheet" href="../../vdashboard/dist/css/MaterialAdminLTE.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="../../vdashboard/dist/css/skins/all-md-skins.min.css">
+<!-- Daterange picker -->
+<link rel="stylesheet" href="../../vdashboard/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+<!-- bootstrap wysihtml5 - text editor -->
+<!-- Google Font -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/alasql/0.4.6/alasql.min.js"></script>
+</head>
+<script>
+let serverdate = "{{serverdate.name}}";
+let moduleattributes = "{{modelattribute}}";
+let validationmap = "{{validationmap}}";
+ validationmap=JSON.parse(validationmap.replace(/&quot;/g, '"'))
+let applyfields="{{applyfields}}";
+applyfields=JSON.parse(applyfields.replace(/&quot;/g, '"'))
+/*console.log(JSON.stringify(applyfields))
+console.log(JSON.stringify(validationmap))
+console.log(JSON.stringify(moduleattributes))
+*/
+/*
+applyfields=["first_name","last_name","gender","birth_date"]
+validationmap=[{"inputname":"first_name","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"80"},{"inputname":"last_name","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"80"},{"inputname":"gender","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"1"},{"inputname":"birth_date","fieldtypename":"DATE","fieldvalidatename":"date","fieldmaxlength":"10"}]
+moduleattributes="employeesid,first_name,last_name,gender,birth_date,recordstate,created_date,updated_date"
+*/
+</script>
+<link rel="stylesheet" href="../../vdashboard/plugins/select2/select2.min.css" />
+<script src="../../vdashboard/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="../../admin/js/app/baseutils.js"></script>
+<script src="../js/bluebird.min.js"></script>
+<!-- <script src="../js/alasql.min.js"></script> -->
+</head>
+<input type="hidden" id="idhdnvalue" name="user" value="texens">
+
+<body class="hold-transition skin-blue sidebar-mini sidebar-collapse">
+    <!--     <script src="../../admin/js/alasql.min.js"></script> -->
+    <style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+  .wrapper{
+    overflow-y: hidden!important;
+    overflow-x: hidden!important;
+  }
+    #overlaycontent .col-sm-6:nth-child(odd) {
+        clear: left;
+    }
+
+    .box .box-header .box-title {
+        font-size: 18px!important;
+    }
+
+    .box-body div.row {
+        height: 58px !important;
+    }
+
+    .box.box-default {
+        margin-top: -1%!important;
+    }
+
+    .box.box-default.collapsed-box {
+        margin-top: -1%!important;
+    }
+    /*.box-tools.pull-right {
+        top: -12px!important;
+    }
+
+    .box .box-header .box-title {
+        font-size: 14px!important;
+    }
+
+    .box .box-header {
+        padding: 0px;
+    }*/
+
+    .input-group-sm-override {
+        margin-top: 0!important;
+    }
+
+
+    #divreportcontent .box .box-header {
+        padding: 0px!important;
+    }
+
+    .highlightedsearch {
+        color: #1083f5;
+        text-decoration: underline;
+    }
+
+    .chartbuttons {
+        font-size: 12px;
+        line-height: 1;
+        display: inline-block;
+        text-transform: uppercase;
+        font-weight: bolder;
+        padding: 13px 18px;
+        letter-spacing: 1px;
+        background-color: #90ef7f;
+        color: #313131;
+        border: 0;
+        border-radius: 2px;
+        margin: 1px;
+        text-align: center;
+        transition: background-color 0.2s, color 0.2s;
+        -webkit-transition: background-color 0.2s, color 0.2s;
+    }
+
+    .pivotpiechart:hover {
+        /*  background: url("../vdashboard/img/pie_chart.svg") ;*/
+    }
+
+    .tab-pane.active {
+        animation: slide-down 1s ease-out;
+    }
+
+    @keyframes slide-down {
+        0% {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+
+    #divreportcontent div.form-group {
+        padding-bottom: 0px;
+        margin: 0 0 0 0;
+        float: left;
+    }
+
+    @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+    .dropdown-content li>a {
+        padding-right: 70px;
+    }
+
+    .carousel .carousel-item {
+        width: 100%;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+        border: 1px solid #ddd;
+        /*new css */
+        margin-top: 10px;
+        font-family: verdana, arial, sans-serif;
+        font-size: 12px;
+        color: #333333;
+        border-width: 1px;
+        border-color: #666666;
+        border-collapse: collapse;
+    }
+
+    .tablechk {
+        margin-top: 0% !important;
+        margin-bottom: 0% !important;
+    }
+    /* .box-body .form-group {
+        margin: 0 0 0 0 !important;
+        padding-bottom: 0 !important;
+    }*/
+
+    table.loading tbody,
+    table.loading {
+        position: relative;
+    }
+
+    table.loading tbody:after {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.1);
+        background-image: url(../vdashboard/plugins/progress/loader.svg);
+        background-position: top center;
+        background-repeat: no-repeat;
+        background-size: 50px 50px;
+        content: "";
+    }
+
+
+    .currently-loading {
+
+        -moz-opacity: 0.45;
+        filter: alpha(opacity=45);
+        background-image: url(../vdashboard/plugins/progress/loader.svg);
+        background-repeat: no-repeat;
+        background-color: rgba(0, 0, 0, 0.1);
+        background-position: top center;
+        position: absolute;
+        min-height: 100vh;
+        width: 100%;
+        z-index: 10;
+        /*top: 52%;*/
+        /*left: 39%;*/
+    }
+
+    .loading-report-container {
+        background-image: url(../vdashboard/plugins/progress/loader.svg);
+        background-repeat: no-repeat;
+        background-color: rgba(0, 0, 0, 0.1);
+        background-position: top center;
+        position: relative;
+        z-index: 1;
+    }
+
+    th,
+    td {
+        text-align: left;
+        padding: 16px;
+    }
+
+
+    #basetable tbody tr:hover td {
+        background-color: #2072b7;
+        color: #e2e8db !important;
+    }
+
+    .edithover:focus {
+        color: #e2e8db !important;
+    }
+
+    .edithover:hover {
+        color: #e2e8db !important;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    label.control-label {
+        color: #ff5722;
+    }
+
+    .chip {
+        display: inline-block;
+        padding: 0 25px;
+        height: 50px;
+        font-size: 18px;
+        line-height: 50px;
+        border-radius: 25px;
+        background-color: #f1f1f1;
+    }
+
+    .closebtn {
+        padding-left: 10px;
+        color: #888;
+        font-weight: bold;
+        float: right;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .closebtn:hover {
+        color: #000;
+    }
+    /* srchpara*/
+
+    .srchpara {
+
+
+        color: Black!important;
+        position: absolute!important;
+        background-color: white;
+
+        border-radius: 4px;
+        box-sizing: border-box;
+        z-index: 1000!important;
+        border: 1px solid #cccccc;
+        overflow-y: auto;
+        max-height: 400px;
+    }
+
+    .srchpara a {
+        display: block;
+        padding: 7px 12px;
+    }
+    /* srchpara*/
+
+    .highlightselect:hover {
+        background-color: #5897fb;
+        color: #ffffff!important;
+    }
+
+    .select2choiceremove {
+        color: #999;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: 700;
+        margin-right: 2px;
+    }
+
+    .selectchips {
+        background-color: #e4e4e4;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        cursor: default;
+        float: left;
+        margin-right: 5px;
+        margin-top: 5px;
+        padding: 0 5px;
+    }
+
+    label.lblhide {
+        display: none;
+    }
+
+    label.control-label-format {
+        color: #ff5722!important;
+        font-size: 12px;
+        line-height: 1.07142857;
+        font-weight: 400;
+        margin: 16px 0 0 0;
+        position: absolute;
+        top: -30px;
+    }
+
+    .zoom-fab {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 50%;
+        background-color: #009688;
+        vertical-align: middle;
+        text-decoration: none;
+        text-align: center;
+        transition: 0.2s ease-out;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        color: #FFF!important;
+    }
+
+    .zoom-btn-report:hover {
+        background-color: #64b5f6;
+    }
+
+    .zoom-fab:hover {
+        background-color: #4db6ac;
+        box-shadow: 0 3px 3px 0 rgba(0, 0, 0, 0.14), 0 1px 7px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .zoom-btn-report {
+        background-color: #2196F3;
+    }
+
+    .overlaytxtalign {
+        margin-left: 13px!important
+    }
+
+    .tablescroll {
+        overflow-x: auto;
+    }
+
+    .sortorderasc {
+        transform: rotate(180deg);
+        transition: transform .2s linear, width .2s linear, color .2s linear;
+        background: url(../../vdashboard/plugins/progress/revarrow.svg) no-repeat;
+        min-width: 20px;
+        min-height: 20px;
+    }
+
+    .sortorderdesc {
+
+        transform: rotate(0deg);
+        transition: transform .2s linear, width .2s linear, color .2s linear;
+        background: url(../../vdashboard/plugins/progress/revarrow.svg) no-repeat;
+        min-width: 20px;
+        min-height: 20px;
+    }
+
+    #overlay {
+        /* we set all of the properties for are overlay */
+        height: 80%;
+        width: 80%;
+        margin: 0 auto;
+        background: white;
+        color: black;
+        padding: 10px;
+        position: absolute;
+        top: 5%;
+        left: 10%;
+        z-index: 1000;
+        display: none;
+        /* CSS 3 */
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        -o-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    #mask {
+        /* create are mask */
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 500;
+        width: 100%;
+        height: 100%;
+        display: none;
+    }
+    /* use :target to look for a link to the overlay then we find are mask */
+
+    #overlay:target,
+    #overlay:target+#mask {
+        display: block;
+        opacity: 1;
+    }
+
+    .close {
+        /* to make a nice looking pure CSS3 close button */
+        display: block;
+        position: absolute;
+        top: -20px;
+        right: -20px;
+        background: red;
+        color: white;
+        height: 40px;
+        width: 40px;
+        line-height: 40px;
+        font-size: 35px;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        -webkit-border-radius: 40px;
+        -moz-border-radius: 40px;
+        -o-border-radius: 40px;
+        border-radius: 40px;
+    }
+
+    #open-overlay {
+        /* open the overlay */
+        padding: 10px 5px;
+        background: blue;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        margin: 20px;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        -o-border-radius: 10px;
+        border-radius: 10px;
+    }
+
+    .red-pp {
+        width: 59px!important;
+    }
+
+    #page-selection-xaxis .pagination {
+
+        margin: 0px;
+    }
+    </style>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#page-selection').bootpag();
+        $('#page-selection-xaxis').bootpag();
+        $('#page-selection-yaxis').bootpag();
+    })
+    </script>

@@ -1,0 +1,134 @@
+technical 
+business expertise
+problem solving 
+interpersonal
+leadership
+
+five groups of project management 
+1.initiating-------------------------------- 
+a.goals
+b.scope
+c.rom of resources
+d.identify stakeholder
+e.approval from stakeholder
+in depth below 
+goals of project suppose to achive :define a project what is supposed to achive
+Scope : What is scope of project
+ROM :what is rough estimate of resources
+identify stakeholders 
+ask and receive approval
+2.Planning------------------------------------------------- 
+a.what are going to do 
+b.how are we goind to do
+c.how well know when we were done
+when is time to get approval to launch to project 
+3. executing ---------------------------------------------
+a.launch the engagement
+b.bring people onboard and upto speed
+c.explain the rules to run the project
+4. monitoring and controlling -------------------------
+what is going on project check the progress
+compare to what you have planned 
+id project is getting off track we take action to get it on track
+closing process
+get client to accept project is complete 	
+gather lessoon learner
+close contract
+help resources move to next engagement
+
+------------------------phase 2
+identify stakeholder
+who has most stake in outcome of project
+cusotmer
+project sponsor 
+department
+Team members
+understand stakeholde importance , inflience , interest
+project customer/business user-------------()
+informs what needs to be done
+approves deliverables
+project sponsor-----------------------()
+priotize
+talk to stakeholder who arent being supportive
+suggets improvement to project plan
+functional manager------------()
+
+------------------
+analyse stakeholder 
+
+project solution 
+gathering requirement
+identifiying deliverables
+defining scope
+plan
+work how much time
+how many resources
+using above we can build schedule
+process
+(communcation, managing changes)
+
+how will know when your done 
+what determines as sign off 
+which has spelled out clearly with 
+stakeholder responsibilites in place
+what goes into project plan building and fine tuning a project schedule
+
+
+
+simple put project delveriables are the results that a project delivers
+to determine whether deliverablesis  
+what they are supposed to be we need some way to measure it 
+those measurement is called success criteria
+deliverable can be tangile like new building , new product or new service	
+
+deliverable basically help us define project scope
+is basically is what is and isnta in a project 
+deliveravle help to measure progress while your project is underway
+
+1.to document project deliverable we should start at end deliverables
+what is supposed to be migration , buidling schideling system
+2. sign a contract with (SOW)
+3. Define deliverables that can be accompoblised in timeframe of status reports
+that way you can evaluate progress from last status report based upon deliverable compeleted from last report
+now that you have identified you deliverable lets measure success
+"suceess criteria"
+you need quatifiable criteria you can measure them with 
+
+
+identify end deliverables
+
+identiy intemrediate delverales
+define clear and quantifiable success criteria
+ 
+
+--------------Assumption and risks
+1. use to fill information 
+2. revisist and modify as necessary
+for example how much customization is needed
+3. in order to avoid disaaptioned assumption should be brought into open and clarified and middle path has to adopted 
+make sure everyone is on same page 	 
+4. ask about project expectations
+
+Risk 
+a situation or event that might occur
+what defines as risk is that it is uncertain
+flag and convey the risj to required stakeholder for both teams
+case in point vendor /client
+assumption and risk are manageable as long you identify them upfront 
+
+--what is project scope
+projec scope is culimantion of your defination works
+it secribes he boundaries of project  
+get project scope in writing
+helps scope creep
+scope creep is for eg:one you do this one thing we forgot to add to project delvertiables
+change management process comes into effect
+reminf stakeholder what is agreed upon 
+and change management 
+scope emcompasssed below
+goals and objectives
+asummptions
+risk
+deliverabes
+
+meeting schedule and budget while working around the problem that arieses

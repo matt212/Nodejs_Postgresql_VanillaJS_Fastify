@@ -1,0 +1,68 @@
+@startuml
+
+participant Routes << (k,#ADD1B2) >>
+participant Modules << (M,#ADD1B2) >>
+participant JwtAuth << (J,#ADD1B2) >>
+participant modularModConfig << (S,#ADD1B2) >>
+
+Routes-> Modules : payload
+Modules->Modules :
+note left
+    **Auth payload **
+    {"appkey":"domain name",
+    "config":{"headers":{"x-access-token":"xx"}}
+
+    **domain name validate from server.domainName
+end note
+Modules->Modules :
+note right
+    **Payload consist of below structure**
+    "datapayload":{"daterange":{"startdate":"1982-12-25","enddate":"2019-01-24"},
+    "datecolsearch":"birth_date",
+    "searchparam":"NA",
+    "pageno":0,"pageSize":20}}"
+    end note
+    Modules -> JwtAuth: Authentication Request
+    alt successful case
+    JwtAuth -> Modules: Authentication Accepted
+    Modules->modularModConfig:Modular mod configuration
+    modularModConfig ->modularModConfig : hello
+    note left 
+    let validationmap = [
+    {
+    inputname: "f1",
+    fieldtypename: "STRING",
+    fieldvalidatename: "string",
+    fieldmaxlength: "80"
+    }
+    ];
+    let applyfields = ["f1"];
+     end note
+   modularModConfig ->modularModConfig : mehhello 
+   note right
+   { Name: 'employees',
+  id: 'employeesid',
+  type: 'base',
+  sqlScriptRow: 'searchType',
+  sqlScriptCount: 'searchTypeCount',
+  searchtypegroupby: 'searchtypegroupby',
+  exporExcelAlpha: 'exporExcelAlpha',
+  exporExcelAlphaExplain: 'exporExcelAlphaExplain',
+  exportExcelSecondary: 'exportExcelSecondary',
+  exportExcelSecondaryExplain: 'exportExcelSecondaryExplain',
+  exportExcelBase: 'exportExcelBase',
+  sqlstatementsprimaryPivot: 'sqlstatementsprimaryPivot',
+  sqlstatementsecondaryPivot: 'sqlstatementsecondaryPivot',
+  sqlstatepivotcol: 'sqlstatepivotcol',
+  SqlPivot: 'SqlPivot' };
+   end note
+
+
+
+
+
+end
+
+
+
+@enduml

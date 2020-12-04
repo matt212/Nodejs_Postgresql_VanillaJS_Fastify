@@ -1,0 +1,217 @@
+paths:
+  /employees/api/load/:
+    post:
+      tags:
+        - employees
+      summary: Initial load 
+      description: ""
+      operationId: employeesLoad
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+           $ref: "#/definitions/loadDefinitions"
+      responses:
+        "200":
+          description: valid input
+          schema:
+             $ref: "#/definitions/employeesSearchtypeResponseDefinitions"
+      security:
+        - api_accessToken: []
+  /employees/api/searchtype/:
+    post:
+      tags:
+        - employees
+      summary: Multiselect multicolumn search 
+      description: ""
+      operationId: employeesSearchtype
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+          
+           $ref: "#/definitions/SearchDefinitions"
+      responses:
+        "200":
+          description: valid input
+          schema:
+             $ref: "#/definitions/employeesSearchtypeResponseDefinitions"
+      security:
+        - api_accessToken: []      
+  /employees/api/create/:
+    post:
+      tags:
+        - employees
+      summary: Create record
+      description: ""
+      operationId: employeesCreate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Create record
+          required: true
+          schema:
+            $ref: "#/definitions/employees"
+      responses:
+        "200":
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /employees/api/update/:
+    post:
+      tags:
+        - employees
+      summary: Update record
+      description: ""
+      operationId: employeesUpdate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: update record
+          required: true
+          schema:
+            $ref: "#/definitions/employeesUpdateDefinitions"
+      responses:
+        "200":
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /employees/api/searchtypegroupby/:
+    post:
+      tags:
+        - employees
+      summary: Multiselect populate api for employee
+      description: ""
+      operationId: employeesSearchtypegroupby
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: true
+          schema:
+           $ref: "#/definitions/groupByDefinitions"
+      responses:
+        "200":
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /employees/api/uploadcontent:
+    post:
+      tags:
+        - employees
+      summary: Uploads a file.
+      operationId: employeesUpload
+      consumes:
+          - multipart/form-data
+      parameters:
+         - in: formData
+           name: upfile
+           type: file
+           description: The file to upload.
+      responses:
+        "200":
+          description: Invalid input     
+  /employees/api/delete/:
+    post:
+      tags:
+        - employees
+      summary: Delete record
+      description: ""
+      operationId: employeesDelete
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Delete record
+          required: true
+          schema:
+            $ref: "#/definitions/ employeesId"
+      responses:
+        "200":
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /employees/api/pivotresult/:
+    post:
+      tags:
+        - employees
+      summary: Pivot operations for both axis 
+      description: ""
+      operationId: employeesPivot
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: give pivot results and also we can also club 'employeesSearchtype' api for filteration purposes of pivot 
+          required: true
+          schema:
+           $ref: "#/definitions/pivotDefinitions"
+      responses:
+        "200":
+          description: valid input
+          schema:
+             $ref: "#/definitions/employeesSearchtypeResponseDefinitions"
+      security:
+        - api_accessToken: []      
+definitions:
+  employeesUpdateDefinitions:
+     allOf:
+      - $ref: "#/definitions/employees"
+      - $ref: "#/definitions/employeesId"
+  employeesSearchtypeResponseDefinitions:
+    type: object
+    properties:
+      rows:
+        type: array
+        items:
+          $ref: '#/definitions/employeesSearchtypeResponse'
+      count:
+        $ref: '#/definitions/rowCount'
+  employeesSearchtypeResponse:
+    allOf:
+      - $ref: '#/definitions/employees'
+      - $ref: '#/definitions/employeesId'
+  employees:
+    type: object
+    properties:
+      first_name:
+        type: string
+        example: asa
+      last_name:
+        type: string
+        example: asa
+      gender:
+        type: string
+        example: F
+      birth_date:
+        type: string
+        format: date-time 
+        example: 12-10-1989
+      recordstate:
+        type: boolean
+        example: true
+    xml:
+      name: basePayLoad
+  employeesId:
+    type: object
+    properties:
+      employeesid:
+        type: integer
+        format: int64
+        example: 1676213    

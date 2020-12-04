@@ -1,0 +1,118 @@
+<!-- <form id="form1" runat="server" action="/jynerso/stardust" method="Post">
+ -->
+  <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+<html>
+
+    
+   
+<body>
+    <style type="text/css">
+   
+        .formcom
+        {
+
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+
+        }
+    </style>
+<p>
+
+  &nbsp;</p>
+<h5 class="text-center">Dynamic Control : Text Box, Dropdown List, Radiobox and Checkbox</h5>
+<section class="container">
+    <input name="DynamicTextBox" id="txtmodulename" width="25%" type="text" value="" >
+    <br/>
+    <br/>
+
+  <div class="table table-responsive">
+    <table class="table table-responsive table-striped table-bordered">
+      <thead>
+        <tr>
+          <td>TextBox</td>
+          <td>field type</td>
+          <td>validation type</td>
+          <td>length type</td>
+          <td>BTN</td>
+        </tr>
+      </thead>
+      <tbody id="TextBoxContainer">
+      </tbody>
+      <tfoot>
+        <tr>
+          <th colspan="5">
+            <button id="btnAdd" type="button" class="btn btn-primary" data-toggle="tooltip" data-original-title="Add more controls"><i class="glyphicon glyphicon-plus-sign"></i></button></th>
+        </tr>
+         <tr>
+          <th colspan="5" id="jsonatt">
+           
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
+
+<input id="btnAddsss" type="button" value="get json from table">
+<script type="text/javascript">
+        $(function() {
+  $("#btnAdd").bind("click", function() {
+    var div = $("<tr />");
+    div.html(GetDynamicTextBox(""));
+    $("#TextBoxContainer").append(div);
+  });
+  $("body").on("click", ".remove", function() {
+    $(this).closest("tr").remove();
+  });
+});
+var regex=['string','email','number','mobile','passwordvalidation','date']
+function GetDynamicTextBox(value) {
+   
+  var re='<td><input name = "DynamicTextBox" type="text" value = "' + value + '" class="formcom" /></td>' + '<td><select name="" class="formcom bredalpha"><option>STRING</option><option>INTEGER</option><option>DATE</option></select></td>' +
+    '<td><select name="" class="formcom bredbeta">';
+regex.forEach(function(element) {
+  re+='<option>'+element+'</option>'
+});
+re+='</td><td><input  type="number" min="1" max="100"  value="80" class="form-control">'
+re+='</td>' + '<td><button type="button" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove-sign"></i></button></td>'
+return re;
+}
+var arintern = []
+$("#btnAddsss").button().click(function() {
+arintern=[]
+  $('table tbody tr').each(function() {
+    var internobj = {}
+    internobj.inputname = $(this.cells[0]).find('input').val().trim()
+    internobj.fieldtypename = $(this.cells[1]).find('option:selected').text().trim()
+    internobj.fieldvalidatename = $(this.cells[2]).find('option:selected').text().trim()
+   internobj.fieldmaxlength = $(this.cells[3]).find('input').val().trim()
+    arintern.push(internobj)
+    internobj = {}
+  });
+  console.log(arintern)
+$("#jsonatt").html(JSON.stringify(arintern))
+
+
+});
+
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<div class="box box-default collapsed-box" id="dvreportcontainer" style="margin-top:-1%;display: none;">
+    <div class="box-header with-border">
+        <h3 class="box-title">Reporting  Bar</h3>
+        <div class="box-tools pull-right">
+            <button type="button" id="rptwidget" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs pull-right">
+                <li><a href="#revenue-chart" data-toggle="tab"><img src="../../vdashboard/img/grid-icon.svg" /></a></li>
+                <li><a href="#sales-chart" data-toggle="tab"><img src="../../vdashboard/img/pivot-icon.svg" /></a></li>
+                <li id="tabchart" style="display: none;"><a href="#module-chart" data-toggle="tab"><img src="../../vdashboard/img/multiline-chart-icon.svg" /></a></li>
+                <li id="tab3dchart" style="display: none;"><a href="#module-3dchart" data-toggle="tab"><img src="../../vdashboard/img/chart_black.svg" /></a></li>
+                <li id="tabpiechart" style="display: none;"><a href="#module-pie-chart"  data-toggle="tab">
+                    <img src="../../vdashboard/img/pie_chart.svg" class="pivotpiechart" /></a></li>
+                <li class="pull-left header"><i class="fa fa-inbox"></i>Reporting Content</li>
+            </ul>
+            <div class="tab-content no-padding">
+                <div class="tab-pane " id="module-pie-chart">
+                    
+                    {% include '../../public/components/piechart.html' %}
+                   <!--  {% include '../../public/components/drag.html' %} -->
+                </div>
+                <div class="tab-pane " id="module-chart">
+                    <label id="tooglecheck1" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-1">
+                        <input type="checkbox" id="switch-1" class="mdl-switch__input" />
+                        <span class="mdl-switch__label"></span>
+                    </label>
+                    {% include '../../public/components/basechart.html' %}
+                </div>
+                <div class="tab-pane " id="module-3dchart">
+                    <label id="tooglecheck2" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-2">
+                        <input type="checkbox" id="switch-2" class="mdl-switch__input" />
+                        <span class="mdl-switch__label"></span>
+                    </label>
+                    {% include '../../public/components/3dstack.html' %}
+                   
+                </div>
+                <div class="tab-pane " id="sales-chart">
+                    <div id="dvcontainerpivot">
+                        {% include '../../public/components/pivot.html' %}
+                    </div>
+                </div>
+                <div class="loading-report-container" id="dvloader" style="display: none;">&nbsp;</div>
+                <div class="tab-pane fade" id="revenue-chart">
+                    <div class="row">
+                        <div class="col-xs-12" id="divreportcontent" style="display: none;">
+                            {% include '../../public/components/report.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+ {% include '../../public/components/header.html' %}
+      <!-- Main content -->
+      <section class="content" ng-controller="baseController" ng-init="load()" data-ng-init="fn_load()">
+        <script type="text/ng-template" id="templateId">
+          <div id="overlay1">
+
+            <div id="formstart">
+              <div class="box-body modaloverlay">
+                <div class="form-group" ng-form="userForm"> <span ng-show="userForm.Rolename.$error.maxlenght&& userForm.Rolename.$invalid">Rolename must be 100 character maximum</span>
+                  <label for="exampleInputRolename">Rolename</label>
+                  <input name="Rolename" ng-model="fielddata.Rolename" class="form-control" required>
+                  <input type="hidden" ng-model="userForm.RoleID">
+                </div>
+              </div>
+
+              <div class="box-footer">
+              <button type="submit" class="btn btn-primary" ng-disabled="userForm.$invalid"  ng-click="confirm(fielddata)"  id="btn_submit">Submit</button>
+
+                                 <button type="submit" class="btn btn-primary"   ng-click="closeThisDialog(fielddata)"  id="btn_submit">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </script>
+
+
+        <div class="modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <!-- <script type="text/ng-template" id="templateId">-->
+            <div class="modal-content1">
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Quick Example</h3>
+
+                </div>
+                <!-- /.box-header -->
+                <!-- form start modal data herer -->
+
+              </div>
+              <!-- /.box -->
+              <!--/span-->
+              <div class="modal-footer"></div>
+            </div>
+            <!--</script>-->
+          </div>
+        </div>
+        <p>
+          <button type="button" class="btn btn-primary" ng-click="addoverlay();"><span class="glyphicon glyphicon-plus"></span> add</button>
+        </p>
+        <input id="toggle-one" unchecked="" type="checkbox">
+        <input id="toggle-singlesearching" unchecked="" type="checkbox">
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="box">
+              <div class="box-header">
+                <h3 class="box-title">Data Table With Full Features</h3>
+              </div>
+              <a href="javascript:void(0);" ng-click="exportexcel();"><img src="../images/excel-xls-icon.png" height="50px" width="50px"></a>
+              <!-- /.box-header -->
+              <div class="form-group col-lg-2">
+                <label>Select</label>
+                <select class="form-control" id="ddlpageIndex" onchange="javascript:ddlindexchange();">
+                  <option>5</option>
+                  <option>10</option>
+                  <option>15</option>
+                  <option>20</option>
+                  <option>25</option>
+                  <option>30</option>
+
+                </select>
+                <input type="file" id="uploadfiles" name="uploadfiles" onchange="angular.element(this).scope().fileSelected(this)" multiple="multiple">
+                <div class="col-xs-4">
+                  <label for="search">items per page:</label>
+                  <input type="number" min="1" max="100" class="form-control red-pp" ng-model="pageSize"> [{pageSize}]
+                </div>
+              </div>
+              <div id="example_filter" style="display:none;" class="dataTables_filter">
+                <label>Search:
+                  <input type="search" class="" placeholder="" id="txtsearch" onkeyup="searchbyall(this);" aria-controls="example">
+                </label>
+              </div>
+              <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped dataTable">
+                  <thead>
+                    <tr>
+                      <th class="sorting" data-animal-type="Rolename">Rolename</th>
+                      <th>modify</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                    <tr dir-paginate="enums in Role | filter:q | itemsPerPage: pageSize" total-items="totalUsers" current-page="currentPage">
+                      <td>[{ enums.Rolename }]</td>
+                      <td> <a href="javascript:void(0)" ng-click="edit()">edit</a> </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>Rolename</th>
+                      <th>modify</th>
+                    </tr>
+                  </tfoot>
+                </table>
+                <!-- <div ng-controller="OtherController" class="other-controller"> -->
+                <dir-pagination-controls direction-links="true" boundary-links="true" on-page-change="pageChangeHandler(newPageNumber)" max-size="10">
+                </dir-pagination-controls>
+                <!-- </div> -->
+              </div>
+              <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </section>
+      <!-- /.content -->
+     {% include '../../public/components/header.html' %}
+
+
+
+
+
+
+
+</body>
+
+</html>

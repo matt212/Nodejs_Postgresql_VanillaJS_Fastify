@@ -1,0 +1,43 @@
+node {
+  try {
+    stage('Checkout') {
+      //checkout scm
+      //properties([pipelineTriggers([pollSCM('H/1 */4 * * 1-5')])])
+      properties([pipelineTriggers([[$class: 'GenericTrigger',token: env.JOB_NAME]])])
+     //webhook trigger 
+     //http://localhost:8084/generic-webhook-trigger/invoke?token=nodejs_postgres_jquery/performance
+    }
+    stage('Environment') {
+      sh 'git --version'
+      echo "Branch: ${env.BRANCH_NAME}"
+      sh 'docker -v'
+      sh 'printenv'
+    }
+    stage('Test'){
+     docker.image('postgres:11').withRun('--network=host') {c ->
+           docker.image('node:11').inside("--network=host") {
+            // for using sh file uncomment below
+             //sh ' bash ./app/utils/dbDump/pipeline-setup.sh'
+             sh 'apt-get update'
+             sh 'apt-get install -y postgresql-client'
+             sh 'pg_isready -h 127.0.0.1 -p 5432'
+             sh 'npm i -g yarn'
+             sh 'yarn createDB'
+             sh 'yarn pgRestore'
+             sh 'yarn'
+             sh 'yarn test'
+            
+            
+        }
+       
+        
+ 
+    }
+    }
+    
+    
+  }
+  catch (err) {
+    throw err
+  }
+}

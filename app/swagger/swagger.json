@@ -1,0 +1,658 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "this is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters.",
+    "version": "1.0.0",
+    "title": "modular api services",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "localhost:3009",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "employees",
+      "description": "create, update, delete, search Employee"
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/employees/api/load/": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Initial load",
+        "description": "",
+        "operationId": "employeesLoad",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/loadDefinitions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "valid input",
+            "schema": {
+              "$ref": "#/definitions/searchtypeResponseDefinitions"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_accessToken": []
+          }
+        ]
+      }
+    },
+    "/employees/api/searchtype/": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Multiselect multicolumn search",
+        "description": "",
+        "operationId": "employeesSearchtype",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SearchDefinitions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "valid input",
+            "schema": {
+              "$ref": "#/definitions/searchtypeResponseDefinitions"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_accessToken": []
+          }
+        ]
+      }
+    },
+    "/employees/api/create/": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Create record",
+        "description": "",
+        "operationId": "employeesCreate",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Create record",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/employees"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "api_accessToken": []
+          }
+        ]
+      }
+    },
+    "/employees/api/update/": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Update record",
+        "description": "",
+        "operationId": "employeesUpdate",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "update record",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/updateEmpDefinitions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "api_accessToken": []
+          }
+        ]
+      }
+    },
+    "/employees/api/searchtypegroupby/": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Multiselect populate api for employee",
+        "description": "",
+        "operationId": "employeesSearchtypegroupby",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/groupByDefinitions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "api_accessToken": []
+          }
+        ]
+      }
+    },
+    "/employees/api/uploadcontent": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Uploads a file.",
+        "operationId": "employeesUpload",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "upfile",
+            "type": "file",
+            "description": "The file to upload."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    },
+    "/employees/api/delete/": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Delete record",
+        "description": "",
+        "operationId": "employeesDelete",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Delete record",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/employeeId"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "api_accessToken": []
+          }
+        ]
+      }
+    },
+    "/employees/api/pivotresult/": {
+      "post": {
+        "tags": [
+          "employees"
+        ],
+        "summary": "Pivot operations for both axis",
+        "description": "",
+        "operationId": "employeesPivot",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "give pivot results and also we can also club 'employeesSearchtype' api for filteration purposes of pivot",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pivotDefinitions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "valid input",
+            "schema": {
+              "$ref": "#/definitions/searchtypeResponseDefinitions"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_accessToken": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_accessToken": {
+      "type": "apiKey",
+      "name": "x-access-token",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "employees": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "format": "string",
+          "example": "asa"
+        },
+        "last_name": {
+          "type": "string",
+          "format": "string",
+          "example": "asa"
+        },
+        "gender": {
+          "type": "string",
+          "format": "string",
+          "example": "F"
+        },
+        "birth_date": {
+          "type": "string",
+          "format": "string",
+          "example": "12-10-1989"
+        },
+        "recordstate": {
+          "type": "string",
+          "format": "string",
+          "example": true
+        }
+      },
+      "xml": {
+        "name": "basePayLoad"
+      }
+    },
+    "employeeId": {
+      "type": "object",
+      "properties": {
+        "employeesid": {
+          "type": "string",
+          "format": "string",
+          "example": 1676213
+        }
+      }
+    },
+    "updateEmpDefinitions": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/employees"
+        },
+        {
+          "$ref": "#/definitions/employeeId"
+        }
+      ]
+    },
+    "rowCount": {
+      "type": "object",
+      "properties": {
+        "pageno": {
+          "type": "integer",
+          "format": "int64",
+          "example": 2000
+        }
+      }
+    },
+    "basePayLoad": {
+      "type": "object",
+      "properties": {
+        "daterange": {
+          "$ref": "#/definitions/dateRange"
+        },
+        "colsearch": {
+          "type": "string",
+          "format": "string",
+          "example": "createdAt"
+        },
+        "datecolsearch": {
+          "type": "string",
+          "format": "string",
+          "example": "birth_date"
+        },
+        "pageno": {
+          "type": "integer",
+          "format": "int64",
+          "example": 0
+        },
+        "pageSize": {
+          "type": "integer",
+          "format": "int64",
+          "example": 20
+        }
+      }
+    },
+    "searchTypeCol": {
+      "type": "object",
+      "properties": {
+        "searchtype": {
+          "type": "string",
+          "format": "string",
+          "example": "Columnwise"
+        }
+      }
+    },
+    "dateRange": {
+      "type": "object",
+      "properties": {
+        "startdate": {
+          "type": "string",
+          "format": "string",
+          "example": "1982-12-30"
+        },
+        "enddate": {
+          "type": "string",
+          "format": "string",
+          "example": "2019-01-29"
+        }
+      },
+      "xml": {
+        "name": "dateRange"
+      }
+    },
+    "groupByModule": {
+      "type": "object",
+      "properties": {
+        "searchparam": {
+          "$ref": "#/definitions/searchParamBase"
+        },
+        "searchparamkey": {
+          "type": "string",
+          "format": "string",
+          "example": "gender"
+        },
+        "searchtype": {
+          "type": "string",
+          "format": "string",
+          "example": "Columnwise"
+        },
+        "searchparammetafilter": {
+          "type": "array",
+          "format": "string",
+          "items": {},
+          "example": []
+        }
+      }
+    },
+    "searchParamBase": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "gender": {
+            "type": "string",
+            "format": "string",
+            "example": "f"
+          }
+        }
+      }
+    },
+    "groupByModuleCol": {
+      "type": "object",
+      "properties": {
+        "searchparam": {
+          "$ref": "#/definitions/searchParamCol"
+        }
+      }
+    },
+    "searchParamCol": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "example": [
+        {
+          "gender": [
+            "f"
+          ]
+        },
+        {
+          "last_name": [
+            "lyonns"
+          ]
+        }
+      ]
+    },
+    "searchType": {
+      "type": "string",
+      "format": "string",
+      "example": "Columnwise"
+    },
+    "groupByDefinitions": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/groupByModule"
+        },
+        {
+          "$ref": "#/definitions/basePayLoad"
+        }
+      ]
+    },
+    "loadDefinitions": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/searchBase"
+        },
+        {
+          "$ref": "#/definitions/basePayLoad"
+        }
+      ]
+    },
+    "SearchDefinitions": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/groupByModuleCol"
+        },
+        {
+          "$ref": "#/definitions/basePayLoad"
+        },
+        {
+          "$ref": "#/definitions/searchTypeCol"
+        }
+      ]
+    },
+    "pivotDefinitions": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/searchBase"
+        },
+        {
+          "$ref": "#/definitions/basePayLoad"
+        },
+        {
+          "$ref": "#/definitions/pivotResponse"
+        }
+      ]
+    },
+    "pivotResponse": {
+      "type": "object",
+      "properties": {
+        "ispaginate": {
+          "type": "boolean",
+          "format": "boolean",
+          "example": true
+        },
+        "pivotparamXaxis": {
+          "type": "string",
+          "format": "string",
+          "example": "birth_date"
+        },
+        "pivotparamYaxis": {
+          "type": "string",
+          "format": "string",
+          "example": "gender"
+        },
+        "timeinternprimary": {
+          "type": "string",
+          "format": "string",
+          "example": ""
+        },
+        "timeinternsecondary": {
+          "type": "string",
+          "format": "string",
+          "example": "yyyy"
+        },
+        "XpageSize": {
+          "type": "integer",
+          "format": "int32",
+          "example": 40
+        },
+        "Xpageno": {
+          "type": "integer",
+          "format": "int32",
+          "example": 0
+        },
+        "YpageSize": {
+          "type": "integer",
+          "format": "int32",
+          "example": 20
+        },
+        "Ypageno": {
+          "type": "integer",
+          "format": "int32",
+          "example": 0
+        }
+      }
+    },
+    "searchtypeResponse": {
+      "type": "object",
+      "properties": {
+        "employeesid": {
+          "type": "integer",
+          "format": "int32",
+          "example": 1676212
+        },
+        "first_name": {
+          "type": "string",
+          "format": "string",
+          "example": "asa"
+        },
+        "last_name": {
+          "type": "string",
+          "format": "string",
+          "example": "asa"
+        },
+        "gender": {
+          "type": "string",
+          "format": "string",
+          "example": "F"
+        },
+        "birth_date": {
+          "type": "string",
+          "format": "string",
+          "example": "F"
+        },
+        "recordstate": {
+          "type": "string",
+          "format": "boolean",
+          "example": true
+        }
+      }
+    },
+    "searchtypeResponseDefinitions": {
+      "type": "object",
+      "properties": {
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/searchtypeResponse"
+          }
+        },
+        "count": {
+          "$ref": "#/definitions/rowCount"
+        }
+      }
+    },
+    "searchBase": {
+      "type": "object",
+      "properties": {
+        "searchbase": {
+          "type": "string",
+          "format": "string",
+          "example": "NA"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+.active {
+  background-color: #5897fb;
+  color: #ffffff!important;
+
+}
+
+.srchpara ul
+{
+      -webkit-padding-start: 0px;
+}
+.form-control-multiselect {
+  box-shadow: none;
+  outline:none;
+      border-width: 0px;
+}
+.form-control-multiselect :focus {
+box-shadow: none!important;
+outline:none!important;
+border-width: 0px;
+}
+.spanmul
+{
+  background-color: white; 
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: text;
+    overflow: hidden;
+    width: 100%;
+    min-width: 150px;
+}
+.select2choiceremove {
+        color: #999;
+        cursor: pointer;
+        display: inline-block;
+        font-weight: 700;
+        margin-right: 2px;
+    }
+   .sidebyside
+   {
+     display: inline-block !important;
+   }
+    .selectchips {
+        background-color: #e4e4e4;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+        cursor: default;
+        float: left;
+        margin-right: 5px;
+        margin-top: 5px;
+        padding: 0 5px;
+        display: inline-block !important;
+    }
+    .srchpara {
+
+
+        color: Black!important;
+        position: absolute!important;
+        background-color: white;
+
+        border-radius: 4px;
+        box-sizing: border-box;
+        z-index: 1000!important;
+        border: 1px solid #cccccc;
+        overflow-y: auto;
+        max-height: 400px;
+    }
+
+    .srchpara a {
+        display: block;
+        padding: 7px 12px;
+    }
+    /* srchpara*/
+
+    

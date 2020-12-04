@@ -1,0 +1,24 @@
+{
+  "daterange": {
+    "startdate": "1982-02-02",
+    "enddate": "2019-03-04"
+  },
+  "colsearch": "intercolumn",
+  "datecolsearch": "birth_date",
+  "searchparam": [],
+  "pageno": 0,
+  "pageSize": 20,
+  "ispaginate": false,
+  "pivotparamXaxis": "birth_date",
+  "pivotparamYaxis": "gender",
+  "timeinternprimary": "",
+  "timeinternsecondary": "yyyy",
+  "XpageSize": 40,
+  "Xpageno": 0,
+  "YpageSize": 20,
+  "Ypageno": 0,
+  "searchtype": "Columnwise",
+  "basesearcharconsolidated": [],
+  "sortcolumn": 1,
+  "sortcolumnorder": "desc"
+}

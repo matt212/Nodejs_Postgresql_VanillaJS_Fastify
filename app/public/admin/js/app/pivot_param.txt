@@ -1,0 +1,1 @@
+{"daterange":{"startdate":"1982-04-09","enddate":"2017-05-09"},"colsearch":"createdAt","searchparam":"NA","pageno":0,"pageSize":20,"pivotparamYaxis":"birth_date","pivotparamXaxis":"birth_date","timeinternprimary":"YEAR","timeinternsecondary":"MONTHNAME"}

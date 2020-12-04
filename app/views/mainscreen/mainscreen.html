@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+ {% include '../../public/components/loader.html' %}
+ 
+ {% include '../../public/components/legacyinnerheadercontent.html' %}
+
+ 
+ </head>
+
+
+{% include '../../public/components/materialuimenu.html' %}
+ <script src="../../admin/js/app/login.js"></script>
+ <script type="text/javascript">
+   angular.module('todoService', [])
+
+// super simple service
+// each function returns a promise object 
+.factory('Todos', ['$http', function($http) {
+  return {
+
+    get: function() {
+      
+      return $http.get('/modname/');
+    },
+  }
+}]);
+
+ </script>
+      <div class="content" ng-controller="baseController">
+ 
+       
+      
+        
+        
+        
+        
+       
+        
+      </div>
+  
+
+
+
+
+</body>
+<script type="text/javascript">
+	var baselogic=[ { Rolename: 'admin',
+    Username: 'matt212',
+    isactive: '1',
+    muserID: 1,
+    Accestype: 'AA',
+    Modulename: 'mrole,modname,userrolemapping' },
+  { Rolename: 'moderators',
+    Username: 'matt212',
+    isactive: '1',
+    muserID: 1,
+    Accestype: 'VO',
+    Modulename: 'muser,modname,userrolemapping' } ]
+[ { Rolename: 'admin',
+    isactive: '1',
+    muserID: 1,
+    Accestype: 'AA',
+    Modulename: [ 'mrole', 'modname', 'userrolemapping' ] },
+  { Rolename: 'moderators',
+    isactive: '1',
+    muserID: 1,
+    Accestype: 'VO',
+    Modulename: [ 'muser', 'modname', 'userrolemapping' ] } ]
+    
+    console.log(baselogic)
+
+</script>
+
+</html>
+
+  

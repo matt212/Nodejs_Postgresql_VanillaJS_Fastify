@@ -1,0 +1,1 @@
+ffmpeg  -i Nodejs_stream_based_CSV_download_for_1000k_from_PostgresSQL_with_socket.io_as_progress_feature.webm -vf "fps=30,scale=720:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 Node.js_stream_based_CSV_download_for_1000k_from_PostgresSQL_with_socket.io_as_progress_feature.gif

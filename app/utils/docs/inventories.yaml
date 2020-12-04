@@ -1,0 +1,222 @@
+paths:
+  /inventories/api/load/:
+    post:
+      tags:
+        - inventories
+      summary: Initial load
+      description: ''
+      operationId: inventoriesLoad
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/loadDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/inventoriesSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+  /inventories/api/searchtype/:
+    post:
+      tags:
+        - inventories
+      summary: Multiselect multicolumn search
+      description: ''
+      operationId: inventoriesSearchtype
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/SearchDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/inventoriesSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+  /inventories/api/create/:
+    post:
+      tags:
+        - inventories
+      summary: Create record
+      description: ''
+      operationId: inventoriesCreate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Create record
+          required: true
+          schema:
+            $ref: '#/definitions/inventories'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /inventories/api/update/:
+    post:
+      tags:
+        - inventories
+      summary: Update record
+      description: ''
+      operationId: inventoriesUpdate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: update record
+          required: true
+          schema:
+            $ref: '#/definitions/inventoriesUpdateDefinitions'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /inventories/api/searchtypegroupby/:
+    post:
+      tags:
+        - inventories
+      summary: Multiselect populate api for employee
+      description: ''
+      operationId: inventoriesSearchtypegroupby
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/groupByDefinitions'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /inventories/api/uploadcontent:
+    post:
+      tags:
+        - inventories
+      summary: Uploads a file.
+      operationId: inventoriesUpload
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+      responses:
+        '200':
+          description: Invalid input
+  /inventories/api/delete/:
+    post:
+      tags:
+        - inventories
+      summary: Delete record
+      description: ''
+      operationId: inventoriesDelete
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Delete record
+          required: true
+          schema:
+            $ref: '#/definitions/ inventoriesId'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /inventories/api/pivotresult/:
+    post:
+      tags:
+        - inventories
+      summary: Pivot operations for both axis
+      description: ''
+      operationId: inventoriesPivot
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: >-
+            give pivot results and also we can also club 'inventoriesSearchtype'
+            api for filteration purposes of pivot
+          required: true
+          schema:
+            $ref: '#/definitions/pivotDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/inventoriesSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+definitions:
+  inventoriesUpdateDefinitions:
+    allOf:
+      - $ref: '#/definitions/inventories'
+      - $ref: '#/definitions/inventoriesId'
+  inventoriesSearchtypeResponseDefinitions:
+    type: object
+    properties:
+      rows:
+        type: array
+        items:
+          $ref: '#/definitions/inventoriesSearchtypeResponse'
+      count:
+        $ref: '#/definitions/rowCount'
+  inventoriesSearchtypeResponse:
+    allOf:
+      - $ref: '#/definitions/inventories'
+      - $ref: '#/definitions/inventoriesId'
+  inventories:
+    type: object
+    properties:
+      firstname:
+        type: string
+        example: sample text
+      lastname:
+        type: string
+        example: sample text
+      age:
+        type: integer
+        format: int64
+        example: true
+      phone:
+        type: integer
+        format: int64
+        example: true
+      modnameid:
+        type: array
+        format: array
+        example:
+          - 1
+          - 2
+    xml:
+      name: basePayLoad
+  inventoriesId:
+    type: object
+    properties:
+      inventoriesid:
+        type: integer
+        format: int64
+        example: 1676213
