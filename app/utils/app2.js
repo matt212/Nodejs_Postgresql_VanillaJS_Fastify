@@ -5,7 +5,7 @@ const fastify = require('fastify')({
   logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
 })
 
-fastify.register(require('fastify-cors'),{
+fastify.register(require('fastify-cors'), {
 })
 fastify.register(require('fastify-jwt'), {
   secret: 'supersecret',
@@ -14,7 +14,7 @@ fastify.register(require('fastify-jwt'), {
 
 fastify.register(require('fastify-static'), {
   root: path.join(__dirname, '../') + "/public",
-   // optional: default '/'
+  // optional: default '/'
 })
 
 fastify.get('/getAccessToken', function (req, reply) {
@@ -23,40 +23,43 @@ fastify.get('/getAccessToken', function (req, reply) {
 fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
 
 fastify.post('/getToken', function (request, reply) {
-  
+
   var red = {};
-  red.base =request.body.appkey;
-  var token = fastify.jwt.sign("abc123");
+  red.base = request.body.appkey;
+  fastify.log.debug(red);
+  var token = fastify.jwt.sign(red);
 
   reply.send({ token: token })
 })
-fastify.decorate("authenticate",  function(request, reply) {
+fastify.decorate("authenticate", async function (request, reply) {
   try {
-    
+
     {
-      
+
       let token = request.headers["x-access-token"];
-      console.log(request.headers);
-      //request.jwtVerify()
       console.log(token)
+      //     var red = {};
+      // red.base =request.headers["host"];
+      // console.log(red)
       if (token) {
-        request.jwtVerify(token, function (err, decoded) {
+        await fastify.jwt.verify(token, function (err, decoded) {
           if (err) {
             console.log(err)
             // return ({
             //   success: false,
             //   message: "Failed to authenticate token."
             // });
+            return false
           } else {
             // if everything is good, save to request for use in other routes
             request.decoded = decoded;
-            
+            return true
           }
         });
       }
-      
+
     }
-    
+
   } catch (err) {
     reply.send(err)
   }
