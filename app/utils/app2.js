@@ -23,43 +23,25 @@ fastify.get('/getAccessToken', function (req, reply) {
 fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
 
 fastify.post('/getToken', function (request, reply) {
-
-  var red = {};
-  red.base = request.body.appkey;
-  fastify.log.debug(red);
-  var token = fastify.jwt.sign(red);
-
+  var Objappkey = {};
+  Objappkey.base = request.body.appkey;
+  var token = fastify.jwt.sign(Objappkey);
   reply.send({ token: token })
 })
 fastify.decorate("authenticate", async function (request, reply) {
   try {
-
-    {
-
-      let token = request.headers["x-access-token"];
-      console.log(token)
-      //     var red = {};
-      // red.base =request.headers["host"];
-      // console.log(red)
-      if (token) {
-        await fastify.jwt.verify(token, function (err, decoded) {
-          if (err) {
-            console.log(err)
-            // return ({
-            //   success: false,
-            //   message: "Failed to authenticate token."
-            // });
-            return false
-          } else {
-            // if everything is good, save to request for use in other routes
-            request.decoded = decoded;
-            return true
-          }
-        });
-      }
-
+    let token = request.headers["x-access-token"];
+    if (token) {
+      await fastify.jwt.verify(token, function (err, decoded) {
+        if (err) {
+          return false
+        } else {
+          // if everything is good, save to request for use in other routes
+          request.decoded = decoded;
+          return true
+        }
+      });
     }
-
   } catch (err) {
     reply.send(err)
   }
