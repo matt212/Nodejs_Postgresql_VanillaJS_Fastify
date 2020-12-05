@@ -182,7 +182,13 @@ $(function () {
   baseloadsegments.populateaxiskeys();
   htmlpopulate.htmlpopulatetableheader();
   htmlpopulate.htmlpopulatemodal();
+
+
+
+
   //for test/
+ 
+
   // baseloadsegments.initialdatatableload();
   $("#tooglecheck1 input").change(function () {
     if ($(this).is(":checked")) {
@@ -1799,8 +1805,6 @@ let baseloadsegments = {
     }
   }
 };
-/*get access token*/
-baseloadsegments.getapptoken(ajaxbase);
 
 function payloadprepared() {
   filterparam.colsearch = "intercolumn";
