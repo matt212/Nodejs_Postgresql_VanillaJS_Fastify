@@ -24,8 +24,8 @@ async function routes(fastify, options) {
     var req = {}
 
     req.body = request.body;
-    return dep.searchtype(req, reply, mod).then(arg => {
-      return arg
+     dep.searchtypePerf(req, reply, mod).then(arg => {
+     reply.send(arg)
     });
   })
   fastify.post(dep.routeUrls.searchtype[1],{
@@ -36,8 +36,8 @@ async function routes(fastify, options) {
     var req = {}
 
     req.body = request.body;
-    return dep.searchtype(req, reply, mod).then(arg => {
-      return arg
+     dep.searchtype(req, reply, mod).then(arg => {
+      reply.send(arg)
     });
   })
 }

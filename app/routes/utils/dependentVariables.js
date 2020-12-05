@@ -85,8 +85,8 @@ let searchparampayload = req => {
           //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
           var searchvalue = item[Object.keys(item)[0]];
           var searchkey = Object.keys(item)[0];
-          var isBaseArray= item.isArray 
-          
+          var isBaseArray = item.isArray
+
           //var result = (typeof searchvalue === 'number');
 
           var coltype = "";
@@ -99,9 +99,9 @@ let searchparampayload = req => {
             stringtype = "'";
           }
 
-          
+
           if (selector == "") {
-            
+
             if (isBaseArray) {
               console.log("arrays")
               console.log(searchvalue)
@@ -206,7 +206,7 @@ let searchparampayload = req => {
     base.ispaginate = ispaginate;
     base.searchtype = searchtype;
     base.consolidatesearch = consolidatesearch;
-    
+
     console.log(base.selector)
     resolve(base);
   });
@@ -458,23 +458,21 @@ let paramsSearchTypeGroupBy = req => {
         searchkey = Object.keys(item)[0];
         var coltype = "";
         var stringtype = "";
-        var stringCasting="";
+        var stringCasting = "";
         console.log(searchvalue);
-        if(isNaN(searchvalue))
-        {
+        if (isNaN(searchvalue)) {
           coltype = "lower";
           stringtype = "'";
         }
-        else
-        {
+        else {
           coltype = "";
           stringtype = "";
-          stringCasting=" ::TEXT"
+          stringCasting = " ::TEXT"
         }
-        
+
         var obj;
         if (selector == "") {
-          
+
           if (searchvalue.constructor === Array) {
             console.log("arrays")
             console.log(searchvalue)
@@ -488,15 +486,14 @@ let paramsSearchTypeGroupBy = req => {
               "";
 
           }
-          else
-          {
+          else {
             selector =
-            `${coltype}( ` +
-            SqlString.format(searchkey) +`${stringCasting}`+
-            " ) LIKE " +
-            "'" +
-            SqlString.format(searchvalue) +
-            "%'";
+              `${coltype}( ` +
+              SqlString.format(searchkey) + `${stringCasting}` +
+              " ) LIKE " +
+              "'" +
+              SqlString.format(searchvalue) +
+              "%'";
           }
         } else {
           if (searchvalue.constructor === Array) {
@@ -513,18 +510,17 @@ let paramsSearchTypeGroupBy = req => {
             console.log(selector)
 
           }
-          else
-          {
+          else {
             selector =
-            selector +
-            `${coltype}(` +
-            SqlString.format(searchkey) +`${stringCasting}`+
-            ") LIKE " +
-            "'" +
-            SqlString.format(searchvalue) +
-            "%'";
+              selector +
+              `${coltype}(` +
+              SqlString.format(searchkey) + `${stringCasting}` +
+              ") LIKE " +
+              "'" +
+              SqlString.format(searchvalue) +
+              "%'";
           }
-          
+
         }
 
         // finale.push(obj)
@@ -918,47 +914,51 @@ let pageRender = (req, res, validationConfig) => {
 };
 
 let searchtype = (req, res, a) => {
-   return promise = new Promise((resolve, reject) => {
-     
-   
+  return promise = new Promise((resolve, reject) => {
+
+
     searchparampayload(req).then(arg => {
 
-    var fieldnames = Object.keys(models[mod.Name].tableAttributes).toString();
+      var fieldnames = Object.keys(models[mod.Name].tableAttributes).toString();
 
-    let sqlConstructParams = {
-      fieldnames,
-      arg,
-      mod
-    };
+      let sqlConstructParams = {
+        fieldnames,
+        arg,
+        mod
+      };
 
-    //searchtypeExplain(res, sqlConstructParams, a)
-    /* do not delete function since it fallback to Conventional count*/
-    searchtypeConventional(res, sqlConstructParams, a).then(arg => {
-       resolve(arg)
-     })
-    //caching only count since delete of records in any b2b apps is meh !
-    //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+      //searchtypeExplain(res, sqlConstructParams, a)
+      /* do not delete function since it fallback to Conventional count*/
+      searchtypeConventional(res, sqlConstructParams, a).then(arg => {
+        resolve(arg)
+      })
+      //caching only count since delete of records in any b2b apps is meh !
+      //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+    })
+      .catch(function (error) {
+        console.log(error)
+        return error
+      });
   })
-  .catch(function (error) {
-    console.log(error)
-    return error
-  });
-})
 };
 let searchtypePerf = (req, res, a) => {
+  return promise = new Promise((resolve, reject) => {
 
-  searchparampayload(req).then(arg => {
-    var fieldnames = Object.keys(models[mod.Name].tableAttributes).toString();
-    let sqlConstructParams = {
-      fieldnames,
-      arg,
-      mod
-    };
+    searchparampayload(req).then(arg => {
+      var fieldnames = Object.keys(models[mod.Name].tableAttributes).toString();
+      let sqlConstructParams = {
+        fieldnames,
+        arg,
+        mod
+      };
 
-    searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
-  }).catch(function (error) {
-    res.json(error)
-  });
+      searchtypeConventionalCache(res, sqlConstructParams, a, req.body).then(arg => {
+        resolve(arg)
+      })
+    }).catch(function (error) {
+      res.json(error)
+    });
+  })
 };
 let searchtypeExplain = (res, sqlConstructParams, a) => {
 
@@ -1018,114 +1018,117 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
 };
 let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
 
+  return promise = new Promise((resolve, reject) => {
 
-  let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
-    sqlConstructParams
-  );
+    let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
+      sqlConstructParams
+    );
 
-  let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
-    sqlConstructParams
-  );
+    let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
+      sqlConstructParams
+    );
 
-  var internset = {};
-  async(
-    {
-      rows: callback => {
-        connections
-          .pgQueryStream(sqlstatementsprimary)
-          .then(result => {
-            //console.log('number:', res.rows[0].number);
+    var internset = {};
+    async(
+      {
+        rows: callback => {
+          connections
+            .pgQueryStream(sqlstatementsprimary)
+            .then(result => {
+              //console.log('number:', res.rows[0].number);
 
-            internset.rows = result.rows;
+              internset.rows = result.rows;
 
-            callback(null, internset.rows);
+              callback(null, internset.rows);
+            })
+            .catch(err => {
+              console.log(err)
+              connections.release()
+
+            });
+        },
+        count: callback => {
+
+          let key = mod.Name + "-" + JSON.stringify(arg)
+          isCacheCount(key, sqlstatementsecondary).then(function (data) {
+            internset.count = data;
+            callback(null, internset.count);
           })
-          .catch(err => {
-            console.log(err)
-            connections.release()
-
-          });
+        }
       },
-      count: callback => {
-
-        let key = mod.Name + "-" + JSON.stringify(arg)
-        isCacheCount(key, sqlstatementsecondary).then(function (data) {
-          internset.count = data;
-          callback(null, internset.count);
-        })
+      (err, results) => {
+        if (err) {
+          //res.send(err);
+          reject(err);
+        }
+        resolve(results);
       }
-    },
-    (err, results) => {
-      if (err) {
-        res.json(err);
-      }
-      res.json(results);
-    }
-  );
+    );
+  })
 };
 let searchtypeConventional = (res, sqlConstructParams, a) => {
-   return promise = new Promise((resolve, reject) => {
-    
-  
-  let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
-    sqlConstructParams
-  );
-
-  let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
-    sqlConstructParams
-  );
+  return promise = new Promise((resolve, reject) => {
 
 
-  var internset = {};
-  async(
-    {
-      rows: callback => {
-        connections
-          .query(sqlstatementsprimary)
-          .then(result => {
-            //console.log('number:', res.rows[0].number);
+    let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
+      sqlConstructParams
+    );
 
-            internset.rows = result.rows;
+    let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
+      sqlConstructParams
+    );
 
-            callback(null, internset.rows);
-          })
-          .catch(err => {
-            console.log(err)
-            connections.release()
 
-          });
+    var internset = {};
+    async(
+      {
+        rows: callback => {
+          connections
+            .query(sqlstatementsprimary)
+            .then(result => {
+              //console.log('number:', res.rows[0].number);
+
+              internset.rows = result.rows;
+
+              callback(null, internset.rows);
+            })
+            .catch(err => {
+              console.log(err)
+              connections.release()
+
+            });
+        },
+        count: callback => {
+
+          connections
+            .query(sqlstatementsecondary)
+            .then(result => {
+
+              if (result.rowCount > 0) {
+                internset.count = result.rows[0].count;
+                callback(null, internset.count);
+              }
+              else {
+
+                callback(null, 0);
+              }
+
+            })
+            .catch(err => {
+              connections.release()
+              console.log(err)
+            });
+
+        }
       },
-      count: callback => {
+      (err, results) => {
+        if (err) {
+          console.log(err)
+          reject(err);
+        }
 
-        connections
-          .query(sqlstatementsecondary)
-          .then(result => {
-
-            if (result.rowCount > 0) {
-              internset.count = result.rows[0].count;
-              callback(null, internset.count);
-            }
-            else {
-
-              callback(null, 0);
-            }
-
-          })
-          .catch(err => {
-            connections.release()
-            console.log(err)
-          });
-
-      }
-    },
-    (err, results) => {
-      if (err) {
-        console.log(err)
-        reject(err);
-      }
-      
-      resolve(results);
-    });
+        resolve(results);
+      });
   })
 };
 let getCount = (sqlstatementsecondary) => {
@@ -1436,7 +1439,7 @@ let streamingexportexcel = internobj => {
     });
     stream.on("end", () => {
       // console.log('stream end')
-      
+
       stream.destroy();
       resolve(internobj);
       connections.release()
