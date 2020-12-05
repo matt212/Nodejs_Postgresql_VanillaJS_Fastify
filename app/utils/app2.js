@@ -6,6 +6,7 @@ const fastify = require('fastify')({
 })
 
 fastify.register(require('fastify-cors'), {
+  expiresIn:"1h"
 })
 fastify.register(require('fastify-jwt'), {
   secret: 'supersecret',
