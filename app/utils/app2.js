@@ -6,20 +6,11 @@ const fastify = require('fastify')({
 })
 
 fastify.register(require('fastify-cors'),{
-  allowedHeaders:true,
-  exposedHeaders:true,
-  credentials:true,
-  origin: false,
-  methods: ['GET', 'PUT', 'POST']
 })
 fastify.register(require('fastify-jwt'), {
   secret: 'supersecret',
 })
-async function validateToken(request, decodedToken) {
-  const blacklist = ['token1', 'token2']
 
-  return blacklist.includes(decodedToken.jti)
-}
 
 fastify.register(require('fastify-static'), {
   root: path.join(__dirname, '../') + "/public",
@@ -39,37 +30,38 @@ fastify.post('/getToken', function (request, reply) {
 
   reply.send({ token: token })
 })
-fastify.addHook("onRequest", (request, reply, done) =>
-{
-  
-  if(request.url.toString().includes('api'))
-  {
-    let token = request.headers["x-access-token"];
+fastify.decorate("authenticate",  function(request, reply) {
+  try {
     
-    //request.jwtVerify()
-    console.log(token)
-    if (token) {
-      request.jwtVerify(token, function (err, decoded) {
-        if (err) {
-          console.log(err)
-          // return ({
-          //   success: false,
-          //   message: "Failed to authenticate token."
-          // });
-        } else {
-          // if everything is good, save to request for use in other routes
-          request.decoded = decoded;
-          done();
-        }
-      });
+    {
+      
+      let token = request.headers["x-access-token"];
+      console.log(request.headers);
+      //request.jwtVerify()
+      console.log(token)
+      if (token) {
+        request.jwtVerify(token, function (err, decoded) {
+          if (err) {
+            console.log(err)
+            // return ({
+            //   success: false,
+            //   message: "Failed to authenticate token."
+            // });
+          } else {
+            // if everything is good, save to request for use in other routes
+            request.decoded = decoded;
+            
+          }
+        });
+      }
+      
     }
     
+  } catch (err) {
+    reply.send(err)
   }
-  else
-  {
-    done()
-  }  
 })
+
 // Run the server!
 fastify.listen(3011, function (err, address) {
   if (err) {
