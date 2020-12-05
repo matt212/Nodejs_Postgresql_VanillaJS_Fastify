@@ -5,11 +5,10 @@ const fastify = require('fastify')({
   logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
 })
 
-fastify.register(require('fastify-cors'), {
-  expiresIn:"1h"
-})
+fastify.register(require('fastify-cors'))
 fastify.register(require('fastify-jwt'), {
   secret: 'supersecret',
+  expiresIn: "1h"
 })
 
 
@@ -32,16 +31,22 @@ fastify.post('/getToken', function (request, reply) {
 fastify.decorate("authenticate", async function (request, reply) {
   try {
     let token = request.headers["x-access-token"];
+    console.log("the fuck here man")
+    console.log(token)
     if (token) {
       await fastify.jwt.verify(token, function (err, decoded) {
         if (err) {
-          return false
+          reply.send(err)
         } else {
+          console.log("passed")
           // if everything is good, save to request for use in other routes
           request.decoded = decoded;
           return true
         }
       });
+    }
+    else {
+      reply.send("Authentication Is required, Token Missing")
     }
   } catch (err) {
     reply.send(err)
