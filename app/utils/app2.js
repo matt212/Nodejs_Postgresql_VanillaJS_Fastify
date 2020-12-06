@@ -60,12 +60,15 @@ fastify.decorate("authenticate", async function (request, reply) {
 })
 
 // Run the server!
-fastify.listen(3011, function (err, address) {
+var server =fastify.listen(3011, function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
   }
   fastify.log.info(`server listening on ${address}`)
+})
+fastify.register(require('fastify-socket.io'), {
+  // put your options here
 })
 //using express for only swagger panel
 var express = require("express");
