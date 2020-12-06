@@ -1211,10 +1211,10 @@ let SearchTypeGroupBy = (req, res, a) => {
   connections
     .query(sqlstatementsprimary)
     .then(result => {
-      res.json({ rows: result.rows });
+      res.send({ rows: result.rows });
     })
     .catch(err => {
-      res.json(err);
+      res.send(err);
     });
 };
 let bulkCreate = (req, res) => {
@@ -1773,16 +1773,16 @@ Array.prototype.removear = function () {
 };
 
 let routeUrls = {
-  create: "/api/create",
-  exportexcel: "/api/exportexcel",
-  uploadcontent: "/api/uploadcontent",
-  update: "/api/update",
+  create: "/api/create/",
+  exportexcel: "/api/exportexcel/",
+  uploadcontent: "/api/uploadcontent/",
+  update: "/api/update/",
   searchtype: ["/api/load/", "/api/searchtype/"],
-  searchtypegroupby: "/api/searchtypegroupby",
-  searchtypegroupbyId: "/api/searchtypegroupbyId",
-  delete: "/api/delete",
-  pivotresult: "/api/pivotresult",
-  bulkCreate: "/api/bulkCreate"
+  searchtypegroupby: "/api/searchtypegroupby/",
+  searchtypegroupbyId: "/api/searchtypegroupbyId/",
+  delete: "/api/delete/",
+  pivotresult: "/api/pivotresult/",
+  bulkCreate: "/api/bulkCreate/"
 };
 // models.userrolemapping.sync({alter: true}).then(function() {
 // }).catch(e => {

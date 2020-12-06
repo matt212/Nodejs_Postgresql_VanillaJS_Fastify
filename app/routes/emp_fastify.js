@@ -17,7 +17,7 @@ async function routes(fastify, options) {
   let validationConfig = require("./utils/" +
     mod.Name +
     "/validationConfig.js");
-    
+    console.log(dep.routeUrls.searchtypegroupby);
     return reply.view('../views/employees/employees.ejs',dep.pageRenderObj(request, reply, validationConfig));
   })
   
@@ -46,6 +46,14 @@ async function routes(fastify, options) {
       reply.send(arg)
     });
   })
+  fastify.post(
+    dep.routeUrls.searchtypegroupby,{
+      preValidation: [fastify.authenticate]
+    }, async (request, reply) => {
+      dep.assignVariables(mod);
+      dep.SearchTypeGroupBy(request, reply, mod);
+    }
+  );
 }
 
 module.exports = routes
