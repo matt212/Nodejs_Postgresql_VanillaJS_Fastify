@@ -37,8 +37,7 @@ fastify.post('/getToken', function (request, reply) {
 fastify.decorate("authenticate", async function (request, reply) {
   try {
     let token = request.headers["x-access-token"];
-    console.log("the fuck here man")
-    console.log(token)
+    
     if (token) {
       await fastify.jwt.verify(token, function (err, decoded) {
         if (err) {

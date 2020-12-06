@@ -17,7 +17,7 @@ async function routes(fastify, options) {
     let validationConfig = require("./utils/" +
       mod.Name +
       "/validationConfig.js");
-    console.log(dep.routeUrls.searchtypegroupby);
+    
     return reply.view('../views/employees/employees.ejs', dep.pageRenderObj(request, reply, validationConfig));
   })
 
