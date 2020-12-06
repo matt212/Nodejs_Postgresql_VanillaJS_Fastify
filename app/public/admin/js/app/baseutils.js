@@ -187,7 +187,7 @@ $(function () {
 
 
   //for test/
- 
+
 
   // baseloadsegments.initialdatatableload();
   $("#tooglecheck1 input").change(function () {
@@ -1805,6 +1805,10 @@ let baseloadsegments = {
     }
   }
 };
+/*get access token*/
+baseloadsegments.getapptoken(ajaxbase).then(arg => {
+  console.log(arg);
+});
 
 function payloadprepared() {
   filterparam.colsearch = "intercolumn";

@@ -4,6 +4,11 @@ const path = require('path')
 const fastify = require('fastify')({
   logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
 })
+fastify.register(require('point-of-view'), {
+  engine: {
+    ejs: require('ejs')
+  }
+})
 
 fastify.register(require('fastify-cors'))
 fastify.register(require('fastify-jwt'), {
@@ -18,7 +23,8 @@ fastify.register(require('fastify-static'), {
 })
 
 fastify.get('/getAccessToken', function (req, reply) {
-  return reply.sendFile('admin/html/accessTokenlisting.html'); // serving path.join(__dirname, 'public', 'myHtml.html') directly
+  //reply.view('/views/login/index.ejs', { text: 'text' })
+  reply.view('../views/login/accessTokenlisting.ejs'); // serving path.join(__dirname, 'public', 'myHtml.html') directly
 })
 fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
 

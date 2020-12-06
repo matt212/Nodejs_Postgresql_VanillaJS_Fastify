@@ -912,6 +912,20 @@ let pageRender = (req, res, validationConfig) => {
     applyfields: JSON.stringify(validationConfig.applyfields)
   });
 };
+let pageRenderObj = (req, res, validationConfig) => {
+  const d = new Date();
+  const serverdat = {
+    name: d.toString()
+  };
+
+  return {
+    title: req.user,
+    serverdate: serverdat,
+    modelattribute: Object.keys(models[mod.Name].tableAttributes),
+    validationmap: JSON.stringify(datatransformutils.removeJsonAttrs(validationConfig.validationmap, ["fieldtypename"])),
+    applyfields: JSON.stringify(validationConfig.applyfields)
+  };
+};
 
 let searchtype = (req, res, a) => {
   return promise = new Promise((resolve, reject) => {
@@ -1874,5 +1888,7 @@ module.exports = {
   searchtypegroupbyId,
   searchtype,
   searchtypePerf,
-  pageRender
+  pageRender,
+  pageRenderObj,
+
 };

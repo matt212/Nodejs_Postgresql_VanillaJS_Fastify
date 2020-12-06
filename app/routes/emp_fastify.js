@@ -12,7 +12,13 @@ let mod = Object.assign(
 
 async function routes(fastify, options) {
   fastify.get('/', async (request, reply) => {
-    return { hello: 'world' }
+    
+    dep.assignVariables(mod);
+  let validationConfig = require("./utils/" +
+    mod.Name +
+    "/validationConfig.js");
+    
+    return reply.view('../views/employees/employees.ejs',dep.pageRenderObj(request, reply, validationConfig));
   })
   
 
