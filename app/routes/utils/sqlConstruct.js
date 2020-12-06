@@ -15,7 +15,7 @@ let base = {
       tunnel.fieldnames +
       " from " +
       tunnel.mod.Name +
-      " as a where a.recordstate=true and  " +
+      " as a where a.recordstate=true " +
       tunnel.arg.daterange +
       "  " +
       tunnel.arg.selector +
@@ -34,7 +34,7 @@ let base = {
     return (
       " select COUNT(*) as count   from " +
       tunnel.mod.Name +
-      " as a where a.recordstate=true and  " +
+      " as a where a.recordstate=true " +
       tunnel.arg.daterange +
       "  " +
       tunnel.arg.selector +

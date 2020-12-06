@@ -18,8 +18,8 @@
             </ul>
             <div class="tab-content no-padding">
                 <div class="tab-pane " id="module-pie-chart">
+                    <%- include('../../public/components/piechart.html'); %>
                     
-                    {% include '../../public/components/piechart.html' %}
                    <!--  {% include '../../public/components/drag.html' %} -->
                 </div>
                 <div class="tab-pane " id="module-chart">
@@ -27,26 +27,30 @@
                         <input type="checkbox" id="switch-1" class="mdl-switch__input" />
                         <span class="mdl-switch__label"></span>
                     </label>
-                    {% include '../../public/components/basechart.html' %}
+                    
+                    <%- include('../../public/components/basechart.html'); %>
                 </div>
                 <div class="tab-pane " id="module-3dchart">
                     <label id="tooglecheck2" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-2">
                         <input type="checkbox" id="switch-2" class="mdl-switch__input" />
                         <span class="mdl-switch__label"></span>
                     </label>
-                    {% include '../../public/components/3dstack.html' %}
-                   
+                    
+                    <%- include('../../public/components/3dstack.html'); %>
                 </div>
                 <div class="tab-pane " id="sales-chart">
                     <div id="dvcontainerpivot">
-                        {% include '../../public/components/pivot.html' %}
+                        
+                        <%- include('../../public/components/pivot.html'); %>
                     </div>
                 </div>
                 <div class="loading-report-container" id="dvloader" style="display: none;">&nbsp;</div>
                 <div class="tab-pane fade" id="revenue-chart">
                     <div class="row">
                         <div class="col-xs-12" id="divreportcontent" style="display: none;">
-                            {% include '../../public/components/report.html' %}
+                            
+                            <%- include('../../public/components/report.html'); %>
+                            
                         </div>
                     </div>
                 </div>

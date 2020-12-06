@@ -51,7 +51,7 @@ let searchparampayload = req => {
     if (startdate != undefined && enddate != undefined) {
       //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
       daterange =
-        "" +
+        "and " +
         "a." +
         datecolsearch +
         " >= '" +
@@ -63,7 +63,9 @@ let searchparampayload = req => {
         enddate +
         "'";
     }
-
+    if (reqcontent.disableDate) {
+     daterange = " ";
+    }
     if (
       reqcontent.sortcolumnorder == undefined &&
       reqcontent.sortcolumn == undefined
@@ -207,7 +209,7 @@ let searchparampayload = req => {
     base.searchtype = searchtype;
     base.consolidatesearch = consolidatesearch;
 
-    console.log(base.selector)
+    console.log(base)
     resolve(base);
   });
   return promise.catch(function (error) {
@@ -912,6 +914,20 @@ let pageRender = (req, res, validationConfig) => {
     applyfields: JSON.stringify(validationConfig.applyfields)
   });
 };
+let pageRenderObj = (req, res, validationConfig) => {
+  const d = new Date();
+  const serverdat = {
+    name: d.toString()
+  };
+
+  return {
+    title: req.user,
+    serverdate: serverdat,
+    modelattribute: Object.keys(models[mod.Name].tableAttributes),
+    validationmap: JSON.stringify(datatransformutils.removeJsonAttrs(validationConfig.validationmap, ["fieldtypename"])),
+    applyfields: JSON.stringify(validationConfig.applyfields)
+  };
+};
 
 let searchtype = (req, res, a) => {
   return promise = new Promise((resolve, reject) => {
@@ -926,7 +942,7 @@ let searchtype = (req, res, a) => {
         arg,
         mod
       };
-
+console.log(a)
       //searchtypeExplain(res, sqlConstructParams, a)
       /* do not delete function since it fallback to Conventional count*/
       searchtypeConventional(res, sqlConstructParams, a).then(arg => {
@@ -956,7 +972,7 @@ let searchtypePerf = (req, res, a) => {
         resolve(arg)
       })
     }).catch(function (error) {
-      res.json(error)
+      reject(error)
     });
   })
 };
@@ -1197,10 +1213,10 @@ let SearchTypeGroupBy = (req, res, a) => {
   connections
     .query(sqlstatementsprimary)
     .then(result => {
-      res.json({ rows: result.rows });
+      res.send({ rows: result.rows });
     })
     .catch(err => {
-      res.json(err);
+      res.send(err);
     });
 };
 let bulkCreate = (req, res) => {
@@ -1224,13 +1240,13 @@ let createRecord = (req, res) => {
 
   models[mod.Name].create(lime).then(
     x => {
-      res.json({ createdId: x[mod.id] });
+      res.send({ createdId: x[mod.id] });
     },
     err => {
       console.log(err)
       res.status(412);
       resp.par = err;
-      res.json(resp);
+      res.send(resp);
     }
   );
 };
@@ -1238,10 +1254,11 @@ let createRecord = (req, res) => {
 let QueryStream = require("pg-query-stream");
 let JSONStream = require("JSONStream");
 let Json2csvTransform = require("json2csv").Transform;
-let exportExcel = (req, res, a) => {
+let exportExcel = (req, res, a, fastify) => {
 
   var baseobj = {};
-  baseobj.ref = req.app.io;
+  console.log(fastify);
+  baseobj.ref = fastify.io;
 
   searchparampayload(req).then(arg => {
     arg.ref = baseobj.ref;
@@ -1267,7 +1284,7 @@ let exportExcel = (req, res, a) => {
     arg.mod = mod;
     qelasticbeta.push(arg, jobcompletedelasticindexedbeta);
 
-    res.json("done");
+    res.send({ status: "in process" });
   });
 
 };
@@ -1567,7 +1584,7 @@ let updateRecord = (req, res) => {
       } /* where criteria */
     )
     .then(affectedRows => {
-      res.json(affectedRows);
+      res.send(affectedRows);
     });
 };
 let deleteRecord = (req, res) => {
@@ -1583,7 +1600,7 @@ let deleteRecord = (req, res) => {
       }
     )
     .then(affectedRows => {
-      res.json(affectedRows);
+      res.send(affectedRows);
     });
 };
 let pivotResult = (req, res, a) => {
@@ -1759,16 +1776,16 @@ Array.prototype.removear = function () {
 };
 
 let routeUrls = {
-  create: "/api/create",
-  exportexcel: "/api/exportexcel",
-  uploadcontent: "/api/uploadcontent",
-  update: "/api/update",
+  create: "/api/create/",
+  exportexcel: "/api/exportexcel/",
+  uploadcontent: "/api/uploadcontent/",
+  update: "/api/update/",
   searchtype: ["/api/load/", "/api/searchtype/"],
-  searchtypegroupby: "/api/searchtypegroupby",
-  searchtypegroupbyId: "/api/searchtypegroupbyId",
-  delete: "/api/delete",
-  pivotresult: "/api/pivotresult",
-  bulkCreate: "/api/bulkCreate"
+  searchtypegroupby: "/api/searchtypegroupby/",
+  searchtypegroupbyId: "/api/searchtypegroupbyId/",
+  delete: "/api/delete/",
+  pivotresult: "/api/pivotresult/",
+  bulkCreate: "/api/bulkCreate/"
 };
 // models.userrolemapping.sync({alter: true}).then(function() {
 // }).catch(e => {
@@ -1874,5 +1891,7 @@ module.exports = {
   searchtypegroupbyId,
   searchtype,
   searchtypePerf,
-  pageRender
+  pageRender,
+  pageRenderObj,
+
 };

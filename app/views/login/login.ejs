@@ -7,10 +7,10 @@
 
 
 
-
+  <script src='../../../js/jquery.min.js'></script>
   <script src="../../admin/js/app/login.js"></script>
-   <script src='../../../js/jquery.min.js'></script>
-  
+
+
   <style type="text/css">
     * {
       box-sizing: border-box;
@@ -376,39 +376,50 @@
     <h3>Nodejs,Postgres,ES, Material </h3>
   </hgroup>
   <div class="content">
-    <form action="/login" method="post">
-      <div class="form" ng-form="userForm">
-        <md-input-container flex="50">
-          <div class="group">
-            <input type="text" name="username" id="txtname" />
-            <input type="password" name="password" id="txtpass"  />
-        </md-input-container>
+
+    <div class="form" ng-form="userForm">
+      <md-input-container flex="50">
         <div class="group">
-          <div>
-        <button class="button buttonBlue" onclick="validatelogin();" type="submit">Submit </button>
-        
+          <input type="text" name="username" id="txtname" />
+          <input type="password" name="password" id="txtpass" />
+      </md-input-container>
+      <div class="group">
+        <div>
+          <button class="button buttonBlue" onclick="validatelogin();" type="submit">Submit </button>
+
+
+        </div>
 
       </div>
-    </form>
-  </div>
-<script>
-  function validatelogin() {
-  
-  var txtname=$("#txtname").val()
-  console.log(txtname);
-  if(txtname!="" && txtname != undefined && txtname!=null)
-  {
-   
-    document.getElementById('formalpha').submit();
-    return true
-  }
-  else
-  {
-  console.log("Please enter valid username ")
-  return false
-  }
-  }
-</script>
+      <script>
+        function validatelogin() {
+
+          var txtname = $("#txtname").val()
+          console.log(txtname);
+          if (txtname != "" && txtname != undefined && txtname != null) {
+
+            
+            baseloadsegments.getapptoken(ajaxbase).then(function () {
+
+              let content = {
+                "username": $("#txtname").val(),
+                "password": $("#txtpass").val()
+              };
+              base.datapayload = content
+              ajaxbase.payload = base.datapayload
+              ajaxbase.url = '/login';
+              ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
+
+              })
+            });
+          }
+          else {
+            console.log("Please enter valid username ")
+            return false
+          }
+        }
+
+      </script>
 </body>
 
 </html>

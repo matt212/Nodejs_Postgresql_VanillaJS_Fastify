@@ -15,8 +15,8 @@
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
     <!-- Messages: style can be found in dropdown.less-->
-    <li class="dropdown tasks-menu">
-        <a href="#" class="dropdown-toggle" id="uploadsaveddl" data-toggle="">
+    <li class="dropdown tasks-menu notification-alignment" id="notificationsid" style="display: none;">
+        <a href="javascript:void(0);" class="dropdown-toggle"  id="uploadsaveddl" data-toggle="dropdown" >
               <i class="fa fa-flag-o"></i>
               <span class="label label-warning" id="uploadsave" style="display: none;">1</span>
             </a>
@@ -272,4 +272,4 @@
 </aside>
 <!-- Content Wrapper. Contains page content -->
 <!-- /.content-wrapper -->
-{% include '../../public/components/vfooter.html' %}
+<%- include('../../public/components/vfooter.html'); %>

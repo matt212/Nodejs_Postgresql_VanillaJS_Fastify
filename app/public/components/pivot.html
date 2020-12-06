@@ -6,7 +6,8 @@
     <select id="selxaxis" onchange="javascript:pivotutils.setselxaxis();">
     </select>
 </div>
-{% include '../../public/components/radiobutton.html' %}
+
+<%- include('../../public/components/radiobutton.html'); %>
 <div style="display: inline-block;">
     <div class="zoom-menu">
         <a class="zoom-fab zoom-btn-sm zoom-btn-report scale-transition" onclick="javascript:pivotutils.pivotreport();"><i class="fa fa-bolt"></i></a>

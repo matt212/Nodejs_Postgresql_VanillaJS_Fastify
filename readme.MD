@@ -68,3 +68,5 @@
 >   **_TL_**(pivot , search multiselect multicolumn)
 >   applications anything from
 >   custom b2b app like crm etc .
+*  ### `Release notes 7 Dec 2020`
+>   made date filter optional with code refractoring by introducing `disableDate=true` arguement in API payload.
