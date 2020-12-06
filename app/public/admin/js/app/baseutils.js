@@ -113,6 +113,7 @@ socket.on("newsdownloadsets", function (data) {
       );
       $("#uploadsave").hide();
     } else {
+      $("#uploadsave").show();
       $("#lbluploadprogress" + filenome + "").html(loop + "%");
       $("#dvuploadprogress" + filenome + "").css("width", loop + "%");
       $("#uploadsave").html(loop + "%");
@@ -121,7 +122,7 @@ socket.on("newsdownloadsets", function (data) {
 
 });
 socket.on("newsdownload", function (data) {
-  console.log("meh done")
+  
   socket.emit('end');
 })
 
@@ -186,6 +187,7 @@ $(function () {
 
 
 
+
   //for test/
 
 
@@ -215,6 +217,7 @@ $(function () {
         .next()
         .text("consolidated result");
     }
+
   });
 
   /* var red = '(cost=0.00..50779.28 rows=7501 width=54) (actual time=0.028..592.775 rows=600290 loops=1)'
@@ -552,7 +555,7 @@ let reqops = {
       $("#uploadfiles").val("");
       $("#uploadsave").show();
       $("#uploadsavemsg").show();
-      $("#uploadsaveddl").attr("data-toggle", "dropdown");
+      $("#notificationsid").show();
       $("#uploadsavemsg").html("Data processing in progress !");
 
       setintervalparams.id = setInterval(frame, 750);
@@ -565,6 +568,7 @@ let reqops = {
           //elem.style.width = width + '%';
           $("#lbluploadprogress").html(setintervalparams.width + "%");
           $("#dvuploadprogress").css("width", setintervalparams.width + "%");
+          $("#uploadsave").show();
           $("#uploadsave").html(setintervalparams.width + "%");
         }
       }
@@ -666,11 +670,15 @@ let reqops = {
     basefunction()
       .exportexcel(base)
       .then(function (data) {
+       
         $("#uploadfiles").val("");
 
         $("#uploadsave").show();
         $("#uploadsavemsg").show();
-        $("#uploadsaveddl").attr("data-toggle", "dropdown");
+
+
+        $("#notificationsid").show();
+
         $("#uploadsavemsg").html("Preparing for download !");
         setintervalparams.id = setInterval(frame, 750);
 

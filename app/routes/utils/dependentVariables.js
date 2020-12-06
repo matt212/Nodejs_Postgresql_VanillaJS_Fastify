@@ -1282,7 +1282,7 @@ let exportExcel = (req, res, a,fastify) => {
     arg.mod = mod;
     qelasticbeta.push(arg, jobcompletedelasticindexedbeta);
 
-    res.send("done");
+    res.send({status:"in process"});
   });
 
 };
