@@ -51,7 +51,7 @@ let searchparampayload = req => {
     if (startdate != undefined && enddate != undefined) {
       //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
       daterange =
-        "" +
+        "and " +
         "a." +
         datecolsearch +
         " >= '" +
@@ -63,7 +63,9 @@ let searchparampayload = req => {
         enddate +
         "'";
     }
-
+    if (reqcontent.disableDate) {
+     daterange = " ";
+    }
     if (
       reqcontent.sortcolumnorder == undefined &&
       reqcontent.sortcolumn == undefined
@@ -207,7 +209,7 @@ let searchparampayload = req => {
     base.searchtype = searchtype;
     base.consolidatesearch = consolidatesearch;
 
-    console.log(base.selector)
+    console.log(base)
     resolve(base);
   });
   return promise.catch(function (error) {
@@ -940,7 +942,7 @@ let searchtype = (req, res, a) => {
         arg,
         mod
       };
-
+console.log(a)
       //searchtypeExplain(res, sqlConstructParams, a)
       /* do not delete function since it fallback to Conventional count*/
       searchtypeConventional(res, sqlConstructParams, a).then(arg => {
@@ -970,7 +972,7 @@ let searchtypePerf = (req, res, a) => {
         resolve(arg)
       })
     }).catch(function (error) {
-      res.json(error)
+      reject(error)
     });
   })
 };
@@ -1252,7 +1254,7 @@ let createRecord = (req, res) => {
 let QueryStream = require("pg-query-stream");
 let JSONStream = require("JSONStream");
 let Json2csvTransform = require("json2csv").Transform;
-let exportExcel = (req, res, a,fastify) => {
+let exportExcel = (req, res, a, fastify) => {
 
   var baseobj = {};
   console.log(fastify);
@@ -1282,7 +1284,7 @@ let exportExcel = (req, res, a,fastify) => {
     arg.mod = mod;
     qelasticbeta.push(arg, jobcompletedelasticindexedbeta);
 
-    res.send({status:"in process"});
+    res.send({ status: "in process" });
   });
 
 };

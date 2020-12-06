@@ -1,8 +1,8 @@
-const pinoInspector = require('pino-inspector')
-const path = require('path')
+ const pinoInspector = require('pino-inspector')
+ const path = require('path')
 
 const fastify = require('fastify')({
- // logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
+  logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
 })
 fastify.register(require('point-of-view'), {
   engine: {
@@ -22,22 +22,15 @@ fastify.register(require('fastify-static'), {
   // optional: default '/'
 })
 
-fastify.get('/getAccessToken', function (req, reply) {
-  //reply.view('/views/login/index.ejs', { text: 'text' })
-  reply.view('../views/login/accessTokenlisting.ejs'); // serving path.join(__dirname, 'public', 'myHtml.html') directly
-})
-fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
 
-fastify.post('/getToken', function (request, reply) {
-  var Objappkey = {};
-  Objappkey.base = request.body.appkey;
-  var token = fastify.jwt.sign(Objappkey);
-  reply.send({ token: token })
-})
-fastify.decorate("authenticate", async function (request, reply) {
+
+
+ fastify.register(require('../routes/customauth'), { prefix: '/' })
+ fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
+ fastify.decorate("authenticate", async function (request, reply) {
   try {
     let token = request.headers["x-access-token"];
-    
+
     if (token) {
       await fastify.jwt.verify(token, function (err, decoded) {
         if (err) {
@@ -58,8 +51,9 @@ fastify.decorate("authenticate", async function (request, reply) {
   }
 })
 
+
 // Run the server!
-var server =fastify.listen(3011, function (err, address) {
+fastify.listen(3011, function (err, address) {
   if (err) {
     fastify.log.error(err)
     process.exit(1)
@@ -69,7 +63,7 @@ var server =fastify.listen(3011, function (err, address) {
 fastify.register(require('fastify-socket.io'), {
   // put your options here
 })
-//using express for only swagger panel
+// //using express for only swagger panel
 var express = require("express");
 var Swaggerapp = express();
 const swaggerSpec = require('./configuration/swagger');

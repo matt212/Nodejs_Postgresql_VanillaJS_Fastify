@@ -17,11 +17,10 @@ async function routes(fastify, options) {
     let validationConfig = require("./utils/" +
       mod.Name +
       "/validationConfig.js");
-    
-    return reply.view('../views/employees/employees.ejs', dep.pageRenderObj(request, reply, validationConfig));
+
+     reply.view('../views/employees/employees.ejs', dep.pageRenderObj(request, reply, validationConfig));
   })
-
-
+  
   fastify.post(dep.routeUrls.searchtype[0], {
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
@@ -67,7 +66,7 @@ async function routes(fastify, options) {
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
-    dep.exportExcel(request, reply, mod,fastify);
+    dep.exportExcel(request, reply, mod, fastify);
   }
   );
 
@@ -111,6 +110,7 @@ async function routes(fastify, options) {
 
     }
   );
+
 }
 
 module.exports = routes
