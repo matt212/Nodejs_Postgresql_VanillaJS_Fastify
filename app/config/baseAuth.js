@@ -50,17 +50,19 @@ async function baseDecorator(fastify, options) {
       if (token) {
         await fastify.jwt.verify(token, function (err, decoded) {
           if (err) {
-            reply.send(err)
+            reply.redirect('/login');
           } else {
             // if everything is good, save to request for use in other routes
             request.decoded = decoded;
-            reply.send(decoded);
-            return true
+            request.session.set('decodeduserLoggedInfor', decoded)
+            return true;
           }
         });
       }
       else {
-        reply.send("Authentication Is required, Token Missing")
+        
+        request.session.set('intendedredirect', request.url)
+        reply.redirect('/login');
       }
     } catch (err) {
       reply.send(err)
@@ -75,6 +77,7 @@ async function baseDecorator(fastify, options) {
       }).then(function (user) {
 
         if (user == undefined) {
+          
           reply.send({status:"fail", 'msgstatus': 'Invalid Username/Password' });
           return false;
         } else {
@@ -85,7 +88,15 @@ async function baseDecorator(fastify, options) {
             ObjLoggedinfo.base = data;
             var token = fastify.jwt.sign(ObjLoggedinfo);
             request.session.set('userLoggedInfor', token)
-            request.session.set('redirectURL', basestate.successRedirect)
+            if(request.session.get('intendedredirect'))
+            {
+              request.session.set('redirectURL', request.session.get('intendedredirect'))  
+            }
+            else
+            {
+              request.session.set('redirectURL', basestate.successRedirect)
+            }
+            
             
             done()
             //set cookie and data here
