@@ -387,10 +387,10 @@
         <div>
           <button class="button buttonBlue" onclick="validatelogin();" type="submit">Submit </button>
 
-            
+
         </div>
-        <%= msgstatus %>
-        
+
+
       </div>
       <script>
         function validatelogin() {
@@ -399,7 +399,7 @@
           console.log(txtname);
           if (txtname != "" && txtname != undefined && txtname != null) {
 
-            
+
             baseloadsegments.getapptoken(ajaxbase).then(function () {
 
               let content = {
@@ -410,7 +410,9 @@
               ajaxbase.payload = base.datapayload
               ajaxbase.url = '/login';
               ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
-
+                if (argument.status = "success") {
+                  window.location.replace(argument.redirect);
+                }
               })
             });
           }

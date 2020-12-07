@@ -1,5 +1,6 @@
 
 let dep = require("./utils/dependentVariables.js");
+let baseAuthObj = require('../../app/config/baseAuth');
 let mod = Object.assign(
   {},
   {
@@ -31,8 +32,17 @@ async function routes(fastify, options) {
     "/login",
     { preValidation: [fastify.islogin] },
     async (request, reply, err) => {
+      console.log(request.session.get('userLoggedInfor'))
       
-        return reply.send({hello:"Hello !"})
+      let token = request.session.get('userLoggedInfor');
+      
+      
+      if(token)
+      {
+        console.log(request.session.get('redirectURL'))
+        
+        reply.send({status:"success",redirect:request.session.get('redirectURL')})
+      }  
       
     }
   );

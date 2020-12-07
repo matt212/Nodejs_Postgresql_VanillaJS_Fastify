@@ -5,6 +5,20 @@ const superadmin = require('./superadmin.json')
 const fastifyPlugin = require('fastify-plugin')
 async function baseDecorator(fastify, options) {
 
+  let jwtverify = function (token) {
+    return new Promise(function (resolve, reject) {
+      fastify.jwt.verify(token, function (err, decoded) {
+        if (err) {
+          reject(err)
+        } else {
+          // if everything is good, save to request for use in other routes
+          resolve(decoded);
+
+        }
+      })
+    })
+  }
+
   fastify.decorate("authenticate", async function (request, reply) {
     try {
       let token = request.headers["x-access-token"];
@@ -12,11 +26,35 @@ async function baseDecorator(fastify, options) {
       if (token) {
         await fastify.jwt.verify(token, function (err, decoded) {
           if (err) {
-            reply.send(err)
+            
+            reply.send({status:"fail", 'msgstatus': err});
           } else {
             console.log("passed")
             // if everything is good, save to request for use in other routes
             request.decoded = decoded;
+            return true
+          }
+        });
+      }
+      else {
+        reply.send("Authentication Is required, Token Missing")
+      }
+    } catch (err) {
+      reply.send(err)
+    }
+  })
+  fastify.decorate("isSession", async function (request, reply) {
+    try {
+      let token = request.session.get('userLoggedInfor');
+
+      if (token) {
+        await fastify.jwt.verify(token, function (err, decoded) {
+          if (err) {
+            reply.send(err)
+          } else {
+            // if everything is good, save to request for use in other routes
+            request.decoded = decoded;
+            reply.send(decoded);
             return true
           }
         });
@@ -37,12 +75,19 @@ async function baseDecorator(fastify, options) {
       }).then(function (user) {
 
         if (user == undefined) {
-          reply.send({ 'msgstatus': 'Invalid Username/Password' });
+          reply.send({status:"fail", 'msgstatus': 'Invalid Username/Password' });
           return false;
         } else {
 
           rbac(user.dataValues.muserid).then(function (data) {
-            return done(null, data);
+            
+            var ObjLoggedinfo = {}
+            ObjLoggedinfo.base = data;
+            var token = fastify.jwt.sign(ObjLoggedinfo);
+            request.session.set('userLoggedInfor', token)
+            request.session.set('redirectURL', basestate.successRedirect)
+            
+            done()
             //set cookie and data here
           })
 
@@ -53,6 +98,7 @@ async function baseDecorator(fastify, options) {
       reply.send({ status: "no login" })
     }
   })
+
   let rbac = function (id) {
     return new Promise((resolve, reject) => {
       var sqlstatement;
@@ -144,4 +190,4 @@ async function baseDecorator(fastify, options) {
 
   }
 }
-module.exports = fastifyPlugin(baseDecorator)
+module.exports =fastifyPlugin(baseDecorator)

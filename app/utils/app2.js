@@ -23,10 +23,17 @@ fastify.register(require('fastify-static'), {
 })
 
 
+fastify.register(require('fastify-secure-session'), {
+  secret: 'averylogphrasebiggerthanfortytwochars',
+  salt: 'mq9hDxBVDbspDR6n',
+  cookie: {
+    path: '/'
+    // options for setCookie, see https://github.com/fastify/fastify-cookie
+  }
+})
 fastify.register(require('../../app/config/baseAuth'))
 fastify.register(require('../routes/customauth'), { prefix: '/' })
 fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
-
  
 
 // Run the server!
