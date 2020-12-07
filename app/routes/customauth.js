@@ -15,7 +15,7 @@ async function routes(fastify, options) {
 
   fastify.get('/login', function (req, reply) {
     //reply.view('/views/login/index.ejs', { text: 'text' })
-    reply.view('../views/login/login.ejs'); // serving path.join(__dirname, 'public', 'myHtml.html') directly
+    reply.view('../views/login/login.ejs',{'msgstatus': ''}); // serving path.join(__dirname, 'public', 'myHtml.html') directly
   })
   fastify.get('/getAccessToken', async function (req, reply) {
     //reply.view('/views/login/index.ejs', { text: 'text' })
@@ -27,41 +27,50 @@ async function routes(fastify, options) {
     var token = fastify.jwt.sign(Objappkey);
     reply.send({ token: token })
   })
-  
-  fastify.post('/login', async (request, reply) => {
-
-    dep.assignVariables(mod);
-    var req={}
-     req.body =
-    {
-      "searchparam": [
-        {
-          "username": [
-            request.body.username
-          ]
-        },
-        {
-          "password": [
-            request.body.password
-          ]
-        }
-      ],
-      "daterange": {
-        "startdate": "1982-12-30",
-        "enddate": "2019-01-29"
-      },
-      "colsearch": "createdAt",
-      "datecolsearch": "created_date",
-      "pageno": 0,
-      "pageSize": 20,
-      "searchtype": "Columnwise",
-      "disableDate":true
+  fastify.post(
+    "/login",
+    { preValidation: [fastify.islogin] },
+    async (request, reply, err) => {
+      
+        return reply.send({hello:"Hello !"})
+      
     }
+  );
+  
+  // fastify.post('/login', async (request, reply) => {
+
+  //   dep.assignVariables(mod);
+  //   var req={}
+  //    req.body =
+  //   {
+  //     "searchparam": [
+  //       {
+  //         "username": [
+  //           request.body.username
+  //         ]
+  //       },
+  //       {
+  //         "password": [
+  //           request.body.password
+  //         ]
+  //       }
+  //     ],
+  //     "daterange": {
+  //       "startdate": "1982-12-30",
+  //       "enddate": "2019-01-29"
+  //     },
+  //     "colsearch": "createdAt",
+  //     "datecolsearch": "created_date",
+  //     "pageno": 0,
+  //     "pageSize": 20,
+  //     "searchtype": "Columnwise",
+  //     "disableDate":true
+  //   }
     
-    dep.searchtype(req, reply, mod).then(arg => {
-      reply.send(arg)
-    });
-  })
+  //   dep.searchtype(req, reply, mod).then(arg => {
+  //     reply.send(arg)
+  //   });
+  // })
 
 }
 

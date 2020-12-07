@@ -1,15 +1,15 @@
  const pinoInspector = require('pino-inspector')
  const path = require('path')
-
-const fastify = require('fastify')({
+ const fs = require('fs')
+ const fastify = require('fastify')({
   logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector }
 })
+
 fastify.register(require('point-of-view'), {
   engine: {
     ejs: require('ejs')
   }
 })
-
 fastify.register(require('fastify-cors'))
 fastify.register(require('fastify-jwt'), {
   secret: 'supersecret',
@@ -23,34 +23,11 @@ fastify.register(require('fastify-static'), {
 })
 
 
+fastify.register(require('../../app/config/baseAuth'))
+fastify.register(require('../routes/customauth'), { prefix: '/' })
+fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
 
-
- fastify.register(require('../routes/customauth'), { prefix: '/' })
- fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
- fastify.decorate("authenticate", async function (request, reply) {
-  try {
-    let token = request.headers["x-access-token"];
-
-    if (token) {
-      await fastify.jwt.verify(token, function (err, decoded) {
-        if (err) {
-          reply.send(err)
-        } else {
-          console.log("passed")
-          // if everything is good, save to request for use in other routes
-          request.decoded = decoded;
-          return true
-        }
-      });
-    }
-    else {
-      reply.send("Authentication Is required, Token Missing")
-    }
-  } catch (err) {
-    reply.send(err)
-  }
-})
-
+ 
 
 // Run the server!
 fastify.listen(3011, function (err, address) {
