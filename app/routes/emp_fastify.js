@@ -22,7 +22,7 @@ async function routes(fastify, options) {
   })
 
   fastify.post(dep.routeUrls.searchtype[0], {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
 
     dep.assignVariables(mod);
@@ -34,7 +34,7 @@ async function routes(fastify, options) {
     });
   })
   fastify.post(dep.routeUrls.searchtype[1], {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     // fastify.log.debug(request.body);
     dep.assignVariables(mod);
@@ -47,7 +47,7 @@ async function routes(fastify, options) {
   })
   fastify.post(
     dep.routeUrls.searchtypegroupby, {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
     dep.SearchTypeGroupBy(request, reply, mod);
@@ -55,7 +55,7 @@ async function routes(fastify, options) {
   );
   fastify.post(
     dep.routeUrls.create, {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
     dep.createRecord(request, reply);
@@ -63,7 +63,7 @@ async function routes(fastify, options) {
   );
   fastify.post(
     dep.routeUrls.exportexcel, {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
     dep.exportExcel(request, reply, mod, fastify);
@@ -71,21 +71,21 @@ async function routes(fastify, options) {
   );
 
   fastify.post(dep.routeUrls.uploadcontent, {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
     return dep.uploadContent(request, reply);
   });
   fastify.post(
     dep.routeUrls.update, {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.updateRecord(request, reply);
   }
   );
   fastify.post(
     dep.routeUrls.searchtypegroupbyId, {
-    preValidation: [fastify.isSession]
+    preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
     dep.searchtypegroupbyId(request, reply, mod);
@@ -94,7 +94,7 @@ async function routes(fastify, options) {
   fastify.post(
     dep.routeUrls.delete,
     {
-      preValidation: [fastify.isSession]
+      preValidation: [fastify.authenticate]
     }, async (request, reply) => {
       dep.assignVariables(mod);
       dep.deleteRecord(request, reply);
@@ -103,7 +103,7 @@ async function routes(fastify, options) {
   fastify.post(
     dep.routeUrls.pivotresult,
     {
-      preValidation: [fastify.isSession]
+      preValidation: [fastify.authenticate]
     }, async (request, reply) => {
       dep.assignVariables(mod);
       dep.pivotResult(request, reply, mod);
