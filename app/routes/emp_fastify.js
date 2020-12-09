@@ -30,7 +30,7 @@ async function routes(fastify, options) {
 
     req.body = request.body;
     dep.searchtype(req, reply, mod).then(arg => {
-      
+      reply.code=200
       reply.send(arg)
     });
   })

@@ -23,7 +23,7 @@ async function baseDecorator (fastify, options) {
       if (token) {
         await fastify.jwt.verify(token, function (err, decoded) {
           if (err) {
-            reply.statusCode=401
+            reply.code=401
             reply.send({ status: 'fail', msgstatus: err })
           } else {
             
@@ -34,7 +34,7 @@ async function baseDecorator (fastify, options) {
         })
       } else {
         
-        reply.statusCode=401
+        reply.code=401
         reply.send('Authentication Is required, Token Missing')
       }
     } catch (err) {
