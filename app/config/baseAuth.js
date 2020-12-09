@@ -25,7 +25,7 @@ async function baseDecorator (fastify, options) {
           if (err) {
             reply.send({ status: 'fail', msgstatus: err })
           } else {
-            console.log('passed')
+            
             // if everything is good, save to request for use in other routes
             request.decoded = decoded
             return true
@@ -108,15 +108,11 @@ async function baseDecorator (fastify, options) {
       reply.send({ status: 'no login' })
     }
   })
-  fastify.decorate('isModuleAccess', async function (
-    request,
-    reply,
-    done
-  ) {
+  fastify.decorate('isModuleAccess', async function (request, reply, done) {
     let baseurlar = request.req.url.split('/')
 
     let fileusers = request.session.get('decodeduserLoggedInfor').base
-   
+    
     //check if module/page  exists in db
     if (fileusers != undefined) {
       fileusers = fileusers.map(function (doctor) {
@@ -126,34 +122,35 @@ async function baseDecorator (fastify, options) {
             .indexOf(baseurlar[1]) > -1
         )
       })
-
+      
       let ispageexists
       if (fileusers.toString().indexOf('true') > -1) {
-        return { hasAccess: true }
+        
         ispageexists = true
+        done()
+        return true
       } else {
         //not authorize for this module
         ispageexists = false
         //either redirect to this generic listing landing page/screen or login with message
 
         //reply.redirect('/login');
-        request.session.delete('userLoggedInfor')
-
-        request.session.delete('decodeduserLoggedInfor')
-        request.session.set('statusMessage','you are not authorized to view that module')
-        console.log("---------------------------------------------------------")
+        
+        request.session.set(
+          'statusMessage',
+          'you are not authorized to view that module'
+        )
+        
         reply.redirect('/login')
       }
     } else {
-      request.session.delete('userLoggedInfor')
-
-      request.session.delete('decodeduserLoggedInfor')
-      request.session.set('statusMessage','Session expire Please re login')
-      reply.redirect('/login')
       
+      request.session.set('statusMessage', 'Session expire Please re login')
+      
+      reply.redirect('/login')
+
       //throw 404 page not found
     }
-    done()
   })
 
   let rbac = function (id) {
