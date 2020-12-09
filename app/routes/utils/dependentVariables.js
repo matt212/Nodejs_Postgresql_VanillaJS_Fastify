@@ -313,7 +313,7 @@ let dumpdataset = argument => {
       .on("error", error => {
         console.log(error);
         resp.status = error;
-        res.json(resp);
+        res.send(resp);
       });
   });
 };
@@ -1026,9 +1026,9 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
     },
     (err, results) => {
       if (err) {
-        res.json(err);
+        res.send(err);
       }
-      res.json(results);
+      res.send(results);
     }
   );
 };
@@ -1193,10 +1193,10 @@ let searchtypegroupbyId = (req, res, a) => {
   connections
     .query(sqlstatementsprimary)
     .then(result => {
-      res.json({ rows: result.rows });
+      res.send({ rows: result.rows });
     })
     .catch(err => {
-      res.json(err);
+      res.send(err);
     });
 };
 let SearchTypeGroupBy = (req, res, a) => {
@@ -1226,10 +1226,10 @@ let bulkCreate = (req, res) => {
     .then(function (x) {
       //res.redirect('/users');
 
-      res.json(x);
+      res.send(x);
     })
     .catch(function (e) {
-      res.json(e);
+      res.send(e);
     });
 };
 
@@ -1564,7 +1564,7 @@ let uploadContent = (req, res) => {
       baseobj.mod = mod;
       qelastic.push(baseobj, jobcompletedelasticindexed);
 
-      res.json("done");
+      res.send("done");
     };
     readexcel(fil);
   });
@@ -1645,7 +1645,7 @@ let pivotResult = (req, res, a) => {
               callback(null, ycount);
             })
             .catch(err => {
-              res.json(err);
+              res.send(err);
             });
         } finally {
         }
@@ -1662,7 +1662,7 @@ let pivotResult = (req, res, a) => {
             callback(null, Xcount);
           })
           .catch(err => {
-            res.json(err);
+            res.send(err);
           });
       }
     },
@@ -1715,7 +1715,7 @@ let pivotResult = (req, res, a) => {
                   callback(null, rollupinternobj);
                 })
                 .catch(err => {
-                  res.json(err);
+                  res.send(err);
                 });
             },
             (arg1, callback) => {
@@ -1737,7 +1737,7 @@ let pivotResult = (req, res, a) => {
                   callback(null, logiblock);
                 })
                 .catch(err => {
-                  res.json(err);
+                  res.send(err);
                 });
             }
           ],
@@ -1745,7 +1745,7 @@ let pivotResult = (req, res, a) => {
             internset.rows = result;
 
 
-            res.json(internset);
+            res.send(internset);
             // result now equals 'done'
           }
         );
