@@ -2,7 +2,7 @@
     "password":"admin123",
     "isactive": "1",
     "muserID": "1",
-    "Modulename": "modname,mrole,userrolemapping,muser,employees",
+    "Modulename": "modname,mrole,userrolemapping,muser",
     "Accestype": "AA",
     "Rolename": "testrolename" },
   { "Username": "krennic",

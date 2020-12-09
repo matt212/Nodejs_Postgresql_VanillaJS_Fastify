@@ -27,7 +27,8 @@ fastify.register(require('fastify-secure-session'), {
   secret: 'averylogphrasebiggerthanfortytwochars',
   salt: 'mq9hDxBVDbspDR6n',
   cookie: {
-    path: '/'
+    path: '/',
+    secure:false
     // options for setCookie, see https://github.com/fastify/fastify-cookie
   }
 })

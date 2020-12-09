@@ -14,9 +14,10 @@ let mod = Object.assign(
 async function routes(fastify, options) {
 
 
-  fastify.get('/login', function (req, reply) {
-    
-    reply.view('../views/login/login.ejs');
+  fastify.get('/login', async function (req, reply) {
+    let statusMsg=req.session.get("statusMessage")
+    console.log(statusMsg);
+   return reply.view('../views/login/login.ejs',{ statusMessage:statusMsg  });
   })
   fastify.get('/getAccessToken', { preValidation: [fastify.isSession] }, async function (req, reply) {
 
