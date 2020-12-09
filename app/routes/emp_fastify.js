@@ -29,7 +29,7 @@ async function routes(fastify, options) {
     var req = {}
 
     req.body = request.body;
-    dep.searchtypePerf(req, reply, mod).then(arg => {
+    dep.searchtype(req, reply, mod).then(arg => {
       reply.send(arg)
     });
   })
