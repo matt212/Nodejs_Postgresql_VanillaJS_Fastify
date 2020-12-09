@@ -86,16 +86,17 @@ async function baseDecorator(fastify, options) {
             
             var ObjLoggedinfo = {}
             ObjLoggedinfo.base = data;
-            var token = fastify.jwt.sign(ObjLoggedinfo);
-            request.session.set('userLoggedInfor', token)
-            if(request.session.get('intendedredirect'))
-            {
-              request.session.set('redirectURL', request.session.get('intendedredirect'))  
-            }
-            else
-            {
-              request.session.set('redirectURL', basestate.successRedirect)
-            }
+            
+              var token = fastify.jwt.sign(ObjLoggedinfo);
+              request.session.set('userLoggedInfor', token)
+              if(request.session.get('intendedredirect'))
+              {
+                request.session.set('redirectURL', request.session.get('intendedredirect'))  
+              }
+              else
+              {
+                request.session.set('redirectURL', basestate.successRedirect)
+              }
             
             
             done()
@@ -109,6 +110,40 @@ async function baseDecorator(fastify, options) {
       reply.send({ status: "no login" })
     }
   })
+  fastify.decorate("isModuleAccess", async function (request, reply, done, basestate = { successRedirect: '/employees', failureRedirect: '/login' }) {
+   
+    let baseurlar =  request.req.url.split("/");
+
+    let fileusers = request.decoded.base;
+
+    //check if module/page  exists in db
+    if (fileusers != undefined) {
+      fileusers = fileusers.map(function (doctor) {
+        return (
+          doctor.Modulename.toString()
+            .split(",")
+            .indexOf(baseurlar[1]) > -1
+        );
+      });
+
+      let ispageexists;
+      if (fileusers.toString().indexOf("true") > -1) {
+        return ({hasAccess:true})
+        ispageexists = true;
+      } else {
+        //not authorize for this module
+        ispageexists = false;
+        //either redirect to this generic listing landing page/screen or login with message 
+        reply.redirect('/login');
+        
+      }
+    } else {
+      reply.redirect('/login');
+      //throw 404 page not found
+    }  
+    //done()
+  })
+
 
   let rbac = function (id) {
     return new Promise((resolve, reject) => {

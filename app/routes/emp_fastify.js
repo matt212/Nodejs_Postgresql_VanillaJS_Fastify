@@ -11,7 +11,7 @@ let mod = Object.assign(
 );
 
 async function routes(fastify, options) {
-  fastify.get('/', { preValidation: [fastify.isSession] }, async (request, reply) => {
+  fastify.get('/', { preValidation: [fastify.isSession,fastify.isModuleAccess] }, async (request, reply) => {
 
     dep.assignVariables(mod);
     let validationConfig = require("./utils/" +
