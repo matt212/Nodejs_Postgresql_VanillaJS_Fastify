@@ -105,8 +105,8 @@ let searchparampayload = req => {
           if (selector == "") {
 
             if (isBaseArray) {
-              console.log("arrays")
-              console.log(searchvalue)
+              //console.log("arrays")
+              //console.log(searchvalue)
               //ARRAY[5,7] && modnameid;
               selector =
                 "and ARRAY [" +
@@ -115,11 +115,11 @@ let searchparampayload = req => {
                 "" +
                 SqlString.format(searchkey) +
                 "";
-              console.log(selector)
+              //console.log(selector)
 
             }
             else {
-              console.log("here")
+             // console.log("here")
               //selector = "and " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
               selector =
                 "and " +
@@ -144,8 +144,8 @@ let searchparampayload = req => {
               consolidatesearchparams + " & " + SqlString.format(searchvalue);
             //selector = selector + " and  " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
             if (isBaseArray) {
-              console.log("arrays")
-              console.log(searchvalue)
+              //console.log("arrays")
+              //console.log(searchvalue)
               //ARRAY[5,7] && modnameid;
               selector = selector +
                 "and  ARRAY [" +
@@ -209,7 +209,7 @@ let searchparampayload = req => {
     base.searchtype = searchtype;
     base.consolidatesearch = consolidatesearch;
 
-    console.log(base)
+    //console.log(base)
     resolve(base);
   });
   return promise.catch(function (error) {

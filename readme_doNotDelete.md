@@ -215,3 +215,4 @@ and then you can select from sex as dbtable while creating recruits form as fres
 
 
 >>**for Muti control access data for EDIT AND update across use interimdatapayload child object of base**
+>> for restart wsl ubuntu wslconfig /t Ubuntu
