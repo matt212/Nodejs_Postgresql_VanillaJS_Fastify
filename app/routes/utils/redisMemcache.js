@@ -1,5 +1,9 @@
-var Redis = require('ioredis');
-var redis = new Redis();
+const Redis = require('ioredis');
+const redisConfig = {
+    port: 6379,
+    host: '0.0.0.0'
+  }
+const redis = new Redis(redisConfig);
 
 //const redis = require("redis");
 

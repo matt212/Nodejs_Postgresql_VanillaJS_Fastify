@@ -45,9 +45,9 @@ fastify.listen(3011, function (err, address) {
   }
   fastify.log.info(`server listening on ${address}`)
 })
-fastify.register(require('fastify-socket.io'), {
-  // put your options here
-})
+// fastify.register(require('fastify-socket.io'), {
+//   // put your options here
+// })
 // //using express for only swagger panel
 var express = require("express");
 var Swaggerapp = express();

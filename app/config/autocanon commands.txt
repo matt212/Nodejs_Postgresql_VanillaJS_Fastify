@@ -1,0 +1,2 @@
+autocannon -c 10 -m 'POST' -i './app/config/payload.json' -H 'Content-Type: application/json' localhost:3011/employees/api/load/
+autocannon -c 1 -d 1 -p 1  -m POST  -H  "accept: application/json" -H  "x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoibG9jYWxob3N0OjMwMTEiLCJpYXQiOjE2MDc1NDMzNTd9.6_DI8UbdXUNiItbENQtNuNsIA77lTGXYPYRs7u4cd_4" -H  "Content-Type: application/json" -i ./app/config/payload.json http://localhost:3011/employees/api/load/
