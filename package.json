@@ -61,7 +61,6 @@
     "sticky-session": "^1.1.2",
     "swagger-jsdoc": "^5.0.1",
     "swagger-ui-express": "^4.1.5",
-    "swig": "^1.4.2",
     "through2": "^4.0.2",
     "util": "^0.12.3"
   },
