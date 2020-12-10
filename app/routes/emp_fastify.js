@@ -51,6 +51,7 @@ async function routes(fastify, options) {
   })
   fastify.post(
     dep.routeUrls.searchtypegroupby, {
+    schema:validatorSchema.searchGroupbyJsonSchema,
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
@@ -109,6 +110,7 @@ async function routes(fastify, options) {
   fastify.post(
     dep.routeUrls.pivotresult,
     {
+      schema:validatorSchema.searchPivotJsonSchema,
       preValidation: [fastify.authenticate]
     }, async (request, reply) => {
       dep.assignVariables(mod);
