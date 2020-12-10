@@ -31,11 +31,11 @@ async function routes (fastify, options) {
   fastify.post(
     dep.routeUrls.searchtype[0],
     {
-      config:cGzip,
+      config: cGzip,
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
     },
-     (request, reply) => {
+    (request, reply) => {
       dep.assignVariables(mod)
       var req = {}
       req.body = request.body
@@ -43,13 +43,12 @@ async function routes (fastify, options) {
         reply.code = 200
         reply.send(arg)
       })
-      
     }
   )
   fastify.post(
     dep.routeUrls.searchtype[1],
     {
-      config:cGzip,
+      config: cGzip,
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
     },
@@ -67,7 +66,7 @@ async function routes (fastify, options) {
   fastify.post(
     dep.routeUrls.searchtypegroupby,
     {
-      config:cGzip,
+      config: cGzip,
       schema: validatorSchema.searchGroupbyJsonSchema,
       preValidation: [fastify.authenticate]
     },
@@ -141,7 +140,7 @@ async function routes (fastify, options) {
   fastify.post(
     dep.routeUrls.pivotresult,
     {
-      config:cGzip,
+      config: cGzip,
       schema: validatorSchema.searchPivotJsonSchema,
       preValidation: [fastify.authenticate]
     },
