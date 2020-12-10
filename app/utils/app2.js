@@ -2,13 +2,18 @@
  const path = require('path')
  const fs = require('fs')
  const fastify = require('fastify')({
- //logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector },
+ logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector },
  ajv: {
   plugins: [
     [require('ajv-keywords'), ['transform']]
   ]
 }
 })
+fastify.register(
+  require('fastify-compress'),
+  { global: false },
+  { encodings: ['deflate', 'gzip'] }
+)
 
 fastify.register(require('point-of-view'), {
   engine: {
@@ -50,9 +55,9 @@ fastify.listen(3011, function (err, address) {
   }
   fastify.log.info(`server listening on ${address}`)
 })
-// fastify.register(require('fastify-socket.io'), {
-//   // put your options here
-// })
+fastify.register(require('fastify-socket.io'), {
+  // put your options here
+})
 // //using express for only swagger panel
 var express = require("express");
 var Swaggerapp = express();

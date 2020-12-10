@@ -1638,7 +1638,7 @@ let baseloadsegments = {
   initialdatatableload: function () {
     filterparam.colsearch = "createdAt";
 
-    filterparam.searchparam = "NA";
+    filterparam.searchparam = ["NA"];
     filterparam.daterange = datefilter;
     base.pageno = (base.pageno === undefined) ? 0 : base.pageno;
     base.pageSize = (base.pageSize === undefined) ? 20 : base.pageSize;
