@@ -105,8 +105,8 @@ let searchparampayload = req => {
           if (selector == "") {
 
             if (isBaseArray) {
-              console.log("arrays")
-              console.log(searchvalue)
+              //console.log("arrays")
+              //console.log(searchvalue)
               //ARRAY[5,7] && modnameid;
               selector =
                 "and ARRAY [" +
@@ -115,11 +115,11 @@ let searchparampayload = req => {
                 "" +
                 SqlString.format(searchkey) +
                 "";
-              console.log(selector)
+              //console.log(selector)
 
             }
             else {
-              console.log("here")
+             // console.log("here")
               //selector = "and " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
               selector =
                 "and " +
@@ -144,8 +144,8 @@ let searchparampayload = req => {
               consolidatesearchparams + " & " + SqlString.format(searchvalue);
             //selector = selector + " and  " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
             if (isBaseArray) {
-              console.log("arrays")
-              console.log(searchvalue)
+              //console.log("arrays")
+              //console.log(searchvalue)
               //ARRAY[5,7] && modnameid;
               selector = selector +
                 "and  ARRAY [" +
@@ -209,7 +209,7 @@ let searchparampayload = req => {
     base.searchtype = searchtype;
     base.consolidatesearch = consolidatesearch;
 
-    console.log(base)
+    //console.log(base)
     resolve(base);
   });
   return promise.catch(function (error) {
@@ -313,7 +313,7 @@ let dumpdataset = argument => {
       .on("error", error => {
         console.log(error);
         resp.status = error;
-        res.json(resp);
+        res.send(resp);
       });
   });
 };
@@ -461,7 +461,7 @@ let paramsSearchTypeGroupBy = req => {
         var coltype = "";
         var stringtype = "";
         var stringCasting = "";
-        console.log(searchvalue);
+        
         if (isNaN(searchvalue)) {
           coltype = "lower";
           stringtype = "'";
@@ -509,7 +509,7 @@ let paramsSearchTypeGroupBy = req => {
               "" +
               SqlString.format(searchkey) +
               "";
-            console.log(selector)
+            //console.log(selector)
 
           }
           else {
@@ -942,7 +942,7 @@ let searchtype = (req, res, a) => {
         arg,
         mod
       };
-console.log(a)
+
       //searchtypeExplain(res, sqlConstructParams, a)
       /* do not delete function since it fallback to Conventional count*/
       searchtypeConventional(res, sqlConstructParams, a).then(arg => {
@@ -1026,9 +1026,9 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
     },
     (err, results) => {
       if (err) {
-        res.json(err);
+        res.send(err);
       }
-      res.json(results);
+      res.send(results);
     }
   );
 };
@@ -1193,10 +1193,10 @@ let searchtypegroupbyId = (req, res, a) => {
   connections
     .query(sqlstatementsprimary)
     .then(result => {
-      res.json({ rows: result.rows });
+      res.send({ rows: result.rows });
     })
     .catch(err => {
-      res.json(err);
+      res.send(err);
     });
 };
 let SearchTypeGroupBy = (req, res, a) => {
@@ -1226,10 +1226,10 @@ let bulkCreate = (req, res) => {
     .then(function (x) {
       //res.redirect('/users');
 
-      res.json(x);
+      res.send(x);
     })
     .catch(function (e) {
-      res.json(e);
+      res.send(e);
     });
 };
 
@@ -1257,7 +1257,7 @@ let Json2csvTransform = require("json2csv").Transform;
 let exportExcel = (req, res, a, fastify) => {
 
   var baseobj = {};
-  console.log(fastify);
+  
   baseobj.ref = fastify.io;
 
   searchparampayload(req).then(arg => {
@@ -1522,7 +1522,7 @@ let uploadContent = (req, res) => {
             getattributesfields().toString() +
             ") FROM STDIN WITH (FORMAT CSV, HEADER,  DELIMITER ',') ";
           var stream = client.query(copyFrom(sqlcopysyntax));
-          console.log(sqlcopysyntax)
+          
           var fileStream = fs.createReadStream(obj.saveTo);
           fileStream.on("error", data => {
             done();
@@ -1564,7 +1564,7 @@ let uploadContent = (req, res) => {
       baseobj.mod = mod;
       qelastic.push(baseobj, jobcompletedelasticindexed);
 
-      res.json("done");
+      res.send("done");
     };
     readexcel(fil);
   });
@@ -1645,7 +1645,7 @@ let pivotResult = (req, res, a) => {
               callback(null, ycount);
             })
             .catch(err => {
-              res.json(err);
+              res.send(err);
             });
         } finally {
         }
@@ -1662,7 +1662,7 @@ let pivotResult = (req, res, a) => {
             callback(null, Xcount);
           })
           .catch(err => {
-            res.json(err);
+            res.send(err);
           });
       }
     },
@@ -1715,7 +1715,7 @@ let pivotResult = (req, res, a) => {
                   callback(null, rollupinternobj);
                 })
                 .catch(err => {
-                  res.json(err);
+                  res.send(err);
                 });
             },
             (arg1, callback) => {
@@ -1737,7 +1737,7 @@ let pivotResult = (req, res, a) => {
                   callback(null, logiblock);
                 })
                 .catch(err => {
-                  res.json(err);
+                  res.send(err);
                 });
             }
           ],
@@ -1745,7 +1745,7 @@ let pivotResult = (req, res, a) => {
             internset.rows = result;
 
 
-            res.json(internset);
+            res.send(internset);
             // result now equals 'done'
           }
         );

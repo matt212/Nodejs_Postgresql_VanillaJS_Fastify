@@ -1,0 +1,3 @@
+autocannon -c 1  -m 'POST' -b './app/config/payload.json'  -H 'Content-Type: application/json' -H "x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoibG9jYWxob3N0OjMwMTEiLCJpYXQiOjE2MDc2MDAzNDV9.yA7loOT5PsqDj4P6mYoHTm9Mh03lS3KDbVeR3YMAsCE"   http://localhost:3011/employees/api/load/
+
+ab -v 4 -p ./app/config/payload.json -T application/json -H 'x-access-token:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoibG9jYWxob3N0OjMwMTEiLCJpYXQiOjE2MDc2MDAzNDV9.yA7loOT5PsqDj4P6mYoHTm9Mh03lS3KDbVeR3YMAsCE' -c 10 -n 2000 http://localhost:3011/employees/api/load/

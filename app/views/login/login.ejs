@@ -370,6 +370,17 @@
       });
 
     });
+    $( document ).ready(function() {
+      var error = "<%= statusMessage %>";          
+
+if(error!=null) 
+{  
+  console.log(error);
+  $("#dvmessages").show()
+  $("#messageContent").html(error)
+}
+    })
+    
   </script>
   <hgroup>
     <h1>Admin panel</h1>
@@ -389,6 +400,11 @@
 
 
         </div>
+        <div class="alert alert-info alert-dismissible fade show" id="dvmessages" style="display: none;">
+          <p id="messageContent"> Please read the comments carefully.</p>
+          
+      </div>
+     
 
       </div>
       <script>
@@ -398,7 +414,7 @@
           console.log(txtname);
           if (txtname != "" && txtname != undefined && txtname != null) {
 
-            
+
             baseloadsegments.getapptoken(ajaxbase).then(function () {
 
               let content = {
@@ -409,7 +425,9 @@
               ajaxbase.payload = base.datapayload
               ajaxbase.url = '/login';
               ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
-
+                if (argument.status = "success") {
+                  window.location.replace(argument.redirect);
+                }
               })
             });
           }

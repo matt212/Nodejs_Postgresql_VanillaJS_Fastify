@@ -159,6 +159,6 @@ definitions:
     type: object
     properties:
       searchparam:
-        type: string
-        format: string
-        example: NA
+        type: array
+        format: array
+        example: ["NA"]

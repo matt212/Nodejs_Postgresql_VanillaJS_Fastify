@@ -1,5 +1,6 @@
 
 let dep = require("./utils/dependentVariables.js");
+let baseAuthObj = require('../../app/config/baseAuth');
 let mod = Object.assign(
   {},
   {
@@ -13,13 +14,14 @@ let mod = Object.assign(
 async function routes(fastify, options) {
 
 
-  fastify.get('/login', function (req, reply) {
-    //reply.view('/views/login/index.ejs', { text: 'text' })
-    reply.view('../views/login/login.ejs'); // serving path.join(__dirname, 'public', 'myHtml.html') directly
+  fastify.get('/login', async function (request, reply) {
+    let statusMsg=request.session.get("statusMessage")
+    
+   return reply.view('../views/login/login.ejs',{ statusMessage:statusMsg  });
   })
-  fastify.get('/getAccessToken', async function (req, reply) {
-    //reply.view('/views/login/index.ejs', { text: 'text' })
-    return reply.view('../views/login/accessTokenlisting.ejs'); // serving path.join(__dirname, 'public', 'myHtml.html') directly
+  fastify.get('/getAccessToken', { preValidation: [fastify.isSession] }, async function (req, reply) {
+
+    return reply.view('../views/login/accessTokenlisting.ejs');
   })
   fastify.post('/getToken', function (request, reply) {
     var Objappkey = {};
@@ -27,41 +29,22 @@ async function routes(fastify, options) {
     var token = fastify.jwt.sign(Objappkey);
     reply.send({ token: token })
   })
-  
-  fastify.post('/login', async (request, reply) => {
+  fastify.post(
+    "/login",
+    { preValidation: [fastify.islogin] },
+    async (request, reply, err) => {
 
-    dep.assignVariables(mod);
-    var req={}
-     req.body =
-    {
-      "searchparam": [
-        {
-          "username": [
-            request.body.username
-          ]
-        },
-        {
-          "password": [
-            request.body.password
-          ]
-        }
-      ],
-      "daterange": {
-        "startdate": "1982-12-30",
-        "enddate": "2019-01-29"
-      },
-      "colsearch": "createdAt",
-      "datecolsearch": "created_date",
-      "pageno": 0,
-      "pageSize": 20,
-      "searchtype": "Columnwise",
-      "disableDate":true
+      let token = request.session.get('userLoggedInfor');
+
+      if (token) {
+        console.log(request.session.get('redirectURL'))
+
+        reply.send({ status: "success", redirect: request.session.get('redirectURL') })
+      }
+
     }
-    
-    dep.searchtype(req, reply, mod).then(arg => {
-      reply.send(arg)
-    });
-  })
+  );
+
 
 }
 
