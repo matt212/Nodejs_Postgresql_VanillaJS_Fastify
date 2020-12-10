@@ -2,7 +2,7 @@
  const path = require('path')
  const fs = require('fs')
  const fastify = require('fastify')({
- logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector },
+// logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector },
  ajv: {
   plugins: [
     [require('ajv-keywords'), ['transform']]
@@ -11,8 +11,8 @@
 })
 fastify.register(
   require('fastify-compress'),
-  { global: false },
-  { encodings: ['deflate', 'gzip'] }
+  { global: true },
+  { encodings: ['gzip'] }
 )
 
 fastify.register(require('point-of-view'), {
