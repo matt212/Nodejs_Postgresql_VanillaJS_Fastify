@@ -11,6 +11,7 @@ const searchLoadbodyJsonSchema = {
   properties: {
     searchparam: {
       type: 'array',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     daterange: {
@@ -19,18 +20,22 @@ const searchLoadbodyJsonSchema = {
     },
     colsearch: {
       type: 'string',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     datecolsearch: {
       type: 'string',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     pageSize: {
       type: 'number',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     pageno: {
       type: 'number',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     }
   }
@@ -60,8 +65,7 @@ const searchPivotbodyJsonSchema = {
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     daterange: {
-      type: 'object',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      type: 'object'
     },
     colsearch: {
       type: 'string',
@@ -131,8 +135,7 @@ const searchGroupbybodyJsonSchema = {
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     daterange: {
-      type: 'object',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      type: 'object'
     },
     colsearch: {
       type: 'string',
@@ -175,16 +178,15 @@ const insertSchema = {
     },
     gender: {
       type: 'string',
-      enum: ['M', 'F'],
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
+      enum: ['M', 'F']
     },
     birth_date: {
       type: 'string',
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     recordstate: {
-      type: 'boolean',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      type: 'boolean'
     }
   }
 }
@@ -209,16 +211,15 @@ const updateSchema = {
     },
     gender: {
       type: 'string',
-      enum: ['M', 'F'],
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
+      enum: ['M', 'F']
     },
     birth_date: {
       type: 'string',
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     recordstate: {
-      type: 'boolean',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      type: 'boolean'
     },
     employeesid: {
       type: 'number',
@@ -229,8 +230,8 @@ const updateSchema = {
 const headersJsonSchema = {
   type: 'object',
   properties: {
-    'x-access-token': { type: 'string' },
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+    'x-access-token': { type: 'string',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }] }
   },
   required: ['x-access-token']
 }

@@ -140,7 +140,7 @@ paths:
           description: Delete record
           required: true
           schema:
-            $ref: "#/definitions/ employeesId"
+            $ref: "#/definitions/employeesId"
       responses:
         "200":
           description: Invalid input
