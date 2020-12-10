@@ -1,5 +1,6 @@
 
 let dep = require("./utils/dependentVariables.js");
+var validatorSchema=require("./utils/employees/empSchema.js")
 let mod = Object.assign(
   {},
   {
@@ -22,6 +23,7 @@ async function routes(fastify, options) {
   })
 
   fastify.post(dep.routeUrls.searchtype[0], {
+    schema:validatorSchema,
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
 
