@@ -23,7 +23,7 @@ async function routes(fastify, options) {
   })
 
   fastify.post(dep.routeUrls.searchtype[0], {
-    schema:validatorSchema,
+    schema:validatorSchema.searchLoadSchema,
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
 
@@ -37,6 +37,7 @@ async function routes(fastify, options) {
     });
   })
   fastify.post(dep.routeUrls.searchtype[1], {
+    schema:validatorSchema.searchLoadSchema,
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     // fastify.log.debug(request.body);
@@ -58,6 +59,7 @@ async function routes(fastify, options) {
   );
   fastify.post(
     dep.routeUrls.create, {
+    schema:validatorSchema.insertLoadSchema,
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
@@ -81,6 +83,7 @@ async function routes(fastify, options) {
   });
   fastify.post(
     dep.routeUrls.update, {
+    schema:validatorSchema.updateLoadSchema,
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.updateRecord(request, reply);
