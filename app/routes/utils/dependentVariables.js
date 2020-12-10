@@ -461,7 +461,7 @@ let paramsSearchTypeGroupBy = req => {
         var coltype = "";
         var stringtype = "";
         var stringCasting = "";
-        console.log(searchvalue);
+        
         if (isNaN(searchvalue)) {
           coltype = "lower";
           stringtype = "'";
@@ -509,7 +509,7 @@ let paramsSearchTypeGroupBy = req => {
               "" +
               SqlString.format(searchkey) +
               "";
-            console.log(selector)
+            //console.log(selector)
 
           }
           else {
@@ -942,7 +942,7 @@ let searchtype = (req, res, a) => {
         arg,
         mod
       };
-console.log(a)
+
       //searchtypeExplain(res, sqlConstructParams, a)
       /* do not delete function since it fallback to Conventional count*/
       searchtypeConventional(res, sqlConstructParams, a).then(arg => {
@@ -1257,7 +1257,7 @@ let Json2csvTransform = require("json2csv").Transform;
 let exportExcel = (req, res, a, fastify) => {
 
   var baseobj = {};
-  console.log(fastify);
+  
   baseobj.ref = fastify.io;
 
   searchparampayload(req).then(arg => {
@@ -1522,7 +1522,7 @@ let uploadContent = (req, res) => {
             getattributesfields().toString() +
             ") FROM STDIN WITH (FORMAT CSV, HEADER,  DELIMITER ',') ";
           var stream = client.query(copyFrom(sqlcopysyntax));
-          console.log(sqlcopysyntax)
+          
           var fileStream = fs.createReadStream(obj.saveTo);
           fileStream.on("error", data => {
             done();

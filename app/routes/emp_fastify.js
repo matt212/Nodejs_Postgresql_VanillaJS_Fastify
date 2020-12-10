@@ -36,9 +36,8 @@ async function routes (fastify, options) {
     async (request, reply) => {
       dep.assignVariables(mod)
       var req = {}
-
       req.body = request.body
-      dep.searchtype(req, reply, mod).then(arg => {
+      dep.searchtypePerf(req, reply, mod).then(arg => {
         reply.code = 200
         reply.send(arg)
       })
