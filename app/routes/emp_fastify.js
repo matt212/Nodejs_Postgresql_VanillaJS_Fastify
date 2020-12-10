@@ -35,7 +35,7 @@ async function routes (fastify, options) {
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
     },
-    async (request, reply) => {
+     (request, reply) => {
       dep.assignVariables(mod)
       var req = {}
       req.body = request.body
