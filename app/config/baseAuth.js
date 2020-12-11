@@ -53,6 +53,7 @@ async function baseDecorator (fastify, options) {
             // if everything is good, save to request for use in other routes
             request.decoded = decoded
             request.session.set('decodeduserLoggedInfor', decoded)
+            console.log(request.session.get('decodeduserLoggedInfor'))
             return true
           }
         })
@@ -112,7 +113,7 @@ async function baseDecorator (fastify, options) {
     }
   })
   fastify.decorate('isModuleAccess', async function (request, reply, done) {
-    let baseurlar = request.req.url.split('/')
+    let baseurlar = request.raw.url.split('/')
 
     let fileusers = request.session.get('decodeduserLoggedInfor').base
     
