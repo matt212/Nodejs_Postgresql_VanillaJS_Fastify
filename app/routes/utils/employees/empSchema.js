@@ -11,7 +11,6 @@ const searchLoadbodyJsonSchema = {
   properties: {
     searchparam: {
       type: 'array',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     daterange: {
@@ -20,22 +19,18 @@ const searchLoadbodyJsonSchema = {
     },
     colsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     datecolsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     pageSize: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     },
     pageno: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
       allOf: [{ transform: ['trim'] }, { minLength: 1 }]
     }
   }
@@ -93,11 +88,11 @@ const searchPivotbodyJsonSchema = {
     },
     timeinternprimary: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      
     },
     timeinternsecondary: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      
     },
     XpageSize: {
       type: 'number',
