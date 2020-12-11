@@ -1,30 +1,30 @@
 var baseSchema = require('../../utils/misc/baseSchemaConfig')
-
+var insertUpdateSchema={
+  first_name: {
+    type: 'string',
+    allOf: baseSchema.commonConfig
+  },
+  last_name: {
+    type: 'string',
+    allOf: baseSchema.commonConfig
+  },
+  gender: {
+    type: 'string',
+    allOf: baseSchema.commonConfig,
+    enum: ['M', 'F']
+  },
+  birth_date: {
+    type: 'string',
+    allOf: baseSchema.commonConfig
+  },
+  recordstate: {
+    type: 'boolean'
+  }
+}
 const insertSchema = {
   type: 'object',
   required: ['first_name', 'last_name', 'gender', 'birth_date', 'recordstate'],
-  properties: {
-    first_name: {
-      type: 'string',
-      allOf: baseSchema.commonConfig
-    },
-    last_name: {
-      type: 'string',
-      allOf: baseSchema.commonConfig
-    },
-    gender: {
-      type: 'string',
-      allOf: baseSchema.commonConfig,
-      enum: ['M', 'F']
-    },
-    birth_date: {
-      type: 'string',
-      allOf: baseSchema.commonConfig
-    },
-    recordstate: {
-      type: 'boolean'
-    }
-  }
+  properties: {insertUpdateSchema}
 }
 const updateSchema = {
   type: 'object',
@@ -36,32 +36,12 @@ const updateSchema = {
     'recordstate',
     'employeesid'
   ],
-  properties: {
-    first_name: {
-      type: 'string',
-      allOf: baseSchema.commonConfig
-    },
-    last_name: {
-      type: 'string',
-      allOf: baseSchema.commonConfig
-    },
-    gender: {
-      type: 'string',
-      allOf: baseSchema.commonConfig,
-      enum: ['M', 'F']
-    },
-    birth_date: {
-      type: 'string',
-      allOf: baseSchema.commonConfig
-    },
-    recordstate: {
-      type: 'boolean'
-    },
+  properties: {insertUpdateSchema},
     employeesid: {
       type: 'number',
       allOf: baseSchema.commonConfig
     }
-  }
+  
 }
 
 const insertLoadSchema = {
