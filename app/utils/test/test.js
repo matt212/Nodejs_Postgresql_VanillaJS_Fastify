@@ -1,3 +1,4 @@
+const { resolve } = require('bluebird')
 var supertest = require('supertest')
 //var should = require("should");
 
@@ -12,13 +13,11 @@ before(async () => {
 var server = supertest.agent('http://localhost:3011')
 
 // UNIT test begin
-
-describe('login', function () {
-  // #1 should return home page
-
-  it('logins as expected when valid username and password are passed', function (done) {
-    //calling ADD api
-    var user = { username: 'krennic', password: 'orson' }
+let loginsuccess=function(cred)
+{
+  return promise = new Promise((resolve, reject) => {
+  
+  var user = cred
     server
       .post('/login')
       .send(user)
@@ -26,16 +25,33 @@ describe('login', function () {
       .expect(200)
       .end(function (err, res) {
         if (err) {
-          console.log(err)
-          return done(err)
+          resolve({status:'fail',content:err})
+          //return done(err)
         }
 
-        //res.status.should.equal(200);
-        //res.body.should.include.keys(['token'])
         res.body.status.should.equal('success')
         res.body.redirect.should.equal('/employees')
-        done()
+        resolve({status:'pass'})
       })
+    })
+}
+describe('login', function () {
+  // #1 should return home page
+
+  it('logins as expected when valid username and password are passed', function (done) {
+    //calling ADD api
+    loginsuccess({ username: 'krennic', password: 'orson' }).then(function(data)
+    {
+      if(data.status=="pass")
+      {
+        done()
+      }
+      else
+      {
+        done("fail")
+      }
+    })
+    
   })
   it('it shows valid messages when incorrect username and password is entered', function (done) {
     //calling ADD api
@@ -88,5 +104,31 @@ describe('login', function () {
         }
         done()
       })
+  })
+  it('redirects to login if user does  not have access to module', function (done) {
+    //calling ADD api
+    loginsuccess({ username: 'scarif', password: 'orson' }).then(function(data)
+    {
+      if(data.status=="pass")
+      {
+      server
+      .get('/employees')
+      .expect(302)
+      .expect('Location', '/login')
+      .end(function (err, res) {
+        if (err) {
+          console.log(err)
+          return done(err)
+        }
+        
+        done()
+      })
+      }
+      else
+      {
+        done("fail")
+      }
+    })
+    
   })
 })

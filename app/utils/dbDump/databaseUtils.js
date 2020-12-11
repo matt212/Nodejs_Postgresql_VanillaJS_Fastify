@@ -1,10 +1,18 @@
-
+let getDateString = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    const currentTime =
+      "-" + date.getHours() + "-" + date.getMinutes() + "-" + date.getSeconds();
+    return `${year}${month}${day}` + `${currentTime}`;
+  };
 let pgbaseDump = function () {
     //PGPASSWORD="abc123" pg_dump -h localhost -p 5432 -U postgres demodb > D:\backup.sql
 
     const fs = require('fs');
     const child_process = require('child_process');
-    var spawn_process_cmd = 'PGPASSWORD=abc123  pg_dump -h localhost -p 5432 -U postgres  demodb > ./app/utils/dbDump/backup.dump'
+    var spawn_process_cmd = 'PGPASSWORD=abc123  pg_dump -h localhost -p 5432 -U postgres  demodb > ./app/utils/dbDump/backup-'+getDateString()+'.dump'
     child_process.exec(spawn_process_cmd, (error, stdout, stderr) => {
         if (error) {
             console.error(`exec error: ${error}`);

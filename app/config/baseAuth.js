@@ -23,18 +23,16 @@ async function baseDecorator (fastify, options) {
       if (token) {
         await fastify.jwt.verify(token, function (err, decoded) {
           if (err) {
-            reply.code=401
+            reply.code = 401
             reply.send({ status: 'fail', msgstatus: err })
           } else {
-            
             // if everything is good, save to request for use in other routes
             request.decoded = decoded
             return true
           }
         })
       } else {
-        
-        reply.code=401
+        reply.code = 401
         reply.send('Authentication Is required, Token Missing')
       }
     } catch (err) {
@@ -53,7 +51,7 @@ async function baseDecorator (fastify, options) {
             // if everything is good, save to request for use in other routes
             request.decoded = decoded
             request.session.set('decodeduserLoggedInfor', decoded)
-            
+
             return true
           }
         })
@@ -116,7 +114,7 @@ async function baseDecorator (fastify, options) {
     let baseurlar = request.raw.url.split('/')
 
     let fileusers = request.session.get('decodeduserLoggedInfor').base
-    
+
     //check if module/page  exists in db
     if (fileusers != undefined) {
       fileusers = fileusers.map(function (doctor) {
@@ -126,10 +124,9 @@ async function baseDecorator (fastify, options) {
             .indexOf(baseurlar[1]) > -1
         )
       })
-      
+
       let ispageexists
       if (fileusers.toString().indexOf('true') > -1) {
-        
         ispageexists = true
         done()
         return true
@@ -139,18 +136,17 @@ async function baseDecorator (fastify, options) {
         //either redirect to this generic listing landing page/screen or login with message
 
         //reply.redirect('/login');
-        
+
         request.session.set(
           'statusMessage',
           'you are not authorized to view that module'
         )
-        
+
         reply.redirect('/login')
       }
     } else {
-      
       request.session.set('statusMessage', 'Session expire Please re login')
-      
+
       reply.redirect('/login')
 
       //throw 404 page not found
@@ -160,7 +156,7 @@ async function baseDecorator (fastify, options) {
   let rbac = function (id) {
     return new Promise((resolve, reject) => {
       var sqlstatement
-      if (id == 1) {
+      if (id == 1 || id == 2) {
         sqlstatement =
           'select array_agg(DISTINCT Mname) Modulename ' +
           'from ' +
@@ -193,7 +189,7 @@ async function baseDecorator (fastify, options) {
         .then(result => {
           var projects = result.rows
 
-          if (id == 1) {
+          if (id == 1 || id == 2) {
             //console.log(superadmin);
 
             var tempsuperadmin = superadmin
@@ -202,11 +198,15 @@ async function baseDecorator (fastify, options) {
               tempsuperadmin[0].slidenav = tempsuperadmin[0].Modulename.toString().split(
                 ','
               )
+              tempsuperadmin = tempsuperadmin.filter(function (doctor) {
+                return doctor.id == id // if truthy then keep item
+              })
 
               resolve(tempsuperadmin)
             } else {
               tempsuperadmin[0].slidenav = projects[0].modulename
               tempsuperadmin[0].Modulename = projects[0].modulename.toString()
+
               resolve(tempsuperadmin)
             }
           } else {
