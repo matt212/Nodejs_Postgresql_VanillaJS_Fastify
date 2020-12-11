@@ -2,7 +2,7 @@
  const path = require('path')
  const fs = require('fs')
  const fastify = require('fastify')({
- logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector },
+ //logger: { prettyPrint: true, level: 'debug', prettifier: pinoInspector },
  ajv: {
   plugins: [
     [require('ajv-keywords'), ['transform']]
@@ -17,8 +17,11 @@ fastify.register(
 
 fastify.register(require('point-of-view'), {
   engine: {
-    ejs: require('ejs')
-  }
+    ejs: require('ejs'),
+    
+  },
+  root: path.join(__dirname, '../views'),
+  
 })
 fastify.register(require('fastify-cors'))
 fastify.register(require('fastify-jwt'), {

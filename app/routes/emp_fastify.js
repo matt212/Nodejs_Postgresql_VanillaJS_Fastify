@@ -1,6 +1,4 @@
-let dep = require('./utils/dependentVariables.js')
-var validatorSchema = require('./utils/employees/empSchema.js')
-var cGzip = require('./utils/misc/cGzip.js')
+let dep = require('./utils/dependentVariables')
 let mod = Object.assign(
   {},
   {
@@ -10,7 +8,7 @@ let mod = Object.assign(
   },
   dep.baseUtilsRoutes
 )
-
+var validatorSchema = require('./utils/'+mod.Name +'/payloadSchema');
 async function routes (fastify, options) {
   fastify.get(
     '/',
@@ -22,7 +20,7 @@ async function routes (fastify, options) {
         '/validationConfig.js')
 
       reply.view(
-        '../views/employees/employees.ejs',
+        'employees/employees.ejs',
         dep.pageRenderObj(request, reply, validationConfig)
       )
     }
@@ -31,7 +29,7 @@ async function routes (fastify, options) {
   fastify.post(
     dep.routeUrls.searchtype[0],
     {
-      config: cGzip,
+      config: dep.cGzip,
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
     },
@@ -48,7 +46,7 @@ async function routes (fastify, options) {
   fastify.post(
     dep.routeUrls.searchtype[1],
     {
-      config: cGzip,
+      config: dep.cGzip,
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
     },
@@ -66,7 +64,7 @@ async function routes (fastify, options) {
   fastify.post(
     dep.routeUrls.searchtypegroupby,
     {
-      config: cGzip,
+      config: dep.cGzip,
       schema: validatorSchema.searchGroupbyJsonSchema,
       preValidation: [fastify.authenticate]
     },
@@ -140,7 +138,7 @@ async function routes (fastify, options) {
   fastify.post(
     dep.routeUrls.pivotresult,
     {
-      config: cGzip,
+      config: dep.cGzip,
       schema: validatorSchema.searchPivotJsonSchema,
       preValidation: [fastify.authenticate]
     },

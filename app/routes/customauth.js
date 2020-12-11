@@ -30,6 +30,21 @@ async function routes(fastify, options) {
     reply.send({ token: token })
   })
   fastify.post(
+    "/logout",
+    { preValidation: [fastify.isSession] },
+    async (request, reply, err) => {
+
+      let token = request.session.get('userLoggedInfor');
+
+      if (token) {
+        
+        request.session.delete()   
+        reply.send({ status: "success", redirect: '/login' })
+      }
+
+    }
+  );
+  fastify.post(
     "/login",
     { preValidation: [fastify.islogin] },
     async (request, reply, err) => {

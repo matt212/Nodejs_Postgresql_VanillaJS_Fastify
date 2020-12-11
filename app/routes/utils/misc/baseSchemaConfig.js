@@ -1,4 +1,4 @@
-let commonConfig=[{ transform: ['trim'] }, { minLength: 1 }]
+let commonConfig = [{ transform: ['trim'] }, { minLength: 1 }]
 const searchLoadbodyJsonSchema = {
   type: 'object',
   required: [
@@ -88,12 +88,10 @@ const searchPivotbodyJsonSchema = {
       allOf: commonConfig
     },
     timeinternprimary: {
-      type: 'string',
-      
+      type: 'string'
     },
     timeinternsecondary: {
-      type: 'string',
-      
+      type: 'string'
     },
     XpageSize: {
       type: 'number',
@@ -159,7 +157,13 @@ const searchGroupbybodyJsonSchema = {
     }
   }
 }
-
+const headersJsonSchema = {
+  type: 'object',
+  properties: {
+    'x-access-token': { type: 'string', allOf: commonConfig }
+  },
+  required: ['x-access-token']
+}
 const insertSchema = {
   type: 'object',
   required: ['first_name', 'last_name', 'gender', 'birth_date', 'recordstate'],
@@ -223,25 +227,9 @@ const updateSchema = {
     }
   }
 }
-const headersJsonSchema = {
-  type: 'object',
-  properties: {
-    'x-access-token': { type: 'string',
-      allOf: commonConfig }
-  },
-  required: ['x-access-token']
-}
 
 const searchLoadSchema = {
   body: searchLoadbodyJsonSchema,
-  headers: headersJsonSchema
-}
-const insertLoadSchema = {
-  body: insertSchema,
-  headers: headersJsonSchema
-}
-const updateLoadSchema = {
-  body: updateSchema,
   headers: headersJsonSchema
 }
 const searchGroupbyJsonSchema = {
@@ -254,9 +242,8 @@ const searchPivotJsonSchema = {
 }
 
 module.exports = {
+  commonConfig: commonConfig,
   searchLoadSchema: searchLoadSchema,
-  insertLoadSchema: insertLoadSchema,
-  updateLoadSchema: updateLoadSchema,
   searchGroupbyJsonSchema: searchGroupbyJsonSchema,
   searchPivotJsonSchema: searchPivotJsonSchema
 }
