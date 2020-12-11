@@ -8,6 +8,7 @@ let redisMiddleware = require("../utils/redisMemcache");
 let Promises = require("bluebird");
 let crypto = require("crypto");
 let Queue = require("better-queue");
+var cGzip = require('../utils/misc/cGzip.js')
 let copyFrom = require("pg-copy-streams").from;
 /*let json2xls = require('json2xls');*/
 let async = require("async").parallel;
@@ -1868,6 +1869,7 @@ let baseUtilsRoutes = {
   SqlPivot: "SqlPivot"
 };
 module.exports = {
+  cGzip,
   baseUtilsRoutes,
   routeUrls,
   MemoryUsage,
