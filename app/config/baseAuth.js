@@ -112,7 +112,7 @@ async function baseDecorator (fastify, options) {
     }
   })
   fastify.decorate('isModuleAccess', async function (request, reply, done) {
-    let baseurlar = request.req.url.split('/')
+    let baseurlar = request.raw.url.split('/')
 
     let fileusers = request.session.get('decodeduserLoggedInfor').base
     

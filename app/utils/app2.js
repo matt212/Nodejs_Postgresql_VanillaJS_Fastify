@@ -11,7 +11,7 @@
 })
 fastify.register(
   require('fastify-compress'),
-  { global: true },
+  { global: false },
   { encodings: ['gzip'] }
 )
 
