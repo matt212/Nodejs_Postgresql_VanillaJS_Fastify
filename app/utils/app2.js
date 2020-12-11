@@ -17,8 +17,11 @@ fastify.register(
 
 fastify.register(require('point-of-view'), {
   engine: {
-    ejs: require('ejs')
-  }
+    ejs: require('ejs'),
+    
+  },
+  root: path.join(__dirname, '../views'),
+  
 })
 fastify.register(require('fastify-cors'))
 fastify.register(require('fastify-jwt'), {

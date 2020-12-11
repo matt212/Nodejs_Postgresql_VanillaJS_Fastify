@@ -20,7 +20,7 @@ async function routes (fastify, options) {
         '/validationConfig.js')
 
       reply.view(
-        '../views/employees/employees.ejs',
+        'employees/employees.ejs',
         dep.pageRenderObj(request, reply, validationConfig)
       )
     }
