@@ -1,4 +1,4 @@
-const express = require("express");
+
 let models = require("../../models");
 let sqlConstruct = require("./sqlConstruct");
 let connections = require("../../config/db");
@@ -1871,7 +1871,6 @@ module.exports = {
   baseUtilsRoutes,
   routeUrls,
   MemoryUsage,
-  express,
   authfunctions,
   models,
   cacheMiddleware,

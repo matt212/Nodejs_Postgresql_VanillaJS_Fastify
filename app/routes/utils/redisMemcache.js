@@ -37,7 +37,7 @@ let redisDel = (key) => {
 }
 
 let redisMiddleware = (req, res, next) => {
-    let key = "__express__" + req.url + JSON.stringify(req.body);
+    let key = "__fastify__" + req.url + JSON.stringify(req.body);
 
 
     redis.get(key, function (err, reply) {
