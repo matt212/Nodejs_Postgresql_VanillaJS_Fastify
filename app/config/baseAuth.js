@@ -155,7 +155,7 @@ async function baseDecorator (fastify, options) {
 
   let rbac = function (id) {
     return new Promise((resolve, reject) => {
-      var sqlstatement
+      var sqlstatement=""
       if (id == 1 || id == 2) {
         sqlstatement =
           'select array_agg(DISTINCT Mname) Modulename ' +
