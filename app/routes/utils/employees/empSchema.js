@@ -1,3 +1,4 @@
+let commonConfig=[{ transform: ['trim'] }, { minLength: 1 }]
 const searchLoadbodyJsonSchema = {
   type: 'object',
   required: [
@@ -11,27 +12,27 @@ const searchLoadbodyJsonSchema = {
   properties: {
     searchparam: {
       type: 'array',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     daterange: {
       type: 'object',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     colsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     datecolsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pageSize: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pageno: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     }
   }
 }
@@ -57,34 +58,34 @@ const searchPivotbodyJsonSchema = {
   properties: {
     searchparam: {
       type: 'array',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     daterange: {
       type: 'object'
     },
     colsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     datecolsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pageSize: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pageno: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pivotparamXaxis: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pivotparamYaxis: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     timeinternprimary: {
       type: 'string',
@@ -96,19 +97,19 @@ const searchPivotbodyJsonSchema = {
     },
     XpageSize: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     Xpageno: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     YpageSize: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     Ypageno: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     }
   }
 }
@@ -127,34 +128,34 @@ const searchGroupbybodyJsonSchema = {
   properties: {
     searchparam: {
       type: 'array',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     daterange: {
       type: 'object'
     },
     colsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     searchparamkey: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     datecolsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pageSize: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     pageno: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     searchtype: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     }
   }
 }
@@ -165,20 +166,20 @@ const insertSchema = {
   properties: {
     first_name: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     last_name: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     gender: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
+      allOf: commonConfig,
       enum: ['M', 'F']
     },
     birth_date: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     recordstate: {
       type: 'boolean'
@@ -198,27 +199,27 @@ const updateSchema = {
   properties: {
     first_name: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     last_name: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     gender: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }],
+      allOf: commonConfig,
       enum: ['M', 'F']
     },
     birth_date: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     },
     recordstate: {
       type: 'boolean'
     },
     employeesid: {
       type: 'number',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+      allOf: commonConfig
     }
   }
 }
@@ -226,7 +227,7 @@ const headersJsonSchema = {
   type: 'object',
   properties: {
     'x-access-token': { type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }] }
+      allOf: commonConfig }
   },
   required: ['x-access-token']
 }
