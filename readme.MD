@@ -70,8 +70,11 @@
 >   custom b2b app like crm etc .
 *  ### `Release notes 7 Dec 2020`
 >   made date filter optional with code refractoring by introducing `disableDate=true` arguement in API payload.
-*  ### `Release notes 12 Dec 2020`
+*  ### `Release notes 10 Dec 2020`
 > run `yarn perfgraph`
 > in new shell run autocannon `yarn customAutocannon`
 > when autocannon bench is completed go back to perfgraph shell and stop the shell (ctlrl+C)
 > it will generate graph html link in same perfgraph shell   
+*  ### `Release notes 11 Dec 2020`
+>  basic login tests are written and can view and evaluated by running below command
+   `yarn customtest`
