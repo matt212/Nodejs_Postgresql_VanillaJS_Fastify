@@ -1,5 +1,5 @@
-var baseSchema = require('../../utils/misc/baseSchemaConfig')
-var insertUpdateSchema={
+let baseSchema = require('../../utils/misc/baseSchemaConfig')
+let insertUpdateSchema={
   first_name: {
     type: 'string',
     allOf: baseSchema.commonConfig
