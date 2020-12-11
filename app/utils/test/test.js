@@ -3,7 +3,6 @@ var supertest = require('supertest')
 
 var should = require('chai').should()
 
-
 before(async () => {
   require('../app2.js')
 })
@@ -14,11 +13,10 @@ var server = supertest.agent('http://localhost:3011')
 
 // UNIT test begin
 
-describe('base test ', function () {
+describe('login', function () {
   // #1 should return home page
 
-  
-  it('is should login pass', function (done) {
+  it('logins as expected when valid username and password are passed', function (done) {
     //calling ADD api
     var user = { username: 'krennic', password: 'orson' }
     server
@@ -31,15 +29,15 @@ describe('base test ', function () {
           console.log(err)
           return done(err)
         }
-        
+
         //res.status.should.equal(200);
         //res.body.should.include.keys(['token'])
-        res.body.status.should.equal('success');
-        res.body.redirect.should.equal('/employees');
+        res.body.status.should.equal('success')
+        res.body.redirect.should.equal('/employees')
         done()
       })
   })
-  it('is should login fail', function (done) {
+  it('it shows valid messages when incorrect username and password is entered', function (done) {
     //calling ADD api
     var user = { username: 'krennic', password: 'or' }
     server
@@ -52,81 +50,43 @@ describe('base test ', function () {
           console.log(err)
           return done(err)
         }
-        
+
         //res.status.should.equal(200);
         //res.body.should.include.keys(['token'])
-        res.body.status.should.equal('fail');
-        res.body.msgstatus.should.equal('Invalid Username/Password');
+        res.body.status.should.equal('fail')
+        res.body.msgstatus.should.equal('Invalid Username/Password')
         done()
       })
   })
-  it('check if Session for Employees', function (done) {
+  it('logouts as expected', function (done) {
+    //calling ADD api
+    server
+      .post('/logout')
+      .expect('Content-type', /json/)
+      .expect(200)
+      .end(function (err, res) {
+        if (err) {
+          console.log(err)
+          // return done(err)
+        }
+        res.status.should.equal(200)
+        res.body.status.should.equal('success')
+        res.body.redirect.should.equal('/login')
+        done()
+      })
+  })
+  it('redirects to login when you are on not loggedin when you try to access directy employees report page ', function (done) {
     //calling ADD api
     server
       .get('/employees')
-      .expect('Content-type', 'text/html; charset=utf-8')
-      .expect(200)
+      .expect(302)
+      .expect('Location', '/login')
       .end(function (err, res) {
         if (err) {
           console.log(err)
           return done(err)
         }
-        
-        res.status.should.equal(200);
-        -
-        
         done()
       })
   })
 })
-
-/*older*/
-/*const request = require('supertest');
-const app = require('../app');
-const expect = require('chai').expect;
-
-describe("Posting is easy to test with supertest", function() {
-
-    it("login", function(done) {
-        var user = { username: 'krennic', password: 'orson1' };
-
-        request(app)
-            .post("/login")
-            .send(user)
-            .expect(302)
-            .expect('Location', '/listing')
-            .end(function(err, res) {
-                if (err) return done(err);
-                done();
-            });
-
-    });
-    it('logs', function(done) {
-        console.log('b');
-        done();
-    });
-    it("auth", function(done) {
-        var auth = { appkey: 'localhost:3009' };
-
-        request("http://localhost:3009")
-            .post("/authenticate")
-            .send(auth)
-            .expect(200)
-
-            //.expect('Location', '/listing')
-            .end(function(err, res) {
-                //if (err) return done(err);
-                console.log(res.body)
-                 expect(err).to.be.null;
-                 //expect(res).to.have.status(200);
-
-                //console.log(res.body.hasOwnProperty("token"));
-                done();
-
-            });
-
-        //.expect("marcus is stored", done);
-    });
-
-
-});*/
