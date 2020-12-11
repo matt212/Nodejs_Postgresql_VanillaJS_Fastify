@@ -1,164 +1,4 @@
-let commonConfig=[{ transform: ['trim'] }, { minLength: 1 }]
-const searchLoadbodyJsonSchema = {
-  type: 'object',
-  required: [
-    'searchparam',
-    'daterange',
-    'colsearch',
-    'datecolsearch',
-    'pageSize',
-    'pageno'
-  ],
-  properties: {
-    searchparam: {
-      type: 'array',
-      allOf: commonConfig
-    },
-    daterange: {
-      type: 'object',
-      allOf: commonConfig
-    },
-    colsearch: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    datecolsearch: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    pageSize: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    pageno: {
-      type: 'number',
-      allOf: commonConfig
-    }
-  }
-}
-
-const searchPivotbodyJsonSchema = {
-  type: 'object',
-  required: [
-    'searchparam',
-    'daterange',
-    'colsearch',
-    'datecolsearch',
-    'pageSize',
-    'pageno',
-    'pivotparamXaxis',
-    'pivotparamYaxis',
-    'timeinternprimary',
-    'timeinternsecondary',
-    'XpageSize',
-    'Xpageno',
-    'YpageSize',
-    'Ypageno'
-  ],
-  properties: {
-    searchparam: {
-      type: 'array',
-      allOf: commonConfig
-    },
-    daterange: {
-      type: 'object'
-    },
-    colsearch: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    datecolsearch: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    pageSize: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    pageno: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    pivotparamXaxis: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    pivotparamYaxis: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    timeinternprimary: {
-      type: 'string',
-      
-    },
-    timeinternsecondary: {
-      type: 'string',
-      
-    },
-    XpageSize: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    Xpageno: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    YpageSize: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    Ypageno: {
-      type: 'number',
-      allOf: commonConfig
-    }
-  }
-}
-const searchGroupbybodyJsonSchema = {
-  type: 'object',
-  required: [
-    'searchparam',
-    'daterange',
-    'colsearch',
-    'datecolsearch',
-    'pageSize',
-    'pageno',
-    'searchparamkey',
-    'searchtype'
-  ],
-  properties: {
-    searchparam: {
-      type: 'array',
-      allOf: commonConfig
-    },
-    daterange: {
-      type: 'object'
-    },
-    colsearch: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    searchparamkey: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    datecolsearch: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    pageSize: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    pageno: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    searchtype: {
-      type: 'string',
-      allOf: commonConfig
-    }
-  }
-}
+var baseSchema = require('../../utils/misc/baseSchemaConfig')
 
 const insertSchema = {
   type: 'object',
@@ -166,20 +6,20 @@ const insertSchema = {
   properties: {
     first_name: {
       type: 'string',
-      allOf: commonConfig
+      allOf: baseSchema.commonConfig
     },
     last_name: {
       type: 'string',
-      allOf: commonConfig
+      allOf: baseSchema.commonConfig
     },
     gender: {
       type: 'string',
-      allOf: commonConfig,
+      allOf: baseSchema.commonConfig,
       enum: ['M', 'F']
     },
     birth_date: {
       type: 'string',
-      allOf: commonConfig
+      allOf: baseSchema.commonConfig
     },
     recordstate: {
       type: 'boolean'
@@ -199,64 +39,44 @@ const updateSchema = {
   properties: {
     first_name: {
       type: 'string',
-      allOf: commonConfig
+      allOf: baseSchema.commonConfig
     },
     last_name: {
       type: 'string',
-      allOf: commonConfig
+      allOf: baseSchema.commonConfig
     },
     gender: {
       type: 'string',
-      allOf: commonConfig,
+      allOf: baseSchema.commonConfig,
       enum: ['M', 'F']
     },
     birth_date: {
       type: 'string',
-      allOf: commonConfig
+      allOf: baseSchema.commonConfig
     },
     recordstate: {
       type: 'boolean'
     },
     employeesid: {
       type: 'number',
-      allOf: commonConfig
+      allOf: baseSchema.commonConfig
     }
   }
 }
-const headersJsonSchema = {
-  type: 'object',
-  properties: {
-    'x-access-token': { type: 'string',
-      allOf: commonConfig }
-  },
-  required: ['x-access-token']
-}
 
-const searchLoadSchema = {
-  body: searchLoadbodyJsonSchema,
-  headers: headersJsonSchema
-}
 const insertLoadSchema = {
   body: insertSchema,
-  headers: headersJsonSchema
+  headers: baseSchema.headersJsonSchema
 }
 const updateLoadSchema = {
   body: updateSchema,
-  headers: headersJsonSchema
-}
-const searchGroupbyJsonSchema = {
-  body: searchGroupbybodyJsonSchema,
-  headers: headersJsonSchema
-}
-const searchPivotJsonSchema = {
-  body: searchPivotbodyJsonSchema,
-  headers: headersJsonSchema
+  headers: baseSchema.headersJsonSchema
 }
 
 module.exports = {
-  searchLoadSchema: searchLoadSchema,
+  searchLoadSchema: baseSchema.searchLoadSchema,
   insertLoadSchema: insertLoadSchema,
   updateLoadSchema: updateLoadSchema,
-  searchGroupbyJsonSchema: searchGroupbyJsonSchema,
-  searchPivotJsonSchema: searchPivotJsonSchema
+  searchGroupbyJsonSchema: baseSchema.searchGroupbyJsonSchema,
+  searchPivotJsonSchema: baseSchema.searchPivotJsonSchema
 }
