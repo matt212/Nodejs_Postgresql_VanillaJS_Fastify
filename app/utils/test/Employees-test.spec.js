@@ -36,6 +36,11 @@ describe('Begin Tests', function () {
     })
   })
 })
+/**
+Object.keys(applyfields).reduce((r, key) => 
+(Object.assign(r, {[applyfields[key]]: ""})), {}); 
+* 
+ */
 /**{
   "first_name": "asa",
   "last_name": "asa",

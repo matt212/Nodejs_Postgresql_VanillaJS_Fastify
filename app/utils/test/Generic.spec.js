@@ -17,7 +17,8 @@ before(async () => {
 })
 //./utils/dependentVariables
 let dep = require('../../../app/routes/utils/dependentVariables').routeUrls
-
+let datatransformutils = require('../../../app/routes/utils/dependentVariables').datatransformutils
+datatransformutils.arraytoJSON()
 // This agent refers to PORT where program is running.
 
 var server = supertest.agent('http://localhost:3011')

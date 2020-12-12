@@ -1802,6 +1802,11 @@ let datatransformutils = {
       }
     });
   },
+  arraytoJSON:function(data)
+  {
+    return Object.keys(data).reduce((r, key) => 
+    (Object.assign(r, {[data[key]]: ""})), {});
+  },
   rename: function (obj, oldName, newName) {
     if (!obj.hasOwnProperty(oldName)) {
       return false;
@@ -1870,6 +1875,7 @@ let baseUtilsRoutes = {
   SqlPivot: "SqlPivot"
 };
 module.exports = {
+  datatransformutils,
   cGzip,
   baseUtilsRoutes,
   routeUrls,
