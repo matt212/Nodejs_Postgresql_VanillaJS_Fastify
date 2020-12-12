@@ -1,7 +1,6 @@
 let testbase = {
   evalModulename: 'employees'
 }
-const { base } = require('../../routes/utils/sqlConstruct.js')
 let genSpecs = require('./Generic.spec.js')
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
