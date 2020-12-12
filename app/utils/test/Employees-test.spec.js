@@ -1,6 +1,7 @@
 let testbase = {
   evalModulename: 'employees'
 }
+const { base } = require('../../routes/utils/sqlConstruct.js')
 let genSpecs = require('./Generic.spec.js')
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
@@ -10,7 +11,7 @@ describe('Begin Tests', function () {
       .loginsuccess()
       .then(genSpecs.loadCurrentModule)
       .then(function (data) {
-        testbase.tokenvalEval = data
+        testbase.token = data
         console.log(
           '****************login and loaded the module  successfully****************'
         )
@@ -25,23 +26,14 @@ describe('Begin Tests', function () {
       done()
     })
   })
-  it('Throws Validation Message when Input fields are empty or blank', function (done) {
-    //calling ADD api
+  it('loads as expected conventionally', function (done) {
+    testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
+    testbase.payload = genSpecs.loadModulePayLoad
 
-    genSpecs.server
-      .post('/' + evalModulename + genSpecs.dep.searchtype[0])
-      .send(genSpecs.loadModulePayLoad)
-      .set('x-access-token', testbase.tokenvalEval)
-      .expect('Content-type', /json/)
-      .expect(200)
-      .end(function (err, res) {
-        if (err) {
-          done(err)
-        } else {
-          console.log(res.body.count)
-          console.log(res.body.rows)
-          done()
-        }
-      })
+    genSpecs.genericApiPostSuccess(testbase).then(function (data) {
+      console.log(data.body.count)
+      console.log(data.body.rows)
+      done()
+    })
   })
 })

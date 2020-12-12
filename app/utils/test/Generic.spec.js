@@ -48,6 +48,24 @@ let loginsuccess = function (
 let setevalModulename = function (data) {
   evalModulename = data
 }
+let genericApiPostSuccess = function (data) {
+  console.log(data)
+  return (promise = new Promise((resolve, reject) => {
+    server
+      .post(data.apiUrl)
+      .send(data.payload)
+      .set('x-access-token', data.token)
+      .expect('Content-type', /json/)
+      .expect(200)
+      .end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(res)
+        }
+      })
+  }))
+}
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
     if (data.status == 'pass') {
@@ -74,5 +92,6 @@ module.exports = {
   loginsuccess,
   loadCurrentModule,
   loadModulePayLoad,
-  setevalModulename
+  setevalModulename,
+  genericApiPostSuccess
 }
