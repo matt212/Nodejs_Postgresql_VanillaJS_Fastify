@@ -1,7 +1,6 @@
 let testbase = {
-  evalModulename: 'employees',
+  evalModulename: 'employees'
 }
-
 let genSpecs = require('./Generic.spec.js')
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
@@ -38,7 +37,6 @@ describe('Begin Tests', function () {
       .end(function (err, res) {
         if (err) {
           done(err)
-          //resolve({ status: 'fail', content: err })
         } else {
           console.log(res.body)
           done()
