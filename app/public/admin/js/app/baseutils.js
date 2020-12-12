@@ -8,7 +8,7 @@ let base = {
   appkey: location.hostname + (location.port ? ":" + location.port : ""),
   config: {
     headers: {
-      "x-access-token": "MwMDAiLCJpYXQiOjE0NzM2MTQ4MDgsImV4cCI6MTQ3MzYxODQwOH0"
+      "x-access-token": customToken
     }
   },
   timeinternprimary: "Month",
@@ -1814,9 +1814,9 @@ let baseloadsegments = {
   }
 };
 /*get access token*/
-baseloadsegments.getapptoken(ajaxbase).then(arg => {
-  console.log(arg);
-});
+// baseloadsegments.getapptoken(ajaxbase).then(arg => {
+//   console.log(arg);
+// });
 
 function payloadprepared() {
   filterparam.colsearch = "intercolumn";

@@ -922,6 +922,7 @@ let pageRenderObj = (req, res, validationConfig) => {
   };
 
   return {
+    sessiontoken:req.session.get('userLoggedInfor'),
     title: req.user,
     serverdate: serverdat,
     modelattribute: Object.keys(models[mod.Name].tableAttributes),

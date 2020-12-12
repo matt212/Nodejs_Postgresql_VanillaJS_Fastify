@@ -4,9 +4,12 @@
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>        
         <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script>var customToken=""</script>
         <script src="../../admin/js/app/baseutils.js"></script>
 
         <script>
+                
+                
                 const copyToClipboard = str => {
                         const el = document.createElement('textarea');  // Create a <textarea> element
                         el.value = str;                                 // Set its value to the string that you want copied
@@ -31,6 +34,7 @@
                 }
                 
                 /*get access token*/
+                
                 baseloadsegments.getapptoken(ajaxbase).then(function () {
                         $("h2").html(' ')
                         $("h2").html(base.config.headers["x-access-token"]);

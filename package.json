@@ -62,7 +62,7 @@
     "build": "cd ./app/utils && node runBackground.js",
     "yaml-json": "yaml2json ./app/swagger/swagger.yaml --pretty --save",
     "swagger-make": "cd ./app/utils && node scaffolding-swagger.js",
-    "customtest": "mocha ./app/utils/test/* --timeout 10000 --exit",
+    "customtest": "mocha ./app/utils/test/Employees-test.js --timeout 10000 --exit",
     "app": "cd ./app/utils && node app.js",
     "app2": "cd ./app/utils && node app2.js",
     "perfapp": "cd ./app/utils && node --prof app.js",
