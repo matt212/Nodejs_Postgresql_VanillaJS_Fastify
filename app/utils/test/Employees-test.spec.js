@@ -28,11 +28,23 @@ describe('Begin Tests', function () {
   it('loads as expected conventionally', function (done) {
     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
     testbase.payload = genSpecs.loadModulePayLoad
-
-    genSpecs.genericApiPostSuccess(testbase).then(function (data) {
+    testbase.responseCode=200; 
+    genSpecs.genericApiPost(testbase).then(function (data) {
       console.log(data.body.count)
       console.log(data.body.rows)
       done()
     })
   })
 })
+/**{
+  "first_name": "asa",
+  "last_name": "asa",
+  "gender": "F",
+  "birth_date": "12-10-1989",
+  "recordstate": true
+}
+{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "body should have required property '.first_name'"
+} */
