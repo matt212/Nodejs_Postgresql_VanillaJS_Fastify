@@ -199,7 +199,7 @@ async function baseDecorator (fastify, options) {
                 ','
               )
               tempsuperadmin = tempsuperadmin.filter(function (doctor) {
-                return doctor.id == id // if truthy then keep item
+                return doctor.muserID == id // if truthy then keep item
               })
 
               resolve(tempsuperadmin)
