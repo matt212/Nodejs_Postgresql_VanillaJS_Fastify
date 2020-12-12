@@ -49,7 +49,7 @@ let setevalModulename = function (data) {
   evalModulename = data
 }
 let genericApiPostSuccess = function (data) {
-  console.log(data)
+  
   return (promise = new Promise((resolve, reject) => {
     server
       .post(data.apiUrl)
