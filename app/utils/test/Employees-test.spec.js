@@ -38,7 +38,8 @@ describe('Begin Tests', function () {
         if (err) {
           done(err)
         } else {
-          console.log(res.body)
+          console.log(res.body.count)
+          console.log(res.body.rows)
           done()
         }
       })
