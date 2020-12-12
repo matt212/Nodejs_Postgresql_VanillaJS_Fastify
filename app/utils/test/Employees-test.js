@@ -13,6 +13,10 @@ before(async () => {
 var server = supertest.agent('http://localhost:3011')
 
 // UNIT test begin
+let getTokenforTests=function(res)
+{
+    return res.text.toString().split('serverdate')[0].split('customToken="')[1].split(" ")[0].replace('";','')
+}
 let loginsuccess=function(cred)
 {
   return promise = new Promise((resolve, reject) => {
@@ -53,13 +57,11 @@ describe('Crud', function () {
             console.log(err)
             return done(err)
           }
-  
-          //res.status.should.equal(200);
-          //res.body.should.include.keys(['token'])
+           
+          console.log(getTokenforTests(res))
           
-          var sessionval=(Object.keys(res))
-          console.log(sessionval)
-                 
+          
+          
           done()
         })
     
