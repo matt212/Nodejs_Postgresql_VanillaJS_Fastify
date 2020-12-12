@@ -18,7 +18,7 @@ async function routes (fastify, options) {
       let validationConfig = require('./utils/' +
         mod.Name +
         '/validationConfig.js')
-
+      reply.header('x-token', request.session.get('userLoggedInfor'))
       reply.view(
         'employees/employees.ejs',
         dep.pageRenderObj(request, reply, validationConfig)

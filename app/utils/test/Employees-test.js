@@ -57,8 +57,8 @@ describe('Crud', function () {
             console.log(err)
             return done(err)
           }
-           
-          console.log(getTokenforTests(res))
+        
+          console.log((res.headers['x-token']))
           
           done()
         })
