@@ -17,8 +17,9 @@ before(async () => {
 })
 //./utils/dependentVariables
 let dep = require('../../../app/routes/utils/dependentVariables').routeUrls
-let datatransformutils = require('../../../app/routes/utils/dependentVariables').datatransformutils
-datatransformutils.arraytoJSON()
+let datatransformutils = require('../../../app/routes/utils/dependentVariables')
+  .datatransformutils
+
 // This agent refers to PORT where program is running.
 
 var server = supertest.agent('http://localhost:3011')
@@ -50,7 +51,6 @@ let setevalModulename = function (data) {
   evalModulename = data
 }
 let genericApiPost = function (data) {
-  
   return (promise = new Promise((resolve, reject) => {
     server
       .post(data.apiUrl)
@@ -66,6 +66,20 @@ let genericApiPost = function (data) {
         }
       })
   }))
+}
+let schemavalidatorPayload = function (baseapplyFields) {
+  var interimAr = []
+  var internprimaryAr = baseapplyFields
+  console.log(baseapplyFields)
+  baseapplyFields.forEach(function (entry) {
+    internprimaryAr = internprimaryAr.filter(item => item !== entry)
+    interimAr.push({
+      key: entry,
+      content: datatransformutils.arraytoJSON(internprimaryAr)
+    })
+    internprimaryAr = baseapplyFields
+  })
+  return interimAr
 }
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
@@ -89,6 +103,8 @@ let loadCurrentModule = function (data) {
 }
 module.exports = {
   dep,
+  datatransformutils,
+  schemavalidatorPayload,
   server,
   loginsuccess,
   loadCurrentModule,
