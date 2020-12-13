@@ -10,7 +10,7 @@ validationConfig.applyfields.push('recordstate')
 testbase.schemaValidatorPayload = genSpecs.schemavalidatorPayload(
   validationConfig.applyfields
 )
-console.log(JSON.stringify(testbase))
+console.log(JSON.stringify(testbase.schemaValidatorPayload))
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
   // #1 should return home page
@@ -34,31 +34,30 @@ describe('Begin Tests', function () {
       done()
     })
   })
-  // it('loads as expected conventionally', function (done) {
-  //   testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
-  //   testbase.payload = genSpecs.loadModulePayLoad
-  //   testbase.responseCode=200;
-  //   genSpecs.genericApiPost(testbase).then(function (data) {
-  //     console.log(data.body.count)
-  //     console.log(data.body.rows)
-  //     done()
-  //   })
-  // })
+  it('loads as expected conventionally', function (done) {
+    testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
+    testbase.payload = genSpecs.loadModulePayLoad
+    testbase.responseCode = 200
+    genSpecs.genericApiPost(testbase).then(function (data) {
+      console.log(data.body.count)
+      console.log(data.body.rows)
+      done()
+    })
+  })
+  testbase.schemaValidatorPayload.forEach(function (entry) {
+    console.log(entry)
+    it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+      testbase.responseCode = 400
+      testbase.payload = entry.content
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.statusCode.should.equal(400)
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body should have required property '.${entry.key}'`
+        )
+        //body should have required property '.recordstate'
+      })
+    })
+  })
 })
-/**
-Object.keys(applyfields).reduce((r, key) => 
-(Object.assign(r, {[applyfields[key]]: ""})), {}); 
-* 
- */
-/**{
-  "first_name": "asa",
-  "last_name": "asa",
-  "gender": "F",
-  "birth_date": "12-10-1989",
-  "recordstate": true
-}
-{
-  "statusCode": 400,
-  "error": "Bad Request",
-  "message": "body should have required property '.first_name'"
-} */
