@@ -10,7 +10,10 @@ validationConfig.applyfields.push('recordstate')
 testbase.schemaValidatorPayload = genSpecs.schemavalidatorPayload(
   validationConfig.applyfields
 )
-console.log(JSON.stringify(testbase.schemaValidatorPayload))
+
+testbase.schemaValueValidatorPayload = genSpecs.schemaValueValidatorPayload(
+  validationConfig.applyfields
+)
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
   // #1 should return home page
@@ -56,6 +59,23 @@ describe('Begin Tests', function () {
         data.body.message.should.equal(
           `body should have required property '.${entry.key}'`
         )
+        //body should have required property '.recordstate'
+      })
+    })
+  })
+  testbase.schemaValueValidatorPayload.forEach(function (entry) {
+    console.log(entry)
+    it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+      testbase.responseCode = 412
+      testbase.payload = entry.content
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        
+        console.log(data.body);
+        // data.body.error.should.equal('Bad Request')
+        // data.body.message.should.equal(
+        //   `body should have required property '.${entry.key}'`
+        // )
         //body should have required property '.recordstate'
       })
     })

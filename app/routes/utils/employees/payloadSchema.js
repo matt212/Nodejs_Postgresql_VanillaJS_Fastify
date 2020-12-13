@@ -2,7 +2,7 @@ let baseSchema = require('../../utils/misc/baseSchemaConfig')
 let insertUpdateSchema={
   first_name: {
     type: 'string',
-    allOf: baseSchema.commonConfig
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }]
   },
   last_name: {
     type: 'string',
@@ -24,7 +24,7 @@ let insertUpdateSchema={
 const insertSchema = {
   type: 'object',
   required: ['first_name', 'last_name', 'gender', 'birth_date', 'recordstate'],
-  properties: {insertUpdateSchema}
+  properties: insertUpdateSchema
 }
 const updateSchema = {
   type: 'object',
@@ -36,7 +36,7 @@ const updateSchema = {
     'recordstate',
     'employeesid'
   ],
-  properties: {insertUpdateSchema},
+  properties: insertUpdateSchema,
     employeesid: {
       type: 'number',
       allOf: baseSchema.commonConfig
