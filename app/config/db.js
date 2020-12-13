@@ -81,7 +81,7 @@ pool.on('remove', function (err) {
 const QueryStream = require('pg-query-stream')
 
 module.exports.pgQueryStream = function (sql) {
-    console.log(sql)
+    
     return new Promise((resolve, reject) => {
         var all = [];
         pool.connect(function (err, client, done) {

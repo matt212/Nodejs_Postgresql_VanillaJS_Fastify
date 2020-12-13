@@ -7,17 +7,14 @@ let validationConfig = require('../../routes/utils/' +
   '/validationConfig.js')
 validationConfig.applyfields.push('recordstate')
 
-testbase.schemaValidatorPayload = genSpecs.schemavalidatorPayload(
-  validationConfig.applyfields
-)
 testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
   validationConfig
 )
-console.log(testbase.schemaBaseValidatorPayload)
 
-// testbase.schemaValueValidatorPayload = genSpecs.schemaValueValidatorPayload(
-//   validationConfig.applyfields
-// )
+testbase.schemaValValidatorPayload = genSpecs.schemaValueValidatorPayload(
+  validationConfig.applyfields,
+  testbase.schemaBaseValidatorPayload
+)
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
   // #1 should return home page
@@ -51,20 +48,21 @@ describe('Begin Tests', function () {
       done()
     })
   })
-  testbase.schemaValidatorPayload.forEach(function (entry) {})
-  // testbase.schemaValidatorPayload.forEach(function (entry) {
-  //   console.log(entry)
-  //   it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-  //     testbase.responseCode = 400
-  //     testbase.payload = entry.content
-  //     return genSpecs.genericApiPost(testbase).then(function (data) {
-  //       data.body.statusCode.should.equal(400)
-  //       data.body.error.should.equal('Bad Request')
 
-  //     })
-  //   })
-  // })
+  testbase.schemaValValidatorPayload.forEach(function (entry) {
+    
+    it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+      testbase.responseCode = 400
+      testbase.payload = entry.schemaContent
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.statusCode.should.equal(400)
+        data.body.error.should.equal('Bad Request')
+        
+        data.body.message.should.equal(`body should have required property '${entry.key}'`)
+      })
+    })
+  })
   // testbase.schemaValueValidatorPayload.forEach(function (entry) {
   //   console.log(entry)
   //   it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {

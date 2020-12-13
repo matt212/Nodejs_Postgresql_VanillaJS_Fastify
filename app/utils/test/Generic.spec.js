@@ -83,15 +83,18 @@ let schemavalidatorPayload = function (baseapplyFields) {
   })
   return interimAr
 }
-let schemaValueValidatorPayload = function (baseapplyFields) {
-  // var interimAr = []
-  // baseapplyFields.forEach(function (entry) {
-  //   let interimAr1 = []
-  //   interimAr1.push(datatransformutils.arraytoJSONDummy(baseapplyFields))
-  //   var o = datatransformutils.replaceByValue(interimAr1, entry, 'abc', '')[0]
-  //   interimAr.push({ key: entry, content: o })
-  // })
-  // return interimAr
+let schemaValueValidatorPayload = function (baseapplyFields, baseObj) {
+  var interimAr = []
+  var baseinterncontent = baseObj
+  baseapplyFields.forEach(function (entry) {
+    interimAr.push({
+      key: entry,
+      schemaContent: datatransformutils.removefieldObj(baseinterncontent, entry)
+    })
+    baseinterncontent = {}
+    baseinterncontent = baseObj
+  })
+  return interimAr
 }
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
