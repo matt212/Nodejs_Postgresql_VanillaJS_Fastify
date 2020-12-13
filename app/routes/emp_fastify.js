@@ -8,7 +8,7 @@ let mod = Object.assign(
   },
   dep.baseUtilsRoutes
 )
-var validatorSchema = require('./utils/'+mod.Name +'/payloadSchema');
+var validatorSchema = require('./utils/' + mod.Name + '/payloadSchema')
 async function routes (fastify, options) {
   fastify.get(
     '/',
