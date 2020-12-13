@@ -39,8 +39,8 @@ describe('Begin Tests', function () {
     testbase.payload = genSpecs.loadModulePayLoad
     testbase.responseCode = 200
     genSpecs.genericApiPost(testbase).then(function (data) {
-      console.log(data.body.count)
-      console.log(data.body.rows)
+      // console.log(data.body.count)
+      // console.log(data.body.rows)
       done()
     })
   })
