@@ -11,7 +11,6 @@ let insertUpdateSchema = {
   gender: {
     type: 'string',
     allOf: baseSchema.commonConfig,
-    enum: ['M', 'F']
   },
   birth_date: {
     type: 'string',

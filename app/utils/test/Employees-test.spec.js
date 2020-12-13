@@ -10,6 +10,10 @@ validationConfig.applyfields.push('recordstate')
 testbase.schemaValidatorPayload = genSpecs.schemavalidatorPayload(
   validationConfig.applyfields
 )
+testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
+  validationConfig
+)
+console.log(testbase.schemaBaseValidatorPayload)
 
 // testbase.schemaValueValidatorPayload = genSpecs.schemaValueValidatorPayload(
 //   validationConfig.applyfields
@@ -47,23 +51,20 @@ describe('Begin Tests', function () {
       done()
     })
   })
-  testbase.schemaValidatorPayload.forEach(function (entry) {
-    console.log(entry)
-    it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-      testbase.responseCode = 400
-      testbase.payload = entry.content
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.statusCode.should.equal(400)
-        data.body.error.should.equal('Bad Request')
-        console.log(data.body.message)
-        // data.body.message.should.equal(
-        //   `body should have required property '${entry.key}'`
-        // )
-        
-      })
-    })
-  })
+  testbase.schemaValidatorPayload.forEach(function (entry) {})
+  // testbase.schemaValidatorPayload.forEach(function (entry) {
+  //   console.log(entry)
+  //   it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+  //     testbase.responseCode = 400
+  //     testbase.payload = entry.content
+  //     return genSpecs.genericApiPost(testbase).then(function (data) {
+  //       data.body.statusCode.should.equal(400)
+  //       data.body.error.should.equal('Bad Request')
+
+  //     })
+  //   })
+  // })
   // testbase.schemaValueValidatorPayload.forEach(function (entry) {
   //   console.log(entry)
   //   it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {

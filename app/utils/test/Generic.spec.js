@@ -19,13 +19,15 @@ before(async () => {
 let dep = require('../../../app/routes/utils/dependentVariables').routeUrls
 let datatransformutils = require('../../../app/routes/utils/dependentVariables')
   .datatransformutils
-
+let createModulePayLoad = require('./makePayLoad.js')
 // This agent refers to PORT where program is running.
 
 var server = supertest.agent('http://localhost:3011')
 
 // UNIT test begin
-
+let createModPayLoad = function (validationConfig) {
+  return createModulePayLoad.makepayload(validationConfig)
+}
 let loginsuccess = function (
   cred = { username: 'krennic', password: 'orson' }
 ) {
@@ -113,6 +115,7 @@ let loadCurrentModule = function (data) {
 }
 module.exports = {
   dep,
+  createModPayLoad,
   datatransformutils,
   schemavalidatorPayload,
   schemaValueValidatorPayload,
