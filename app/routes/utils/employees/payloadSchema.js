@@ -2,7 +2,7 @@ let baseSchema = require('../../utils/misc/baseSchemaConfig')
 let insertUpdateSchema = {
   first_name: {
     type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+    allOf: baseSchema.commonConfig
   },
   last_name: {
     type: 'string',
