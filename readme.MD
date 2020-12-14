@@ -20,6 +20,13 @@
 
 >*`bash ./app/utils/serverSetup/secondarySetup.sh`*
 
+
+**Test run**
+>*`npm run LoginEval or yarn LoginEval `*
+>*`npm run ModuleEval or yarn ModuleEval `*
+
+
+
 **app run**
 >*`npm run app or yarn app `*
 
