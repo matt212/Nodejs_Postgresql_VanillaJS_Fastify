@@ -65,7 +65,6 @@
     "ModuleEval": "mocha ./app/utils/test/employees-test.spec.js --timeout 10000 --exit",
     "LoginEval": "mocha ./app/utils/test/login.spec.js --timeout 10000 --exit",
     "app": "cd ./app/utils && node app.js",
-    "app2": "cd ./app/utils && node app2.js",
     "perfapp": "cd ./app/utils && node --prof app.js",
     "cluster": "node ./app/utils/cluster.js",
     "docker-run": "docker-compose up --build",

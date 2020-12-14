@@ -22,7 +22,7 @@
 
 **app usage**
 
->*`goto localhost:3009/employees`*
+>*`goto localhost:3011/employees`*
 
 >*`username : krennic and  password:orson`*
 
@@ -37,7 +37,7 @@
 ![redlime](app/video/gif/c1.gif)
 
 
-*  ### `Automated Swagger for each Module created By build in scaffoding`
+*  ### `Automated Swagger for each Module created By build in scaffoding accessed  at http://localhost:3012/api-docs/`
 ![redlime](app/video/gif/d.gif)
 
 * ### `Basic dashboard operation`
