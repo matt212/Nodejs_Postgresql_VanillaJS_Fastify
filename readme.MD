@@ -1,7 +1,6 @@
 
    
->*`Please note if you have node/postgres/redis server installed in your instance/machine`*
-*`just comment the install information in primarySetup.sh file and then run this file `*
+>*`Please note if you have node/postgres/redis server installed in your instance/machine. Please  comment the install information in primarySetup.sh file and then run this file `*
 
 **app setup**
 > **node,postgres, redis and app dependencies  installation**
