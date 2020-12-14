@@ -51,12 +51,18 @@ describe('Begin Tests', function () {
   })
 
   after(function (done) {
-    genSpecs.server.get('/logout').end(function (err, res) {
+    genSpecs.server.post('/logout').end(function (err, data) {
       if (err) return done(err)
       console.log('****************logout successfully****************')
+
+      data.statusCode.should.equal(200)
+      data.body.status.should.equal('success')
+      data.body.redirect.should.equal('/login')
       done()
     })
   })
+  //success
+  ///redirect login
   it('loads as expected conventionally', function (done) {
     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
     testbase.payload = genSpecs.loadModulePayLoad
@@ -67,58 +73,78 @@ describe('Begin Tests', function () {
       done()
     })
   })
+  describe('****************Schema Removal Validation Test Cases****************', function () {
+    testbase.schemaValValidatorPayload.forEach(function (entry) {
+      it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+        testbase.responseCode = 400
+        testbase.payload = entry.schemaContent
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.statusCode.should.equal(400)
+          data.body.error.should.equal('Bad Request')
 
-  testbase.schemaValValidatorPayload.forEach(function (entry) {
-    it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-      testbase.responseCode = 400
-      testbase.payload = entry.schemaContent
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.statusCode.should.equal(400)
-        data.body.error.should.equal('Bad Request')
-
-        data.body.message.should.equal(
-          `body should have required property '${entry.key}'`
-        )
+          data.body.message.should.equal(
+            `body should have required property '${entry.key}'`
+          )
+        })
       })
     })
   })
-  testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
-    
-    it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-      testbase.responseCode = 400
-      testbase.payload = entry.schemaContent
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
+  describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
+    testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
+      it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+        testbase.responseCode = 400
+        testbase.payload = entry.schemaContent
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.error.should.equal('Bad Request')
 
-        let fieldtype = validationConfig.validationmap.filter(
-          o => o.inputname == entry.key
-        )[0].fieldtypename
-        if (fieldtype == 'boolean') {
-          data.body.message.should.equal(`body.${entry.key} should be boolean`)
-        } else if (fieldtype == 'DATE') {
-          data.body.message.should.equal(
-            `body.${entry.key} should match format "date-time"`
-          )
-        } else {
-          data.body.message.should.equal(
-            `body.${entry.key} should NOT be shorter than 1 characters`
-          )
-        }
+          let fieldtype = validationConfig.validationmap.filter(
+            o => o.inputname == entry.key
+          )[0].fieldtypename
+          if (fieldtype == 'boolean') {
+            data.body.message.should.equal(
+              `body.${entry.key} should be boolean`
+            )
+          } else if (fieldtype == 'DATE') {
+            data.body.message.should.equal(
+              `body.${entry.key} should match format "date-time"`
+            )
+          } else {
+            data.body.message.should.equal(
+              `body.${entry.key} should NOT be shorter than 1 characters`
+            )
+          }
+        })
       })
     })
   })
 
-  // testbase.schemaValValidatorPayloadMaxLenght.forEach(function (entry) {
-  //   it(`For insert Operation test case By assigning ${entry.key} as maxLenght of fields value from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-  //     testbase.responseCode = 400
-  //     testbase.payload = entry.schemaContent
-  //     return genSpecs.genericApiPost(testbase).then(function (data) {
-  //       console.log(data.body)
-
-  //     })
-  //   })
-  // })
+  describe('****************Schema MaxLenght Validation Test Cases****************', function () {
+    testbase.schemaValValidatorPayloadMaxLenght.forEach(function (entry) {
+      it(`For insert Operation test case By assigning ${entry.key} as maxLenght of fields value from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+        testbase.responseCode = 400
+        testbase.payload = entry.schemaContent
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          let fieldtype = validationConfig.validationmap.filter(
+            o => o.inputname == entry.key
+          )[0]
+          if (fieldtype.fieldtypename == 'boolean') {
+            data.body.message.should.equal(
+              `body.${entry.key} should be boolean`
+            )
+          } else if (fieldtype.fieldtypename == 'DATE') {
+            data.body.message.should.equal(
+              `body.${entry.key} should match format "date-time"`
+            )
+          } else {
+            data.body.message.should.equal(
+              `body.${entry.key} should NOT be longer than ${fieldtype.fieldmaxlength} characters`
+            )
+          }
+        })
+      })
+    })
+  })
 })

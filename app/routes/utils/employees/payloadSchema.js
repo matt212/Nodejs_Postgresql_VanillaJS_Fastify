@@ -10,16 +10,16 @@ let insertUpdateSchema = {
   },
   gender: {
     type: 'string',
-    allOf:  [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 2}],
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 1 }]
   },
   birth_date: {
     type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 30}],
-    format: 'date-time',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 30 }],
+    format: 'date-time'
   },
   recordstate: {
     type: 'boolean',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 4}]
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
   }
 }
 const insertSchema = {
