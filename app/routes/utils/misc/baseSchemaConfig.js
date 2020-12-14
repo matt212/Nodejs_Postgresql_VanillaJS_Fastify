@@ -160,7 +160,7 @@ const searchGroupbybodyJsonSchema = {
 const headersJsonSchema = {
   type: 'object',
   properties: {
-    'x-access-token': { type: 'string', allOf: commonConfig }
+    'x-access-token': { type: 'string', allOf: [{ transform: ['trim'] }, { minLength: 1 }] }
   },
   required: ['x-access-token']
 }
