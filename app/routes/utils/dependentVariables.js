@@ -1753,6 +1753,11 @@ let datatransformutils = {
       }
     })
   },
+  updateJSONByKEY: function (baseObj, field, newvalue) {
+    var o = Object.assign({}, baseObj);
+    o[field] = newvalue
+    return o
+  },
   replaceByValue: function (json, field, oldvalue, newvalue) {
     for (var k = 0; k < json.length; ++k) {
       if (oldvalue == json[k][field]) {

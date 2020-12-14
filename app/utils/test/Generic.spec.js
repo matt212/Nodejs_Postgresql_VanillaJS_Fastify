@@ -96,6 +96,15 @@ let schemaValueValidatorPayload = function (baseapplyFields, baseObj) {
   })
   return interimAr
 }
+let schemaValueValidatorPayloadBlank = function (baseapplyFields, baseObj) {
+  var interimAr = []
+  baseapplyFields.forEach(function (entry) {
+    var o = datatransformutils.updateJSONByKEY(baseObj, entry, '')
+    interimAr.push({ key: entry, schemaContent: o })
+  })
+
+  return interimAr
+}
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
     if (data.status == 'pass') {
@@ -127,5 +136,6 @@ module.exports = {
   loadCurrentModule,
   loadModulePayLoad,
   setevalModulename,
+  schemaValueValidatorPayloadBlank,
   genericApiPost
 }

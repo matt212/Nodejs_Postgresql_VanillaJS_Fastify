@@ -6,12 +6,24 @@ let validationConfig = require('../../routes/utils/' +
   testbase.evalModulename +
   '/validationConfig.js')
 validationConfig.applyfields.push('recordstate')
-
+var recordstateobj = {
+  inputname: 'recordstate',
+  fieldtypename: 'boolean',
+  fieldvalidatename: 'boolean',
+  fieldmaxlength: '4'
+}
+validationConfig.validationmap.push(recordstateobj)
+/*for getting and passing to rest of tests fields and validationConfig*/
 testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
   validationConfig
 )
-
+/*Schema validatior with removing one by ony fields*/
 testbase.schemaValValidatorPayload = genSpecs.schemaValueValidatorPayload(
+  validationConfig.applyfields,
+  testbase.schemaBaseValidatorPayload
+)
+/*Schema validatior with blank fields one by ony fields*/
+testbase.schemaValValidatorPayloadBlank = genSpecs.schemaValueValidatorPayloadBlank(
   validationConfig.applyfields,
   testbase.schemaBaseValidatorPayload
 )
@@ -50,7 +62,6 @@ describe('Begin Tests', function () {
   })
 
   testbase.schemaValValidatorPayload.forEach(function (entry) {
-    
     it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
       testbase.responseCode = 400
@@ -58,25 +69,34 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.statusCode.should.equal(400)
         data.body.error.should.equal('Bad Request')
-        
-        data.body.message.should.equal(`body should have required property '${entry.key}'`)
+
+        data.body.message.should.equal(
+          `body should have required property '${entry.key}'`
+        )
       })
     })
   })
-  // testbase.schemaValueValidatorPayload.forEach(function (entry) {
-  //   console.log(entry)
-  //   it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-  //     testbase.responseCode = 400
-  //     testbase.payload = entry.content
-  //     return genSpecs.genericApiPost(testbase).then(function (data) {
-  //       console.log(data.body)
-  //       // data.body.error.should.equal('Bad Request')
-  //       // data.body.message.should.equal(
-  //       //   `body should have required property '.${entry.key}'`
-  //       // )
-  //       //body should have required property '.recordstate'
-  //     })
-  //   })
-  // })
+  testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
+    it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+      testbase.responseCode = 400
+      testbase.payload = entry.schemaContent
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        console.log()
+        let fieldtype = validationConfig.validationmap.filter(
+          o => o.inputname == entry.key
+        )[0].fieldtypename
+        if (fieldtype == 'boolean') {
+          data.body.message.should.equal(`body.${entry.key} should be boolean`)
+        } else {
+          data.body.message.should.equal(
+            `body.${entry.key} should NOT be shorter than 1 characters`
+          )
+        }
+
+        //
+      })
+    })
+  })
 })
