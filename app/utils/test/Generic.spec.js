@@ -28,6 +28,7 @@ var server = supertest.agent('http://localhost:3011')
 let createModPayLoad = function (validationConfig) {
   return createModulePayLoad.makepayload(validationConfig)
 }
+
 let loginsuccess = function (
   cred = { username: 'krennic', password: 'orson' }
 ) {
@@ -72,7 +73,7 @@ let genericApiPost = function (data) {
 let schemavalidatorPayload = function (baseapplyFields) {
   var interimAr = []
   var internprimaryAr = baseapplyFields
-  console.log(baseapplyFields)
+
   baseapplyFields.forEach(function (entry) {
     internprimaryAr = internprimaryAr.filter(item => item !== entry)
     interimAr.push({
@@ -105,6 +106,20 @@ let schemaValueValidatorPayloadBlank = function (baseapplyFields, baseObj) {
 
   return interimAr
 }
+let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
+  var interimAr = []
+  baseapplyFields.forEach(function (entry) {
+    var o = datatransformutils.updateJSONByKEY(
+      baseObj,
+      entry,
+      createModulePayLoad.makeMaxlenghtpayload(baseObj, entry)
+    )
+    interimAr.push({ key: entry, schemaContent: o })
+  })
+
+  return interimAr
+}
+
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
     if (data.status == 'pass') {
@@ -128,6 +143,7 @@ let loadCurrentModule = function (data) {
 module.exports = {
   dep,
   createModPayLoad,
+  schemaValValidatorPayloadMaxLenght,
   datatransformutils,
   schemavalidatorPayload,
   schemaValueValidatorPayload,

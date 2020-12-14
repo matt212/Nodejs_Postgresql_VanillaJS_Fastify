@@ -52,4 +52,17 @@ let makepayload = function (validationConfig) {
   })
   return interimObj
 }
-module.exports = { makepayload }
+
+let makeMaxlenghtpayload = function (interncontent, entry) {
+  let interim
+  if (typeof interncontent[entry] == 'string'||typeof interncontent[entry] == 'boolean') {
+    interim = interncontent[entry] + 'AA'
+  }
+  if (typeof interncontent[entry] == 'number') {
+    interim = interncontent[entry] + 100
+  }
+  
+  return interim
+}
+
+module.exports = { makepayload, makeMaxlenghtpayload }

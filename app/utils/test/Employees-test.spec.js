@@ -17,6 +17,7 @@ validationConfig.validationmap.push(recordstateobj)
 testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
   validationConfig
 )
+
 /*Schema validatior with removing one by ony fields*/
 testbase.schemaValValidatorPayload = genSpecs.schemaValueValidatorPayload(
   validationConfig.applyfields,
@@ -27,6 +28,12 @@ testbase.schemaValValidatorPayloadBlank = genSpecs.schemaValueValidatorPayloadBl
   validationConfig.applyfields,
   testbase.schemaBaseValidatorPayload
 )
+/*Schema validatior with Max  fields validations one by ony fields*/
+testbase.schemaValValidatorPayloadMaxLenght = genSpecs.schemaValValidatorPayloadMaxLenght(
+  validationConfig.applyfields,
+  testbase.schemaBaseValidatorPayload
+)
+
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
   // #1 should return home page
@@ -77,26 +84,41 @@ describe('Begin Tests', function () {
     })
   })
   testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
+    
     it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
       testbase.responseCode = 400
       testbase.payload = entry.schemaContent
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.error.should.equal('Bad Request')
-        console.log()
+
         let fieldtype = validationConfig.validationmap.filter(
           o => o.inputname == entry.key
         )[0].fieldtypename
         if (fieldtype == 'boolean') {
           data.body.message.should.equal(`body.${entry.key} should be boolean`)
+        } else if (fieldtype == 'DATE') {
+          data.body.message.should.equal(
+            `body.${entry.key} should match format "date-time"`
+          )
         } else {
           data.body.message.should.equal(
             `body.${entry.key} should NOT be shorter than 1 characters`
           )
         }
-
-        //
       })
     })
   })
+
+  // testbase.schemaValValidatorPayloadMaxLenght.forEach(function (entry) {
+  //   it(`For insert Operation test case By assigning ${entry.key} as maxLenght of fields value from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+  //     testbase.responseCode = 400
+  //     testbase.payload = entry.schemaContent
+  //     return genSpecs.genericApiPost(testbase).then(function (data) {
+  //       console.log(data.body)
+
+  //     })
+  //   })
+  // })
 })

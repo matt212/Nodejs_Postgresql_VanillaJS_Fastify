@@ -14,7 +14,8 @@ let insertUpdateSchema = {
   },
   birth_date: {
     type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 30}]
+    allOf: [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 30}],
+    format: 'date-time',
   },
   recordstate: {
     type: 'boolean',
