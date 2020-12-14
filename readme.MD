@@ -1,17 +1,7 @@
-**sh file Setup**
-> *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
-
-> *`sed -i -e 's/\r$//' ./app/utils/serverSetup/> primarySetup.sh`*
-
->*`chmod +x ./app/utils/serverSetup/secondarySetup.sh`*
-
->*`sed -i -e 's/\r$//' ./app/utils/serverSetup/secondarySetup.sh`*
-
->*`bash ./app/utils/serverSetup/primarySetup.sh`*
 
    
->*`Please note if you have node/postgres/server installed in your instance/machine`*
-*`just comment out in primarySetup.sh file and then run this file `*
+>*`Please note if you have node/postgres/redis server installed in your instance/machine`*
+*`just comment the install information in primarySetup.sh file and then run this file `*
 
 **app setup**
 > **node,postgres, redis and app dependencies  installation**
@@ -21,8 +11,9 @@
 >*`bash ./app/utils/serverSetup/secondarySetup.sh`*
 
 
-**Test run**
+**Mocha chai tests**
 >*`npm run LoginEval or yarn LoginEval `*
+
 >*`npm run ModuleEval or yarn ModuleEval `*
 
 
@@ -58,6 +49,19 @@
 **Custom fractural pattern based app** :
 
 > things which are plug and play
+
+In case of error running sh Files Follow below 
+**sh file Setup**
+> *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
+
+> *`sed -i -e 's/\r$//' ./app/utils/serverSetup/> primarySetup.sh`*
+
+>*`chmod +x ./app/utils/serverSetup/secondarySetup.sh`*
+
+>*`sed -i -e 's/\r$//' ./app/utils/serverSetup/secondarySetup.sh`*
+
+>*`bash ./app/utils/serverSetup/primarySetup.sh`*
+
 
 - new fields (datatypes string and ints ) ,
   config based modular apporach on server side `duh`.
