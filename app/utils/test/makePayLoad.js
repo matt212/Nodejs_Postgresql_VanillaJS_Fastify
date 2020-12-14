@@ -42,7 +42,6 @@ let makepayload = function (validationConfig) {
         doctors.fieldtypename == 'INTEGER' ||
         doctors.fieldtypename == 'BIGINT'
       ) {
-        console.log(makeidnumber(10))
         interimObj[doctors.inputname] = makeidnumber(doctors.fieldmaxlength)
       }
       if (doctors.fieldtypename == 'DATE') {
