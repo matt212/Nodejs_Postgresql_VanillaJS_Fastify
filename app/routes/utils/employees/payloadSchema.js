@@ -10,14 +10,15 @@ let insertUpdateSchema = {
   },
   gender: {
     type: 'string',
-    allOf: baseSchema.commonConfig,
+    allOf:  [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 2}],
   },
   birth_date: {
     type: 'string',
-    allOf: baseSchema.commonConfig
+    allOf: [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 30}]
   },
   recordstate: {
-    type: 'boolean'
+    type: 'boolean',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 4}]
   }
 }
 const insertSchema = {

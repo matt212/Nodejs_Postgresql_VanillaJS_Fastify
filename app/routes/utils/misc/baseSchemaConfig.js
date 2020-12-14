@@ -1,4 +1,4 @@
-let commonConfig = [{ transform: ['trim'] }, { minLength: 1 }]
+let commonConfig = [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 80}]
 const searchLoadbodyJsonSchema = {
   type: 'object',
   required: [
