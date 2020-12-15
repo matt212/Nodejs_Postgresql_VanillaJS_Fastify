@@ -252,7 +252,6 @@ describe('Begin Tests', function () {
       })
     })
     it(`date filter enddate Nan payload `, function () {
-      
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
       o.daterange.enddate = NaN
@@ -272,17 +271,15 @@ describe('Begin Tests', function () {
       o.daterange.startdate = undefined
       testbase.payload = o
       testbase.responseCode = 400
-      
+
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.error.should.equal('Bad Request')
         data.body.message.should.equal(
           `body.daterange should have required property 'startdate'`
         )
-       
       })
     })
     it(`date filter enddate Undefined payload `, function () {
-      
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
       o.daterange.enddate = undefined
