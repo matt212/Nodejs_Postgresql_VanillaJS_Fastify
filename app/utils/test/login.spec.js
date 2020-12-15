@@ -5,7 +5,7 @@ var supertest = require('supertest')
 var should = require('chai').should()
 
 before(async () => {
-  require('../app2.js')
+  require('../app.js')
 })
 
 // This agent refers to PORT where program is running.
