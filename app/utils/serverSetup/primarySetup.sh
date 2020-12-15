@@ -14,4 +14,3 @@ sudo apt install redis-server
 sudo service redis-server start
 #for ubunutu in windows wsl
 sudo npm install -g --unsafe-perm=true --allow-root
-

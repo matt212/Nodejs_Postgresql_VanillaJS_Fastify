@@ -53,7 +53,7 @@ In case of error running sh Files Follow below
 **sh file Setup**
 > *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
 
-> *`sed -i -e 's/\r$//' ./app/utils/serverSetup/> primarySetup.sh`*
+> *`sed -i -e 's/\r$//' ./app/utils/serverSetup/primarySetup.sh`*
 
 >*`chmod +x ./app/utils/serverSetup/secondarySetup.sh`*
 
