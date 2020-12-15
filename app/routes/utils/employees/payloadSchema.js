@@ -22,6 +22,35 @@ let insertUpdateSchema = {
     allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
   }
 }
+let baseupdatefunction = {
+  first_name: {
+    type: 'string',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
+  },
+  last_name: {
+    type: 'string',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
+  },
+  gender: {
+    type: 'string',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 1 }]
+  },
+  birth_date: {
+    type: 'string',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 30 }],
+    format: 'date-time'
+  },
+  recordstate: {
+    type: 'boolean',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
+  },
+  employeesid: {
+    type: 'integer',
+    minimum: 1,
+    //allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+  }
+}
+
 const insertSchema = {
   type: 'object',
   required: ['first_name', 'last_name', 'gender', 'birth_date', 'recordstate'],
@@ -37,11 +66,7 @@ const updateSchema = {
     'recordstate',
     'employeesid'
   ],
-  properties: insertUpdateSchema,
-  employeesid: {
-    type: 'number',
-    allOf: baseSchema.commonConfig
-  }
+  properties: baseupdatefunction
 }
 
 const insertLoadSchema = {

@@ -64,8 +64,10 @@ let genericApiPost = function (data) {
       .expect(data.responseCode)
       .end(function (err, res) {
         if (err) {
+          console.log(err)
           reject(err)
         } else {
+          
           resolve(res)
         }
       })

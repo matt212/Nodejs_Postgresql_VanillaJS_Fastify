@@ -147,7 +147,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-  describe('****************Valid Record Insertion Validation Test Cases****************', function () {
+  describe(/**/ '****************Valid Record Insertion Validation Test Cases****************', function () {
     it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
       testbase.responseCode = 200
@@ -157,6 +157,67 @@ describe('Begin Tests', function () {
         data.body.Message.should.equal('Record SuccessFully Inserted')
         genSpecs.expect(data.body.createdId).to.be.a('number')
         testbase.InsertID = data.body.createdId
+      })
+    })
+  })
+  describe('****************Invalid Record Updation by Schema Removal Validation Test Cases****************', function () {
+    it(`For  Update Operation test cases By passing as removing UpdatedID in the  payload to Evaluate   if we are getting valid return field `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+      testbase.responseCode = 400
+      testbase.payload = testbase.schemaBaseValidatorPayload
+
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body should have required property '${testbase.evalModulename}id'`
+        )
+      })
+    })
+  })
+  describe('****************Invalid Record Updation by Schema NaN Validation Test Cases****************', function () {
+    it(`For  Update Operation test cases By passing as  UpdatedID as NaN in the  payload to Evaluate   if we are getting valid return field `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+      testbase.responseCode = 400
+      testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] = NaN
+      testbase.payload = testbase.schemaBaseValidatorPayload
+
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body.${testbase.evalModulename}id should be >= 1`
+        )
+      })
+    })
+  })
+  describe('****************Invalid Record Updation by Schema undefined Validation Test Cases****************', function () {
+    it(`For  Update Operation test cases By passing as  UpdatedID as undefined in the  payload to Evaluate   if we are getting valid return field `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+      testbase.responseCode = 400
+      testbase.schemaBaseValidatorPayload[
+        testbase.evalModulename + 'id'
+      ] = undefined
+      testbase.payload = testbase.schemaBaseValidatorPayload
+
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body should have required property '${testbase.evalModulename}id'`
+        )
+      })
+    })
+  })
+  describe('****************Valid Record Updation Validation Test Cases****************', function () {
+    it(`For  Update Operation test cases By passing as  UpdatedID as valid value in the  payload to Evaluate   if we are getting valid return field `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+      testbase.responseCode = 200
+      testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] =
+        testbase.InsertID
+      testbase.payload = testbase.schemaBaseValidatorPayload
+
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        genSpecs
+          .expect(data.body[1][testbase.evalModulename + 'id'])
+          .to.equal(testbase.InsertID)
       })
     })
   })

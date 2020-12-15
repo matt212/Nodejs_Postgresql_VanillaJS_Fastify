@@ -1538,7 +1538,9 @@ let updateRecord = (req, res) => {
       {
         where: {
           [mod.id]: lime[mod.id]
-        }
+        },
+        returning: true,
+        plain: true
       } /* where criteria */
     )
     .then(affectedRows => {
