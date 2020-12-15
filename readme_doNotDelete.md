@@ -199,6 +199,10 @@ sudo kill $(sudo lsof -t -i:3009)
 > * create html file in  in 
 > *    `app/view/{modname}/{modname}.html`
 
+**remove install**
+> * `chmod +x ./app/utils/serverSetup/remove-Setup.sh`
+> * `sed -i -e 's/\r$//' ./app/utils/serverSetup/> remove-Setup.sh`
+> * `bash ./app/utils/serverSetup/remove-Setup.sh`
 
 >**********************Important notice for complex muti control form**
 for create complex file like multi checkbox for complex multi control use respective module file for insert , update and delete *do not use modular code from baseutils inherit it and use it in module js files"

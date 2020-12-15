@@ -1,7 +1,5 @@
-
-#Create postgres Authentication
-sudo -u postgres psql postgres -c "\password postgres"
-sudo service postgresql restart
+#for ubuntu
+sudo npm install
 #create database
 npm run createDB
 #restore database 
