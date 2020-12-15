@@ -23,31 +23,10 @@ let insertUpdateSchema = {
   }
 }
 let baseupdatefunction = {
-  first_name: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
-  },
-  last_name: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
-  },
-  gender: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 1 }]
-  },
-  birth_date: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 30 }],
-    format: 'date-time'
-  },
-  recordstate: {
-    type: 'boolean',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
-  },
+  insertUpdateSchema,
   employeesid: {
     type: 'integer',
-    minimum: 1,
-    //allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+    minimum: 1
   }
 }
 
