@@ -3,13 +3,13 @@ let validationmap = [
     inputname: 'first_name',
     fieldtypename: 'STRING',
     fieldvalidatename: 'string',
-    fieldmaxlength: '80'
+    fieldmaxlength: '45'
   },
   {
     inputname: 'last_name',
     fieldtypename: 'STRING',
     fieldvalidatename: 'string',
-    fieldmaxlength: '80'
+    fieldmaxlength: '45'
   },
   {
     inputname: 'gender',
@@ -21,7 +21,7 @@ let validationmap = [
     inputname: 'birth_date',
     fieldtypename: 'DATE',
     fieldvalidatename: 'date',
-    fieldmaxlength: '10'
+    fieldmaxlength: '30'
   }
 ]
 let applyfields = ['first_name', 'last_name', 'gender', 'birth_date']

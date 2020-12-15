@@ -1217,7 +1217,7 @@ let createRecord = (req, res) => {
 
   models[mod.Name].create(lime).then(
     x => {
-      res.send({ createdId: x[mod.id] })
+      res.send({ createdId: x[mod.id],Message:"Record SuccessFully Inserted" })
     },
     err => {
       console.log(err)

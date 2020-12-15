@@ -1,5 +1,6 @@
 var supertest = require('supertest')
 var should = require('chai').should()
+var expect = require('chai').expect;
 let tokenvalEval
 let loadModulePayLoad = {
   searchparam: ['NA'],
@@ -13,7 +14,7 @@ let loadModulePayLoad = {
   pageSize: 20
 }
 before(async () => {
-  require('../app2.js')
+  require('../app.js')
 })
 //./utils/dependentVariables
 let dep = require('../../../app/routes/utils/dependentVariables').routeUrls
@@ -141,6 +142,7 @@ let loadCurrentModule = function (data) {
   }))
 }
 module.exports = {
+  expect,
   dep,
   createModPayLoad,
   schemaValValidatorPayloadMaxLenght,

@@ -147,4 +147,17 @@ describe('Begin Tests', function () {
       })
     })
   })
+  describe('****************Valid Record Insertion Validation Test Cases****************', function () {
+    it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+      testbase.responseCode = 200
+      testbase.payload = testbase.schemaBaseValidatorPayload
+
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.Message.should.equal('Record SuccessFully Inserted')
+        genSpecs.expect(data.body.createdId).to.be.a('number')
+        testbase.InsertID = data.body.createdId
+      })
+    })
+  })
 })
