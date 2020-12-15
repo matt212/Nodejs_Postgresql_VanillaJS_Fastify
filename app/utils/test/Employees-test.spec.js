@@ -237,5 +237,35 @@ describe('Begin Tests', function () {
           .to.be.lte(testbase.payload.pageSize)
       })
     })
+    it(`date filter startdate Undefined payload `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+      o.daterange.startdate = NaN
+      testbase.payload = o
+      testbase.responseCode = 400
+      //console.log(testbase)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body.daterange.startdate should match format "date"`
+        )
+      })
+    })
+    it(`date filter enddate Undefined payload `, function () {
+      
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+      o.daterange.enddate = NaN
+      testbase.payload = o
+      testbase.responseCode = 400
+      //console.log(testbase)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body.daterange.enddate should match format "date"`
+        )
+      })
+
+    })
   })
 })

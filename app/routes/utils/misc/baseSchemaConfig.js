@@ -1,4 +1,8 @@
-let commonConfig = [{ transform: ['trim'] }, { minLength: 1 },{ maxLength: 80}]
+let commonConfig = [
+  { transform: ['trim'] },
+  { minLength: 1 },
+  { maxLength: 80 }
+]
 const searchLoadbodyJsonSchema = {
   type: 'object',
   required: [
@@ -16,6 +20,10 @@ const searchLoadbodyJsonSchema = {
     },
     daterange: {
       type: 'object',
+      properties: {
+        startdate: { type: 'string', format: 'date' },
+        enddate: { type: 'string', format: 'date' }
+      },
       allOf: commonConfig
     },
     colsearch: {
@@ -160,7 +168,10 @@ const searchGroupbybodyJsonSchema = {
 const headersJsonSchema = {
   type: 'object',
   properties: {
-    'x-access-token': { type: 'string', allOf: [{ transform: ['trim'] }, { minLength: 1 }] }
+    'x-access-token': {
+      type: 'string',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }]
+    }
   },
   required: ['x-access-token']
 }
