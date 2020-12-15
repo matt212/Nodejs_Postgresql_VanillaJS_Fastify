@@ -221,4 +221,21 @@ describe('Begin Tests', function () {
       })
     })
   })
+  describe('****************Valid SearchParam Validation Test Cases****************', function () {
+    it(`without date filter payload `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+      var o = Object.assign({}, genSpecs.loadModulePayLoad)
+      o.disableDate = true
+      testbase.payload = o
+      testbase.responseCode = 200
+      //console.log(testbase)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
+
+        genSpecs
+          .expect(data.body.rows.length)
+          .to.be.lte(testbase.payload.pageSize)
+      })
+    })
+  })
 })

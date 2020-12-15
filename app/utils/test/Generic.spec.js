@@ -1,6 +1,6 @@
 var supertest = require('supertest')
 var should = require('chai').should()
-var expect = require('chai').expect;
+var expect = require('chai').expect
 let tokenvalEval
 let loadModulePayLoad = {
   searchparam: ['NA'],
@@ -67,7 +67,6 @@ let genericApiPost = function (data) {
           console.log(err)
           reject(err)
         } else {
-          
           resolve(res)
         }
       })
