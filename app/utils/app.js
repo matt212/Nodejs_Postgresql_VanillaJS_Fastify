@@ -9,6 +9,16 @@
   ]
 }
 })
+// Paste your code here
+
+const fastifyPassport= require('fastify-passport')
+const fastifySecureSession= require('fastify-secure-session')
+// set up secure sessions for fastify-passport to store data in
+fastify.register(fastifySecureSession, { key: fs.readFileSync(path.join(__dirname, "secret-key")) });
+// initialize fastify-passport and connect it to the secure-session storage. Note: both of these plugins are mandatory.
+fastify.register(fastifyPassport.initialize());
+fastify.register(fastifyPassport.secureSession());
+console.log(fastifyPassport);
 fastify.register(
   require('fastify-compress'),
   { global: false },
