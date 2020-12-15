@@ -11,7 +11,7 @@
 })
 // Paste your code here
 
-const fastifyPassport= require('fastify-passport')
+const fastifyPassport= require('fastify-passport').default
 const fastifySecureSession= require('fastify-secure-session')
 // set up secure sessions for fastify-passport to store data in
 fastify.register(fastifySecureSession, { key: fs.readFileSync(path.join(__dirname, "secret-key")) });
