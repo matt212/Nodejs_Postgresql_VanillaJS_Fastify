@@ -21,9 +21,10 @@ const searchLoadbodyJsonSchema = {
     daterange: {
       type: 'object',
       properties: {
-        startdate: { type: 'string', format: 'date' },
-        enddate: { type: 'string', format: 'date' }
+        startdate: { type: 'string', format: 'date',minimum: 1 },
+        enddate: { type: 'string', format: 'date',minimum: 1}
       },
+      required:["startdate","enddate"],
       allOf: commonConfig
     },
     colsearch: {

@@ -237,7 +237,7 @@ describe('Begin Tests', function () {
           .to.be.lte(testbase.payload.pageSize)
       })
     })
-    it(`date filter startdate Undefined payload `, function () {
+    it(`date filter startdate Nan payload `, function () {
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
       o.daterange.startdate = NaN
@@ -251,7 +251,7 @@ describe('Begin Tests', function () {
         )
       })
     })
-    it(`date filter enddate Undefined payload `, function () {
+    it(`date filter enddate Nan payload `, function () {
       
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
@@ -265,7 +265,36 @@ describe('Begin Tests', function () {
           `body.daterange.enddate should match format "date"`
         )
       })
-
+    })
+    it(`date filter startdate Undefined payload `, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+      o.daterange.startdate = undefined
+      testbase.payload = o
+      testbase.responseCode = 400
+      
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body.daterange should have required property 'startdate'`
+        )
+       
+      })
+    })
+    it(`date filter enddate Undefined payload `, function () {
+      
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+      o.daterange.enddate = undefined
+      testbase.payload = o
+      testbase.responseCode = 400
+      //console.log(testbase)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.error.should.equal('Bad Request')
+        data.body.message.should.equal(
+          `body.daterange should have required property 'enddate'`
+        )
+      })
     })
   })
 })
