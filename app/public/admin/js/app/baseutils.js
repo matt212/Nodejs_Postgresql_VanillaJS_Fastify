@@ -1636,7 +1636,7 @@ var baseobjvalidation = {
 /*page load functions*/
 let baseloadsegments = {
   initialdatatableload: function () {
-    filterparam.colsearch = "createdAt";
+    //filterparam.colsearch = "createdAt";
 
     filterparam.searchparam = ["NA"];
     filterparam.daterange = datefilter;

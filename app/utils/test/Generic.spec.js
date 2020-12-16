@@ -8,7 +8,6 @@ let loadModulePayLoad = {
     startdate: '1982-12-30',
     enddate: '2019-01-29'
   },
-  colsearch: 'createdAt',
   datecolsearch: 'birth_date',
   pageno: 0,
   pageSize: 20

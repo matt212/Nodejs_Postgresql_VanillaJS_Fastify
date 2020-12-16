@@ -8,7 +8,6 @@ const searchLoadbodyJsonSchema = {
   required: [
     'searchparam',
     'daterange',
-    'colsearch',
     'datecolsearch',
     'pageSize',
     'pageno'
@@ -25,10 +24,6 @@ const searchLoadbodyJsonSchema = {
         enddate: { type: 'string', format: 'date', minimum: 1 }
       },
       required: ['startdate', 'enddate'],
-      allOf: commonConfig
-    },
-    colsearch: {
-      type: 'string',
       allOf: commonConfig
     },
     datecolsearch: {

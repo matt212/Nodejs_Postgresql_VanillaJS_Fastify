@@ -331,6 +331,32 @@ describe('Begin Tests', function () {
           )
         })
       })
+      it(`filter with datecolsearch as undefined  payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.datecolsearch = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(
+            `body should have required property \'datecolsearch\'`
+          )
+        })
+      })
+      it(`filter with datecolsearch as NaN  payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.datecolsearch = NaN
+        testbase.payload = o
+        testbase.responseCode = 400
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(
+            `body.datecolsearch should NOT be shorter than 1 characters`
+          )
+        })
+      })
     })
   })
 })
