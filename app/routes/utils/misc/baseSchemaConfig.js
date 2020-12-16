@@ -13,15 +13,15 @@ const searchLoadbodyJsonSchema = {
     daterange: {
       type: 'object',
       properties: {
-        startdate: { type: 'string', format: 'date', minimum: 1 },
-        enddate: { type: 'string', format: 'date', minimum: 1 }
+        startdate: { type: 'string', allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] },
+        enddate: { type: 'string',  allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] }
       },
       required: ['startdate', 'enddate'],
       allOf: commonConfig
     },
     datecolsearch: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 20 }]
     },
     pageSize: {
       type: 'integer',

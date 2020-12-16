@@ -253,7 +253,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           data.body.message.should.equal(
-            `body.daterange.startdate should match format "date"`
+            `body.daterange.startdate should NOT be shorter than 1 characters`
           )
         })
       })
@@ -271,7 +271,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           data.body.message.should.equal(
-            `body.daterange.enddate should match format "date"`
+            `body.daterange.enddate should NOT be shorter than 1 characters`
           )
         })
       })
@@ -382,6 +382,49 @@ describe('Begin Tests', function () {
           data.body.message.should.equal(
             `body should have required property '.datecolsearch'`
           )
+        })
+      })
+      describe('****************Search Features Single/MultiColumn Test Cases****************', function () {
+        Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (
+          entry
+        ) {
+          it(`Searching for ${entry} and getting expected single recordset `, function () {
+            testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+            testbase.responseCode = 200
+            var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+
+            let fieldtype = validationConfig.validationmap.filter(
+              o => o.inputname == entry
+            )[0].fieldtypename
+
+            if (fieldtype == 'DATE') {
+              o.daterange = {
+                startdate: new Date(
+                  testbase.schemaBaseValidatorPayload[entry]
+                ).toLocaleDateString(),
+                enddate: new Date(
+                  testbase.schemaBaseValidatorPayload[entry]
+                ).toLocaleDateString()
+              }
+              o.datecolsearch = entry
+              o.disableDate = false
+            } else {
+              o.searchparam = [
+                {
+                  [entry]: [testbase.schemaBaseValidatorPayload[entry]]
+                }
+              ]
+              o.disableDate = true
+              o.searchtype = 'Columnwise'
+            }
+
+            testbase.payload = o
+            console.log(testbase.payload)
+            return genSpecs.genericApiPost(testbase).then(function (data) {
+              console.log(data.body.rows.length)
+              console.log(data.body.count)
+            })
+          })
         })
       })
     })
