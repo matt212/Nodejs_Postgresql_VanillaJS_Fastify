@@ -67,8 +67,9 @@ describe('Begin Tests', function () {
     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
     testbase.payload = genSpecs.loadModulePayLoad
     testbase.responseCode = 200
+    console.log(testbase.payload)
     genSpecs.genericApiPost(testbase).then(function (data) {
-      // console.log(data.body.count)
+      console.log(data.body.count)
       // console.log(data.body.rows)
       done()
     })
@@ -229,7 +230,7 @@ describe('Begin Tests', function () {
         o.disableDate = true
         testbase.payload = o
         testbase.responseCode = 200
-        //console.log(testbase)
+
         return genSpecs.genericApiPost(testbase).then(function (data) {
           genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
 
@@ -241,7 +242,11 @@ describe('Begin Tests', function () {
       it(`date filter startdate Nan payload `, function () {
         testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
         var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange.startdate = NaN
+        o.daterange = {
+          startdate: NaN,
+          enddate: '2019-01-29'
+        }
+        o.disableDate = false
         testbase.payload = o
         testbase.responseCode = 400
         //console.log(testbase)
@@ -255,7 +260,11 @@ describe('Begin Tests', function () {
       it(`date filter enddate Nan payload `, function () {
         testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
         var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange.enddate = NaN
+        o.daterange = {
+          startdate: '1982-01-29',
+          enddate: NaN
+        }
+        o.disableDate = false
         testbase.payload = o
         testbase.responseCode = 400
         //console.log(testbase)
@@ -269,7 +278,11 @@ describe('Begin Tests', function () {
       it(`date filter startdate Undefined payload `, function () {
         testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
         var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange.startdate = undefined
+        o.daterange = {
+          startdate: undefined,
+          enddate: '1982-01-29'
+        }
+        o.disableDate = false
         testbase.payload = o
         testbase.responseCode = 400
 
@@ -283,7 +296,11 @@ describe('Begin Tests', function () {
       it(`date filter enddate Undefined payload `, function () {
         testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
         var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange.enddate = undefined
+        o.daterange = {
+          startdate: '1982-01-29',
+          enddate: undefined
+        }
+        o.disableDate = false
         testbase.payload = o
         testbase.responseCode = 400
         //console.log(testbase)
@@ -314,7 +331,7 @@ describe('Begin Tests', function () {
         testbase.responseCode = 400
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
-            `body should have required property 'pageSize'`
+            `body should have required property '.pageSize'`
           )
         })
       })
@@ -327,33 +344,43 @@ describe('Begin Tests', function () {
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
-            `body should have required property \'pageno\'`
-          )
-        })
-      })
-      it(`filter with datecolsearch as undefined  payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.datecolsearch = undefined
-        testbase.payload = o
-        testbase.responseCode = 400
-
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.message.should.equal(
-            `body should have required property \'datecolsearch\'`
+            `body should have required property \'.pageno\'`
           )
         })
       })
       it(`filter with datecolsearch as NaN  payload `, function () {
         testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
         var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.daterange = {
+          startdate: '1982-01-29',
+          enddate: '1982-01-29'
+        }
         o.datecolsearch = NaN
+        o.disableDate = false
         testbase.payload = o
         testbase.responseCode = 400
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
             `body.datecolsearch should NOT be shorter than 1 characters`
+          )
+        })
+      })
+      it(`filter with datecolsearch as undefined  payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.daterange = {
+          startdate: '1982-01-29',
+          enddate: '1982-01-29'
+        }
+        o.datecolsearch = undefined
+        o.disableDate = false
+        testbase.payload = o
+        testbase.responseCode = 400
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(
+            `body should have required property '.datecolsearch'`
           )
         })
       })

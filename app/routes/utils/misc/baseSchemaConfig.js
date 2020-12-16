@@ -5,13 +5,6 @@ let commonConfig = [
 ]
 const searchLoadbodyJsonSchema = {
   type: 'object',
-  required: [
-    'searchparam',
-    'daterange',
-    'datecolsearch',
-    'pageSize',
-    'pageno'
-  ],
   properties: {
     searchparam: {
       type: 'array',
@@ -28,7 +21,7 @@ const searchLoadbodyJsonSchema = {
     },
     datecolsearch: {
       type: 'string',
-      allOf: commonConfig
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
     },
     pageSize: {
       type: 'integer',
@@ -37,9 +30,32 @@ const searchLoadbodyJsonSchema = {
     },
     pageno: {
       type: 'integer',
-      minimum: 0,
+      minimum: 0
     }
-  }
+  },
+  allOf: [
+    {
+      if: {
+        properties: {
+          disableDate: {
+            "enum": [true]
+          }
+        }
+      },
+      then: {
+        required: ['searchparam', 'pageSize', 'pageno']
+      },
+      else: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
+          'datecolsearch',
+          'daterange'
+        ]
+      }
+    }
+  ]
 }
 
 const searchPivotbodyJsonSchema = {
@@ -74,7 +90,7 @@ const searchPivotbodyJsonSchema = {
     },
     datecolsearch: {
       type: 'string',
-      allOf: commonConfig
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
     },
     pageSize: {
       type: 'number',
@@ -146,7 +162,7 @@ const searchGroupbybodyJsonSchema = {
     },
     datecolsearch: {
       type: 'string',
-      allOf: commonConfig
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
     },
     pageSize: {
       type: 'number',

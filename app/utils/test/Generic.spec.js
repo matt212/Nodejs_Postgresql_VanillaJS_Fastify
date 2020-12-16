@@ -4,17 +4,18 @@ var expect = require('chai').expect
 let tokenvalEval
 let loadModulePayLoad = {
   searchparam: ['NA'],
-  daterange: {
-    startdate: '1982-12-30',
-    enddate: '2019-01-29'
-  },
-  datecolsearch: 'birth_date',
   pageno: 0,
-  pageSize: 20
+  pageSize: 20,
+  disableDate:true
 }
 before(async () => {
   require('../app.js')
 })
+/**daterange: {
+    startdate: '1982-12-30',
+    enddate: '2019-01-29'
+  },
+  datecolsearch: 'birth_date', */
 //./utils/dependentVariables
 let dep = require('../../../app/routes/utils/dependentVariables').routeUrls
 let datatransformutils = require('../../../app/routes/utils/dependentVariables')
