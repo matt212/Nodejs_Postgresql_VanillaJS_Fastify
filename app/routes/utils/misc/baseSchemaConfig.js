@@ -36,12 +36,13 @@ const searchLoadbodyJsonSchema = {
       allOf: commonConfig
     },
     pageSize: {
-      type: 'number',
-      allOf: commonConfig
+      type: 'integer',
+      minimum: 1,
+      maximum: 100
     },
     pageno: {
-      type: 'number',
-      allOf: commonConfig
+      type: 'integer',
+      minimum: 0,
     }
   }
 }

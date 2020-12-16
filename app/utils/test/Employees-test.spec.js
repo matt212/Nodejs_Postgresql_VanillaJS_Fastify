@@ -221,76 +221,115 @@ describe('Begin Tests', function () {
       })
     })
   })
-  describe('****************Valid SearchParam Validation Test Cases****************', function () {
-    it(`without date filter payload `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-      var o = Object.assign({}, genSpecs.loadModulePayLoad)
-      o.disableDate = true
-      testbase.payload = o
-      testbase.responseCode = 200
-      //console.log(testbase)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
+  describe('****************Parent Payload Validation Test Cases****************', function () {
+    describe('****************Dates SearchParam Validation Test Cases****************', function () {
+      it(`without date filter payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.disableDate = true
+        testbase.payload = o
+        testbase.responseCode = 200
+        //console.log(testbase)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
 
-        genSpecs
-          .expect(data.body.rows.length)
-          .to.be.lte(testbase.payload.pageSize)
+          genSpecs
+            .expect(data.body.rows.length)
+            .to.be.lte(testbase.payload.pageSize)
+        })
       })
-    })
-    it(`date filter startdate Nan payload `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-      o.daterange.startdate = NaN
-      testbase.payload = o
-      testbase.responseCode = 400
-      //console.log(testbase)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
-        data.body.message.should.equal(
-          `body.daterange.startdate should match format "date"`
-        )
+      it(`date filter startdate Nan payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.daterange.startdate = NaN
+        testbase.payload = o
+        testbase.responseCode = 400
+        //console.log(testbase)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.error.should.equal('Bad Request')
+          data.body.message.should.equal(
+            `body.daterange.startdate should match format "date"`
+          )
+        })
       })
-    })
-    it(`date filter enddate Nan payload `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-      o.daterange.enddate = NaN
-      testbase.payload = o
-      testbase.responseCode = 400
-      //console.log(testbase)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
-        data.body.message.should.equal(
-          `body.daterange.enddate should match format "date"`
-        )
+      it(`date filter enddate Nan payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.daterange.enddate = NaN
+        testbase.payload = o
+        testbase.responseCode = 400
+        //console.log(testbase)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.error.should.equal('Bad Request')
+          data.body.message.should.equal(
+            `body.daterange.enddate should match format "date"`
+          )
+        })
       })
-    })
-    it(`date filter startdate Undefined payload `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-      o.daterange.startdate = undefined
-      testbase.payload = o
-      testbase.responseCode = 400
+      it(`date filter startdate Undefined payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.daterange.startdate = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
 
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
-        data.body.message.should.equal(
-          `body.daterange should have required property 'startdate'`
-        )
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.error.should.equal('Bad Request')
+          data.body.message.should.equal(
+            `body.daterange should have required property 'startdate'`
+          )
+        })
+      })
+      it(`date filter enddate Undefined payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.daterange.enddate = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
+        //console.log(testbase)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.error.should.equal('Bad Request')
+          data.body.message.should.equal(
+            `body.daterange should have required property 'enddate'`
+          )
+        })
       })
     })
-    it(`date filter enddate Undefined payload `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-      o.daterange.enddate = undefined
-      testbase.payload = o
-      testbase.responseCode = 400
-      //console.log(testbase)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
-        data.body.message.should.equal(
-          `body.daterange should have required property 'enddate'`
-        )
+    describe('****************Payload Param Validation Test Cases****************', function () {
+      it(`filter with pageSize as NaN  payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.pageSize = NaN
+        testbase.payload = o
+        testbase.responseCode = 400
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(`body.pageSize should be >= 1`)
+        })
+      })
+      it(`filter with pageSize as undefined  payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.pageSize = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(
+            `body should have required property 'pageSize'`
+          )
+        })
+      })
+      it(`filter with pageno as undefined  payload `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+        o.pageno = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(
+            `body should have required property \'pageno\'`
+          )
+        })
       })
     })
   })
