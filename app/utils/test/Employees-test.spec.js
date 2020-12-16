@@ -408,10 +408,20 @@ describe('Begin Tests', function () {
               }
               o.datecolsearch = entry
               o.disableDate = false
-            } else {
+            } else if (fieldtype == 'boolean') {
               o.searchparam = [
                 {
                   [entry]: [testbase.schemaBaseValidatorPayload[entry]]
+                }
+              ]
+              o.disableDate = true
+              o.searchtype = 'Columnwise'
+            } else {
+              let interimval = testbase.schemaBaseValidatorPayload[entry]
+
+              o.searchparam = [
+                {
+                  [entry]: [interimval.toLowerCase()]
                 }
               ]
               o.disableDate = true
