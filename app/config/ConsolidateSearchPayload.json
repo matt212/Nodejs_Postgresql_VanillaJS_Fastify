@@ -1,0 +1,24 @@
+{
+  "daterange": { "startdate": "1982-11-18", "enddate": "2020-12-18" },
+  "datecolsearch": "created_date",
+  "searchparam": [],
+  "pageno": 0,
+  "pageSize": 20,
+  "sortcolumn": 1,
+  "sortcolumnorder": "desc",
+  "colsearch": "intercolumn",
+  "ispaginate": false,
+  "timeinternprimary": "Month",
+  "timeinternsecondary": "Month",
+  "XpageSize": 40,
+  "Xpageno": 0,
+  "YpageSize": 20,
+  "Ypageno": 0,
+  "searchtype": "consolidatesearch",
+  "basesearcharconsolidated": [
+    {
+      "consolidatecol": ["first_name", "last_name", "gender"],
+      "consolidatecolval": "the"
+    }
+  ]
+}
