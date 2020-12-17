@@ -21,193 +21,204 @@ let assignVariables = modObj => {
 }
 
 let searchparampayload = req => {
-  let SqlString = require('sqlstring')
-  let base = {}
-  promise = new Promise((resolve, reject) => {
-    let reqcontent =
-      req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body
+  try {
+    let SqlString = require('sqlstring')
+    let base = {}
+    promise = new Promise((resolve, reject) => {
+      let reqcontent =
+        req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body
 
-    //let reqcontent=JSON.parse(req.rawBody)
+      //let reqcontent=JSON.parse(req.rawBody)
 
-    var searchparam = reqcontent.searchparam
-    var columns = reqcontent.colsearch
-    var number_of_items = reqcontent.pageno
-    var pageSize = reqcontent.pageSize
-    var ispaginate = reqcontent.ispaginate
-    var datecolsearch = reqcontent.datecolsearch
-    var consolidatesearchparam = reqcontent.basesearcharconsolidated
-    var consolidatesearch = ''
-    var startdate
-    var enddate
-    if (req.body.daterange != undefined) {
-      startdate = reqcontent.daterange.startdate + ' 00:00:00'
-      enddate = reqcontent.daterange.enddate + '  24:00:00'
-    }
-    var searchtype = reqcontent.searchtype
-    var sortcolumn = reqcontent.sortcolumn
-    var sortcolumnorder = reqcontent.sortcolumnorder
-
-    var daterange = '1=1'
-    if (startdate != undefined && enddate != undefined) {
-      //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
-      daterange =
-        'and ' +
-        'a.' +
-        datecolsearch +
-        " >= '" +
-        startdate +
-        "' AND " +
-        'a.' +
-        datecolsearch +
-        " <='" +
-        enddate +
-        "'"
-    }
-    if (reqcontent.disableDate) {
-      daterange = ' '
-    }
-    if (
-      reqcontent.sortcolumnorder == undefined &&
-      reqcontent.sortcolumn == undefined
-    ) {
-      sortcolumn = mod.id
-      sortcolumnorder = 'desc'
-    }
-    if (req.body.sortcolumn == 1) {
-      sortcolumn = mod.id
-    }
-
-    var selector = ''
-    var consolidatesearchparams = ''
-    if (searchtype == 'Columnwise') {
-      if (searchparam.constructor === Array) {
-        var interns = searchparam
-
-        interns.forEach((item, index) => {
-          //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
-          var searchvalue = item[Object.keys(item)[0]]
-          var searchkey = Object.keys(item)[0]
-          var isBaseArray = item.isArray
-
-          //var result = (typeof searchvalue === 'number');
-
-          var coltype = ''
-          var stringtype = ''
-          if (!searchvalue.some(isNaN)) {
-            coltype = ''
-            stringtype = ''
-          } else {
-            coltype = 'lower'
-            stringtype = "'"
-          }
-
-          if (selector == '') {
-            if (isBaseArray) {
-              //console.log("arrays")
-              //console.log(searchvalue)
-              //ARRAY[5,7] && modnameid;
-              selector =
-                'and ARRAY [' +
-                SqlString.format(searchvalue) +
-                '] && ' +
-                '' +
-                SqlString.format(searchkey) +
-                ''
-              //console.log(selector)
-            } else {
-              // console.log("here")
-              //selector = "and " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
-              selector =
-                'and ' +
-                coltype +
-                '(a.' +
-                SqlString.format(searchkey) +
-                ') IN ' +
-                '(' +
-                stringtype +
-                SqlString.format(
-                  searchvalue.join('' + stringtype + ',' + stringtype + '')
-                ) +
-                '' +
-                stringtype +
-                ')'
-              consolidatesearchparams =
-                '(' + SqlString.format(searchvalue).join(' & ') + ')'
-            }
-          } else {
-            consolidatesearchparams =
-              consolidatesearchparams + ' & ' + SqlString.format(searchvalue)
-            //selector = selector + " and  " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
-            if (isBaseArray) {
-              //console.log("arrays")
-              //console.log(searchvalue)
-              //ARRAY[5,7] && modnameid;
-              selector =
-                selector +
-                'and  ARRAY [' +
-                SqlString.format(searchvalue) +
-                '] && ' +
-                '' +
-                SqlString.format(searchkey) +
-                ''
-            } else {
-              selector =
-                selector +
-                ' and  ' +
-                coltype +
-                '(a.' +
-                SqlString.format(searchkey) +
-                ') IN ' +
-                '(' +
-                stringtype +
-                SqlString.format(
-                  searchvalue.join('' + stringtype + ',' + stringtype + '')
-                ) +
-                '' +
-                stringtype +
-                ')'
-            }
-          }
-
-          // finale.push(obj)
-        })
+      var searchparam = reqcontent.searchparam
+      var columns = reqcontent.colsearch
+      var number_of_items = reqcontent.pageno
+      var pageSize = reqcontent.pageSize
+      var ispaginate = reqcontent.ispaginate
+      var datecolsearch = reqcontent.datecolsearch
+      var consolidatesearchparam = reqcontent.basesearcharconsolidated
+      var consolidatesearch = ''
+      var startdate
+      var enddate
+      if (req.body.daterange != undefined) {
+        startdate = reqcontent.daterange.startdate + ' 00:00:00'
+        enddate = reqcontent.daterange.enddate + '  24:00:00'
       }
-      /*comment this for legacy search !*/
-      /* selector = "";
+      var searchtype = reqcontent.searchtype
+      var sortcolumn = reqcontent.sortcolumn
+      var sortcolumnorder = reqcontent.sortcolumnorder
+
+      var daterange = '1=1'
+      if (startdate != undefined && enddate != undefined) {
+        //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
+        daterange =
+          'and ' +
+          'a.' +
+          datecolsearch +
+          " >= '" +
+          startdate +
+          "' AND " +
+          'a.' +
+          datecolsearch +
+          " <='" +
+          enddate +
+          "'"
+      }
+      if (reqcontent.disableDate) {
+        daterange = ' '
+      }
+      if (
+        reqcontent.sortcolumnorder == undefined &&
+        reqcontent.sortcolumn == undefined
+      ) {
+        sortcolumn = mod.id
+        sortcolumnorder = 'desc'
+      }
+      if (req.body.sortcolumn == 1) {
+        sortcolumn = mod.id
+      }
+
+      var selector = ''
+      var consolidatesearchparams = ''
+      if (searchtype == 'Columnwise') {
+        if (searchparam.constructor === Array) {
+          var interns = searchparam
+
+          interns.forEach((item, index) => {
+            //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
+            var searchvalue = item[Object.keys(item)[0]]
+            var searchkey = Object.keys(item)[0]
+            var isBaseArray = item.isArray
+
+            //var result = (typeof searchvalue === 'number');
+
+            var coltype = ''
+            var stringtype = ''
+            if (searchvalue != undefined) {
+              if (!searchvalue.some(isNaN)) {
+                coltype = ''
+                stringtype = ''
+              } else {
+                coltype = 'lower'
+                stringtype = "'"
+              }
+            }
+            else
+            {
+              coltype = ''
+                stringtype = ''
+            }
+
+            if (selector == '') {
+              if (isBaseArray) {
+                //console.log("arrays")
+                //console.log(searchvalue)
+                //ARRAY[5,7] && modnameid;
+                selector =
+                  'and ARRAY [' +
+                  SqlString.format(searchvalue) +
+                  '] && ' +
+                  '' +
+                  SqlString.format(searchkey) +
+                  ''
+                //console.log(selector)
+              } else {
+                // console.log("here")
+                //selector = "and " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
+                selector =
+                  'and ' +
+                  coltype +
+                  '(a.' +
+                  SqlString.format(searchkey) +
+                  ') IN ' +
+                  '(' +
+                  stringtype +
+                  SqlString.format(
+                    searchvalue.join('' + stringtype + ',' + stringtype + '')
+                  ) +
+                  '' +
+                  stringtype +
+                  ')'
+                consolidatesearchparams =
+                  '(' + SqlString.format(searchvalue).join(' & ') + ')'
+              }
+            } else {
+              consolidatesearchparams =
+                consolidatesearchparams + ' & ' + SqlString.format(searchvalue)
+              //selector = selector + " and  " + SqlString.format(searchkey) + " LIKE " + "'%" + SqlString.format(searchvalue) + "%'";
+              if (isBaseArray) {
+                //console.log("arrays")
+                //console.log(searchvalue)
+                //ARRAY[5,7] && modnameid;
+                selector =
+                  selector +
+                  'and  ARRAY [' +
+                  SqlString.format(searchvalue) +
+                  '] && ' +
+                  '' +
+                  SqlString.format(searchkey) +
+                  ''
+              } else {
+                selector =
+                  selector +
+                  ' and  ' +
+                  coltype +
+                  '(a.' +
+                  SqlString.format(searchkey) +
+                  ') IN ' +
+                  '(' +
+                  stringtype +
+                  SqlString.format(
+                    searchvalue.join('' + stringtype + ',' + stringtype + '')
+                  ) +
+                  '' +
+                  stringtype +
+                  ')'
+              }
+            }
+
+            // finale.push(obj)
+          })
+        }
+        /*comment this for legacy search !*/
+        /* selector = "";
              console.log(consolidatesearchparams)
              consolidatesearch = 'and weighted_tsv @@ to_tsquery(\'' + consolidatesearchparams + '\')'*/
-      /*end region*/
-    } else if (searchtype == 'consolidatesearch') {
-      //*traditional search*//
-      consolidatesearch =
-        'and ' +
-        consolidatesearchparam[0].consolidatecol.join("||' '||") +
-        " LIKE '%" +
-        consolidatesearchparam[0].consolidatecolval +
-        "%'"
-      /*without vector column*/
-      //consolidatesearch='and to_tsvector("'+consolidatesearchparam[0].consolidatecol.join("\"||' '||\"")+'") @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
-      /*with vector column*/
-      //consolidatesearch='and weighted_tsv @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
-    }
-    var next_offset = pageSize * number_of_items
+        /*end region*/
+      } else if (searchtype == 'consolidatesearch') {
+        //*traditional search*//
+        consolidatesearch =
+          'and ' +
+          consolidatesearchparam[0].consolidatecol.join("||' '||") +
+          " LIKE '%" +
+          consolidatesearchparam[0].consolidatecolval +
+          "%'"
+        /*without vector column*/
+        //consolidatesearch='and to_tsvector("'+consolidatesearchparam[0].consolidatecol.join("\"||' '||\"")+'") @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
+        /*with vector column*/
+        //consolidatesearch='and weighted_tsv @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
+      }
+      var next_offset = pageSize * number_of_items
 
-    base.daterange = daterange
-    base.selector = selector
-    base.sortcolumn = sortcolumn
-    base.sortcolumnorder = sortcolumnorder
-    base.pageSize = pageSize
-    base.next_offset = next_offset
-    base.ispaginate = ispaginate
-    base.searchtype = searchtype
-    base.consolidatesearch = consolidatesearch
+      base.daterange = daterange
+      base.selector = selector
+      base.sortcolumn = sortcolumn
+      base.sortcolumnorder = sortcolumnorder
+      base.pageSize = pageSize
+      base.next_offset = next_offset
+      base.ispaginate = ispaginate
+      base.searchtype = searchtype
+      base.consolidatesearch = consolidatesearch
 
-    //console.log(base)
-    resolve(base)
-  })
-  return promise.catch(function (error) {
-    throw error
-  })
+      //console.log(base)
+      resolve(base)
+    })
+    return promise.catch(function (error) {
+      console.log(error)
+    })
+  } catch (err) {
+    console.log(err.message)
+  }
 }
 let pivottransformation = dataset => {
   let internbase = {}
@@ -1217,7 +1228,10 @@ let createRecord = (req, res) => {
 
   models[mod.Name].create(lime).then(
     x => {
-      res.send({ createdId: x[mod.id],Message:"Record SuccessFully Inserted" })
+      res.send({
+        createdId: x[mod.id],
+        Message: 'Record SuccessFully Inserted'
+      })
     },
     err => {
       console.log(err)
@@ -1231,6 +1245,7 @@ let createRecord = (req, res) => {
 let QueryStream = require('pg-query-stream')
 let JSONStream = require('JSONStream')
 let Json2csvTransform = require('json2csv').Transform
+
 let exportExcel = (req, res, a, fastify) => {
   var baseobj = {}
 
@@ -1565,13 +1580,11 @@ let deleteRecord = (req, res) => {
 }
 let deleteHardRecord = (req, res) => {
   models[mod.Name]
-    .destroy(
-      {
-        where: {
-          [mod.id]: req.body[mod.id]
-        }
+    .destroy({
+      where: {
+        [mod.id]: req.body[mod.id]
       }
-    )
+    })
     .then(affectedRows => {
       res.send(affectedRows)
     })
@@ -1768,8 +1781,25 @@ let datatransformutils = {
       }
     })
   },
+  multicolumnSearchFilter: function (baseobj) {
+    let interim1 = function (interim) {
+      var interimAr1 = []
+      Object.keys(interim).forEach(function (data) {
+        interimAr1.push({
+          [data]: [interim[data]]
+        })
+      })
+      return interimAr1
+    }
+
+    var interim2 = []
+    Object.keys(baseobj).forEach(function (data, i) {
+      interim2.push({ key: data, content: interim1(baseobj).slice(0, i+1) })
+    })
+    return interim2
+  },
   updateJSONByKEY: function (baseObj, field, newvalue) {
-    var o = Object.assign({}, baseObj);
+    var o = Object.assign({}, baseObj)
     o[field] = newvalue
     return o
   },

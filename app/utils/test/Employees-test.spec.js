@@ -17,6 +17,7 @@ validationConfig.validationmap.push(recordstateobj)
 testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
   validationConfig
 )
+console.log(testbase.schemaBaseValidatorPayload)
 /*Generate multi insert payloads by passing second parameter as number recordset to generate*/
 testbase.schemaBaseValidatorPayloadAr = genSpecs.genPayloadByNum(
   validationConfig,
@@ -445,7 +446,7 @@ describe('Begin Tests', function () {
   //       })
   //     })
 
-  //     describe('****************Search Features Single/MultiColumn Test Cases****************', function () {
+  //     describe('****************Search Features Single/SingleColumn Test Cases****************', function () {
   //       Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (
   //         entry
   //       ) {
@@ -503,7 +504,7 @@ describe('Begin Tests', function () {
   // })
   // })
 
-  describe('****************Search Features Multi/MultiColumn Test Cases****************', function () {
+  describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`Searching for ${entry} and getting expected Multi recordset `, function () {
         testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
@@ -566,6 +567,57 @@ describe('Begin Tests', function () {
           genSpecs.expect(parseInt(firstSet.length)).to.be.gte(payloadCount)
 
           genSpecs.expect(parseInt(secondSet.length)).to.be.gte(payloadCount)
+        })
+      })
+    })
+  })
+  describe('****************Search Features Multi/MultiColumn Test Cases****************', function () {
+    Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
+      it(`Searching for ${entry} and getting expected Multi recordset `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        testbase.responseCode = 200
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+
+        let fieldtype = validationConfig.validationmap.filter(
+          o => o.inputname == entry
+        )[0].fieldtypename
+
+        if (fieldtype == 'DATE') {
+          o.daterange = {
+            startdate: new Date(
+              testbase.schemaBaseValidatorPayload[entry]
+            ).toLocaleDateString(),
+            enddate: new Date(
+              testbase.schemaBaseValidatorPayload[entry]
+            ).toLocaleDateString()
+          }
+          o.datecolsearch = entry
+          o.disableDate = false
+        } else if (fieldtype == 'boolean') {
+          o.searchparam = [
+            {
+              [entry]: [testbase.schemaBaseValidatorPayload[entry]]
+            }
+          ]
+          o.disableDate = true
+          o.searchtype = 'Columnwise'
+        } else {
+          
+          o.searchparam = [
+            {
+              [entry]: genSpecs.multicolumngenAr(testbase.schemaBaseValidatorPayload,entry)
+            }
+          ]
+          o.disableDate = true
+          o.searchtype = 'Columnwise'
+        }
+        testbase.payload = o
+        
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          var payloadCount = parseInt(
+            testbase.schemaBaseValidatorPayloadAr.length
+          )
+          genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
         })
       })
     })
