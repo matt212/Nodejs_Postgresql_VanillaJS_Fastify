@@ -1,3 +1,4 @@
+let Promises = require('bluebird')
 var supertest = require('supertest')
 var should = require('chai').should()
 var expect = require('chai').expect
@@ -155,6 +156,7 @@ let loadCurrentModule = function (data) {
 module.exports = {
   expect,
   dep,
+  Promises,
   genPayloadByNum,
   createModPayLoad,
   schemaValValidatorPayloadMaxLenght,

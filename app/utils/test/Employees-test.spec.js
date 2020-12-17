@@ -17,6 +17,7 @@ validationConfig.validationmap.push(recordstateobj)
 testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
   validationConfig
 )
+/*Generate multi insert payloads by passing second parameter as number recordset to generate*/
 testbase.schemaBaseValidatorPayloadAr = genSpecs.genPayloadByNum(
   validationConfig,
   2
@@ -42,7 +43,6 @@ genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
   // #1 should return home page
   before(function (done) {
-    
     genSpecs
       .loginsuccess()
       .then(genSpecs.loadCurrentModule)
@@ -51,7 +51,11 @@ describe('Begin Tests', function () {
         console.log(
           '****************login and loaded the module  successfully****************'
         )
-        done()
+        multiInsertforSearch().then(function (data) {
+          console.log('---Deletes--')
+          testbase.DelAr = data
+          done()
+        })
       })
   })
   let multiInsert = function (entry) {
@@ -66,53 +70,51 @@ describe('Begin Tests', function () {
     })
   }
   let multiDel = function (DelAr) {
-    var delObj=
-    {[testbase.evalModulename + 'id']:DelAr}
+    var delObj = { [testbase.evalModulename + 'id']: DelAr }
+
     return new Promise((resolve, reject) => {
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.delete
       testbase.responseCode = 200
       testbase.payload = delObj
       genSpecs.genericApiPost(testbase).then(function (data) {
-        console.log(data.body)
         resolve(data)
       })
     })
   }
-  let Promises = require('bluebird')
+
   let multiInsertforSearch = function () {
     return new Promise((resolve, reject) => {
-    Promises.mapSeries(
-      testbase.schemaBaseValidatorPayloadAr,
-      multiInsert
-    ).then(a => {
-      console.log('-------------------afte multi insert value')
-      resolve(a)
+      genSpecs.Promises.mapSeries(
+        testbase.schemaBaseValidatorPayloadAr,
+        multiInsert
+      ).then(a => {
+        console.log('-------------------afte multi insert value')
+        resolve(a)
+      })
     })
-  })
   }
   let multiDelete = function (ar) {
     return new Promise((resolve, reject) => {
-    Promises.mapSeries(
-      ar,
-      multiDel
-    ).then(a => {
-      console.log('-------------------after delete insert value')
-      //console.log(a)
-      resolve(a)
+      genSpecs.Promises.mapSeries(ar, multiDel).then(a => {
+        console.log('-------------------after delete insert value')
+        //console.log(a)
+        resolve(a)
+      })
     })
-  })
   }
 
-  
   after(function (done) {
-    genSpecs.server.post('/logout').end(function (err, data) {
-      if (err) return done(err)
-      console.log('****************logout successfully****************')
+    multiDelete(testbase.DelAr).then(function (data) {
+      console.log('-----------data cleanUp--------')
+      genSpecs.server.post('/logout').end(function (err, data) {
+        if (err) return done(err)
+        console.log('****************logout successfully****************')
 
-      data.statusCode.should.equal(200)
-      data.body.status.should.equal('success')
-      data.body.redirect.should.equal('/login')
-      done()
+        data.statusCode.should.equal(200)
+        data.body.status.should.equal('success')
+        data.body.redirect.should.equal('/login')
+        done()
+      })
     })
   })
   //success
@@ -121,20 +123,19 @@ describe('Begin Tests', function () {
     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
     testbase.payload = genSpecs.loadModulePayLoad
     testbase.responseCode = 200
-    
+
     genSpecs.genericApiPost(testbase).then(function (data) {
-      
       // console.log(data.body.rows)
       done()
     })
   })
-  it('loads as expected conventionally', function () {
-    return multiInsertforSearch().then(multiDelete).then(function(data)
-    {
-      
-    })
-  })
-  
+  // it('multi insert and multi Delete', function () {
+  //   return multiInsertforSearch().then(multiDelete).then(function(data)
+  //   {
+
+  //   })
+  // })
+
   // describe('****************Schema Removal Validation Test Cases****************', function () {
   //   testbase.schemaValValidatorPayload.forEach(function (entry) {
   //     it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
@@ -500,8 +501,63 @@ describe('Begin Tests', function () {
   //         })
   //       })
   //     })
-      
-   // })
- // })
-  
+
+  // })
+  // })
+
+  describe('****************Search Features Multi/MultiColumn Test Cases****************', function () {
+    Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
+      it(`Searching for ${entry} and getting expected Multi recordset `, function () {
+        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+        testbase.responseCode = 200
+        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+
+        let fieldtype = validationConfig.validationmap.filter(
+          o => o.inputname == entry
+        )[0].fieldtypename
+
+        if (fieldtype == 'DATE') {
+          o.daterange = {
+            startdate: new Date(
+              testbase.schemaBaseValidatorPayloadAr[0][entry]
+            ).toLocaleDateString(),
+            enddate: new Date(
+              testbase.schemaBaseValidatorPayloadAr[0][entry]
+            ).toLocaleDateString()
+          }
+          o.datecolsearch = entry
+          o.disableDate = false
+        } else if (fieldtype == 'boolean') {
+          o.searchparam = [
+            {
+              [entry]: [
+                testbase.schemaBaseValidatorPayloadAr[0][entry],
+                testbase.schemaBaseValidatorPayloadAr[1][entry]
+              ]
+            }
+          ]
+          o.disableDate = true
+          o.searchtype = 'Columnwise'
+        } else {
+          let interimval1 = testbase.schemaBaseValidatorPayloadAr[0][entry]
+          let interimval2 = testbase.schemaBaseValidatorPayloadAr[1][entry]
+          o.searchparam = [
+            {
+              [entry]: [interimval1.toLowerCase(), interimval2.toLowerCase()]
+            }
+          ]
+          o.disableDate = true
+          o.searchtype = 'Columnwise'
+        }
+        testbase.payload = o
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          genSpecs
+            .expect(parseInt(data.body.count))
+            .to.be.gte(parseInt(testbase.schemaBaseValidatorPayloadAr.length))
+          // let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+          // genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+        })
+      })
+    })
+  })
 })
