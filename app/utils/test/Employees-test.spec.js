@@ -52,7 +52,7 @@ describe('Begin Tests', function () {
           '****************login and loaded the module  successfully****************'
         )
         multiInsertforSearch().then(function (data) {
-          console.log('---Deletes--')
+          console.log('*****Multi Records are inserted sucessfully*****')
           testbase.DelAr = data
           done()
         })
@@ -88,7 +88,6 @@ describe('Begin Tests', function () {
         testbase.schemaBaseValidatorPayloadAr,
         multiInsert
       ).then(a => {
-        console.log('-------------------afte multi insert value')
         resolve(a)
       })
     })
@@ -96,7 +95,6 @@ describe('Begin Tests', function () {
   let multiDelete = function (ar) {
     return new Promise((resolve, reject) => {
       genSpecs.Promises.mapSeries(ar, multiDel).then(a => {
-        console.log('-------------------after delete insert value')
         //console.log(a)
         resolve(a)
       })
@@ -105,7 +103,7 @@ describe('Begin Tests', function () {
 
   after(function (done) {
     multiDelete(testbase.DelAr).then(function (data) {
-      console.log('-----------data cleanUp--------')
+      console.log('<<<<<<<data cleanUp Completed>>>>>>>')
       genSpecs.server.post('/logout').end(function (err, data) {
         if (err) return done(err)
         console.log('****************logout successfully****************')
@@ -551,11 +549,23 @@ describe('Begin Tests', function () {
         }
         testbase.payload = o
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          genSpecs
-            .expect(parseInt(data.body.count))
-            .to.be.gte(parseInt(testbase.schemaBaseValidatorPayloadAr.length))
-          // let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
-          // genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+          var payloadCount = parseInt(
+            testbase.schemaBaseValidatorPayloadAr.length
+          )
+          genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
+          var searchAssert = data.body.rows
+          var firstSet = searchAssert.filter(
+            word =>
+              (word[entry] = testbase.schemaBaseValidatorPayloadAr[0][entry])
+          )
+          var secondSet = searchAssert.filter(
+            word =>
+              (word[entry] = testbase.schemaBaseValidatorPayloadAr[1][entry])
+          )
+
+          genSpecs.expect(parseInt(firstSet.length)).to.be.gte(payloadCount)
+
+          genSpecs.expect(parseInt(secondSet.length)).to.be.gte(payloadCount)
         })
       })
     })
