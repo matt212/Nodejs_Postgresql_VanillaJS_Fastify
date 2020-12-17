@@ -7,7 +7,7 @@ let loadModulePayLoad = {
   searchparam: ['NA'],
   pageno: 0,
   pageSize: 20,
-  disableDate:true
+  disableDate: true
 }
 before(async () => {
   require('../app.js')
@@ -109,15 +109,14 @@ let schemaValueValidatorPayloadBlank = function (baseapplyFields, baseObj) {
 
   return interimAr
 }
-let multicolumngenAr=function(baseObj,fieldname)
-{
-  let interim3=datatransformutils.multicolumnSearchFilter(baseObj)
-  console.log(interim3)
-  interim3 = interim3.filter(function(a) {
-    return a.key ==fieldname; // if truthy then keep item
-})[0]
-console.log(JSON.stringify(interim3));
-return interim3.content
+let multicolumngenAr = function (baseObj, fieldname) {
+  let interim3 = datatransformutils.multicolumnSearchFilter(baseObj)
+
+  interim3 = interim3.filter(function (a) {
+    return a.key == fieldname // if truthy then keep item
+  })[0]
+  console.log(JSON.stringify(interim3))
+  return interim3.content
 }
 let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
   var interimAr = []
@@ -132,16 +131,12 @@ let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
 
   return interimAr
 }
-let genPayloadByNum=function(validationConfig,num)
-{
-  var interim=[]
-  for (i=0;i<=num-1;i++)
-  {
-    interim.push(createModPayLoad(
-      validationConfig
-    ))
+let genPayloadByNum = function (validationConfig, num) {
+  var interim = []
+  for (i = 0; i <= num - 1; i++) {
+    interim.push(createModPayLoad(validationConfig))
   }
-  return interim;
+  return interim
 }
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {

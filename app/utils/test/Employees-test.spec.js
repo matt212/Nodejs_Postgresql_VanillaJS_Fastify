@@ -17,7 +17,7 @@ validationConfig.validationmap.push(recordstateobj)
 testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
   validationConfig
 )
-console.log(testbase.schemaBaseValidatorPayload)
+
 /*Generate multi insert payloads by passing second parameter as number recordset to generate*/
 testbase.schemaBaseValidatorPayloadAr = genSpecs.genPayloadByNum(
   validationConfig,
@@ -52,11 +52,13 @@ describe('Begin Tests', function () {
         console.log(
           '****************login and loaded the module  successfully****************'
         )
-        multiInsertforSearch().then(function (data) {
-          console.log('*****Multi Records are inserted sucessfully*****')
-          testbase.DelAr = data
-          done()
-        })
+        multiInsert(testbase.schemaBaseValidatorPayload)
+          .then(multiInsertforSearch)
+          .then(function (data) {
+            console.log('*****Multi Records are inserted sucessfully*****')
+            testbase.DelAr = data
+            done()
+          })
       })
   })
   let multiInsert = function (entry) {
@@ -65,7 +67,7 @@ describe('Begin Tests', function () {
       testbase.responseCode = 200
       testbase.payload = entry
       genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.createdId
+        console.log(entry)
         resolve(data.body.createdId)
       })
     })
@@ -83,7 +85,11 @@ describe('Begin Tests', function () {
     })
   }
 
-  let multiInsertforSearch = function () {
+  let multiInsertforSearch = function (createdID) {
+    if (createdID != undefined) {
+      testbase.singleInsertID = createdID
+    }
+
     return new Promise((resolve, reject) => {
       genSpecs.Promises.mapSeries(
         testbase.schemaBaseValidatorPayloadAr,
@@ -103,6 +109,9 @@ describe('Begin Tests', function () {
   }
 
   after(function (done) {
+    if (testbase.singleInsertID != undefined) {
+      testbase.DelAr.push(testbase.singleInsertID)
+    }
     multiDelete(testbase.DelAr).then(function (data) {
       console.log('<<<<<<<data cleanUp Completed>>>>>>>')
       genSpecs.server.post('/logout').end(function (err, data) {
@@ -594,30 +603,20 @@ describe('Begin Tests', function () {
           o.datecolsearch = entry
           o.disableDate = false
         } else if (fieldtype == 'boolean') {
-          o.searchparam = [
-            {
-              [entry]: [testbase.schemaBaseValidatorPayload[entry]]
-            }
-          ]
-          o.disableDate = true
-          o.searchtype = 'Columnwise'
+          /*there cannot be multi boolean Filter */
         } else {
-          
-          o.searchparam = [
-            {
-              [entry]: genSpecs.multicolumngenAr(testbase.schemaBaseValidatorPayload,entry)
-            }
-          ]
+          o.searchparam = genSpecs.multicolumngenAr(
+            testbase.schemaBaseValidatorPayload,
+            entry
+          )
+
           o.disableDate = true
           o.searchtype = 'Columnwise'
         }
         testbase.payload = o
-        
+
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          var payloadCount = parseInt(
-            testbase.schemaBaseValidatorPayloadAr.length
-          )
-          genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
+          genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
         })
       })
     })

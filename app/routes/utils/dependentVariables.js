@@ -1782,11 +1782,12 @@ let datatransformutils = {
     })
   },
   multicolumnSearchFilter: function (baseobj) {
+    delete baseobj["recordstate"]
     let interim1 = function (interim) {
       var interimAr1 = []
       Object.keys(interim).forEach(function (data) {
         interimAr1.push({
-          [data]: [interim[data]]
+          [data]: [interim[data].toString().toLowerCase()]
         })
       })
       return interimAr1

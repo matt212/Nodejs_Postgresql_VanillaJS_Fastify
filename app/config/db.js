@@ -125,11 +125,16 @@ module.exports.query = function (sql) {
             }
             client.query(sql, function (err, result) {
                 if (err) {
+                    console.log(sql)
                     release(true)
                     reject(err)
+                }else
+                {
+                    release(true);
+                    resolve(result);
                 }
-                release(true);
-                resolve(result);
+                
+                
             })
         });
     })
