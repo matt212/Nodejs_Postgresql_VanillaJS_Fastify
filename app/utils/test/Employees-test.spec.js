@@ -429,10 +429,13 @@ describe('Begin Tests', function () {
             }
 
             testbase.payload = o
-            console.log(testbase.payload)
+
             return genSpecs.genericApiPost(testbase).then(function (data) {
               console.log(data.body.rows.length)
               console.log(data.body.count)
+              let interimval = testbase.schemaBaseValidatorPayload[entry]
+
+              genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
             })
           })
         })
