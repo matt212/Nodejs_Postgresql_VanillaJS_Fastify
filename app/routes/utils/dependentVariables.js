@@ -1563,6 +1563,19 @@ let deleteRecord = (req, res) => {
       res.send(affectedRows)
     })
 }
+let deleteHardRecord = (req, res) => {
+  models[mod.Name]
+    .destroy(
+      {
+        where: {
+          [mod.id]: req.body[mod.id]
+        }
+      }
+    )
+    .then(affectedRows => {
+      res.send(affectedRows)
+    })
+}
 let pivotResult = (req, res, a) => {
   let async = require('async')
   let tempDep = pivotTransform(req)
@@ -1849,6 +1862,7 @@ let baseUtilsRoutes = {
 }
 module.exports = {
   datatransformutils,
+  deleteHardRecord,
   cGzip,
   baseUtilsRoutes,
   routeUrls,

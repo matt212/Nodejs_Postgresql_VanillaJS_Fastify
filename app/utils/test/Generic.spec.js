@@ -121,7 +121,17 @@ let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
 
   return interimAr
 }
-
+let genPayloadByNum=function(validationConfig,num)
+{
+  var interim=[]
+  for (i=0;i<=num-1;i++)
+  {
+    interim.push(createModPayLoad(
+      validationConfig
+    ))
+  }
+  return interim;
+}
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
     if (data.status == 'pass') {
@@ -145,6 +155,7 @@ let loadCurrentModule = function (data) {
 module.exports = {
   expect,
   dep,
+  genPayloadByNum,
   createModPayLoad,
   schemaValValidatorPayloadMaxLenght,
   datatransformutils,

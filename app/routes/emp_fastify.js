@@ -132,7 +132,7 @@ async function routes (fastify, options) {
     },
     async (request, reply) => {
       dep.assignVariables(mod)
-      dep.deleteRecord(request, reply)
+      dep.deleteHardRecord(request, reply)
     }
   )
   fastify.post(

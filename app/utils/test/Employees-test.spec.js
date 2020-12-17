@@ -17,6 +17,10 @@ validationConfig.validationmap.push(recordstateobj)
 testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
   validationConfig
 )
+testbase.schemaBaseValidatorPayloadAr = genSpecs.genPayloadByNum(
+  validationConfig,
+  2
+)
 
 /*Schema validatior with removing one by ony fields*/
 testbase.schemaValValidatorPayload = genSpecs.schemaValueValidatorPayload(
@@ -38,6 +42,7 @@ genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
   // #1 should return home page
   before(function (done) {
+    
     genSpecs
       .loginsuccess()
       .then(genSpecs.loadCurrentModule)
@@ -49,7 +54,56 @@ describe('Begin Tests', function () {
         done()
       })
   })
+  let multiInsert = function (entry) {
+    return new Promise((resolve, reject) => {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+      testbase.responseCode = 200
+      testbase.payload = entry
+      genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.createdId
+        resolve(data.body.createdId)
+      })
+    })
+  }
+  let multiDel = function (DelAr) {
+    var delObj=
+    {[testbase.evalModulename + 'id']:DelAr}
+    return new Promise((resolve, reject) => {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.delete
+      testbase.responseCode = 200
+      testbase.payload = delObj
+      genSpecs.genericApiPost(testbase).then(function (data) {
+        console.log(data.body)
+        resolve(data)
+      })
+    })
+  }
+  let Promises = require('bluebird')
+  let multiInsertforSearch = function () {
+    return new Promise((resolve, reject) => {
+    Promises.mapSeries(
+      testbase.schemaBaseValidatorPayloadAr,
+      multiInsert
+    ).then(a => {
+      console.log('-------------------afte multi insert value')
+      resolve(a)
+    })
+  })
+  }
+  let multiDelete = function (ar) {
+    return new Promise((resolve, reject) => {
+    Promises.mapSeries(
+      ar,
+      multiDel
+    ).then(a => {
+      console.log('-------------------after delete insert value')
+      //console.log(a)
+      resolve(a)
+    })
+  })
+  }
 
+  
   after(function (done) {
     genSpecs.server.post('/logout').end(function (err, data) {
       if (err) return done(err)
@@ -67,379 +121,387 @@ describe('Begin Tests', function () {
     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[0]
     testbase.payload = genSpecs.loadModulePayLoad
     testbase.responseCode = 200
-    console.log(testbase.payload)
+    
     genSpecs.genericApiPost(testbase).then(function (data) {
-      console.log(data.body.count)
+      
       // console.log(data.body.rows)
       done()
     })
   })
-  describe('****************Schema Removal Validation Test Cases****************', function () {
-    testbase.schemaValValidatorPayload.forEach(function (entry) {
-      it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-        testbase.responseCode = 400
-        testbase.payload = entry.schemaContent
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.statusCode.should.equal(400)
-          data.body.error.should.equal('Bad Request')
-
-          data.body.message.should.equal(
-            `body should have required property '${entry.key}'`
-          )
-        })
-      })
+  it('loads as expected conventionally', function () {
+    return multiInsertforSearch().then(multiDelete).then(function(data)
+    {
+      
     })
   })
-  describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
-    testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
-      it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-        testbase.responseCode = 400
-        testbase.payload = entry.schemaContent
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.error.should.equal('Bad Request')
+  
+  // describe('****************Schema Removal Validation Test Cases****************', function () {
+  //   testbase.schemaValValidatorPayload.forEach(function (entry) {
+  //     it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+  //       testbase.responseCode = 400
+  //       testbase.payload = entry.schemaContent
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.statusCode.should.equal(400)
+  //         data.body.error.should.equal('Bad Request')
 
-          let fieldtype = validationConfig.validationmap.filter(
-            o => o.inputname == entry.key
-          )[0].fieldtypename
-          if (fieldtype == 'boolean') {
-            data.body.message.should.equal(
-              `body.${entry.key} should be boolean`
-            )
-          } else if (fieldtype == 'DATE') {
-            data.body.message.should.equal(
-              `body.${entry.key} should match format "date-time"`
-            )
-          } else {
-            data.body.message.should.equal(
-              `body.${entry.key} should NOT be shorter than 1 characters`
-            )
-          }
-        })
-      })
-    })
-  })
+  //         data.body.message.should.equal(
+  //           `body should have required property '${entry.key}'`
+  //         )
+  //       })
+  //     })
+  //   })
+  // })
+  // describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
+  //   testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
+  //     it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+  //       testbase.responseCode = 400
+  //       testbase.payload = entry.schemaContent
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.error.should.equal('Bad Request')
 
-  describe('****************Schema MaxLenght Validation Test Cases****************', function () {
-    testbase.schemaValValidatorPayloadMaxLenght.forEach(function (entry) {
-      it(`For insert Operation test case By assigning ${entry.key} as maxLenght of fields value from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-        testbase.responseCode = 400
-        testbase.payload = entry.schemaContent
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          let fieldtype = validationConfig.validationmap.filter(
-            o => o.inputname == entry.key
-          )[0]
-          if (fieldtype.fieldtypename == 'boolean') {
-            data.body.message.should.equal(
-              `body.${entry.key} should be boolean`
-            )
-          } else if (fieldtype.fieldtypename == 'DATE') {
-            data.body.message.should.equal(
-              `body.${entry.key} should match format "date-time"`
-            )
-          } else {
-            data.body.message.should.equal(
-              `body.${entry.key} should NOT be longer than ${fieldtype.fieldmaxlength} characters`
-            )
-          }
-        })
-      })
-    })
-  })
-  describe(/**/ '****************Valid Record Insertion Validation Test Cases****************', function () {
-    it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-      testbase.responseCode = 200
-      testbase.payload = testbase.schemaBaseValidatorPayload
+  //         let fieldtype = validationConfig.validationmap.filter(
+  //           o => o.inputname == entry.key
+  //         )[0].fieldtypename
+  //         if (fieldtype == 'boolean') {
+  //           data.body.message.should.equal(
+  //             `body.${entry.key} should be boolean`
+  //           )
+  //         } else if (fieldtype == 'DATE') {
+  //           data.body.message.should.equal(
+  //             `body.${entry.key} should match format "date-time"`
+  //           )
+  //         } else {
+  //           data.body.message.should.equal(
+  //             `body.${entry.key} should NOT be shorter than 1 characters`
+  //           )
+  //         }
+  //       })
+  //     })
+  //   })
+  // })
 
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.Message.should.equal('Record SuccessFully Inserted')
-        genSpecs.expect(data.body.createdId).to.be.a('number')
-        testbase.InsertID = data.body.createdId
-      })
-    })
-  })
-  describe('****************Invalid Record Updation by Schema Removal Validation Test Cases****************', function () {
-    it(`For  Update Operation test cases By passing as removing UpdatedID in the  payload to Evaluate   if we are getting valid return field `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
-      testbase.responseCode = 400
-      testbase.payload = testbase.schemaBaseValidatorPayload
+  // describe('****************Schema MaxLenght Validation Test Cases****************', function () {
+  //   testbase.schemaValValidatorPayloadMaxLenght.forEach(function (entry) {
+  //     it(`For insert Operation test case By assigning ${entry.key} as maxLenght of fields value from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+  //       testbase.responseCode = 400
+  //       testbase.payload = entry.schemaContent
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         let fieldtype = validationConfig.validationmap.filter(
+  //           o => o.inputname == entry.key
+  //         )[0]
+  //         if (fieldtype.fieldtypename == 'boolean') {
+  //           data.body.message.should.equal(
+  //             `body.${entry.key} should be boolean`
+  //           )
+  //         } else if (fieldtype.fieldtypename == 'DATE') {
+  //           data.body.message.should.equal(
+  //             `body.${entry.key} should match format "date-time"`
+  //           )
+  //         } else {
+  //           data.body.message.should.equal(
+  //             `body.${entry.key} should NOT be longer than ${fieldtype.fieldmaxlength} characters`
+  //           )
+  //         }
+  //       })
+  //     })
+  //   })
+  // })
+  // describe(/**/ '****************Valid Record Insertion Validation Test Cases****************', function () {
+  //   it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
+  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
+  //     testbase.responseCode = 200
+  //     testbase.payload = testbase.schemaBaseValidatorPayload
 
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
-        data.body.message.should.equal(
-          `body should have required property '${testbase.evalModulename}id'`
-        )
-      })
-    })
-  })
-  describe('****************Invalid Record Updation by Schema NaN Validation Test Cases****************', function () {
-    it(`For  Update Operation test cases By passing as  UpdatedID as NaN in the  payload to Evaluate   if we are getting valid return field `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
-      testbase.responseCode = 400
-      testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] = NaN
-      testbase.payload = testbase.schemaBaseValidatorPayload
+  //     return genSpecs.genericApiPost(testbase).then(function (data) {
+  //       data.body.Message.should.equal('Record SuccessFully Inserted')
+  //       genSpecs.expect(data.body.createdId).to.be.a('number')
+  //       testbase.InsertID = data.body.createdId
+  //     })
+  //   })
+  // })
+  // describe('****************Invalid Record Updation by Schema Removal Validation Test Cases****************', function () {
+  //   it(`For  Update Operation test cases By passing as removing UpdatedID in the  payload to Evaluate   if we are getting valid return field `, function () {
+  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+  //     testbase.responseCode = 400
+  //     testbase.payload = testbase.schemaBaseValidatorPayload
 
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
-        data.body.message.should.equal(
-          `body.${testbase.evalModulename}id should be >= 1`
-        )
-      })
-    })
-  })
-  describe('****************Invalid Record Updation by Schema undefined Validation Test Cases****************', function () {
-    it(`For  Update Operation test cases By passing as  UpdatedID as undefined in the  payload to Evaluate   if we are getting valid return field `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
-      testbase.responseCode = 400
-      testbase.schemaBaseValidatorPayload[
-        testbase.evalModulename + 'id'
-      ] = undefined
-      testbase.payload = testbase.schemaBaseValidatorPayload
+  //     return genSpecs.genericApiPost(testbase).then(function (data) {
+  //       data.body.error.should.equal('Bad Request')
+  //       data.body.message.should.equal(
+  //         `body should have required property '${testbase.evalModulename}id'`
+  //       )
+  //     })
+  //   })
+  // })
+  // describe('****************Invalid Record Updation by Schema NaN Validation Test Cases****************', function () {
+  //   it(`For  Update Operation test cases By passing as  UpdatedID as NaN in the  payload to Evaluate   if we are getting valid return field `, function () {
+  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+  //     testbase.responseCode = 400
+  //     testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] = NaN
+  //     testbase.payload = testbase.schemaBaseValidatorPayload
 
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.error.should.equal('Bad Request')
-        data.body.message.should.equal(
-          `body should have required property '${testbase.evalModulename}id'`
-        )
-      })
-    })
-  })
-  describe('****************Valid Record Updation Validation Test Cases****************', function () {
-    it(`For  Update Operation test cases By passing as  UpdatedID as valid value in the  payload to Evaluate   if we are getting valid return field `, function () {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
-      testbase.responseCode = 200
-      testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] =
-        testbase.InsertID
-      testbase.payload = testbase.schemaBaseValidatorPayload
+  //     return genSpecs.genericApiPost(testbase).then(function (data) {
+  //       data.body.error.should.equal('Bad Request')
+  //       data.body.message.should.equal(
+  //         `body.${testbase.evalModulename}id should be >= 1`
+  //       )
+  //     })
+  //   })
+  // })
+  // describe('****************Invalid Record Updation by Schema undefined Validation Test Cases****************', function () {
+  //   it(`For  Update Operation test cases By passing as  UpdatedID as undefined in the  payload to Evaluate   if we are getting valid return field `, function () {
+  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+  //     testbase.responseCode = 400
+  //     testbase.schemaBaseValidatorPayload[
+  //       testbase.evalModulename + 'id'
+  //     ] = undefined
+  //     testbase.payload = testbase.schemaBaseValidatorPayload
 
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        genSpecs
-          .expect(data.body[1][testbase.evalModulename + 'id'])
-          .to.equal(testbase.InsertID)
-      })
-    })
-  })
-  describe('****************Parent Payload Validation Test Cases****************', function () {
-    describe('****************Dates SearchParam Validation Test Cases****************', function () {
-      it(`without date filter payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.disableDate = true
-        testbase.payload = o
-        testbase.responseCode = 200
+  //     return genSpecs.genericApiPost(testbase).then(function (data) {
+  //       data.body.error.should.equal('Bad Request')
+  //       data.body.message.should.equal(
+  //         `body should have required property '${testbase.evalModulename}id'`
+  //       )
+  //     })
+  //   })
+  // })
+  // describe('****************Valid Record Updation Validation Test Cases****************', function () {
+  //   it(`For  Update Operation test cases By passing as  UpdatedID as valid value in the  payload to Evaluate   if we are getting valid return field `, function () {
+  //     testbase.apiUrl = '/' + evalModulename + genSpecs.dep.update
+  //     testbase.responseCode = 200
+  //     testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] =
+  //       testbase.InsertID
+  //     testbase.payload = testbase.schemaBaseValidatorPayload
 
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
+  //     return genSpecs.genericApiPost(testbase).then(function (data) {
+  //       genSpecs
+  //         .expect(data.body[1][testbase.evalModulename + 'id'])
+  //         .to.equal(testbase.InsertID)
+  //     })
+  //   })
+  // })
+  // describe('****************Parent Payload Validation Test Cases****************', function () {
+  //   describe('****************Dates SearchParam Validation Test Cases****************', function () {
+  //     it(`without date filter payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.disableDate = true
+  //       testbase.payload = o
+  //       testbase.responseCode = 200
 
-          genSpecs
-            .expect(data.body.rows.length)
-            .to.be.lte(testbase.payload.pageSize)
-        })
-      })
-      it(`date filter startdate Nan payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange = {
-          startdate: NaN,
-          enddate: '2019-01-29'
-        }
-        o.disableDate = false
-        testbase.payload = o
-        testbase.responseCode = 400
-        //console.log(testbase)
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.error.should.equal('Bad Request')
-          data.body.message.should.equal(
-            `body.daterange.startdate should NOT be shorter than 1 characters`
-          )
-        })
-      })
-      it(`date filter enddate Nan payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange = {
-          startdate: '1982-01-29',
-          enddate: NaN
-        }
-        o.disableDate = false
-        testbase.payload = o
-        testbase.responseCode = 400
-        //console.log(testbase)
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.error.should.equal('Bad Request')
-          data.body.message.should.equal(
-            `body.daterange.enddate should NOT be shorter than 1 characters`
-          )
-        })
-      })
-      it(`date filter startdate Undefined payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange = {
-          startdate: undefined,
-          enddate: '1982-01-29'
-        }
-        o.disableDate = false
-        testbase.payload = o
-        testbase.responseCode = 400
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
 
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.error.should.equal('Bad Request')
-          data.body.message.should.equal(
-            `body.daterange should have required property 'startdate'`
-          )
-        })
-      })
-      it(`date filter enddate Undefined payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange = {
-          startdate: '1982-01-29',
-          enddate: undefined
-        }
-        o.disableDate = false
-        testbase.payload = o
-        testbase.responseCode = 400
-        //console.log(testbase)
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.error.should.equal('Bad Request')
-          data.body.message.should.equal(
-            `body.daterange should have required property 'enddate'`
-          )
-        })
-      })
-    })
-    describe('****************Payload Param Validation Test Cases****************', function () {
-      it(`filter with pageSize as NaN  payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.pageSize = NaN
-        testbase.payload = o
-        testbase.responseCode = 400
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.message.should.equal(`body.pageSize should be >= 1`)
-        })
-      })
-      it(`filter with pageSize as undefined  payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.pageSize = undefined
-        testbase.payload = o
-        testbase.responseCode = 400
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.message.should.equal(
-            `body should have required property '.pageSize'`
-          )
-        })
-      })
-      it(`filter with pageno as undefined  payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.pageno = undefined
-        testbase.payload = o
-        testbase.responseCode = 400
+  //         genSpecs
+  //           .expect(data.body.rows.length)
+  //           .to.be.lte(testbase.payload.pageSize)
+  //       })
+  //     })
+  //     it(`date filter startdate Nan payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.daterange = {
+  //         startdate: NaN,
+  //         enddate: '2019-01-29'
+  //       }
+  //       o.disableDate = false
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
+  //       //console.log(testbase)
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.error.should.equal('Bad Request')
+  //         data.body.message.should.equal(
+  //           `body.daterange.startdate should NOT be shorter than 1 characters`
+  //         )
+  //       })
+  //     })
+  //     it(`date filter enddate Nan payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.daterange = {
+  //         startdate: '1982-01-29',
+  //         enddate: NaN
+  //       }
+  //       o.disableDate = false
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
+  //       //console.log(testbase)
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.error.should.equal('Bad Request')
+  //         data.body.message.should.equal(
+  //           `body.daterange.enddate should NOT be shorter than 1 characters`
+  //         )
+  //       })
+  //     })
+  //     it(`date filter startdate Undefined payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.daterange = {
+  //         startdate: undefined,
+  //         enddate: '1982-01-29'
+  //       }
+  //       o.disableDate = false
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
 
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.message.should.equal(
-            `body should have required property \'.pageno\'`
-          )
-        })
-      })
-      it(`filter with datecolsearch as NaN  payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange = {
-          startdate: '1982-01-29',
-          enddate: '1982-01-29'
-        }
-        o.datecolsearch = NaN
-        o.disableDate = false
-        testbase.payload = o
-        testbase.responseCode = 400
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.error.should.equal('Bad Request')
+  //         data.body.message.should.equal(
+  //           `body.daterange should have required property 'startdate'`
+  //         )
+  //       })
+  //     })
+  //     it(`date filter enddate Undefined payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.daterange = {
+  //         startdate: '1982-01-29',
+  //         enddate: undefined
+  //       }
+  //       o.disableDate = false
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
+  //       //console.log(testbase)
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.error.should.equal('Bad Request')
+  //         data.body.message.should.equal(
+  //           `body.daterange should have required property 'enddate'`
+  //         )
+  //       })
+  //     })
+  //   })
+  //   describe('****************Payload Param Validation Test Cases****************', function () {
+  //     it(`filter with pageSize as NaN  payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.pageSize = NaN
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.message.should.equal(`body.pageSize should be >= 1`)
+  //       })
+  //     })
+  //     it(`filter with pageSize as undefined  payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.pageSize = undefined
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.message.should.equal(
+  //           `body should have required property '.pageSize'`
+  //         )
+  //       })
+  //     })
+  //     it(`filter with pageno as undefined  payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.pageno = undefined
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
 
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.message.should.equal(
-            `body.datecolsearch should NOT be shorter than 1 characters`
-          )
-        })
-      })
-      it(`filter with datecolsearch as undefined  payload `, function () {
-        testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-        var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-        o.daterange = {
-          startdate: '1982-01-29',
-          enddate: '1982-01-29'
-        }
-        o.datecolsearch = undefined
-        o.disableDate = false
-        testbase.payload = o
-        testbase.responseCode = 400
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.message.should.equal(
+  //           `body should have required property \'.pageno\'`
+  //         )
+  //       })
+  //     })
+  //     it(`filter with datecolsearch as NaN  payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.daterange = {
+  //         startdate: '1982-01-29',
+  //         enddate: '1982-01-29'
+  //       }
+  //       o.datecolsearch = NaN
+  //       o.disableDate = false
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
 
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.message.should.equal(
-            `body should have required property '.datecolsearch'`
-          )
-        })
-      })
-      describe('****************Search Features Single/MultiColumn Test Cases****************', function () {
-        Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (
-          entry
-        ) {
-          it(`Searching for ${entry} and getting expected single recordset `, function () {
-            testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-            testbase.responseCode = 200
-            var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.message.should.equal(
+  //           `body.datecolsearch should NOT be shorter than 1 characters`
+  //         )
+  //       })
+  //     })
+  //     it(`filter with datecolsearch as undefined  payload `, function () {
+  //       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+  //       o.daterange = {
+  //         startdate: '1982-01-29',
+  //         enddate: '1982-01-29'
+  //       }
+  //       o.datecolsearch = undefined
+  //       o.disableDate = false
+  //       testbase.payload = o
+  //       testbase.responseCode = 400
 
-            let fieldtype = validationConfig.validationmap.filter(
-              o => o.inputname == entry
-            )[0].fieldtypename
+  //       return genSpecs.genericApiPost(testbase).then(function (data) {
+  //         data.body.message.should.equal(
+  //           `body should have required property '.datecolsearch'`
+  //         )
+  //       })
+  //     })
 
-            if (fieldtype == 'DATE') {
-              o.daterange = {
-                startdate: new Date(
-                  testbase.schemaBaseValidatorPayload[entry]
-                ).toLocaleDateString(),
-                enddate: new Date(
-                  testbase.schemaBaseValidatorPayload[entry]
-                ).toLocaleDateString()
-              }
-              o.datecolsearch = entry
-              o.disableDate = false
-            } else if (fieldtype == 'boolean') {
-              o.searchparam = [
-                {
-                  [entry]: [testbase.schemaBaseValidatorPayload[entry]]
-                }
-              ]
-              o.disableDate = true
-              o.searchtype = 'Columnwise'
-            } else {
-              let interimval = testbase.schemaBaseValidatorPayload[entry]
+  //     describe('****************Search Features Single/MultiColumn Test Cases****************', function () {
+  //       Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (
+  //         entry
+  //       ) {
+  //         it(`Searching for ${entry} and getting expected single recordset `, function () {
+  //           testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+  //           testbase.responseCode = 200
+  //           var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
 
-              o.searchparam = [
-                {
-                  [entry]: [interimval.toLowerCase()]
-                }
-              ]
-              o.disableDate = true
-              o.searchtype = 'Columnwise'
-            }
+  //           let fieldtype = validationConfig.validationmap.filter(
+  //             o => o.inputname == entry
+  //           )[0].fieldtypename
 
-            testbase.payload = o
+  //           if (fieldtype == 'DATE') {
+  //             o.daterange = {
+  //               startdate: new Date(
+  //                 testbase.schemaBaseValidatorPayload[entry]
+  //               ).toLocaleDateString(),
+  //               enddate: new Date(
+  //                 testbase.schemaBaseValidatorPayload[entry]
+  //               ).toLocaleDateString()
+  //             }
+  //             o.datecolsearch = entry
+  //             o.disableDate = false
+  //           } else if (fieldtype == 'boolean') {
+  //             o.searchparam = [
+  //               {
+  //                 [entry]: [testbase.schemaBaseValidatorPayload[entry]]
+  //               }
+  //             ]
+  //             o.disableDate = true
+  //             o.searchtype = 'Columnwise'
+  //           } else {
+  //             let interimval = testbase.schemaBaseValidatorPayload[entry]
 
-            return genSpecs.genericApiPost(testbase).then(function (data) {
-              console.log(data.body.rows.length)
-              console.log(data.body.count)
-              let interimval = testbase.schemaBaseValidatorPayload[entry]
+  //             o.searchparam = [
+  //               {
+  //                 [entry]: [interimval.toLowerCase()]
+  //               }
+  //             ]
+  //             o.disableDate = true
+  //             o.searchtype = 'Columnwise'
+  //           }
 
-              genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
-            })
-          })
-        })
-      })
-    })
-  })
+  //           testbase.payload = o
+
+  //           return genSpecs.genericApiPost(testbase).then(function (data) {
+  //             let interimval = testbase.schemaBaseValidatorPayload[entry]
+
+  //             genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+  //           })
+  //         })
+  //       })
+  //     })
+      
+   // })
+ // })
+  
 })
