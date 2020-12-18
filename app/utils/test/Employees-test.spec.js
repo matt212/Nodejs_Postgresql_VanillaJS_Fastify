@@ -347,13 +347,10 @@ describe('Begin Tests', function () {
   })
 
   it(`Consolidated ResultSet Search param as undefined working as expected`, function () {
-    testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
-    testbase.responseCode = 400
-    var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-    o.basesearcharconsolidated = undefined
-    o.disableDate = true
-    o.searchtype = 'consolidatesearch'
-    testbase.payload = o
+    testbase = genSpecs
+      .consolidatedPayload()
+      .payload21(testbase, evalModulename)
+
     return genSpecs.genericApiPost(testbase).then(function (data) {
       data.body.message.should.equal(
         `body should have required property \'.basesearcharconsolidated\'`

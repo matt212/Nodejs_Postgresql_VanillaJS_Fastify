@@ -542,41 +542,46 @@ let consolidatedPayload = function () {
       testbase.payload = o1
       return testbase
     }),
-    (o.payload19 = function (testbase,entry,evalModulename,validationConfig) {
+    (o.payload19 = function (
+      testbase,
+      entry,
+      evalModulename,
+      validationConfig
+    ) {
       testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-        testbase.responseCode = 200
-        var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+      testbase.responseCode = 200
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-        let fieldtype = validationConfig.validationmap.filter(
-          o1 => o1.inputname == entry
-        )[0].fieldtypename
+      let fieldtype = validationConfig.validationmap.filter(
+        o1 => o1.inputname == entry
+      )[0].fieldtypename
 
-        if (fieldtype == 'DATE') {
-          o1.daterange = {
-            startdate: new Date(
-              testbase.schemaBaseValidatorPayload[entry]
-            ).toLocaleDateString(),
-            enddate: new Date(
-              testbase.schemaBaseValidatorPayload[entry]
-            ).toLocaleDateString()
-          }
-          o1.datecolsearch = entry
-          o1.disableDate = false
-        } else if (fieldtype == 'boolean') {
-          /*there cannot be multi boolean Filter */
-        } else {
-          o1.searchparam = multicolumngenAr(
-            testbase.schemaBaseValidatorPayload,
-            entry
-          )
-
-          o1.disableDate = true
-          o1.searchtype = 'Columnwise'
+      if (fieldtype == 'DATE') {
+        o1.daterange = {
+          startdate: new Date(
+            testbase.schemaBaseValidatorPayload[entry]
+          ).toLocaleDateString(),
+          enddate: new Date(
+            testbase.schemaBaseValidatorPayload[entry]
+          ).toLocaleDateString()
         }
-        testbase.payload = o1
-return testbase
+        o1.datecolsearch = entry
+        o1.disableDate = false
+      } else if (fieldtype == 'boolean') {
+        /*there cannot be multi boolean Filter */
+      } else {
+        o1.searchparam = multicolumngenAr(
+          testbase.schemaBaseValidatorPayload,
+          entry
+        )
+
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      }
+      testbase.payload = o1
+      return testbase
     }),
-    (o.payload20 = function (testbase,evalModulename,validationConfig) {
+    (o.payload20 = function (testbase, evalModulename, validationConfig) {
       testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
@@ -597,6 +602,17 @@ return testbase
       testbase.payload = o1
       return testbase
     })
+  o.payload21 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 400
+    var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o.basesearcharconsolidated = undefined
+    o.disableDate = true
+    o.searchtype = 'consolidatesearch'
+    testbase.payload = o
+    return testbase
+  }
+
   return o
 }
 module.exports = {
