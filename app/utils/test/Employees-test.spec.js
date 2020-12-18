@@ -14,7 +14,7 @@ var recordstateobj = {
 }
 validationConfig.validationmap.push(recordstateobj)
 /*for getting and passing to rest of tests fields and validationConfig*/
-testbase=genSpecs.customTestsInit(testbase,validationConfig);
+testbase = genSpecs.customTestsInit(testbase, validationConfig)
 
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
@@ -28,77 +28,43 @@ describe('Begin Tests', function () {
         console.log(
           '****************login and loaded the module  successfully****************'
         )
-        multiInsert(testbase.schemaBaseValidatorPayload)
-          .then(multiInsertforSearch)
+        genSpecs
+          .customMultiInsertDelete(testbase, testbase.evalModulename)
+          .multiInsert(testbase.schemaBaseValidatorPayload)
+          .then(
+            genSpecs.customMultiInsertDelete(testbase, testbase.evalModulename)
+              .multiInsertforSearch
+          )
           .then(function (data) {
             console.log('*****Multi Records are inserted sucessfully*****')
+
             testbase.DelAr = data
+            testbase.singleInsertID = data.singleInsertID
             done()
           })
       })
   })
-  let multiInsert = function (entry) {
-    return new Promise((resolve, reject) => {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.create
-      testbase.responseCode = 200
-      testbase.payload = entry
-      genSpecs.genericApiPost(testbase).then(function (data) {
-        resolve(data.body.createdId)
-      })
-    })
-  }
-  let multiDel = function (DelAr) {
-    var delObj = { [testbase.evalModulename + 'id']: DelAr }
-
-    return new Promise((resolve, reject) => {
-      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.delete
-      testbase.responseCode = 200
-      testbase.payload = delObj
-      genSpecs.genericApiPost(testbase).then(function (data) {
-        resolve(data)
-      })
-    })
-  }
-
-  let multiInsertforSearch = function (createdID) {
-    if (createdID != undefined) {
-      testbase.singleInsertID = createdID
-    }
-
-    return new Promise((resolve, reject) => {
-      genSpecs.Promises.mapSeries(
-        testbase.schemaBaseValidatorPayloadAr,
-        multiInsert
-      ).then(a => {
-        resolve(a)
-      })
-    })
-  }
-  let multiDelete = function (ar) {
-    return new Promise((resolve, reject) => {
-      genSpecs.Promises.mapSeries(ar, multiDel).then(a => {
-        //console.log(a)
-        resolve(a)
-      })
-    })
-  }
 
   after(function (done) {
     if (testbase.singleInsertID != undefined) {
       testbase.DelAr.push(testbase.singleInsertID)
     }
-    multiDelete(testbase.DelAr).then(function (data) {
-      console.log('<<<<<<<data cleanUp Completed>>>>>>>')
-      genSpecs.server.post('/logout').end(function (err, data) {
-        if (err) return done(err)
-        console.log('****************logout successfully****************')
 
-        data.statusCode.should.equal(200)
-        data.body.status.should.equal('success')
-        data.body.redirect.should.equal('/login')
-        done()
+    genSpecs
+      .customMultiInsertDelete(testbase, testbase.evalModulename)
+      .multiDelete(testbase.DelAr)
+      .then(function (data) {
+        console.log('<<<<<<<data cleanUp Completed>>>>>>>')
+        genSpecs.server.post('/logout').end(function (err, data) {
+          if (err) return done(err)
+          console.log('****************logout successfully****************')
+
+          data.statusCode.should.equal(200)
+          data.body.status.should.equal('success')
+          data.body.redirect.should.equal('/login')
+          done()
+        })
       })
-    })
   })
   //success
   ///redirect login
@@ -620,7 +586,6 @@ describe('Begin Tests', function () {
     o.searchtype = 'consolidatesearch'
     testbase.payload = o
     return genSpecs.genericApiPost(testbase).then(function (data) {
-      console.log(data.body)
       data.body.message.should.equal(
         `body should have required property \'.basesearcharconsolidated\'`
       )

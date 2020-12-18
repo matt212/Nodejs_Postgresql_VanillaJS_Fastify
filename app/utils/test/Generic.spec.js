@@ -8,7 +8,7 @@ let loadModulePayLoad = {
   pageno: 0,
   pageSize: 20,
   disableDate: true,
-  searchtype:"NoFilter"
+  searchtype: 'NoFilter'
 }
 before(async () => {
   require('../app.js')
@@ -31,18 +31,63 @@ var server = supertest.agent('http://localhost:3011')
 let createModPayLoad = function (validationConfig) {
   return createModulePayLoad.makepayload(validationConfig)
 }
-let customTestsInit=function(testbase,validationConfig)
-{
-  testbase.schemaBaseValidatorPayload = createModPayLoad(
-    validationConfig
-  )
-  
+let customMultiInsertDelete = function (testbase, evalModulename) {
+  let o = {}
+  o.multiInsert = function (entry) {
+    return new Promise((resolve, reject) => {
+      testbase.apiUrl = '/' + evalModulename + dep.create
+      testbase.responseCode = 200
+      testbase.payload = entry
+
+      genericApiPost(testbase).then(function (data) {
+        resolve(data.body.createdId)
+      })
+    })
+  }
+  o.multiDel = function (DelAr) {
+    var delObj = { [testbase.evalModulename + 'id']: DelAr }
+
+    return new Promise((resolve, reject) => {
+      testbase.apiUrl = '/' + evalModulename + dep.delete
+      testbase.responseCode = 200
+      testbase.payload = delObj
+      genericApiPost(testbase).then(function (data) {
+        resolve(data)
+      })
+    })
+  }
+
+  o.multiInsertforSearch = function (createdID) {
+    if (createdID != undefined) {
+      o.singleInsertID = createdID
+    }
+
+    return new Promise((resolve, reject) => {
+      Promises.mapSeries(testbase.schemaBaseValidatorPayloadAr, o.multiInsert)
+        .then(a => {
+          console.log(a)
+          resolve(a)
+        })
+        .catch(err => console.log(err))
+    })
+  }
+  o.multiDelete = function (ar) {
+    console.log(ar)
+    return new Promise((resolve, reject) => {
+      Promises.mapSeries(ar, o.multiDel).then(a => {
+        //console.log(a)
+        resolve(a)
+      })
+    })
+  }
+  return o
+}
+let customTestsInit = function (testbase, validationConfig) {
+  testbase.schemaBaseValidatorPayload = createModPayLoad(validationConfig)
+
   /*Generate multi insert payloads by passing second parameter as number recordset to generate*/
-  testbase.schemaBaseValidatorPayloadAr = genPayloadByNum(
-    validationConfig,
-    2
-  )
-  
+  testbase.schemaBaseValidatorPayloadAr = genPayloadByNum(validationConfig, 2)
+
   /*Schema validatior with removing one by ony fields*/
   testbase.schemaValValidatorPayload = schemaValueValidatorPayload(
     validationConfig.applyfields,
@@ -144,7 +189,7 @@ let multicolumngenAr = function (baseObj, fieldname) {
   interim3 = interim3.filter(function (a) {
     return a.key == fieldname // if truthy then keep item
   })[0]
-  console.log(JSON.stringify(interim3))
+
   return interim3.content
 }
 let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
@@ -191,6 +236,7 @@ module.exports = {
   expect,
   dep,
   Promises,
+  customMultiInsertDelete,
   customTestsInit,
   multicolumngenAr,
   genPayloadByNum,
