@@ -648,8 +648,6 @@ describe('Begin Tests', function () {
       data.body.message.should.equal(
         `body should have required property \'.basesearcharconsolidated\'`
       )
-      //
-      //genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
     })
   })
 })
