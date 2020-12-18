@@ -10,6 +10,15 @@ const searchLoadbodyJsonSchema = {
       type: 'array',
       allOf: commonConfig
     },
+    basesearcharconsolidated: {
+      type: 'array',
+      properties: {
+        consolidatecol: { type: 'array', allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] },
+        consolidatecolval: { type: 'string',  allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] }
+      },
+      required: ['consolidatecol', 'consolidatecolval'],
+      allOf: commonConfig
+    },
     daterange: {
       type: 'object',
       properties: {
@@ -52,6 +61,25 @@ const searchLoadbodyJsonSchema = {
           'pageno',
           'datecolsearch',
           'daterange'
+        ]
+      }
+    },
+    {
+      if: {
+        properties: {
+          searchtype: {
+            "enum": ["consolidatesearch"]
+          }
+        }
+      },
+      then: {
+        required: ['searchparam', 'pageSize', 'pageno','basesearcharconsolidated']
+      },
+      else: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
         ]
       }
     }

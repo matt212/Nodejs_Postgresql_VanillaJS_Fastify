@@ -67,7 +67,6 @@ describe('Begin Tests', function () {
       testbase.responseCode = 200
       testbase.payload = entry
       genSpecs.genericApiPost(testbase).then(function (data) {
-        console.log(entry)
         resolve(data.body.createdId)
       })
     })
@@ -133,14 +132,10 @@ describe('Begin Tests', function () {
     testbase.responseCode = 200
 
     genSpecs.genericApiPost(testbase).then(function (data) {
+      //console.log(data.body)
       // console.log(data.body.rows)
       done()
     })
-  })
-  it('multi insert and multi Delete', function () {
-    return multiInsertforSearch()
-      .then(multiDelete)
-      .then(function (data) {})
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
@@ -617,6 +612,44 @@ describe('Begin Tests', function () {
           genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
         })
       })
+    })
+  })
+  describe('****************Consolidated Search Across all column except auto generated dates and boolean Test Cases****************', function () {
+    it(`Consolidated ResultSet Search working as expected`, function () {
+      testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+      testbase.responseCode = 200
+      var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+
+      o.basesearcharconsolidated = [
+        {
+          consolidatecol: validationConfig.applyfields,
+          consolidatecolval: 'the'
+        }
+      ]
+      o.disableDate = true
+      o.searchtype = 'consolidatesearch'
+      testbase.payload = o
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+      })
+    })
+  })
+
+  it(`Consolidated ResultSet Search param as undefined working as expected`, function () {
+    testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
+    testbase.responseCode = 400
+    var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
+    o.basesearcharconsolidated = undefined
+    o.disableDate = true
+    o.searchtype = 'consolidatesearch'
+    testbase.payload = o
+    return genSpecs.genericApiPost(testbase).then(function (data) {
+      console.log(data.body)
+      data.body.message.should.equal(
+        `body should have required property \'.basesearcharconsolidated\'`
+      )
+      //
+      //genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
     })
   })
 })

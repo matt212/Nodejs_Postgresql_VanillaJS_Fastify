@@ -7,7 +7,8 @@ let loadModulePayLoad = {
   searchparam: ['NA'],
   pageno: 0,
   pageSize: 20,
-  disableDate: true
+  disableDate: true,
+  searchtype:"NoFilter"
 }
 before(async () => {
   require('../app.js')
