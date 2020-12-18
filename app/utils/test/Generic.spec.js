@@ -31,7 +31,35 @@ var server = supertest.agent('http://localhost:3011')
 let createModPayLoad = function (validationConfig) {
   return createModulePayLoad.makepayload(validationConfig)
 }
-
+let customTestsInit=function(testbase,validationConfig)
+{
+  testbase.schemaBaseValidatorPayload = createModPayLoad(
+    validationConfig
+  )
+  
+  /*Generate multi insert payloads by passing second parameter as number recordset to generate*/
+  testbase.schemaBaseValidatorPayloadAr = genPayloadByNum(
+    validationConfig,
+    2
+  )
+  
+  /*Schema validatior with removing one by ony fields*/
+  testbase.schemaValValidatorPayload = schemaValueValidatorPayload(
+    validationConfig.applyfields,
+    testbase.schemaBaseValidatorPayload
+  )
+  /*Schema validatior with blank fields one by ony fields*/
+  testbase.schemaValValidatorPayloadBlank = schemaValueValidatorPayloadBlank(
+    validationConfig.applyfields,
+    testbase.schemaBaseValidatorPayload
+  )
+  /*Schema validatior with Max  fields validations one by ony fields*/
+  testbase.schemaValValidatorPayloadMaxLenght = schemaValValidatorPayloadMaxLenght(
+    validationConfig.applyfields,
+    testbase.schemaBaseValidatorPayload
+  )
+  return testbase
+}
 let loginsuccess = function (
   cred = { username: 'krennic', password: 'orson' }
 ) {
@@ -163,6 +191,7 @@ module.exports = {
   expect,
   dep,
   Promises,
+  customTestsInit,
   multicolumngenAr,
   genPayloadByNum,
   createModPayLoad,

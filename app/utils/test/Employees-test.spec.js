@@ -14,31 +14,7 @@ var recordstateobj = {
 }
 validationConfig.validationmap.push(recordstateobj)
 /*for getting and passing to rest of tests fields and validationConfig*/
-testbase.schemaBaseValidatorPayload = genSpecs.createModPayLoad(
-  validationConfig
-)
-
-/*Generate multi insert payloads by passing second parameter as number recordset to generate*/
-testbase.schemaBaseValidatorPayloadAr = genSpecs.genPayloadByNum(
-  validationConfig,
-  2
-)
-
-/*Schema validatior with removing one by ony fields*/
-testbase.schemaValValidatorPayload = genSpecs.schemaValueValidatorPayload(
-  validationConfig.applyfields,
-  testbase.schemaBaseValidatorPayload
-)
-/*Schema validatior with blank fields one by ony fields*/
-testbase.schemaValValidatorPayloadBlank = genSpecs.schemaValueValidatorPayloadBlank(
-  validationConfig.applyfields,
-  testbase.schemaBaseValidatorPayload
-)
-/*Schema validatior with Max  fields validations one by ony fields*/
-testbase.schemaValValidatorPayloadMaxLenght = genSpecs.schemaValValidatorPayloadMaxLenght(
-  validationConfig.applyfields,
-  testbase.schemaBaseValidatorPayload
-)
+testbase=genSpecs.customTestsInit(testbase,validationConfig);
 
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
