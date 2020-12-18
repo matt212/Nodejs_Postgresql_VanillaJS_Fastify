@@ -89,7 +89,6 @@ let searchparampayload = req => {
             var searchvalue = item[Object.keys(item)[0]]
             var searchkey = Object.keys(item)[0]
             var isBaseArray = item.isArray
-            console.log('--------------------')
 
             //var result = (typeof searchvalue === 'number');
 
@@ -104,8 +103,7 @@ let searchparampayload = req => {
                 stringtype = "'"
               }
             } else {
-              
-              reject(`${Object.keys(item)[0]} is undefined `)
+              reject(`${searchkey} is undefined `)
             }
 
             if (selector == '') {
@@ -213,12 +211,10 @@ let searchparampayload = req => {
       resolve(base)
     })
     return promise.catch(function (error) {
-     return  Promise.reject(error)
-      
+      return Promise.reject(error)
     })
   } catch (err) {
-    return  Promise.reject(error)
-    
+    return Promise.reject(error)
   }
 }
 let pivottransformation = dataset => {
@@ -954,7 +950,6 @@ let searchtype = (req, res, a) => {
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
       .catch(function (error) {
-        
         reject(error)
       })
   }))
@@ -981,7 +976,7 @@ let searchtypePerf = (req, res, a) => {
           })
       })
       .catch(function (error) {
-        console.log("here man")
+        console.log('here man')
         reject(error)
       })
   }))

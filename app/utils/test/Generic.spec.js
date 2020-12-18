@@ -605,12 +605,37 @@ let consolidatedPayload = function () {
   o.payload21 = function (testbase, evalModulename) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     testbase.responseCode = 400
-    var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-    o.basesearcharconsolidated = undefined
-    o.disableDate = true
-    o.searchtype = 'consolidatesearch'
-    testbase.payload = o
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o1.basesearcharconsolidated = undefined
+    o1.disableDate = true
+    o1.searchtype = 'consolidatesearch'
+    testbase.payload = o1
     return testbase
+  }
+  o.payload22 = function (testbase,entry, evalModulename,validationConfig) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      testbase.responseCode = 400
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+      let fieldtype = validationConfig.validationmap.filter(
+        o1 => o1.inputname == entry
+      )[0].fieldtypename
+
+      if (fieldtype == 'DATE') {
+        o1.daterange = {
+          startdate: undefined,
+          enddate: undefined
+        }
+        o1.datecolsearch = entry
+        o1.disableDate = false
+      } 
+     else {
+        o1.searchparam = [{[entry]:[undefined]}]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      }
+      testbase.payload = o1
+      return testbase
   }
 
   return o
