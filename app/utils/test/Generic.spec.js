@@ -65,6 +65,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
     return new Promise((resolve, reject) => {
       Promises.mapSeries(testbase.schemaBaseValidatorPayloadAr, o.multiInsert)
         .then(a => {
+          a.singleInsertID = o.singleInsertID
           resolve(a)
         })
         .catch(err => console.log(err))

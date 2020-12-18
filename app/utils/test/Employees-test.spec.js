@@ -37,8 +37,8 @@ describe('Begin Tests', function () {
           )
           .then(function (data) {
             console.log('*****Multi Records are inserted sucessfully*****')
-
             testbase.DelAr = data
+
             testbase.singleInsertID = data.singleInsertID
             done()
           })
@@ -48,6 +48,9 @@ describe('Begin Tests', function () {
   after(function (done) {
     if (testbase.singleInsertID != undefined) {
       testbase.DelAr.push(testbase.singleInsertID)
+    }
+    if (testbase.InsertID != undefined) {
+      testbase.DelAr.push(testbase.InsertID)
     }
 
     genSpecs
