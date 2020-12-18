@@ -359,7 +359,7 @@ describe('Begin Tests', function () {
   })
   describe('****************undefined Searchparam Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
-      it(`Searching for ${entry} and getting expected Multi recordset `, function () {
+      it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
         testbase = genSpecs
           .consolidatedPayload()
           .payload22(testbase, entry, evalModulename, validationConfig)
