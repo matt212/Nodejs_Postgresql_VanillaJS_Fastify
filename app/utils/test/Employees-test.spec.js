@@ -365,7 +365,15 @@ describe('Begin Tests', function () {
           .payload22(testbase, entry, evalModulename, validationConfig)
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          console.log(data.body)
+          if (data.body.statusCode === undefined) {
+            data.body.status.should.equal(`${entry} is undefined `)
+          } else {
+            data.body.message.should.equal(
+              `body.daterange should have required property \'startdate\'`
+            )
+          }
+
+          //
         })
       })
     })
