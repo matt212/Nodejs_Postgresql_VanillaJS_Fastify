@@ -211,6 +211,66 @@ let genPayloadByNum = function (validationConfig, num) {
   }
   return interim
 }
+let PrimarytestInit = function (testbase) {
+  return new Promise((resolve, reject) => {
+    loginsuccess()
+      .then(loadCurrentModule)
+      .then(function (data) {
+        testbase.token = data
+        console.log(
+          '****************login and loaded the module  successfully****************'
+        )
+        customMultiInsertDelete(testbase, testbase.evalModulename)
+          .multiInsert(testbase.schemaBaseValidatorPayload)
+          .then(
+            customMultiInsertDelete(testbase, testbase.evalModulename)
+              .multiInsertforSearch
+          )
+          .then(function (data) {
+            console.log('*****Multi Records are inserted sucessfully*****')
+            testbase.DelAr = data
+
+            testbase.singleInsertID = data.singleInsertID
+            resolve(testbase)
+          })
+      })
+  })
+}
+let dataCleanUp = function (testbase) {
+  return new Promise((resolve, reject) => {
+    if (testbase.singleInsertID != undefined) {
+      testbase.DelAr.push(testbase.singleInsertID)
+    }
+    if (testbase.InsertID != undefined) {
+      testbase.DelAr.push(testbase.InsertID)
+    }
+    customMultiInsertDelete(testbase, testbase.evalModulename)
+      .multiDelete(testbase.DelAr)
+      .then(function (data) {
+        console.log('<<<<<<<data cleanUp Completed>>>>>>>')
+        server.post('/logout').end(function (err, data) {
+          if (err) return done(err)
+          console.log('****************logout successfully****************')
+
+          data.statusCode.should.equal(200)
+          data.body.status.should.equal('success')
+          data.body.redirect.should.equal('/login')
+          resolve('success')
+        })
+      })
+  })
+}
+let validationconfigInit = function (validationConfig) {
+  validationConfig.applyfields.push('recordstate')
+  var recordstateobj = {
+    inputname: 'recordstate',
+    fieldtypename: 'boolean',
+    fieldvalidatename: 'boolean',
+    fieldmaxlength: '4'
+  }
+  validationConfig.validationmap.push(recordstateobj)
+  return validationConfig
+}
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
     if (data.status == 'pass') {
@@ -235,6 +295,7 @@ module.exports = {
   expect,
   dep,
   Promises,
+  validationconfigInit,
   customMultiInsertDelete,
   customTestsInit,
   multicolumngenAr,
@@ -250,5 +311,7 @@ module.exports = {
   loadModulePayLoad,
   setevalModulename,
   schemaValueValidatorPayloadBlank,
-  genericApiPost
+  genericApiPost,
+  PrimarytestInit,
+  dataCleanUp
 }

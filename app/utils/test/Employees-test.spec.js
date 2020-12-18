@@ -5,69 +5,22 @@ let genSpecs = require('./Generic.spec.js')
 let validationConfig = require('../../routes/utils/' +
   testbase.evalModulename +
   '/validationConfig.js')
-validationConfig.applyfields.push('recordstate')
-var recordstateobj = {
-  inputname: 'recordstate',
-  fieldtypename: 'boolean',
-  fieldvalidatename: 'boolean',
-  fieldmaxlength: '4'
-}
-validationConfig.validationmap.push(recordstateobj)
+validationConfig = genSpecs.validationconfigInit(validationConfig)
 /*for getting and passing to rest of tests fields and validationConfig*/
 testbase = genSpecs.customTestsInit(testbase, validationConfig)
-
 genSpecs.setevalModulename(testbase.evalModulename)
 describe('Begin Tests', function () {
-  // #1 should return home page
   before(function (done) {
-    genSpecs
-      .loginsuccess()
-      .then(genSpecs.loadCurrentModule)
-      .then(function (data) {
-        testbase.token = data
-        console.log(
-          '****************login and loaded the module  successfully****************'
-        )
-        genSpecs
-          .customMultiInsertDelete(testbase, testbase.evalModulename)
-          .multiInsert(testbase.schemaBaseValidatorPayload)
-          .then(
-            genSpecs.customMultiInsertDelete(testbase, testbase.evalModulename)
-              .multiInsertforSearch
-          )
-          .then(function (data) {
-            console.log('*****Multi Records are inserted sucessfully*****')
-            testbase.DelAr = data
-
-            testbase.singleInsertID = data.singleInsertID
-            done()
-          })
-      })
+    genSpecs.PrimarytestInit(testbase).then(function (data) {
+      console.log('*****Multi Records are inserted sucessfully*****')
+      testbase = data
+      done()
+    })
   })
-
   after(function (done) {
-    if (testbase.singleInsertID != undefined) {
-      testbase.DelAr.push(testbase.singleInsertID)
-    }
-    if (testbase.InsertID != undefined) {
-      testbase.DelAr.push(testbase.InsertID)
-    }
-
-    genSpecs
-      .customMultiInsertDelete(testbase, testbase.evalModulename)
-      .multiDelete(testbase.DelAr)
-      .then(function (data) {
-        console.log('<<<<<<<data cleanUp Completed>>>>>>>')
-        genSpecs.server.post('/logout').end(function (err, data) {
-          if (err) return done(err)
-          console.log('****************logout successfully****************')
-
-          data.statusCode.should.equal(200)
-          data.body.status.should.equal('success')
-          data.body.redirect.should.equal('/login')
-          done()
-        })
-      })
+    genSpecs.dataCleanUp(testbase).then(function () {
+      done()
+    })
   })
   //success
   ///redirect login
