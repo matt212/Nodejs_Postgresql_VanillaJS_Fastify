@@ -65,14 +65,12 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
     return new Promise((resolve, reject) => {
       Promises.mapSeries(testbase.schemaBaseValidatorPayloadAr, o.multiInsert)
         .then(a => {
-          console.log(a)
           resolve(a)
         })
         .catch(err => console.log(err))
     })
   }
   o.multiDelete = function (ar) {
-    console.log(ar)
     return new Promise((resolve, reject) => {
       Promises.mapSeries(ar, o.multiDel).then(a => {
         //console.log(a)
