@@ -291,10 +291,319 @@ let loadCurrentModule = function (data) {
     }
   }))
 }
+let consolidatedPayload = function () {
+  let o = {}
+  o.payload1 = function (testbase, entry, evalModulename) {
+    console.log(evalModulename)
+    testbase.apiUrl = '/' + evalModulename + dep.create
+    testbase.responseCode = 400
+    testbase.payload = entry.schemaContent
+
+    return testbase
+  }
+  o.payload2 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.create
+    testbase.responseCode = 200
+    testbase.payload = testbase.schemaBaseValidatorPayload
+
+    return testbase
+  }
+  o.payload3 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.update
+    testbase.responseCode = 400
+    testbase.payload = testbase.schemaBaseValidatorPayload
+    return testbase
+  }
+  o.payload4 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.update
+    testbase.responseCode = 400
+    testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] = NaN
+    testbase.payload = testbase.schemaBaseValidatorPayload
+    return testbase
+  }
+  o.payload5 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.update
+    testbase.responseCode = 400
+    testbase.schemaBaseValidatorPayload[
+      testbase.evalModulename + 'id'
+    ] = undefined
+    testbase.payload = testbase.schemaBaseValidatorPayload
+    return testbase
+  }
+  o.payload6 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.update
+    testbase.responseCode = 200
+    testbase.schemaBaseValidatorPayload[testbase.evalModulename + 'id'] =
+      testbase.InsertID
+    testbase.payload = testbase.schemaBaseValidatorPayload
+    return testbase
+  }
+  o.payload7 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o.disableDate = true
+    testbase.payload = o
+    testbase.responseCode = 200
+    return testbase
+  }
+  o.payload8 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o.daterange = {
+      startdate: NaN,
+      enddate: '2019-01-29'
+    }
+    o.disableDate = false
+    testbase.payload = o
+    testbase.responseCode = 400
+    return testbase
+  }
+  o.payload9 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o.daterange = {
+      startdate: '1982-01-29',
+      enddate: NaN
+    }
+    o.disableDate = false
+    testbase.payload = o
+    testbase.responseCode = 400
+    return testbase
+  }
+  ;(o.payload10 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o.daterange = {
+      startdate: undefined,
+      enddate: '1982-01-29'
+    }
+    o.disableDate = false
+    testbase.payload = o
+    testbase.responseCode = 400
+    return testbase
+  }),
+    (o.payload11 = function (testbase, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+      o.daterange = {
+        startdate: '1982-01-29',
+        enddate: undefined
+      }
+      o.disableDate = false
+      testbase.payload = o
+      testbase.responseCode = 400
+      return testbase
+    }),
+    (o.payload12 = function (testbase, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+      o.pageSize = NaN
+      testbase.payload = o
+      testbase.responseCode = 400
+      return testbase
+    }),
+    (o.payload13 = function (testbase, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+      o.pageSize = undefined
+      testbase.payload = o
+      testbase.responseCode = 400
+      return testbase
+    }),
+    (o.payload14 = function (testbase, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+      o.pageno = undefined
+      testbase.payload = o
+      testbase.responseCode = 400
+      return testbase
+    }),
+    (o.payload15 = function (testbase, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+      o.daterange = {
+        startdate: '1982-01-29',
+        enddate: '1982-01-29'
+      }
+      o.datecolsearch = NaN
+      o.disableDate = false
+      testbase.payload = o
+      testbase.responseCode = 400
+      return testbase
+    }),
+    (o.payload16 = function (testbase, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+      o.daterange = {
+        startdate: '1982-01-29',
+        enddate: '1982-01-29'
+      }
+      o.datecolsearch = undefined
+      o.disableDate = false
+      testbase.payload = o
+      testbase.responseCode = 400
+      return testbase
+    }),
+    (o.payload17 = function (
+      testbase,
+      entry,
+      evalModulename,
+      validationConfig
+    ) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      testbase.responseCode = 200
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+      let fieldtype = validationConfig.validationmap.filter(
+        o1 => o1.inputname == entry
+      )[0].fieldtypename
+
+      if (fieldtype == 'DATE') {
+        o1.daterange = {
+          startdate: new Date(
+            testbase.schemaBaseValidatorPayload[entry]
+          ).toLocaleDateString(),
+          enddate: new Date(
+            testbase.schemaBaseValidatorPayload[entry]
+          ).toLocaleDateString()
+        }
+        o1.datecolsearch = entry
+        o1.disableDate = false
+      } else if (fieldtype == 'boolean') {
+        o1.searchparam = [
+          {
+            [entry]: [testbase.schemaBaseValidatorPayload[entry]]
+          }
+        ]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      } else {
+        let interimval = testbase.schemaBaseValidatorPayload[entry]
+
+        o1.searchparam = [
+          {
+            [entry]: [interimval.toLowerCase()]
+          }
+        ]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      }
+
+      testbase.payload = o1
+      return testbase
+    }),
+    (o.payload18 = function (
+      testbase,
+      entry,
+      evalModulename,
+      validationConfig
+    ) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      testbase.responseCode = 200
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+      let fieldtype = validationConfig.validationmap.filter(
+        o1 => o1.inputname == entry
+      )[0].fieldtypename
+
+      if (fieldtype == 'DATE') {
+        o1.daterange = {
+          startdate: new Date(
+            testbase.schemaBaseValidatorPayloadAr[0][entry]
+          ).toLocaleDateString(),
+          enddate: new Date(
+            testbase.schemaBaseValidatorPayloadAr[0][entry]
+          ).toLocaleDateString()
+        }
+        o1.datecolsearch = entry
+        o1.disableDate = false
+      } else if (fieldtype == 'boolean') {
+        o1.searchparam = [
+          {
+            [entry]: [
+              testbase.schemaBaseValidatorPayloadAr[0][entry],
+              testbase.schemaBaseValidatorPayloadAr[1][entry]
+            ]
+          }
+        ]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      } else {
+        let interimval1 = testbase.schemaBaseValidatorPayloadAr[0][entry]
+        let interimval2 = testbase.schemaBaseValidatorPayloadAr[1][entry]
+        o1.searchparam = [
+          {
+            [entry]: [interimval1.toLowerCase(), interimval2.toLowerCase()]
+          }
+        ]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      }
+      testbase.payload = o1
+      return testbase
+    }),
+    (o.payload19 = function (testbase,entry,evalModulename,validationConfig) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        testbase.responseCode = 200
+        var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+        let fieldtype = validationConfig.validationmap.filter(
+          o1 => o1.inputname == entry
+        )[0].fieldtypename
+
+        if (fieldtype == 'DATE') {
+          o1.daterange = {
+            startdate: new Date(
+              testbase.schemaBaseValidatorPayload[entry]
+            ).toLocaleDateString(),
+            enddate: new Date(
+              testbase.schemaBaseValidatorPayload[entry]
+            ).toLocaleDateString()
+          }
+          o1.datecolsearch = entry
+          o1.disableDate = false
+        } else if (fieldtype == 'boolean') {
+          /*there cannot be multi boolean Filter */
+        } else {
+          o1.searchparam = multicolumngenAr(
+            testbase.schemaBaseValidatorPayload,
+            entry
+          )
+
+          o1.disableDate = true
+          o1.searchtype = 'Columnwise'
+        }
+        testbase.payload = o1
+return testbase
+    }),
+    (o.payload20 = function (testbase,evalModulename,validationConfig) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      testbase.responseCode = 200
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+      Object.keys(testbase.schemaBaseValidatorPayload)[0]
+      var searchVal =
+        testbase.schemaBaseValidatorPayload[
+          Object.keys(testbase.schemaBaseValidatorPayload)[0]
+        ]
+      searchVal = searchVal.substring(0, 3)
+      o1.basesearcharconsolidated = [
+        {
+          consolidatecol: validationConfig.applyfields,
+          consolidatecolval: searchVal
+        }
+      ]
+      o1.disableDate = true
+      o1.searchtype = 'consolidatesearch'
+      testbase.payload = o1
+      return testbase
+    })
+  return o
+}
 module.exports = {
   expect,
   dep,
   Promises,
+  consolidatedPayload,
   validationconfigInit,
   customMultiInsertDelete,
   customTestsInit,
