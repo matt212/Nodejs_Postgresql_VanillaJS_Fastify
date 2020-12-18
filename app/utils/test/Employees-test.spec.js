@@ -561,11 +561,16 @@ describe('Begin Tests', function () {
       testbase.apiUrl = '/' + evalModulename + genSpecs.dep.searchtype[1]
       testbase.responseCode = 200
       var o = JSON.parse(JSON.stringify(genSpecs.loadModulePayLoad))
-
+      Object.keys(testbase.schemaBaseValidatorPayload)[0]
+      var searchVal =
+        testbase.schemaBaseValidatorPayload[
+          Object.keys(testbase.schemaBaseValidatorPayload)[0]
+        ]
+      searchVal = searchVal.substring(0, 3)
       o.basesearcharconsolidated = [
         {
           consolidatecol: validationConfig.applyfields,
-          consolidatecolval: 'the'
+          consolidatecolval: searchVal
         }
       ]
       o.disableDate = true
