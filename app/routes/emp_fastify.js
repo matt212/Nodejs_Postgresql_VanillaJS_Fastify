@@ -37,10 +37,15 @@ async function routes (fastify, options) {
       dep.assignVariables(mod)
       var req = {}
       req.body = request.body
-      dep.searchtypePerf(req, reply, mod).then(arg => {
-        reply.code = 200
-        reply.send(arg)
-      })
+      dep
+        .searchtypePerf(req, reply, mod)
+        .then(arg => {
+          reply.code = 200
+          reply.send(arg)
+        })
+        .catch(function (error) {
+          reply.code(400).send(error)
+        })
     }
   )
   fastify.post(
@@ -56,9 +61,14 @@ async function routes (fastify, options) {
       var req = {}
 
       req.body = request.body
-      dep.searchtype(req, reply, mod).then(arg => {
-        reply.send(arg)
-      })
+      dep
+        .searchtype(req, reply, mod)
+        .then(arg => {
+          reply.send(arg)
+        })
+        .catch(function (error) {
+          reply.code(400).send({ status: error })
+        })
     }
   )
   fastify.post(

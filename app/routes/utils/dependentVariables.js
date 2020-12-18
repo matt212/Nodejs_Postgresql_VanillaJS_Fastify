@@ -48,7 +48,7 @@ let searchparampayload = req => {
       var sortcolumn = reqcontent.sortcolumn
       var sortcolumnorder = reqcontent.sortcolumnorder
 
-      var daterange = '1=1'
+      var daterange = ''
       if (startdate != undefined && enddate != undefined) {
         //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
         daterange =
@@ -89,12 +89,13 @@ let searchparampayload = req => {
             var searchvalue = item[Object.keys(item)[0]]
             var searchkey = Object.keys(item)[0]
             var isBaseArray = item.isArray
+            console.log('--------------------')
 
             //var result = (typeof searchvalue === 'number');
 
             var coltype = ''
             var stringtype = ''
-            if (searchvalue != undefined) {
+            if (searchvalue != undefined && searchvalue.filter(e => e).length) {
               if (!searchvalue.some(isNaN)) {
                 coltype = ''
                 stringtype = ''
@@ -102,11 +103,9 @@ let searchparampayload = req => {
                 coltype = 'lower'
                 stringtype = "'"
               }
-            }
-            else
-            {
-              coltype = ''
-                stringtype = ''
+            } else {
+              
+              reject(`${Object.keys(item)[0]} is undefined `)
             }
 
             if (selector == '') {
@@ -214,10 +213,12 @@ let searchparampayload = req => {
       resolve(base)
     })
     return promise.catch(function (error) {
-      console.log(error)
+     return  Promise.reject(error)
+      
     })
   } catch (err) {
-    console.log(err.message)
+    return  Promise.reject(error)
+    
   }
 }
 let pivottransformation = dataset => {
@@ -953,8 +954,8 @@ let searchtype = (req, res, a) => {
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
       .catch(function (error) {
-        console.log(error)
-        return error
+        
+        reject(error)
       })
   }))
 }
@@ -971,13 +972,16 @@ let searchtypePerf = (req, res, a) => {
           mod
         }
 
-        searchtypeConventionalCache(res, sqlConstructParams, a, req.body).then(
-          arg => {
+        searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+          .then(arg => {
             resolve(arg)
-          }
-        )
+          })
+          .catch(function (error) {
+            reject(error)
+          })
       })
       .catch(function (error) {
+        console.log("here man")
         reject(error)
       })
   }))
@@ -1782,7 +1786,7 @@ let datatransformutils = {
     })
   },
   multicolumnSearchFilter: function (baseobj) {
-    delete baseobj["recordstate"]
+    delete baseobj['recordstate']
     let interim1 = function (interim) {
       var interimAr1 = []
       Object.keys(interim).forEach(function (data) {
@@ -1795,7 +1799,7 @@ let datatransformutils = {
 
     var interim2 = []
     Object.keys(baseobj).forEach(function (data, i) {
-      interim2.push({ key: data, content: interim1(baseobj).slice(0, i+1) })
+      interim2.push({ key: data, content: interim1(baseobj).slice(0, i + 1) })
     })
     return interim2
   },
