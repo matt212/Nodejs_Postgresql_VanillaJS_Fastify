@@ -637,7 +637,35 @@ let consolidatedPayload = function () {
       testbase.payload = o1
       return testbase
   }
+  o.payload23 = function (testbase,entry, evalModulename,validationConfig) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      testbase.responseCode = 400
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
+      let fieldtype = validationConfig.validationmap.filter(
+        o1 => o1.inputname == entry
+      )[0].fieldtypename
+
+      if (fieldtype == 'DATE') {
+        o1.daterange = {
+          [undefined]: new Date(
+            testbase.schemaBaseValidatorPayload[entry]
+          ).toLocaleDateString(),
+          [undefined]: new Date(
+            testbase.schemaBaseValidatorPayload[entry]
+          ).toLocaleDateString()
+        }
+        o1.datecolsearch = entry
+        o1.disableDate = false
+      }
+     else {
+        o1.searchparam = [{["undefined"]:[testbase.schemaBaseValidatorPayload[entry]]}]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      }
+      testbase.payload = o1
+      return testbase
+  }
   return o
 }
 module.exports = {

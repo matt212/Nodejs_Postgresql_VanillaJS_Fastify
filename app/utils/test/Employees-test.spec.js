@@ -357,7 +357,7 @@ describe('Begin Tests', function () {
       )
     })
   })
-  describe('****************undefined Searchparam Test Cases****************', function () {
+  describe('****************undefined Searchparam values Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
         testbase = genSpecs
@@ -366,7 +366,35 @@ describe('Begin Tests', function () {
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
           if (data.body.statusCode === undefined) {
-            data.body.status.should.equal(`${entry} is undefined `)
+            data.body.status.should.equal(`${entry} is undefined`)
+          } else {
+            data.body.message.should.equal(
+              `body.daterange should have required property \'startdate\'`
+            )
+          }
+
+          //
+        })
+      })
+    })
+  })
+  describe('****************undefined Searchparam Key Test Cases****************', function () {
+    Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
+      it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload23(testbase, entry, evalModulename, validationConfig)
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          if (
+            data.body.statusCode === undefined &&
+            testbase.schemaBaseValidatorPayload[entry] != undefined
+          ) {
+            data.body.status.should.equal(
+              `key of ${testbase.schemaBaseValidatorPayload[entry]} is undefined`
+            )
+          } else if (testbase.schemaBaseValidatorPayload[entry] === undefined) {
+            data.body.status.should.equal(`key of  is undefined`)
           } else {
             data.body.message.should.equal(
               `body.daterange should have required property \'startdate\'`

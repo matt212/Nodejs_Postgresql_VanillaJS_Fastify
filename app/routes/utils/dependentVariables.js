@@ -91,7 +91,11 @@ let searchparampayload = req => {
             var isBaseArray = item.isArray
 
             //var result = (typeof searchvalue === 'number');
-
+            console.log(searchkey+"--"+searchvalue);
+            if (searchkey=="undefined"||searchkey==undefined) {
+              
+              reject(`key of ${searchvalue} is undefined `)
+            } 
             var coltype = ''
             var stringtype = ''
             if (searchvalue != undefined && searchvalue.filter(e => e).length) {

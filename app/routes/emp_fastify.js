@@ -44,7 +44,7 @@ async function routes (fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
-          reply.code(400).send(error)
+          reply.code(400).send(error.trim())
         })
     }
   )
@@ -67,7 +67,7 @@ async function routes (fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
-          reply.code(400).send({ status: error })
+          reply.code(400).send({ status: error.trim() })
         })
     }
   )
