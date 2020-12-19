@@ -8,7 +8,8 @@ var redlime={
 	"colsearch": "createdAt",
 	"datecolsearch": "birth_date",
 	"pageno": 0,
-	"pageSize": 20
+  "pageSize": 20,
+  "searchtype": 'NoFilter'
 }
 const instance = autocannon({
     url: 'http://localhost:3011/employees/api/load/',
@@ -17,7 +18,7 @@ const instance = autocannon({
     duration: 50, 
     method:"POST",
     debug:true,
-    headers: {"Content-Type": "application/json", 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoibG9jYWxob3N0OjMwMTEiLCJpYXQiOjE2MDc2MTAxODR9.lXRV23jZ4nlvHKnFylkHMGwQB-ma7-PCWXx1TBbIvq0'},
+    headers: {"Content-Type": "application/json", 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoibG9jYWxob3N0OjMwMTEiLCJpYXQiOjE2MDg0MDU0ODB9.n8CU3Gz5DmwSrm2wWTjQmTU3Xals6vWbMVG3bk9hyLs'},
     body: JSON.stringify(redlime),
   }, (err, result) => {
     console.log("----------Error-----------");

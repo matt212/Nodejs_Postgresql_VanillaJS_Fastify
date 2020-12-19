@@ -70,7 +70,7 @@
     "docker-run": "docker-compose up --build",
     "createDBSequelize": "cd ./app/ &&  sequelize  db:create",
     "customAutocannon": "node  ./app/config/autocannon.js",
-    "perfgraph": " cd ./app/utils && 0x app2.js",
+    "perfgraph": " cd ./app/utils && 0x -- node --no-turbo-inlining app.js",
     "pgDump": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgbaseDump()'",
     "createDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgcreateDb()'",
     "createDB_updated": "npx run-func ./app/utils/dbDump/databaseUtils.js pgcreateDb",
