@@ -87,4 +87,7 @@ In case of error running sh Files Follow below
 > it will generate graph html link in same perfgraph shell   
 *  ### `Release notes 11 Dec 2020`
 >  basic login tests are written and can view and evaluated by running below command
-   `yarn customtest`
+   `yarn LoginEval`
+*  ### `Release notes 20 Dec 2020`
+>  69 **Modular** Mocha test cases for single Module 360 coverage including schema payload validations,NaN/Undefined payload Validations 
+   `yarn ModuleEval`   
