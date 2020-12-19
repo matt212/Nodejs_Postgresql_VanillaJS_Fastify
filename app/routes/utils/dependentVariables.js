@@ -731,18 +731,25 @@ let pivotTransform = req => {
         var searchvalue = item[Object.keys(item)]
         var searchkey = Object.keys(item)[0]
         //var result = (typeof searchvalue === 'number');
+        if (searchkey == 'undefined' || searchkey == undefined) {
+          reject(`key of ${searchvalue} is undefined `)
+        }
 
         var coltype = ''
         var stringtype = ''
         var dynamicstringtype = ''
-        if (!searchvalue.some(isNaN)) {
-          coltype = ''
-          stringtype = ''
-          dynamicstringtype = ''
+        if (searchvalue != undefined && searchvalue.filter(e => e).length) {
+          if (!searchvalue.some(isNaN)) {
+            coltype = ''
+            stringtype = ''
+            dynamicstringtype = ''
+          } else {
+            coltype = 'lower'
+            stringtype = "'"
+            dynamicstringtype = "''"
+          }
         } else {
-          coltype = 'lower'
-          stringtype = "'"
-          dynamicstringtype = "''"
+          reject(`${searchkey} is undefined `)
         }
 
         var obj
