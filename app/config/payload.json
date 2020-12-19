@@ -1,11 +1,22 @@
+({
+  "searchparam": ["NA"],
+  "daterange": {
+    "startdate": "1982-12-30",
+    "enddate": "2019-01-29"
+  },
+  "colsearch": "createdAt",
+  "datecolsearch": "birth_date",
+  "pageno": 0,
+  "pageSize": 20
+},
 {
-	"searchparam": ["NA"],
-	"daterange": {
-		"startdate": "1982-12-30",
-		"enddate": "2019-01-29"
-	},
-	"colsearch": "createdAt",
-	"datecolsearch": "birth_date",
-	"pageno": 0,
-	"pageSize": 20
-}
+  "daterange": { "startdate": "2020-11-19", "enddate": "2020-12-19" },
+  "searchtype": "NoFilter",
+  "datecolsearch": "created_date",
+  "searchparam": ["NA"],
+  "pageno": 0,
+  "pageSize": 20,
+  "sortcolumn": "first_name",
+  "sortcolumnorder": "DESC",
+  "ispaginate": true
+})

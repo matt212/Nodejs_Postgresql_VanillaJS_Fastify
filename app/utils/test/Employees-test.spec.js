@@ -40,6 +40,7 @@ describe('Begin Tests', function () {
       })
     })
   })
+
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
       it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
@@ -223,6 +224,28 @@ describe('Begin Tests', function () {
       })
     })
     describe('****************Payload Param Validation Test Cases****************', function () {
+      it(`filter with sortcolumn as NaN  payload `, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload24(testbase, evalModulename)
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(
+            `body.sortcolumn should NOT be shorter than 1 characters`
+          )
+        })
+      })
+      it(`filter with sortcolumnorder as NaN  payload `, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload25(testbase, evalModulename)
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          data.body.message.should.equal(
+            `body.sortcolumnorder should NOT be shorter than 1 characters`
+          )
+        })
+      })
       it(`filter with pageSize as NaN  payload `, function () {
         testbase = genSpecs
           .consolidatedPayload()

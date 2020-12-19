@@ -10,6 +10,14 @@ const searchLoadbodyJsonSchema = {
       type: 'array',
       allOf: commonConfig
     },
+    sortcolumn: {
+      type: 'string',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 6 }]
+    },
+    sortcolumnorder: {
+      type: 'string',
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 6 }]
+    },
     basesearcharconsolidated: {
       type: 'array',
       properties: {
@@ -216,70 +224,6 @@ const headersJsonSchema = {
   },
   required: ['x-access-token']
 }
-const insertSchema = {
-  type: 'object',
-  required: ['first_name', 'last_name', 'gender', 'birth_date', 'recordstate'],
-  properties: {
-    first_name: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    last_name: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    gender: {
-      type: 'string',
-      allOf: commonConfig,
-      enum: ['M', 'F']
-    },
-    birth_date: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    recordstate: {
-      type: 'boolean'
-    }
-  }
-}
-const updateSchema = {
-  type: 'object',
-  required: [
-    'first_name',
-    'last_name',
-    'gender',
-    'birth_date',
-    'recordstate',
-    'employeesid'
-  ],
-  properties: {
-    first_name: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    last_name: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    gender: {
-      type: 'string',
-      allOf: commonConfig,
-      enum: ['M', 'F']
-    },
-    birth_date: {
-      type: 'string',
-      allOf: commonConfig
-    },
-    recordstate: {
-      type: 'boolean'
-    },
-    employeesid: {
-      type: 'number',
-      allOf: commonConfig
-    }
-  }
-}
-
 const searchLoadSchema = {
   body: searchLoadbodyJsonSchema,
   headers: headersJsonSchema

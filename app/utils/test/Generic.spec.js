@@ -666,6 +666,22 @@ let consolidatedPayload = function () {
       testbase.payload = o1
       return testbase
   }
+  o.payload24 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o1.sortcolumn = NaN
+    testbase.payload = o1
+    testbase.responseCode = 400
+    return testbase
+  }
+  o.payload25 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o1.sortcolumnorder = NaN
+    testbase.payload = o1
+    testbase.responseCode = 400
+    return testbase
+  }
   return o
 }
 module.exports = {

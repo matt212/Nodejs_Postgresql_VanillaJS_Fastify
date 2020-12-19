@@ -1,0 +1,21 @@
+{
+  "daterange": { "startdate": "2020-11-19", "enddate": "2020-12-19" },
+  "searchtype": "Columnwise",
+  "datecolsearch": "created_date",
+  "searchparam": [],
+  "pageno": 0,
+  "pageSize": 20,
+  "sortcolumn": 1,
+  "sortcolumnorder": "desc",
+  "ispaginate": false,
+  "colsearch": "intercolumn",
+  "pivotparamXaxis": "birth_date",
+  "pivotparamYaxis": "gender",
+  "timeinternprimary": "",
+  "timeinternsecondary": "Month",
+  "XpageSize": 40,
+  "Xpageno": 0,
+  "YpageSize": 20,
+  "Ypageno": 0,
+  "basesearcharconsolidated": []
+}
