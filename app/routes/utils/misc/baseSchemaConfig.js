@@ -12,11 +12,11 @@ const searchLoadbodyJsonSchema = {
     },
     sortcolumn: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 6 }]
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 60 }]
     },
     sortcolumnorder: {
       type: 'string',
-      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 6 }]
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 60 }]
     },
     basesearcharconsolidated: {
       type: 'array',

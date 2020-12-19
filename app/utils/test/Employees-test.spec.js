@@ -246,6 +246,36 @@ describe('Begin Tests', function () {
           )
         })
       })
+      Object.keys(testbase.schemaBaseValidatorPayloadAr[0]).forEach(function (
+        entry
+      ) {
+        it(`Sorting ${entry} Ascending and evaluating if it is should not be breaking`, function () {
+          testbase = genSpecs
+            .consolidatedPayload()
+            .payload26(testbase, entry, evalModulename)
+          //  console.log(testbase.payload)
+          return genSpecs.genericApiPost(testbase).then(function (data) {
+            
+          //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+        //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+          })
+        })
+      })
+      Object.keys(testbase.schemaBaseValidatorPayloadAr[0]).forEach(function (
+        entry
+      ) {
+        it(`Sorting ${entry} Descending and evaluating if it is should not be breaking`, function () {
+          testbase = genSpecs
+            .consolidatedPayload()
+            .payload27(testbase, entry, evalModulename)
+          //  console.log(testbase.payload)
+          return genSpecs.genericApiPost(testbase).then(function (data) {
+            
+          //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+        //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+          })
+        })
+      })
       it(`filter with pageSize as NaN  payload `, function () {
         testbase = genSpecs
           .consolidatedPayload()

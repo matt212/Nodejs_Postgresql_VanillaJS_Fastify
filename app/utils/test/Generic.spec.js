@@ -612,59 +612,59 @@ let consolidatedPayload = function () {
     testbase.payload = o1
     return testbase
   }
-  o.payload22 = function (testbase,entry, evalModulename,validationConfig) {
+  o.payload22 = function (testbase, entry, evalModulename, validationConfig) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      testbase.responseCode = 400
-      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    testbase.responseCode = 400
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = validationConfig.validationmap.filter(
-        o1 => o1.inputname == entry
-      )[0].fieldtypename
+    let fieldtype = validationConfig.validationmap.filter(
+      o1 => o1.inputname == entry
+    )[0].fieldtypename
 
-      if (fieldtype == 'DATE') {
-        o1.daterange = {
-          startdate: undefined,
-          enddate: undefined
-        }
-        o1.datecolsearch = entry
-        o1.disableDate = false
-      } 
-     else {
-        o1.searchparam = [{[entry]:[undefined]}]
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
+    if (fieldtype == 'DATE') {
+      o1.daterange = {
+        startdate: undefined,
+        enddate: undefined
       }
-      testbase.payload = o1
-      return testbase
+      o1.datecolsearch = entry
+      o1.disableDate = false
+    } else {
+      o1.searchparam = [{ [entry]: [undefined] }]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    }
+    testbase.payload = o1
+    return testbase
   }
-  o.payload23 = function (testbase,entry, evalModulename,validationConfig) {
+  o.payload23 = function (testbase, entry, evalModulename, validationConfig) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      testbase.responseCode = 400
-      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    testbase.responseCode = 400
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = validationConfig.validationmap.filter(
-        o1 => o1.inputname == entry
-      )[0].fieldtypename
+    let fieldtype = validationConfig.validationmap.filter(
+      o1 => o1.inputname == entry
+    )[0].fieldtypename
 
-      if (fieldtype == 'DATE') {
-        o1.daterange = {
-          [undefined]: new Date(
-            testbase.schemaBaseValidatorPayload[entry]
-          ).toLocaleDateString(),
-          [undefined]: new Date(
-            testbase.schemaBaseValidatorPayload[entry]
-          ).toLocaleDateString()
-        }
-        o1.datecolsearch = entry
-        o1.disableDate = false
+    if (fieldtype == 'DATE') {
+      o1.daterange = {
+        [undefined]: new Date(
+          testbase.schemaBaseValidatorPayload[entry]
+        ).toLocaleDateString(),
+        [undefined]: new Date(
+          testbase.schemaBaseValidatorPayload[entry]
+        ).toLocaleDateString()
       }
-     else {
-        o1.searchparam = [{["undefined"]:[testbase.schemaBaseValidatorPayload[entry]]}]
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
-      }
-      testbase.payload = o1
-      return testbase
+      o1.datecolsearch = entry
+      o1.disableDate = false
+    } else {
+      o1.searchparam = [
+        { ['undefined']: [testbase.schemaBaseValidatorPayload[entry]] }
+      ]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    }
+    testbase.payload = o1
+    return testbase
   }
   o.payload24 = function (testbase, evalModulename) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
@@ -680,6 +680,26 @@ let consolidatedPayload = function () {
     o1.sortcolumnorder = NaN
     testbase.payload = o1
     testbase.responseCode = 400
+    return testbase
+  }
+  o.payload26 = function (testbase, entry, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 200
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o1.sortcolumnorder = 'ASC'
+    o1.sortcolumn = entry
+    o1.disableDate = true
+    testbase.payload = o1
+    return testbase
+  }
+  o.payload27 = function (testbase, entry, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 200
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    o1.sortcolumnorder = 'DESC'
+    o1.sortcolumn = entry
+    o1.disableDate = true
+    testbase.payload = o1
     return testbase
   }
   return o
