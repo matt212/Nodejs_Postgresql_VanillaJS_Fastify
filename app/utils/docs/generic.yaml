@@ -14,20 +14,18 @@ definitions:
   basePayLoad:
     type: object
     properties:
-      daterange:
-        $ref: "#/definitions/dateRange"
-      colsearch:
-        type: string
-        format: string
-        example: createdAt
-      datecolsearch:
-        type: string
-        format: string
-        example: created_date
       pageno:
         type: integer
         format: int64
         example: 0
+      searchtype:
+        type: string
+        format: string
+        example: "NoFilter"
+      disableDate:
+        type: boolean
+        format: boolean
+        example: true    
       pageSize:
         type: integer
         format: int64
