@@ -1,19 +1,5 @@
-var models = require("../../../models/");
-var express = require("express");
 var beautify = require('js-beautify').js;
 var html_beautify = require('js-beautify').html_beautify;
-var router = express.Router();
-var config = require("../../../config/config.json");
-var Sequelize = require("sequelize");
-var connections = require("../../../config/db");
-var SqlString = require("sqlstring");
-var sequelize = new Sequelize(
-  config.development.database,
-  config.development.username,
-  config.development.password,
-  { dialect: "postgres" }
-);
-
 var Promise = require("bluebird");
 
 (http = require("http")),
@@ -62,11 +48,25 @@ let addbaseRoutes = function (arr, keys, vals) {
   }
   return arr;
 }
+async function routes (fastify, options) {
+  fastify.get(
+    '/',
+    { preValidation: [fastify.isSession, fastify.isModuleAccess] },
+    async (request, reply) => {
+            
+      reply.view(
+        `base_scaffolding.ejs`,
+      )
+    }
+  )
 
-router.post("/jedha", function (req, res) {
-
-
-  var mainapp = req.body;
+  fastify.post(
+    '/jedha',
+    (request, reply) => {
+      dep.assignVariables(mod)
+      var req = {}
+      req.body = request.body
+      var mainapp = req.body;
 
   applymodel(mainapp)
     .then(applyApp)
@@ -87,7 +87,10 @@ router.post("/jedha", function (req, res) {
       
     })
 
-});
+    }
+  )
+}
+
 
 
 function createdb(mainapp) {
@@ -393,7 +396,7 @@ function applyhtml(mainapp) {
   return new Promise((resolve, reject) => {
     try {
       var appsgenerator = fs.readFileSync('../ref/views/employees/employees.ejs', 'utf8');
-      appsgenerator = appsgenerator.replace(/emp/g, mainapp[0].datapayloadModulename);
+      appsgenerator = appsgenerator.replace(/employees/g, mainapp[0].datapayloadModulename);
 
 
       var dir = '../views/' + mainapp[0].datapayloadModulename
@@ -578,4 +581,4 @@ function swaggerdocs(mainapp) {
 
 }
 
-module.exports = router;
+module.exports = routes
