@@ -255,9 +255,8 @@ describe('Begin Tests', function () {
             .payload26(testbase, entry, evalModulename)
           //  console.log(testbase.payload)
           return genSpecs.genericApiPost(testbase).then(function (data) {
-            
-          //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
-        //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
           })
         })
       })
@@ -270,9 +269,8 @@ describe('Begin Tests', function () {
             .payload27(testbase, entry, evalModulename)
           //  console.log(testbase.payload)
           return genSpecs.genericApiPost(testbase).then(function (data) {
-            
-          //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
-        //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
           })
         })
       })
@@ -461,49 +459,49 @@ describe('Begin Tests', function () {
   })
 
   describe('****************undefined Pivot  Test Cases****************', function () {
-  it(`filter with XpageSize as undefined  payload `, function () {
-    testbase = genSpecs
-      .consolidatedPayload()
-      .payload28(testbase, evalModulename)
-    return genSpecs.genericApiPost(testbase).then(function (data) {
-      //console.log(data.body);
-      data.body.message.should.equal(
-        `body should have required property \'.XpageSize\'`
-      )
+    it(`filter with XpageSize as undefined  payload `, function () {
+      testbase = genSpecs
+        .consolidatedPayload()
+        .payload28(testbase, evalModulename)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        //console.log(data.body);
+        data.body.message.should.equal(
+          `body should have required property \'.XpageSize\'`
+        )
+      })
+    })
+    it(`filter with Xpageno as undefined  payload `, function () {
+      testbase = genSpecs
+        .consolidatedPayload()
+        .payload29(testbase, evalModulename)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        //console.log(data.body);
+        data.body.message.should.equal(
+          `body should have required property \'.Xpageno\'`
+        )
+      })
+    })
+    it(`filter with YpageSize as undefined  payload `, function () {
+      testbase = genSpecs
+        .consolidatedPayload()
+        .payload30(testbase, evalModulename)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        //console.log(data.body);
+        data.body.message.should.equal(
+          `body should have required property \'.YpageSize\'`
+        )
+      })
+    })
+    it(`filter with Ypageno as undefined  payload `, function () {
+      testbase = genSpecs
+        .consolidatedPayload()
+        .payload31(testbase, evalModulename)
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        //console.log(data.body);
+        data.body.message.should.equal(
+          `body should have required property \'.Ypageno\'`
+        )
+      })
     })
   })
-  it(`filter with Xpageno as undefined  payload `, function () {
-    testbase = genSpecs
-      .consolidatedPayload()
-      .payload29(testbase, evalModulename)
-    return genSpecs.genericApiPost(testbase).then(function (data) {
-      //console.log(data.body);
-      data.body.message.should.equal(
-        `body should have required property \'.Xpageno\'`
-      )
-    })
-  })
-  it(`filter with YpageSize as undefined  payload `, function () {
-    testbase = genSpecs
-      .consolidatedPayload()
-      .payload30(testbase, evalModulename)
-    return genSpecs.genericApiPost(testbase).then(function (data) {
-      //console.log(data.body);
-      data.body.message.should.equal(
-        `body should have required property \'.YpageSize\'`
-      )
-    })
-  })
-  it(`filter with Ypageno as undefined  payload `, function () {
-    testbase = genSpecs
-      .consolidatedPayload()
-      .payload31(testbase, evalModulename)
-    return genSpecs.genericApiPost(testbase).then(function (data) {
-      //console.log(data.body);
-      data.body.message.should.equal(
-        `body should have required property \'.Ypageno\'`
-      )
-    })
-  })
-})
 })
