@@ -2,7 +2,7 @@ const swaggerJSDoc = require('swagger-jsdoc');
 
 const swaggerDefinition = {
   info: {
-    title: 'REST API for my Nodejs Postgres VanillaJS ', // Title of the documentation
+    title: 'REST API for Fastify based Nodejs Postgres VanillaJS WebApp ', // Title of the documentation
     version: '1.0.0', // Version of the app
     description: 'Below one can find Different Modules with its respective list of APIs and its request and response structure', // short description of the app
   },
