@@ -86,8 +86,7 @@ In case of error running sh Files Follow below
   > basic login tests are written and can view and evaluated by running below command
   > `yarn LoginEval`
 - ### `Release notes 20 Dec 2020`
-  > 69 **Modular** Mocha test cases with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select payload Validations
+  > 73 **Modular** Mocha test cases with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
   > `yarn ModuleEval`
   - ### `Release notes 21 Dec 2020`
-  > Grand total 73 **Modular** Mocha test cases including for Pivot X and Y for pageSize and pageNo 
-  > `yarn ModuleEval`
+  
