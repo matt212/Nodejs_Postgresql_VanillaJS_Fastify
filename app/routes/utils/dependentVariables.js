@@ -703,7 +703,9 @@ let pivotTransform = req => {
       enddate +
       "''"
   }
-
+  if (req.body.disableDate) {
+    daterange = ' '
+  }
   if (
     req.body.sortcolumnorder == undefined &&
     req.body.sortcolumn == undefined

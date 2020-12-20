@@ -109,22 +109,6 @@ const searchLoadbodyJsonSchema = {
 
 const searchPivotbodyJsonSchema = {
   type: 'object',
-  required: [
-    'searchparam',
-    'daterange',
-    'colsearch',
-    'datecolsearch',
-    'pageSize',
-    'pageno',
-    'pivotparamXaxis',
-    'pivotparamYaxis',
-    'timeinternprimary',
-    'timeinternsecondary',
-    'XpageSize',
-    'Xpageno',
-    'YpageSize',
-    'Ypageno'
-  ],
   properties: {
     searchparam: {
       type: 'array',
@@ -180,7 +164,70 @@ const searchPivotbodyJsonSchema = {
       type: 'integer',
       minimum: 0
     }
-  }
+  },
+  allOf: [
+    {
+      if: {
+        properties: {
+          disableDate: {
+            enum: [true]
+          }
+        }
+      },
+      then: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
+          'pivotparamXaxis',
+          'pivotparamYaxis',
+          'XpageSize',
+          'Xpageno',
+          'YpageSize',
+          'Ypageno'
+        ]
+      },
+      else: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
+          'datecolsearch',
+          'daterange'
+        ]
+      }
+    },
+    {
+      if: {
+        properties: {
+          searchtype: {
+            enum: ['consolidatesearch']
+          }
+        }
+      },
+      then: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
+          'basesearcharconsolidated'
+        ]
+      },
+      else: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
+          'pivotparamXaxis',
+          'pivotparamYaxis',
+          'XpageSize',
+          'Xpageno',
+          'YpageSize',
+          'Ypageno'
+        ]
+      }
+    }
+  ]
 }
 const searchGroupbybodyJsonSchema = {
   type: 'object',

@@ -10,6 +10,21 @@ let loadModulePayLoad = {
   disableDate: true,
   searchtype: 'NoFilter'
 }
+let PivotloadModulePayLoad = {
+  searchparam: ['NA'],
+  pageno: 0,
+  pageSize: 20,
+  disableDate: true,
+  searchtype: 'NoFilter',
+  pivotparamXaxis: "birth_date",
+  pivotparamYaxis: "gender",
+  timeinternprimary: "",
+  timeinternsecondary: "Month",
+  XpageSize: 40,
+  Xpageno: 0,
+  YpageSize: 20,
+  Ypageno: 0,
+}
 before(async () => {
   require('../app.js')
 })
@@ -700,6 +715,38 @@ let consolidatedPayload = function () {
     o1.sortcolumn = entry
     o1.disableDate = true
     testbase.payload = o1
+    return testbase
+  },
+  o.payload28 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.pivotresult
+    var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
+    o.XpageSize = undefined
+    testbase.payload = o
+    testbase.responseCode = 400
+    return testbase
+  }
+  o.payload29 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.pivotresult
+    var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
+    o.Xpageno = undefined
+    testbase.payload = o
+    testbase.responseCode = 400
+    return testbase
+  }
+  o.payload30 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.pivotresult
+    var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
+    o.YpageSize = undefined
+    testbase.payload = o
+    testbase.responseCode = 400
+    return testbase
+  }
+  o.payload31 = function (testbase, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.pivotresult
+    var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
+    o.Ypageno = undefined
+    testbase.payload = o
+    testbase.responseCode = 400
     return testbase
   }
   return o
