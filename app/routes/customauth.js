@@ -11,6 +11,11 @@ let mod = Object.assign(
 )
 
 async function routes (fastify, options) {
+  fastify.get('/', async function (request, reply) {
+    let statusMsg = request.session.get('statusMessage')
+
+    return reply.view('../views/login/login.ejs', { statusMessage: statusMsg })
+  })
   fastify.get('/login', async function (request, reply) {
     let statusMsg = request.session.get('statusMessage')
 

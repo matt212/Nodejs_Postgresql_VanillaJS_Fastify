@@ -98,7 +98,11 @@ async function baseDecorator (fastify, options) {
                   request.session.get('intendedredirect')
                 )
               } else {
-                request.session.set('redirectURL', basestate.successRedirect)
+                if (basestate.successRedirect != undefined) {
+                  request.session.set('redirectURL', basestate.successRedirect)
+                } else {
+                  request.session.set('redirectURL', '/employees')
+                }
               }
 
               done()
@@ -155,7 +159,7 @@ async function baseDecorator (fastify, options) {
 
   let rbac = function (id) {
     return new Promise((resolve, reject) => {
-      var sqlstatement=""
+      var sqlstatement = ''
       if (id == 1 || id == 2) {
         sqlstatement =
           'select array_agg(DISTINCT Mname) Modulename ' +
