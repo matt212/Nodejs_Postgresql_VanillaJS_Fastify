@@ -1,22 +1,6 @@
 let baseSchema = require('../../utils/misc/baseSchemaConfig')
 let insertUpdateSchema = {
-  first_name: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
-  },
-  last_name: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
-  },
-  gender: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 1 }]
-  },
-  birth_date: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 30 }],
-    format: 'date-time'
-  },
+  placeholder1,
   recordstate: {
     type: 'boolean',
     allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
@@ -24,7 +8,7 @@ let insertUpdateSchema = {
 }
 let baseupdatefunction = {
   insertUpdateSchema,
-  employeesid: {
+  placeholder4: {
     type: 'integer',
     minimum: 1
   }
@@ -32,19 +16,12 @@ let baseupdatefunction = {
 
 const insertSchema = {
   type: 'object',
-  required: ['first_name', 'last_name', 'gender', 'birth_date', 'recordstate'],
+  required: placeholder2,
   properties: insertUpdateSchema
 }
 const updateSchema = {
   type: 'object',
-  required: [
-    'first_name',
-    'last_name',
-    'gender',
-    'birth_date',
-    'recordstate',
-    'employeesid'
-  ],
+  required: placeholder3,
   properties: baseupdatefunction
 }
 

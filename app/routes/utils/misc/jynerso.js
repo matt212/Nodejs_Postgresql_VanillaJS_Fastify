@@ -66,31 +66,82 @@ async function routes (fastify, options) {
       var req = {}
       req.body = request.body
       var mainapp = req.body;
+      applyserverschemaValidator(mainapp).then(function (data) {
+      
+            res.json({ a: "run  yarn applychangesDB " })
+            
+          }).catch(e => {
+            // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
+            res.json(e)
+            
+          })
 
-  applymodel(mainapp)
-    .then(applyApp)
-    .then(applyroutes)
-    .then(applyserverValidationConfig)
-    .then(swaggerdocs)
-    .then(applyMultiControls)
-    .then(applyhtml)
-    .then(createdb)
-    //.then(pgcreateDb)
-    .then(function (data) {
+  // applymodel(mainapp)
+  //   .then(applyApp)
+  //   .then(applyroutes)
+  //   .then(applyserverValidationConfig)
+  //   .then(swaggerdocs)
+  //   .then(applyMultiControls)
+  //   .then(applyhtml)
+  //   //.then(createdb)
+  //   //.then(pgcreateDb)
+  //   .then(function (data) {
       
-      res.json({ a: "run  yarn applychangesDB " })
+  //     res.json({ a: "run  yarn applychangesDB " })
       
-    }).catch(e => {
-      // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
-      res.json(e)
+  //   }).catch(e => {
+  //     // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
+  //     res.json(e)
       
-    })
+  //   })
 
     }
   )
 }
 
+function applyserverschemaValidator(mainapp) {
+  return new Promise((resolve, reject) => {
+    try {
 
+      var appsgenerator = fs.readFileSync('../ref/routes/utils/payloadSchema.js', 'utf8');
+      var filename = mainapp[0].server_client
+      var applyFields = filename.map(function (doctor) {
+        return doctor.inputname
+      });
+
+      filename = JSON.stringify(filename, null, 2).replace(/\"([^(\")"]+)\":/g, "$1:");
+      applyFields = JSON.stringify(applyFields, null, 2);
+      applyFields=applyFields.push('recordstate')
+      applyFields1=applyFields.push(mainapp[0].datapayloadModulename+"id")
+      appsgenerator = appsgenerator.replace('placeholder2', applyFields);
+      appsgenerator = appsgenerator.replace('placeholder3', applyFields1);
+      appsgenerator = appsgenerator.replace('placeholder4', mainapp[0].datapayloadModulename+"id");
+      
+      var dir = '../routes/utils/' + mainapp[0].datapayloadModulename
+      if (!fs.existsSync(dir)) {
+        fs.mkdir(dir, function (err, data) {
+          fs.writeFile('../routes/utils/' + mainapp[0].datapayloadModulename + '/payloadSchema.js', (beautify(appsgenerator, { indent_size: 2 })), 'utf8', function (err, data) {
+            console.log(err)
+            resolve(mainapp)
+
+          })
+
+        });
+      }
+      else {
+        fs.writeFile('../routes/utils/' + mainapp[0].datapayloadModulename + '/payloadSchema.js', (beautify(appsgenerator, { indent_size: 2 })), 'utf8', function (err, data) {
+          console.log(err)
+          resolve(mainapp)
+
+        })
+      }
+    }
+    catch (err) {
+      reject(err)
+    }
+
+  })
+}
 
 function createdb(mainapp) {
   return new Promise((resolve, reject) => {
@@ -520,6 +571,7 @@ function applyserverValidationConfig(mainapp) {
 
   })
 }
+
 function swaggerdocs(mainapp) {
   return new Promise((resolve, reject) => {
     try {
