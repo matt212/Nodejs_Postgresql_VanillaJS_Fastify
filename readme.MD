@@ -8,7 +8,7 @@
 
 > _`bash ./app/utils/serverSetup/secondarySetup.sh`_
 
-**Mocha chai tests**
+**Mocha chai tests against 20,00,000 recordsets**
 
 > _`npm run LoginEval or yarn LoginEval`_
 
@@ -82,6 +82,6 @@ In case of error running sh Files Follow below
   > basic login tests are written and can view and evaluated by running below command
   > `yarn LoginEval`
 - ### `Release notes 20 Dec 2020`
-  > 73 **Modular** Mocha test cases with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
+  > 73 **Modular** Mocha test cases against 20,00,000 recordset with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
   > `yarn ModuleEval`
   
