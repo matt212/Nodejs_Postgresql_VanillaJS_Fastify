@@ -30,7 +30,7 @@
 
 ![redlime](app/video/gif/b2.gif)
 
-- ### `Node.js stream based CSV download for 1000k from PostgresSQL with socket.io as progress feature`
+- ### `Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature`
   ![redlime](app/video/gif/c1.gif)
 
 * ### `Automated Swagger for each Module created By build in scaffoding accessed at http://localhost:3012/api-docs/`
