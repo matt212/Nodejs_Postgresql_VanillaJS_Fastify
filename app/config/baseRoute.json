@@ -1,22 +1,4 @@
 [{
   "val": "employees",
   "key": "employees"
-}, {
-  "val": "modname",
-  "key": "modname"
-}, {
-  "val": "muser",
-  "key": "muser"
-}, {
-  "val": "role",
-  "key": "role"
-}, {
-  "val": "mrole",
-  "key": "mrole"
-}, {
-  "val": "userrole",
-  "key": "userrole"
-}, {
-  "val": "inventories",
-  "key": "inventories"
 }]

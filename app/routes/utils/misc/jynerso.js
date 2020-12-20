@@ -392,20 +392,20 @@ baseCheckbox:\`<div class="checkbox tablechk">
 function applyhtml(mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync('../ref/views/employees/employees.html', 'utf8');
-      appsgenerator = appsgenerator.replace(/employees/g, mainapp[0].datapayloadModulename);
+      var appsgenerator = fs.readFileSync('../ref/views/employees/employees.ejs', 'utf8');
+      appsgenerator = appsgenerator.replace(/emp/g, mainapp[0].datapayloadModulename);
 
 
       var dir = '../views/' + mainapp[0].datapayloadModulename
       if (!fs.existsSync(dir)) {
         fs.mkdir(dir, function (err, data) {
-          fs.writeFile(dir + '/' + mainapp[0].datapayloadModulename + '.html', (html_beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
+          fs.writeFile(dir + '/' + mainapp[0].datapayloadModulename + '.ejs', (html_beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
             resolve(mainapp)
           })
         })
       }
       else {
-        fs.writeFile(dir + '/' + mainapp[0].datapayloadModulename + '.html', (html_beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
+        fs.writeFile(dir + '/' + mainapp[0].datapayloadModulename + '.ejs', (html_beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
           resolve(mainapp)
         })
       }

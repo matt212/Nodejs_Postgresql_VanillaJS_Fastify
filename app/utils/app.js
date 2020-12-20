@@ -40,7 +40,13 @@ fastify.register(require('fastify-secure-session'), {
 })
 fastify.register(require('../../app/config/baseAuth'))
 fastify.register(require('../routes/customauth'), { prefix: '/' })
-fastify.register(require('../routes/emp_fastify'), { prefix: 'employees' })
+let baseroutes=require('../config/baseRoute')
+baseroutes.forEach(function(dt)
+{  
+ 
+ fastify.register(require(`../routes/${dt.val}`), { prefix: dt.val })
+})
+
 
 // Run the server!
 fastify.listen(3011, function (err, address) {
