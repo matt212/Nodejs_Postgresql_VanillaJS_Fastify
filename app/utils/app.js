@@ -40,6 +40,7 @@ fastify.register(require('fastify-secure-session'), {
 })
 fastify.register(require('../../app/config/baseAuth'))
 fastify.register(require('../routes/customauth'), { prefix: '/' })
+fastify.register(require('../routes/utils/misc/jynerso'), { prefix: '/black-squadron' })
 let baseroutes=require('../config/baseRoute')
 baseroutes.forEach(function(dt)
 {  

@@ -51,7 +51,6 @@ let addbaseRoutes = function (arr, keys, vals) {
 async function routes (fastify, options) {
   fastify.get(
     '/',
-    { preValidation: [fastify.isSession, fastify.isModuleAccess] },
     async (request, reply) => {
             
       reply.view(
