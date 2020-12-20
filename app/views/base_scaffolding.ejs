@@ -51,8 +51,8 @@
 <input id="btnserver_client" type="button" onclick='javascript:base_server();' value="generate scaffolding">
 
 <script>
-    var based = "{{ mod }}"
-    var killzone = JSON.parse(based.replace(/&quot;/g, '"'))
+    var based = "<%= mod %>"
+    var killzone = JSON.parse(based.replace(/\&#34;/g, '\"'))
     var killzones = killzone.map(function (doctor) {
         return doctor.mod
     });

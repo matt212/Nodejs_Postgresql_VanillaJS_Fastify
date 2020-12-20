@@ -53,8 +53,23 @@ async function routes (fastify, options) {
     '/',
     async (request, reply) => {
             
+      var models = require("../../../models/");
+  
+      var baseOBj=[]
+      Object.keys(models).forEach(function(data)
+      {
+        
+        
+        
+        if(data!="sequelize" && data!="Sequelize")
+        {
+          baseOBj.push({mod:data,attr:Object.keys(models[data].tableAttributes)});
+        }
+        
+      })
+console.log(JSON.stringify(baseOBj));
       reply.view(
-        `base_scaffolding.ejs`,
+        `base_scaffolding.ejs`,{mod:JSON.stringify(baseOBj)}
       )
     }
   )
