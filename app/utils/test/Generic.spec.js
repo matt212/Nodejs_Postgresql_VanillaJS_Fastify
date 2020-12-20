@@ -16,14 +16,14 @@ let PivotloadModulePayLoad = {
   pageSize: 20,
   disableDate: true,
   searchtype: 'NoFilter',
-  pivotparamXaxis: "birth_date",
-  pivotparamYaxis: "gender",
-  timeinternprimary: "",
-  timeinternsecondary: "Month",
+  pivotparamXaxis: 'birth_date',
+  pivotparamYaxis: 'gender',
+  timeinternprimary: '',
+  timeinternsecondary: 'Month',
   XpageSize: 40,
   Xpageno: 0,
   YpageSize: 20,
-  Ypageno: 0,
+  Ypageno: 0
 }
 before(async () => {
   require('../app.js')
@@ -309,7 +309,6 @@ let loadCurrentModule = function (data) {
 let consolidatedPayload = function () {
   let o = {}
   o.payload1 = function (testbase, entry, evalModulename) {
-    console.log(evalModulename)
     testbase.apiUrl = '/' + evalModulename + dep.create
     testbase.responseCode = 400
     testbase.payload = entry.schemaContent
@@ -707,7 +706,7 @@ let consolidatedPayload = function () {
     testbase.payload = o1
     return testbase
   }
-  o.payload27 = function (testbase, entry, evalModulename) {
+  ;(o.payload27 = function (testbase, entry, evalModulename) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     testbase.responseCode = 200
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
@@ -716,15 +715,15 @@ let consolidatedPayload = function () {
     o1.disableDate = true
     testbase.payload = o1
     return testbase
-  },
-  o.payload28 = function (testbase, evalModulename) {
-    testbase.apiUrl = '/' + evalModulename + dep.pivotresult
-    var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
-    o.XpageSize = undefined
-    testbase.payload = o
-    testbase.responseCode = 400
-    return testbase
-  }
+  }),
+    (o.payload28 = function (testbase, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.pivotresult
+      var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
+      o.XpageSize = undefined
+      testbase.payload = o
+      testbase.responseCode = 400
+      return testbase
+    })
   o.payload29 = function (testbase, evalModulename) {
     testbase.apiUrl = '/' + evalModulename + dep.pivotresult
     var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
