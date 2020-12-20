@@ -20,7 +20,7 @@ async function routes (fastify, options) {
         '/validationConfig.js')
       reply.header('x-token', request.session.get('userLoggedInfor'))
       reply.view(
-        'employees/employees.ejs',
+        `${mod.Name}/${mod.Name}.ejs`,
         dep.pageRenderObj(request, reply, validationConfig)
       )
     }
