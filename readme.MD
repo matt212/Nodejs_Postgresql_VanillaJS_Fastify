@@ -60,7 +60,7 @@ In case of error running sh Files Follow below
 
 - new fields (datatypes string and ints ) ,
   config based modular apporach on server side `duh`.
-- validation is sly-ly implemented taken care by config based modular apporach on client side.
+- validation is implemented  by config based modular apporach on client side.
 - <u> `modulerized everything baby` </u> concept for excel export ,import table rendering and dynamic pivot based filters !
 - create, update , delete and search features is implemented for single table with complex queries multi join 
 - every features be as may search, group by multiselect search is paginated to the core for effeciency and scalabliltiy and is modulerized to the barebone .
