@@ -1,42 +1,37 @@
-var beautify = require('js-beautify').js;
-var html_beautify = require('js-beautify').html_beautify;
-var Promise = require("bluebird");
+var beautify = require('js-beautify').js
+var html_beautify = require('js-beautify').html_beautify
+var Promise = require('bluebird')
 
-(http = require("http")),
-  (fs = require("fs")),
-  (util = require("util")),
-  (Busboy = require("busboy"));
-(os = require("os")), (path = require("path")), (csv = require("fast-csv"));
-crypto = require("crypto");
-var d = new Date();
+;(http = require('http')),
+  (fs = require('fs')),
+  (util = require('util')),
+  (Busboy = require('busboy'))
+;(os = require('os')), (path = require('path')), (csv = require('fast-csv'))
+crypto = require('crypto')
+var d = new Date()
 
-var serverdat = { name: d.toString() };
+var serverdat = { name: d.toString() }
 
-const { spawn } = require('child_process');
-
-
+const { spawn } = require('child_process')
 
 let pgcreateDb = function () {
   return new Promise((resolve, reject) => {
     try {
-
-      const fs = require('fs');
-      const child_process = require('child_process');
+      const fs = require('fs')
+      const child_process = require('child_process')
 
       var spawn_process_cmd = 'yarn applychangesDB'
       child_process.exec(spawn_process_cmd, (error, stdout, stderr) => {
         if (error) {
-          console.error(`exec error: ${error}`);
+          console.error(`exec error: ${error}`)
 
           reject(error)
         }
-        resolve({'stdout':stdout})
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-        
-      });
-    }
-    catch (err) {
+        resolve({ stdout: stdout })
+        console.log(`stdout: ${stdout}`)
+        console.log(`stderr: ${stderr}`)
+      })
+    } catch (err) {
       reject(err)
     }
   })
@@ -44,148 +39,154 @@ let pgcreateDb = function () {
 let addbaseRoutes = function (arr, keys, vals) {
   arr = JSON.parse(arr)
   if (arr.filter(item => item.val == vals).length == 0) {
-    arr.push({ val: vals, key: keys });
+    arr.push({ val: vals, key: keys })
   }
-  return arr;
+  return arr
 }
 async function routes (fastify, options) {
-  fastify.get(
-    '/',
-    async (request, reply) => {
-            
-      var models = require("../../../models/");
-  
-      var baseOBj=[]
-      Object.keys(models).forEach(function(data)
-      {
-        
-        
-        
-        if(data!="sequelize" && data!="Sequelize")
-        {
-          baseOBj.push({mod:data,attr:Object.keys(models[data].tableAttributes)});
-        }
-        
+  fastify.get('/', async (request, reply) => {
+    var models = require('../../../models/')
+
+    var baseOBj = []
+    Object.keys(models).forEach(function (data) {
+      if (data != 'sequelize' && data != 'Sequelize') {
+        baseOBj.push({
+          mod: data,
+          attr: Object.keys(models[data].tableAttributes)
+        })
+      }
+    })
+
+    reply.view(`base_scaffolding.ejs`, { mod: JSON.stringify(baseOBj) })
+  })
+
+  fastify.post('/jedha', (request, reply) => {
+    dep.assignVariables(mod)
+    var req = {}
+    req.body = request.body
+    var mainapp = req.body
+    applyserverschemaValidator(mainapp)
+      .then(function (data) {
+        res.json({ a: 'run  yarn applychangesDB ' })
       })
-console.log(JSON.stringify(baseOBj));
-      reply.view(
-        `base_scaffolding.ejs`,{mod:JSON.stringify(baseOBj)}
-      )
-    }
-  )
+      .catch(e => {
+        // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
+        res.json(e)
+      })
 
-  fastify.post(
-    '/jedha',
-    (request, reply) => {
-      dep.assignVariables(mod)
-      var req = {}
-      req.body = request.body
-      var mainapp = req.body;
-      applyserverschemaValidator(mainapp).then(function (data) {
-      
-            res.json({ a: "run  yarn applychangesDB " })
-            
-          }).catch(e => {
-            // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
-            res.json(e)
-            
-          })
+    // applymodel(mainapp)
+    //   .then(applyApp)
+    //   .then(applyroutes)
+    //   .then(applyserverValidationConfig)
+    //   .then(swaggerdocs)
+    //   .then(applyMultiControls)
+    //   .then(applyhtml)
+    //   //.then(createdb)
+    //   //.then(pgcreateDb)
+    //   .then(function (data) {
 
-  // applymodel(mainapp)
-  //   .then(applyApp)
-  //   .then(applyroutes)
-  //   .then(applyserverValidationConfig)
-  //   .then(swaggerdocs)
-  //   .then(applyMultiControls)
-  //   .then(applyhtml)
-  //   //.then(createdb)
-  //   //.then(pgcreateDb)
-  //   .then(function (data) {
-      
-  //     res.json({ a: "run  yarn applychangesDB " })
-      
-  //   }).catch(e => {
-  //     // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
-  //     res.json(e)
-      
-  //   })
+    //     res.json({ a: "run  yarn applychangesDB " })
 
-    }
-  )
+    //   }).catch(e => {
+    //     // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
+    //     res.json(e)
+
+    //   })
+  })
 }
 
-function applyserverschemaValidator(mainapp) {
+function applyserverschemaValidator (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-
-      var appsgenerator = fs.readFileSync('../ref/routes/utils/payloadSchema.js', 'utf8');
+      var appsgenerator = fs.readFileSync(
+        '../ref/routes/utils/payloadSchema.js',
+        'utf8'
+      )
       var filename = mainapp[0].server_client
       var applyFields = filename.map(function (doctor) {
         return doctor.inputname
-      });
+      })
 
-      filename = JSON.stringify(filename, null, 2).replace(/\"([^(\")"]+)\":/g, "$1:");
-      applyFields = JSON.stringify(applyFields, null, 2);
-      applyFields=applyFields.push('recordstate')
-      applyFields1=applyFields.push(mainapp[0].datapayloadModulename+"id")
-      appsgenerator = appsgenerator.replace('placeholder2', applyFields);
-      appsgenerator = appsgenerator.replace('placeholder3', applyFields1);
-      appsgenerator = appsgenerator.replace('placeholder4', mainapp[0].datapayloadModulename+"id");
-      
+      filename = JSON.stringify(filename, null, 2).replace(
+        /\"([^(\")"]+)\":/g,
+        '$1:'
+      )
+      applyFields = JSON.stringify(applyFields, null, 2)
+      applyFields = applyFields.push('recordstate')
+      applyFields1 = applyFields.push(mainapp[0].datapayloadModulename + 'id')
+      appsgenerator = appsgenerator.replace('placeholder2', applyFields)
+      appsgenerator = appsgenerator.replace('placeholder3', applyFields1)
+      appsgenerator = appsgenerator.replace(
+        'placeholder4',
+        mainapp[0].datapayloadModulename + 'id'
+      )
+
       var dir = '../routes/utils/' + mainapp[0].datapayloadModulename
       if (!fs.existsSync(dir)) {
         fs.mkdir(dir, function (err, data) {
-          fs.writeFile('../routes/utils/' + mainapp[0].datapayloadModulename + '/payloadSchema.js', (beautify(appsgenerator, { indent_size: 2 })), 'utf8', function (err, data) {
+          fs.writeFile(
+            '../routes/utils/' +
+              mainapp[0].datapayloadModulename +
+              '/payloadSchema.js',
+            beautify(appsgenerator, { indent_size: 2 }),
+            'utf8',
+            function (err, data) {
+              console.log(err)
+              resolve(mainapp)
+            }
+          )
+        })
+      } else {
+        fs.writeFile(
+          '../routes/utils/' +
+            mainapp[0].datapayloadModulename +
+            '/payloadSchema.js',
+          beautify(appsgenerator, { indent_size: 2 }),
+          'utf8',
+          function (err, data) {
             console.log(err)
             resolve(mainapp)
-
-          })
-
-        });
+          }
+        )
       }
-      else {
-        fs.writeFile('../routes/utils/' + mainapp[0].datapayloadModulename + '/payloadSchema.js', (beautify(appsgenerator, { indent_size: 2 })), 'utf8', function (err, data) {
-          console.log(err)
-          resolve(mainapp)
-
-        })
-      }
-    }
-    catch (err) {
+    } catch (err) {
       reject(err)
     }
-
   })
 }
 
-function createdb(mainapp) {
+function createdb (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var baseobj = {};
-      baseobj.mname = mainapp[0].datapayloadModulename.toString().trim();
-      var models = require("../../../models/");
+      var baseobj = {}
+      baseobj.mname = mainapp[0].datapayloadModulename.toString().trim()
+      var models = require('../../../models/')
       //models.sequelize.sync().then(function () {
-        models.modname.create(baseobj).then(function () {
+      models.modname
+        .create(baseobj)
+        .then(function () {
           resolve(mainapp)
-        }).catch(e=>
-          {
-            reject(e)
-          })
+        })
+        .catch(e => {
+          reject(e)
+        })
 
       //});
-    }
-    catch (err) {
+    } catch (err) {
       reject(err)
     }
   })
 }
-function applyMultiControls(mainapp) {
+function applyMultiControls (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync('../ref/public/admin/js/app/app_employees.js', 'utf8');
+      var appsgenerator = fs.readFileSync(
+        '../ref/public/admin/js/app/app_employees.js',
+        'utf8'
+      )
       var based = mainapp[0].server_client
       based = based.filter(function (doctor) {
-        return doctor.inputtype != "textbox"; // if truthy then keep item
+        return doctor.inputtype != 'textbox' // if truthy then keep item
       })
       console.log(based.length)
       if (based.length <= 1) {
@@ -195,7 +196,8 @@ function applyMultiControls(mainapp) {
         text:"{text}",
       };`
         //definition
-        var currentInitialization = "getcurrentMod{modulename}groupby: '/' + current{modulename}.name + '/api/searchtypegroupbyId/',"
+        var currentInitialization =
+          "getcurrentMod{modulename}groupby: '/' + current{modulename}.name + '/api/searchtypegroupbyId/',"
         //initialization
 
         //implementation
@@ -248,64 +250,114 @@ function applyMultiControls(mainapp) {
   });
 }`
 
-        var c = ""
-        var d = ""
-        var e = ""
+        var c = ''
+        var d = ''
+        var e = ''
         mainapp[0].server_client.forEach(element => {
           //server_client.forEach(element => {
-          if (element.inputtype != "textbox") {
-            multiControlsScripts = multiControlsScripts.replace("//onchkcapture", "\n " + onchkscaffolding)
+          if (element.inputtype != 'textbox') {
+            multiControlsScripts = multiControlsScripts.replace(
+              '//onchkcapture',
+              '\n ' + onchkscaffolding
+            )
             baseMod = baseMod.replace(/{Modname}/g, element.inputtypemod)
             baseMod = baseMod.replace(/{name}/g, element.inputtypemod)
             baseMod = baseMod.replace(/{id}/g, element.inputtypeID)
             baseMod = baseMod.replace(/{text}/g, element.inputtypeVal)
-            checkboxCode = checkboxCode.replace(/{Modname}/g, element.inputtypemod)
-            multiControlsScripts = multiControlsScripts.replace("//checkboxCode", "\n " + checkboxCode)
-            appsgenerator = appsgenerator.replace("//definition", "\n " + baseMod)
-            if (c == "") {
-              c = currentInitialization.replace(/{modulename}/g, element.inputtypemod)
-              d = currentImplementation.replace(/{modulename}/g, element.inputtypemod)
+            checkboxCode = checkboxCode.replace(
+              /{Modname}/g,
+              element.inputtypemod
+            )
+            multiControlsScripts = multiControlsScripts.replace(
+              '//checkboxCode',
+              '\n ' + checkboxCode
+            )
+            appsgenerator = appsgenerator.replace(
+              '//definition',
+              '\n ' + baseMod
+            )
+            if (c == '') {
+              c = currentInitialization.replace(
+                /{modulename}/g,
+                element.inputtypemod
+              )
+              d = currentImplementation.replace(
+                /{modulename}/g,
+                element.inputtypemod
+              )
               e = groupbyControlsPopulate(element.inputtypemod)
-            }
-            else {
-              c = c + "\n" + currentInitialization.replace(/{modulename}/g, element.inputtypemod)
-              d = d + "\n" + currentImplementation.replace(/{modulename}/g, element.inputtypemod)
-              e = e + "\n" + groupbyControlsPopulate(element.inputtypemod)
+            } else {
+              c =
+                c +
+                '\n' +
+                currentInitialization.replace(
+                  /{modulename}/g,
+                  element.inputtypemod
+                )
+              d =
+                d +
+                '\n' +
+                currentImplementation.replace(
+                  /{modulename}/g,
+                  element.inputtypemod
+                )
+              e = e + '\n' + groupbyControlsPopulate(element.inputtypemod)
             }
           }
         })
-        if (c != "") {
-          appsgenerator = appsgenerator.replace(/definition/g, "\n" + baseMod);
-          appsgenerator = appsgenerator.replace(/initialization/g, "\n" + c);
-          appsgenerator = appsgenerator.replace(/implementation/g, "\n" + d);
-          appsgenerator = appsgenerator.replace(/groupBySets/g, "\n" + e);
-          appsgenerator = appsgenerator.replace(/baseOffLoad/g, "\n" + baseOffLoad);
+        if (c != '') {
+          appsgenerator = appsgenerator.replace(/definition/g, '\n' + baseMod)
+          appsgenerator = appsgenerator.replace(/initialization/g, '\n' + c)
+          appsgenerator = appsgenerator.replace(/implementation/g, '\n' + d)
+          appsgenerator = appsgenerator.replace(/groupBySets/g, '\n' + e)
+          appsgenerator = appsgenerator.replace(
+            /baseOffLoad/g,
+            '\n' + baseOffLoad
+          )
           var replaces = `let basemod_modal = {afterhtmlpopulate: function() {}}`
 
-          appsgenerator = appsgenerator.replace(replaces, "\n" + (beautify(multiControlsScripts, { indent_size: 2 })));
+          appsgenerator = appsgenerator.replace(
+            replaces,
+            '\n' + beautify(multiControlsScripts, { indent_size: 2 })
+          )
         }
       }
 
-
-      appsgenerator = appsgenerator.replace(/employees/g, mainapp[0].datapayloadModulename);
-      fs.writeFile('../public/admin/js/app/app_' + mainapp[0].datapayloadModulename + '.js', (beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
-        resolve(mainapp)
-
-      })
-    }
-    catch (err) {
+      appsgenerator = appsgenerator.replace(
+        /employees/g,
+        mainapp[0].datapayloadModulename
+      )
+      fs.writeFile(
+        '../public/admin/js/app/app_' +
+          mainapp[0].datapayloadModulename +
+          '.js',
+        beautify(appsgenerator, { indent_size: 2 }),
+        function (err, data) {
+          resolve(mainapp)
+        }
+      )
+    } catch (err) {
       reject(err)
     }
   })
 }
-function applyclientJS(mainapp) {
+function applyclientJS (mainapp) {
   return new Promise((resolve, reject) => {
-    var appsgenerator = fs.readFileSync('../ref/public/admin/js/app/app_employees.js', 'utf8');
-    appsgenerator = appsgenerator.replace(/employees/g, mainapp[0].datapayloadModulename);
-    fs.writeFile('../public/admin/js/app/app_' + mainapp[0].datapayloadModulename + '.js', (beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
-      resolve(mainapp)
-
-    })
+    var appsgenerator = fs.readFileSync(
+      '../ref/public/admin/js/app/app_employees.js',
+      'utf8'
+    )
+    appsgenerator = appsgenerator.replace(
+      /employees/g,
+      mainapp[0].datapayloadModulename
+    )
+    fs.writeFile(
+      '../public/admin/js/app/app_' + mainapp[0].datapayloadModulename + '.js',
+      beautify(appsgenerator, { indent_size: 2 }),
+      function (err, data) {
+        resolve(mainapp)
+      }
+    )
   })
 }
 /* multi control part in process */
@@ -320,8 +372,14 @@ let groupbyControlsPopulate = function (modname) {
          return argument
      })
   },`
-  groupbyControlsPopulate = groupbyControlsPopulate.replace("employees", modname)
-  groupbyControlsPopulate = groupbyControlsPopulate.replace(`getpaginatesearchtypegroupby`, `getcurrentMod${modname}groupby`)
+  groupbyControlsPopulate = groupbyControlsPopulate.replace(
+    'employees',
+    modname
+  )
+  groupbyControlsPopulate = groupbyControlsPopulate.replace(
+    `getpaginatesearchtypegroupby`,
+    `getcurrentMod${modname}groupby`
+  )
   return groupbyControlsPopulate
 }
 
@@ -457,194 +515,240 @@ baseCheckbox:\`<div class="checkbox tablechk">
      
  }`
 
-function applyhtml(mainapp) {
+function applyhtml (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync('../ref/views/employees/employees.ejs', 'utf8');
-      appsgenerator = appsgenerator.replace(/employees/g, mainapp[0].datapayloadModulename);
-
+      var appsgenerator = fs.readFileSync(
+        '../ref/views/employees/employees.ejs',
+        'utf8'
+      )
+      appsgenerator = appsgenerator.replace(
+        /employees/g,
+        mainapp[0].datapayloadModulename
+      )
 
       var dir = '../views/' + mainapp[0].datapayloadModulename
       if (!fs.existsSync(dir)) {
         fs.mkdir(dir, function (err, data) {
-          fs.writeFile(dir + '/' + mainapp[0].datapayloadModulename + '.ejs', (html_beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
+          fs.writeFile(
+            dir + '/' + mainapp[0].datapayloadModulename + '.ejs',
+            html_beautify(appsgenerator, { indent_size: 2 }),
+            function (err, data) {
+              resolve(mainapp)
+            }
+          )
+        })
+      } else {
+        fs.writeFile(
+          dir + '/' + mainapp[0].datapayloadModulename + '.ejs',
+          html_beautify(appsgenerator, { indent_size: 2 }),
+          function (err, data) {
             resolve(mainapp)
-          })
-        })
+          }
+        )
       }
-      else {
-        fs.writeFile(dir + '/' + mainapp[0].datapayloadModulename + '.ejs', (html_beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
-          resolve(mainapp)
-        })
-      }
-    }
-    catch (err) {
+    } catch (err) {
       reject(err)
     }
-
   })
 }
-function applyroutes(mainapp) {
+function applyroutes (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync('../config/baseRoute.json', 'utf8');
+      var appsgenerator = fs.readFileSync('../config/baseRoute.json', 'utf8')
       console.log(mainapp[0].datapayloadModulename)
-      appsgenerator = addbaseRoutes(appsgenerator, mainapp[0].datapayloadModulename, mainapp[0].datapayloadModulename)
-      fs.writeFile('../config/baseRoute.json', (beautify(JSON.stringify(appsgenerator), { indent_size: 2 })), function (err, data) {
-        resolve(mainapp)
-      })
-    }
-    catch (err) {
+      appsgenerator = addbaseRoutes(
+        appsgenerator,
+        mainapp[0].datapayloadModulename,
+        mainapp[0].datapayloadModulename
+      )
+      fs.writeFile(
+        '../config/baseRoute.json',
+        beautify(JSON.stringify(appsgenerator), { indent_size: 2 }),
+        function (err, data) {
+          resolve(mainapp)
+        }
+      )
+    } catch (err) {
       reject(err)
     }
   })
 }
-function applyApp(mainapp) {
-
+function applyApp (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync('../ref/routes/employees.js', 'utf8');
-      appsgenerator = appsgenerator.replace(/employees/g, mainapp[0].datapayloadModulename);
-      fs.writeFile('../routes/' + mainapp[0].datapayloadModulename + '.js', (beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
-        resolve(mainapp)
-
-      })
-    }
-    catch (err) {
+      var appsgenerator = fs.readFileSync('../ref/routes/employees.js', 'utf8')
+      appsgenerator = appsgenerator.replace(
+        /employees/g,
+        mainapp[0].datapayloadModulename
+      )
+      fs.writeFile(
+        '../routes/' + mainapp[0].datapayloadModulename + '.js',
+        beautify(appsgenerator, { indent_size: 2 }),
+        function (err, data) {
+          resolve(mainapp)
+        }
+      )
+    } catch (err) {
       reject(err)
     }
   })
 }
-function applymodel(mainapp) {
+function applymodel (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync('../ref/models/employees.js', 'utf8');
-      var basetemplate = ""
+      var appsgenerator = fs.readFileSync('../ref/models/employees.js', 'utf8')
+      var basetemplate = ''
       mainapp[0].server_client.forEach(element => {
-
-        if (basetemplate == "") {
-          basetemplate = element.inputname + ": {type: DataTypes." + element.fieldtypename + " , allowNull: true }";
+        if (basetemplate == '') {
+          basetemplate =
+            element.inputname +
+            ': {type: DataTypes.' +
+            element.fieldtypename +
+            ' , allowNull: true }'
+        } else {
+          basetemplate =
+            basetemplate +
+            ',' +
+            element.inputname +
+            ': {type: DataTypes.' +
+            element.fieldtypename +
+            ' , allowNull: true }'
         }
-        else {
-          basetemplate = basetemplate + "," + element.inputname + ": {type: DataTypes." + element.fieldtypename + " , allowNull: true }";
-        }
-
-      });
-      basetemplate = basetemplate + "," + mainapp[0].datapayloadModulename + "id: {" +
-        "type: DataTypes.INTEGER," +
-        "allowNull: false," +
-        "primaryKey: true," +
-        "autoIncrement: true }";
-      appsgenerator = appsgenerator.replace(/plotcolumns/g, basetemplate);
-      appsgenerator = appsgenerator.replace(/employees/g, mainapp[0].datapayloadModulename);
-      fs.writeFile('../models/' + mainapp[0].datapayloadModulename + '.js', (beautify(appsgenerator, { indent_size: 2 })), function (err, data) {
-        resolve(mainapp)
-
       })
-    }
-    catch (err) {
+      basetemplate =
+        basetemplate +
+        ',' +
+        mainapp[0].datapayloadModulename +
+        'id: {' +
+        'type: DataTypes.INTEGER,' +
+        'allowNull: false,' +
+        'primaryKey: true,' +
+        'autoIncrement: true }'
+      appsgenerator = appsgenerator.replace(/plotcolumns/g, basetemplate)
+      appsgenerator = appsgenerator.replace(
+        /employees/g,
+        mainapp[0].datapayloadModulename
+      )
+      fs.writeFile(
+        '../models/' + mainapp[0].datapayloadModulename + '.js',
+        beautify(appsgenerator, { indent_size: 2 }),
+        function (err, data) {
+          resolve(mainapp)
+        }
+      )
+    } catch (err) {
       reject(err)
     }
   })
 }
-function applyserverValidationConfig(mainapp) {
+function applyserverValidationConfig (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-
-      var appsgenerator = fs.readFileSync('../ref/routes/utils/validationConfig.js', 'utf8');
+      var appsgenerator = fs.readFileSync(
+        '../ref/routes/utils/validationConfig.js',
+        'utf8'
+      )
       var filename = mainapp[0].server_client
       var applyFields = filename.map(function (doctor) {
         return doctor.inputname
-      });
+      })
 
-      filename = JSON.stringify(filename, null, 2).replace(/\"([^(\")"]+)\":/g, "$1:");
-      applyFields = JSON.stringify(applyFields, null, 2);
-      appsgenerator = appsgenerator.replace('applyfieldsMap', applyFields);
+      filename = JSON.stringify(filename, null, 2).replace(
+        /\"([^(\")"]+)\":/g,
+        '$1:'
+      )
+      applyFields = JSON.stringify(applyFields, null, 2)
+      appsgenerator = appsgenerator.replace('applyfieldsMap', applyFields)
       appsgenerator = appsgenerator.replace('validationmapMap', filename)
       var dir = '../routes/utils/' + mainapp[0].datapayloadModulename
       if (!fs.existsSync(dir)) {
         fs.mkdir(dir, function (err, data) {
-          fs.writeFile('../routes/utils/' + mainapp[0].datapayloadModulename + '/validationConfig.js', (beautify(appsgenerator, { indent_size: 2 })), 'utf8', function (err, data) {
+          fs.writeFile(
+            '../routes/utils/' +
+              mainapp[0].datapayloadModulename +
+              '/validationConfig.js',
+            beautify(appsgenerator, { indent_size: 2 }),
+            'utf8',
+            function (err, data) {
+              console.log(err)
+              resolve(mainapp)
+            }
+          )
+        })
+      } else {
+        fs.writeFile(
+          '../routes/utils/' +
+            mainapp[0].datapayloadModulename +
+            '/validationConfig.js',
+          beautify(appsgenerator, { indent_size: 2 }),
+          'utf8',
+          function (err, data) {
             console.log(err)
             resolve(mainapp)
-
-          })
-
-        });
+          }
+        )
       }
-      else {
-        fs.writeFile('../routes/utils/' + mainapp[0].datapayloadModulename + '/validationConfig.js', (beautify(appsgenerator, { indent_size: 2 })), 'utf8', function (err, data) {
-          console.log(err)
-          resolve(mainapp)
-
-        })
-      }
-    }
-    catch (err) {
+    } catch (err) {
       reject(err)
     }
-
   })
 }
 
-function swaggerdocs(mainapp) {
+function swaggerdocs (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var yaml = require('js-yaml');
-      var fs = require('fs');
+      var yaml = require('js-yaml')
+      var fs = require('fs')
       modname = mainapp[0].datapayloadModulename
       // Get document, or throw exception on error
       try {
         fs.readFile('../utils/docs/emp.yaml', 'utf8', function (err, contents) {
-          var doc = yaml.safeLoad(contents);
-
+          var doc = yaml.safeLoad(contents)
 
           //let peopleArray = Object.keys(doc).map(i => doc[i])
-          let peopleArrayString = JSON.parse(JSON.stringify(doc).replace(/employees/g, modname))
+          let peopleArrayString = JSON.parse(
+            JSON.stringify(doc).replace(/employees/g, modname)
+          )
           doc = peopleArrayString
           var red = mainapp[0].swagger
 
           var internObj = red.map(function (doctor) {
             var keyname = doctor.fieldname
-            delete doctor.fieldname;
+            delete doctor.fieldname
             return {
               [keyname]: doctor
-            };
-          });
+            }
+          })
 
-
-
-          //convert array to js 
+          //convert array to js
 
           var newObj = internObj.reduce((a, b) => Object.assign(a, b), {})
 
-
-
           doc.paths = peopleArrayString.paths
-          doc.definitions[modname]["properties"] = newObj;
+          doc.definitions[modname]['properties'] = newObj
 
-          doc.definitions[modname + "Id"] = peopleArrayString.definitions[modname + "Id"]
-          fs.writeFile("../utils/docs/" + modname + ".yaml", yaml.safeDump(doc), function (err, data) {
-            if (err) {
-              console.log(err)
+          doc.definitions[modname + 'Id'] =
+            peopleArrayString.definitions[modname + 'Id']
+          fs.writeFile(
+            '../utils/docs/' + modname + '.yaml',
+            yaml.safeDump(doc),
+            function (err, data) {
+              if (err) {
+                console.log(err)
+              } else {
+                resolve(mainapp)
+              }
             }
-            else {
-
-              resolve(mainapp)
-            }
-          });
-
-        });
-
+          )
+        })
       } catch (e) {
         reject(err)
       }
-    }
-    catch (err) {
+    } catch (err) {
       reject(err)
     }
   })
-
 }
 
 module.exports = routes
