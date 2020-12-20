@@ -21,8 +21,14 @@ const searchLoadbodyJsonSchema = {
     basesearcharconsolidated: {
       type: 'array',
       properties: {
-        consolidatecol: { type: 'array', allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] },
-        consolidatecolval: { type: 'string',  allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] }
+        consolidatecol: {
+          type: 'array',
+          allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }]
+        },
+        consolidatecolval: {
+          type: 'string',
+          allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }]
+        }
       },
       required: ['consolidatecol', 'consolidatecolval'],
       allOf: commonConfig
@@ -30,8 +36,14 @@ const searchLoadbodyJsonSchema = {
     daterange: {
       type: 'object',
       properties: {
-        startdate: { type: 'string', allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] },
-        enddate: { type: 'string',  allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }] }
+        startdate: {
+          type: 'string',
+          allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }]
+        },
+        enddate: {
+          type: 'string',
+          allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 10 }]
+        }
       },
       required: ['startdate', 'enddate'],
       allOf: commonConfig
@@ -55,7 +67,7 @@ const searchLoadbodyJsonSchema = {
       if: {
         properties: {
           disableDate: {
-            "enum": [true]
+            enum: [true]
           }
         }
       },
@@ -76,19 +88,20 @@ const searchLoadbodyJsonSchema = {
       if: {
         properties: {
           searchtype: {
-            "enum": ["consolidatesearch"]
+            enum: ['consolidatesearch']
           }
         }
       },
       then: {
-        required: ['searchparam', 'pageSize', 'pageno','basesearcharconsolidated']
-      },
-      else: {
         required: [
           'searchparam',
           'pageSize',
           'pageno',
+          'basesearcharconsolidated'
         ]
+      },
+      else: {
+        required: ['searchparam', 'pageSize', 'pageno']
       }
     }
   ]
@@ -128,14 +141,6 @@ const searchPivotbodyJsonSchema = {
       type: 'string',
       allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
     },
-    pageSize: {
-      type: 'number',
-      allOf: commonConfig
-    },
-    pageno: {
-      type: 'number',
-      allOf: commonConfig
-    },
     pivotparamXaxis: {
       type: 'string',
       allOf: commonConfig
@@ -150,21 +155,30 @@ const searchPivotbodyJsonSchema = {
     timeinternsecondary: {
       type: 'string'
     },
+    pageSize: {
+      type: 'integer',
+      minimum: 1,
+      maximum: 100
+    },
+    pageno: {
+      type: 'integer',
+      minimum: 0
+    },
     XpageSize: {
-      type: 'number',
-      allOf: commonConfig
+      type: 'integer',
+      minimum: 0
     },
     Xpageno: {
-      type: 'number',
-      allOf: commonConfig
+      type: 'integer',
+      minimum: 0
     },
     YpageSize: {
-      type: 'number',
-      allOf: commonConfig
+      type: 'integer',
+      minimum: 0
     },
     Ypageno: {
-      type: 'number',
-      allOf: commonConfig
+      type: 'integer',
+      minimum: 0
     }
   }
 }
