@@ -90,7 +90,6 @@ async function routes (fastify, options) {
   })
 
   fastify.post('/jedha', (request, reply) => {
-    
     var req = {}
     req.body = request.body
     var mainapp = req.body
@@ -135,19 +134,20 @@ function applyserverschemaValidator (mainapp) {
       var applyFields = filename.map(function (doctor) {
         return doctor.inputname
       })
-      applyFields.push("recordstate")
-      
-      var applyFields2=baseSchemaBuilder(filename)
+      applyFields.push('recordstate')
+      appsgenerator = appsgenerator.replace('placeholder2', JSON.stringify(applyFields, null, 2))
+      var applyFields2 = baseSchemaBuilder(filename)
       filename = JSON.stringify(filename, null, 2).replace(
         /\"([^(\")"]+)\":/g,
         '$1:'
       )
+
+      var applyFields1= applyFields
+       applyFields1.push(
+        mainapp[0].datapayloadModulename + 'id'
+      )
       
-      
-      
-      var applyFields1 = applyFields.push(mainapp[0].datapayloadModulename + 'id')
-      appsgenerator = appsgenerator.replace('placeholder2', applyFields)
-      appsgenerator = appsgenerator.replace('placeholder3', applyFields1)
+      appsgenerator = appsgenerator.replace('placeholder3', JSON.stringify(applyFields1, null, 2))
       appsgenerator = appsgenerator.replace(
         'placeholder4',
         mainapp[0].datapayloadModulename + 'id'
