@@ -43,6 +43,35 @@ let addbaseRoutes = function (arr, keys, vals) {
   }
   return arr
 }
+let baseSchemaBuilder = function (fieldname) {
+  var interims = ''
+  fieldname.forEach(function (a) {
+    if (a.fieldtypename == 'STRING') {
+      interims =
+        interims +
+        `${a.inputname}: {
+    type: 'string',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: ${a.fieldmaxlength} }]
+  },`
+    } else if (a.fieldtypename == 'INTEGER' || a.fieldtypename == 'BIGINT') {
+      interims =
+        interims +
+        `${a.inputname}: {
+      type: 'integer',
+      minimum: 1,
+      maximum: ${a.fieldmaxlength}
+    },`
+    } else if (a.fieldtypename == 'DATE') {
+      interims =
+        interims +
+        `${a.inputname}: {
+    type: 'string',
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: ${a.fieldmaxlength} }],
+    format: 'date-time'`
+    }
+  })
+  return interims
+}
 async function routes (fastify, options) {
   fastify.get('/', async (request, reply) => {
     var models = require('../../../models/')
@@ -61,17 +90,17 @@ async function routes (fastify, options) {
   })
 
   fastify.post('/jedha', (request, reply) => {
-    dep.assignVariables(mod)
+    
     var req = {}
     req.body = request.body
     var mainapp = req.body
     applyserverschemaValidator(mainapp)
       .then(function (data) {
-        res.json({ a: 'run  yarn applychangesDB ' })
+        reply.send({ a: 'run  yarn applychangesDB ' })
       })
       .catch(e => {
         // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
-        res.json(e)
+        reply.send(e)
       })
 
     // applymodel(mainapp)
@@ -106,21 +135,24 @@ function applyserverschemaValidator (mainapp) {
       var applyFields = filename.map(function (doctor) {
         return doctor.inputname
       })
-
+      applyFields.push("recordstate")
+      
+      var applyFields2=baseSchemaBuilder(filename)
       filename = JSON.stringify(filename, null, 2).replace(
         /\"([^(\")"]+)\":/g,
         '$1:'
       )
-      applyFields = JSON.stringify(applyFields, null, 2)
-      applyFields = applyFields.push('recordstate')
-      applyFields1 = applyFields.push(mainapp[0].datapayloadModulename + 'id')
+      
+      
+      
+      var applyFields1 = applyFields.push(mainapp[0].datapayloadModulename + 'id')
       appsgenerator = appsgenerator.replace('placeholder2', applyFields)
       appsgenerator = appsgenerator.replace('placeholder3', applyFields1)
       appsgenerator = appsgenerator.replace(
         'placeholder4',
         mainapp[0].datapayloadModulename + 'id'
       )
-
+      appsgenerator = appsgenerator.replace('placeholder1', applyFields2)
       var dir = '../routes/utils/' + mainapp[0].datapayloadModulename
       if (!fs.existsSync(dir)) {
         fs.mkdir(dir, function (err, data) {

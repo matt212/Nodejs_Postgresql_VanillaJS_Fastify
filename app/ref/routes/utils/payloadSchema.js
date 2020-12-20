@@ -1,6 +1,6 @@
 let baseSchema = require('../../utils/misc/baseSchemaConfig')
 let insertUpdateSchema = {
-  placeholder1,
+  placeholder1
   recordstate: {
     type: 'boolean',
     allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
