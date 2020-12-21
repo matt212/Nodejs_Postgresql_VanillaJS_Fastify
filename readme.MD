@@ -88,5 +88,5 @@ In case of error running sh Files Follow below
   > 73 **Modular** Mocha test cases against 20,00,000 recordset with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
   > `yarn ModuleEval`
 - ### `Release notes 22 Dec 2020`
-  >Dyanmic Bolierplate generation completed for dataType Strings , Integers and BigInt data types config based
+  >Dynamic Bolierplate generation completed for dataType Strings , Integers and BigInt data types config based
   
