@@ -59,7 +59,8 @@ let baseSchemaBuilder = function (fieldname) {
         `${a.inputname}: {
       type: 'integer',
       minimum: 1,
-      maximum: ${a.fieldmaxlength}
+      minLength:1,
+      maxLength:${a.fieldmaxlength}
     },`
     } else if (a.fieldtypename == 'DATE') {
       interims =
@@ -93,33 +94,47 @@ async function routes (fastify, options) {
     var req = {}
     req.body = request.body
     var mainapp = req.body
-    applyserverschemaValidator(mainapp)
+    
+    applymodel(mainapp)
+      .then(applyApp)
+      .then(applyroutes)
+      .then(applyserverValidationConfig)
+      .then(applyserverschemaValidator)
+      .then(applyMochaChaiTestCases)
+      .then(swaggerdocs)
+      .then(applyMultiControls)
+      .then(applyhtml)
+      //.then(createdb)
+      //.then(pgcreateDb)
       .then(function (data) {
-        reply.send({ a: 'run  yarn applychangesDB ' })
-      })
-      .catch(e => {
+
+        reply.send({ a: "run  yarn applychangesDB " })
+
+      }).catch(e => {
         // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
         reply.send(e)
+
       })
-
-    // applymodel(mainapp)
-    //   .then(applyApp)
-    //   .then(applyroutes)
-    //   .then(applyserverValidationConfig)
-    //   .then(swaggerdocs)
-    //   .then(applyMultiControls)
-    //   .then(applyhtml)
-    //   //.then(createdb)
-    //   //.then(pgcreateDb)
-    //   .then(function (data) {
-
-    //     res.json({ a: "run  yarn applychangesDB " })
-
-    //   }).catch(e => {
-    //     // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
-    //     res.json(e)
-
-    //   })
+  })
+}
+function applyMochaChaiTestCases (mainapp) {
+  return new Promise((resolve, reject) => {
+    try {
+      var appsgenerator = fs.readFileSync('../ref/tests/Employees-test.spec.js', 'utf8')
+      appsgenerator = appsgenerator.replace(
+        /employees/g,
+        mainapp[0].datapayloadModulename
+      )
+      fs.writeFile(
+        '../utils/test/' + mainapp[0].datapayloadModulename + '-test.spec.js',
+        beautify(appsgenerator, { indent_size: 2 }),
+        function (err, data) {
+          resolve(mainapp)
+        }
+      )
+    } catch (err) {
+      reject(err)
+    }
   })
 }
 
@@ -167,7 +182,7 @@ function applyserverschemaValidator (mainapp) {
             beautify(appsgenerator, { indent_size: 2 }),
             'utf8',
             function (err, data) {
-              console.log(err)
+              
               resolve(mainapp)
             }
           )

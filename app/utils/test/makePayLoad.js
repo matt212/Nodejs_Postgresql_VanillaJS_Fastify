@@ -42,7 +42,8 @@ let makepayload = function (validationConfig) {
         doctors.fieldtypename == 'INTEGER' ||
         doctors.fieldtypename == 'BIGINT'
       ) {
-        interimObj[doctors.inputname] = makeidnumber(doctors.fieldmaxlength)
+        console.log(doctors.fieldmaxlength);
+        interimObj[doctors.inputname] = Math.round(parseInt(makeidnumber(doctors.fieldmaxlength)))
       }
       if (doctors.fieldtypename == 'DATE') {
         interimObj[doctors.inputname] = getCurrentDate()

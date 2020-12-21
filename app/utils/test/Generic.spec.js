@@ -53,7 +53,6 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
       testbase.apiUrl = '/' + evalModulename + dep.create
       testbase.responseCode = 200
       testbase.payload = entry
-
       genericApiPost(testbase).then(function (data) {
         resolve(data.body.createdId)
       })
@@ -119,10 +118,9 @@ let customTestsInit = function (testbase, validationConfig) {
   )
   return testbase
 }
-let loginsuccess = function (
-  cred = { username: 'krennic', password: 'orson' }
-) {
+let loginsuccess = function (cred) {
   return (promise = new Promise((resolve, reject) => {
+    console.log(cred);
     var user = cred
     server
       .post('/login')
@@ -228,7 +226,7 @@ let genPayloadByNum = function (validationConfig, num) {
 }
 let PrimarytestInit = function (testbase) {
   return new Promise((resolve, reject) => {
-    loginsuccess()
+    FirstTimeloadCurrentModule().then(loginsuccess)
       .then(loadCurrentModule)
       .then(function (data) {
         testbase.token = data
@@ -285,6 +283,28 @@ let validationconfigInit = function (validationConfig) {
   }
   validationConfig.validationmap.push(recordstateobj)
   return validationConfig
+}
+let FirstTimeloadCurrentModule = function (data) {
+  return (promise = new Promise((resolve, reject) => {
+    server.post('/logout').end(function (err, data) {
+      console.log(evalModulename)
+      server
+        .get('/' + evalModulename)
+        //.expect('Content-type', /text\/html/)
+        .end(function (err, res) {
+          if (err) {
+            console.log(err)
+            reject(err)
+          }
+          
+          data.statusCode.should.equal(302)
+         // data.body.status.should.equal('success')
+         // data.body.redirect.should.equal('/login')
+          resolve(cred = { username: 'krennic', password: 'orson' })
+          
+        })
+    })
+  }))
 }
 let loadCurrentModule = function (data) {
   return (promise = new Promise((resolve, reject) => {
@@ -483,7 +503,7 @@ let consolidatedPayload = function () {
         }
         o1.datecolsearch = entry
         o1.disableDate = false
-      } else if (fieldtype == 'boolean') {
+      } else if (fieldtype == 'boolean'||fieldtype == 'BIGINT'||fieldtype == 'INTEGER') {
         o1.searchparam = [
           {
             [entry]: [testbase.schemaBaseValidatorPayload[entry]]
@@ -491,7 +511,7 @@ let consolidatedPayload = function () {
         ]
         o1.disableDate = true
         o1.searchtype = 'Columnwise'
-      } else {
+      } else if (fieldtype == 'STRING')  {
         let interimval = testbase.schemaBaseValidatorPayload[entry]
 
         o1.searchparam = [
@@ -531,7 +551,8 @@ let consolidatedPayload = function () {
         }
         o1.datecolsearch = entry
         o1.disableDate = false
-      } else if (fieldtype == 'boolean') {
+        
+      } else if (fieldtype == 'boolean'||fieldtype == 'BIGINT'||fieldtype == 'INTEGER') {
         o1.searchparam = [
           {
             [entry]: [
@@ -542,9 +563,10 @@ let consolidatedPayload = function () {
         ]
         o1.disableDate = true
         o1.searchtype = 'Columnwise'
-      } else {
+      } else if (fieldtype == 'STRING') {
         let interimval1 = testbase.schemaBaseValidatorPayloadAr[0][entry]
         let interimval2 = testbase.schemaBaseValidatorPayloadAr[1][entry]
+        
         o1.searchparam = [
           {
             [entry]: [interimval1.toLowerCase(), interimval2.toLowerCase()]
