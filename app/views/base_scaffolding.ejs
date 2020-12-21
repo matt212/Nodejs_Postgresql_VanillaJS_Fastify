@@ -42,7 +42,7 @@
                 <tr>
                     <th colspan="5" id="jsonatt3">
                 </tr>
-                
+
             </tfoot>
         </table>
     </div>
@@ -123,13 +123,13 @@
                 re += '<option>' + element + '</option>'
             });
             re += '</td><td><select name="" class="formcom bredter" data-animal-type=' + rowCount + ' onchange="javascript:onmodelchange(this)">';
-                re += '<option>--Please Select Table --</option>'
-                killzones.forEach(function (element) {
+            re += '<option>--Please Select Table --</option>'
+            killzones.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
 
             re += '</td><td><select id="childname_' + rowCount + '" name="" class="formcom bredter">';
-            re += '<option>--Please Select FieldType --</option>'    
+            re += '<option>--Please Select FieldType --</option>'
             ddlclientfieldtype.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
@@ -144,7 +144,7 @@
         }
         var arintern = []
         $("#btnAddsss").button().click(function () {
-            
+
             arintern = []
             $('table tbody tr.parent').each(function (index) {
                 var internobj = {}
@@ -192,8 +192,8 @@
                     o.type = "string";
                     o.fieldname = doctor.inputname;
                     o.format = "date-time";
-                    var exampledt=new Date();
-                    o.example =exampledt.toString() 
+                    var exampledt = new Date();
+                    o.example = exampledt.toString()
                 }
                 else if (doctor.fieldtypename == "boolean") {
                     o.type = doctor.fieldtypename;
@@ -271,26 +271,26 @@
             "fieldvalidatename": "mobile",
             "fieldmaxlength": "15"
         }
-        // , {
-        //     "inputtype": "checkbox",
-        //     "inputtypemod": "modname",
-        //     "inputtypeVal": "mname",
-        //     "inputtypeID": "modnameid",
-        //     "inputname": "modnameid",
-        //     "inputplaceholder": "Gender",
-        //     "fieldtypename": "ARRAY(DataTypes.INTEGER)",
-        //     "fieldvalidatename": "number",
-        //     "fieldmaxlength": "80"
-        // }
-    ]
-        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true } 
-        // ,{
-        //     "type": "array",
-        //     "fieldname": "modnameid",
-        //     "format": "array",
-        //     "example": [1, 2]
-        // }
-    ]
+            // , {
+            //     "inputtype": "checkbox",
+            //     "inputtypemod": "modname",
+            //     "inputtypeVal": "mname",
+            //     "inputtypeID": "modnameid",
+            //     "inputname": "modnameid",
+            //     "inputplaceholder": "Gender",
+            //     "fieldtypename": "ARRAY(DataTypes.INTEGER)",
+            //     "fieldvalidatename": "number",
+            //     "fieldmaxlength": "80"
+            // }
+        ]
+        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true }
+            // ,{
+            //     "type": "array",
+            //     "fieldname": "modnameid",
+            //     "format": "array",
+            //     "example": [1, 2]
+            // }
+        ]
         // var server_client=$("#jsonatt1").val();
         // var swagger=$("#jsonatt2").val();
         console.log(swagger);
@@ -304,9 +304,10 @@
         }]
         console.log(ajaxbase.payload)
         ajaxutils.basepostmethod(ajaxbase).then(function (data) {
-            console.log(data)
-            
-           $("#jsonatt3").html("run  yarn applychangesDB in command line (bash, wsl etc)")
+            console.log(data.a)
+            console.log(data.b)
+
+            $("#jsonatt3").html(`${data.a} in command line (bash, wsl etc)<br/> then for test run below <br/>${data.b}`)
         })
     }
     function base_db() {

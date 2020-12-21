@@ -53,7 +53,7 @@ let baseSchemaBuilder = function (fieldname) {
     type: 'string',
     allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: ${a.fieldmaxlength} }]
   },`
-    } else if (a.fieldtypename == 'INTEGER' ) {
+    } else if (a.fieldtypename == 'INTEGER') {
       interims =
         interims +
         `${a.inputname}: {
@@ -61,7 +61,7 @@ let baseSchemaBuilder = function (fieldname) {
       minimum: 1,
       maximum:2147483648
     },`
-    }else if (a.fieldtypename == 'BIGINT') {
+    } else if (a.fieldtypename == 'BIGINT') {
       interims =
         interims +
         `${a.inputname}: {
@@ -69,8 +69,7 @@ let baseSchemaBuilder = function (fieldname) {
       minimum: 1,
       maximum:9223372036854775808
     },`
-    } 
-     else if (a.fieldtypename == 'DATE') {
+    } else if (a.fieldtypename == 'DATE') {
       interims =
         interims +
         `${a.inputname}: {
@@ -103,32 +102,88 @@ async function routes (fastify, options) {
     req.body = request.body
     var mainapp = req.body
     
-    applymodel(mainapp)
-      .then(applyApp)
-      .then(applyroutes)
-      .then(applyserverValidationConfig)
-      .then(applyserverschemaValidator)
-      .then(applyMochaChaiTestCases)
-      .then(swaggerdocs)
-      .then(applyMultiControls)
-      .then(applyhtml)
-      //.then(createdb)
-      //.then(pgcreateDb)
+      applymodel(mainapp)
+        .then(applyApp)
+        .then(applyroutes)
+        .then(applyserverValidationConfig)
+        .then(applyserverschemaValidator)
+        .then(applyMochaChaiTestCases)
+        .then(swaggerdocs)
+        .then(applyMultiControls)
+        .then(applyhtml)
+        .then(packageJsonUpdate)
+        .then(superadminUpdate)
       .then(function (data) {
-
-        reply.send({ a: "run  yarn applychangesDB " })
-
-      }).catch(e => {
-        // can address the error here and recover from it, from getItemsAsync rejects or returns a falsey value
-        reply.send(e)
-
+        reply.send({ a: 'run  yarn applychangesDB ',b:`run yarn ${mainapp[0].datapayloadModulename}Eval` })
       })
+      .catch(e => {
+        reply.send(e)
+      })
+  })
+}
+function packageJsonUpdate (mainapp) {
+  return new Promise((resolve, reject) => {
+    //var appsgenerator = fs.readFileSync('../../../../package.json', 'utf8')
+    var appsgenerator = require('../../../../package.json')
+
+    let interappsgenerator = appsgenerator
+    var modname = mainapp[0].datapayloadModulename
+    var o = {}
+    o[
+      modname + 'Eval'
+    ] = `mocha ./app/utils/test/${modname}-test.spec.js --timeout 10000 --exit`
+
+    Object.assign(interappsgenerator.scripts, o)
+
+    fs.writeFile(
+      '../../package.json',
+      beautify(JSON.stringify(interappsgenerator), { indent_size: 2 }),
+      function (err, data) {
+        console.log(err)
+        console.log(data)
+        if (err) {
+          reject(err)
+        }
+        resolve(mainapp)
+      }
+    )
+  })
+}
+function superadminUpdate (mainapp) {
+  return new Promise((resolve, reject) => {
+    //var appsgenerator = fs.readFileSync('../../../../package.json', 'utf8')
+    var appsgenerator = require('../../../config/superadmin.json')
+
+    let interappsgenerator = appsgenerator
+    var modname = mainapp[0].datapayloadModulename
+
+    var interim = interappsgenerator[0].Modulename.split(',')
+    interim.push(modname)
+
+    interappsgenerator[0].Modulename = interim.join(',')
+    interappsgenerator[1].Modulename = interim.join(',')
+
+    fs.writeFile(
+      '../config/superadmin.json',
+      beautify(JSON.stringify(interappsgenerator), { indent_size: 2 }),
+      function (err, data) {
+        console.log(err)
+        console.log(data)
+        if (err) {
+          reject(err)
+        }
+        resolve(mainapp)
+      }
+    )
   })
 }
 function applyMochaChaiTestCases (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync('../ref/tests/Employees-test.spec.js', 'utf8')
+      var appsgenerator = fs.readFileSync(
+        '../ref/tests/Employees-test.spec.js',
+        'utf8'
+      )
       appsgenerator = appsgenerator.replace(
         /employees/g,
         mainapp[0].datapayloadModulename
@@ -190,7 +245,6 @@ function applyserverschemaValidator (mainapp) {
             beautify(appsgenerator, { indent_size: 2 }),
             'utf8',
             function (err, data) {
-              
               resolve(mainapp)
             }
           )
