@@ -53,16 +53,24 @@ let baseSchemaBuilder = function (fieldname) {
     type: 'string',
     allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: ${a.fieldmaxlength} }]
   },`
-    } else if (a.fieldtypename == 'INTEGER' || a.fieldtypename == 'BIGINT') {
+    } else if (a.fieldtypename == 'INTEGER' ) {
       interims =
         interims +
         `${a.inputname}: {
       type: 'integer',
       minimum: 1,
-      minLength:1,
-      maxLength:${a.fieldmaxlength}
+      maximum:2147483648
     },`
-    } else if (a.fieldtypename == 'DATE') {
+    }else if (a.fieldtypename == 'BIGINT') {
+      interims =
+        interims +
+        `${a.inputname}: {
+      type: 'integer',
+      minimum: 1,
+      maximum:9223372036854775808
+    },`
+    } 
+     else if (a.fieldtypename == 'DATE') {
       interims =
         interims +
         `${a.inputname}: {

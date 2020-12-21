@@ -1,7 +1,6 @@
 function makeid (length) {
   var result = ''
-  var characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
   var charactersLength = characters.length
   for (var i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength))
@@ -42,8 +41,9 @@ let makepayload = function (validationConfig) {
         doctors.fieldtypename == 'INTEGER' ||
         doctors.fieldtypename == 'BIGINT'
       ) {
-        console.log(doctors.fieldmaxlength);
-        interimObj[doctors.inputname] = Math.round(parseInt(makeidnumber(doctors.fieldmaxlength)))
+        interimObj[doctors.inputname] = Math.round(
+          parseInt(makeidnumber(doctors.fieldmaxlength))
+        )
       }
       if (doctors.fieldtypename == 'DATE') {
         interimObj[doctors.inputname] = getCurrentDate()
@@ -56,13 +56,16 @@ let makepayload = function (validationConfig) {
 
 let makeMaxlenghtpayload = function (interncontent, entry) {
   let interim
-  if (typeof interncontent[entry] == 'string'||typeof interncontent[entry] == 'boolean') {
+  if (
+    typeof interncontent[entry] == 'string' ||
+    typeof interncontent[entry] == 'boolean'
+  ) {
     interim = interncontent[entry] + 'AA'
   }
   if (typeof interncontent[entry] == 'number') {
-    interim = interncontent[entry] + 100
+    interim = parseInt(interncontent[entry].toString() + 10000)
   }
-  
+
   return interim
 }
 

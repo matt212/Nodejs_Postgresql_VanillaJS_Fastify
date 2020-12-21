@@ -61,6 +61,10 @@ describe('Begin Tests', function () {
             data.body.message.should.equal(
               `body.${entry.key} should match format "date-time"`
             )
+          } else if (fieldtype == 'INTEGER' || fieldtype == 'BIGINT') {
+            data.body.message.should.equal(
+              `body.${entry.key} should be integer`
+            )
           } else {
             data.body.message.should.equal(
               `body.${entry.key} should NOT be shorter than 1 characters`
@@ -88,6 +92,14 @@ describe('Begin Tests', function () {
           } else if (fieldtype.fieldtypename == 'DATE') {
             data.body.message.should.equal(
               `body.${entry.key} should match format "date-time"`
+            )
+          } else if (fieldtype.fieldtypename == 'INTEGER') {
+            data.body.message.should.equal(
+              `body.${entry.key} should be <= 2147483648`
+            )
+          } else if (fieldtype.fieldtypename == 'BIGINT') {
+            data.body.message.should.equal(
+              `body.${entry.key} should be <= 9223372036854776000`
             )
           } else {
             data.body.message.should.equal(
@@ -334,8 +346,13 @@ describe('Begin Tests', function () {
               .payload17(testbase, entry, evalModulename, validationConfig)
             return genSpecs.genericApiPost(testbase).then(function (data) {
               let interimval = testbase.schemaBaseValidatorPayload[entry]
-
-              genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+              if (Number.isInteger(interimval)) {
+                genSpecs
+                  .expect(parseInt(data.body.rows[0][entry]))
+                  .to.equal(interimval)
+              } else {
+                genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+              }
             })
           })
         })
