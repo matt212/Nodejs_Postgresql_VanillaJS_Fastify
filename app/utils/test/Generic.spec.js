@@ -673,7 +673,16 @@ let consolidatedPayload = function () {
         testbase.schemaBaseValidatorPayload[
           Object.keys(testbase.schemaBaseValidatorPayload)[0]
         ]
-      searchVal = searchVal.substring(0, 3)
+        console.log(searchVal);
+        if(Number.isInteger(searchVal))
+        {
+          searchVal = searchVal
+        }
+        else
+        {
+          searchVal = searchVal.substring(0, 3)
+        }
+      
       o1.basesearcharconsolidated = [
         {
           consolidatecol: validationConfig.applyfields,
