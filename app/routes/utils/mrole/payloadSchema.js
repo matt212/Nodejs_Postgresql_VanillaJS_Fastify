@@ -1,21 +1,18 @@
 let baseSchema = require('../../utils/misc/baseSchemaConfig')
 let insertUpdateSchema = {
-  first_name: {
+  accesstype: {
     type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
+    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 2 }]
   },
-  last_name: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 45 }]
+  rolename: {
+    type: 'integer',
+    minimum: 1,
+    maximum: 2147483648
   },
-  gender: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 1 }]
-  },
-  birth_date: {
-    type: 'string',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 30 }],
-    format: 'date-time'
+  modulename: {
+    type: 'integer',
+    minimum: 1,
+    maximum: 2147483648
   },
   recordstate: {
     type: 'boolean',
@@ -24,7 +21,7 @@ let insertUpdateSchema = {
 }
 let baseupdatefunction = {
   insertUpdateSchema,
-  employeesid: {
+  mroleid: {
     type: 'integer',
     minimum: 1
   }
@@ -32,19 +29,12 @@ let baseupdatefunction = {
 
 const insertSchema = {
   type: 'object',
-  required: ['first_name', 'last_name', 'gender', 'birth_date', 'recordstate'],
+  required: ['rolename', 'modulename', 'accesstype', 'recordstate'],
   properties: insertUpdateSchema
 }
 const updateSchema = {
   type: 'object',
-  required: [
-    'first_name',
-    'last_name',
-    'gender',
-    'birth_date',
-    'recordstate',
-    'employeesid'
-  ],
+  required: ['rolename', 'modulename', 'accesstype', 'recordstate', 'mroleid'],
   properties: baseupdatefunction
 }
 

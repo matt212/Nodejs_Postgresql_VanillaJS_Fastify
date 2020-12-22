@@ -210,6 +210,7 @@ let mrole = {
       "where a.recordstate=true "
   },
   basesearchtype: function (tunnel) {
+    
     return (
       "select   Rolename, " +
       "string_agg(distinct Modulename,',')as Modulename," +
@@ -218,8 +219,9 @@ let mrole = {
       "string_agg(distinct roleid::text,',') as mroleID," +
       "ROLEID as RoleID from " +
       "( " +
-      this.basesqlscrp.a +
-      "and " +
+      this.basesqlscrp.a
+      +
+      " " +
       tunnel.arg.daterange +
       tunnel.arg.selector +
       " ) as a " +
@@ -236,7 +238,7 @@ let mrole = {
       "from " +
       "( " +
       this.basesqlscrp.a +
-      "and " +
+      " " +
       tunnel.arg.daterange +
       tunnel.arg.selector +
       " ) as a " +
@@ -250,7 +252,7 @@ let mrole = {
       "from " +
       "( " +
       this.basesqlscrp.a +
-      "and " +
+      " " +
       tunnel.arg.daterange +
       tunnel.arg.selector +
       " ) as a " +
@@ -345,7 +347,7 @@ let mrole = {
       tunnel.tempDep.baseYaxisparamprimary +
       " from (" +
       this.basesqlscrp.a +
-      " and  " +
+      "   " +
       tunnel.tempDep.daterange +
       "  " +
       tunnel.tempDep.selector +
@@ -361,7 +363,7 @@ let mrole = {
       tunnel.tempDep.baseXaxisparamprimary +
       " from (" +
       this.basesqlscrp.a +
-      " and  " +
+      "   " +
       tunnel.tempDep.daterange +
       "  " +
       tunnel.tempDep.selector +
@@ -378,7 +380,7 @@ let mrole = {
       " from " +
       " (" +
       this.basesqlscrp.a +
-      " and " +
+      "  " +
       tunnel.tempDep.daterange +
       "  " +
       tunnel.tempDep.selector +
@@ -402,6 +404,7 @@ let userrole = {
       " where a.recordstate=true "
   },
   basesearchtype: function (tunnel) {
+    
     return (
       "select" +
       " string_agg(distinct userrolemappingID::text,',') as userrolemappingID," +

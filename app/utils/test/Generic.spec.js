@@ -43,8 +43,32 @@ let createModulePayLoad = require('./makePayLoad.js')
 var server = supertest.agent('http://localhost:3011')
 
 // UNIT test begin
+
+let controlPayset=function(validationConfig,entry)
+{
+  let fieldtype=""
+  if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
+     fieldtype = validationConfig.validationmap.filter(
+      o1 => o1.inputtextval == entry
+    )[0].fieldtypename
+  
+  }
+  else
+  {
+     fieldtype = validationConfig.validationmap.filter(
+      o1 => o1.inputname == entry
+    )[0].fieldtypename
+    
+  }
+  return fieldtype
+}
+
 let createModPayLoad = function (validationConfig) {
-  return createModulePayLoad.makepayload(validationConfig)
+  if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
+    return createModulePayLoad.makepayloadControl(validationConfig)
+  } else {
+    return createModulePayLoad.makepayload(validationConfig)
+  }
 }
 let customMultiInsertDelete = function (testbase, evalModulename) {
   let o = {}
@@ -53,8 +77,8 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
       testbase.apiUrl = '/' + evalModulename + dep.create
       testbase.responseCode = 200
       testbase.payload = entry
-console.log(testbase.payload)
       genericApiPost(testbase).then(function (data) {
+        
         resolve(data.body.createdId)
       })
     })
@@ -278,6 +302,7 @@ let validationconfigInit = function (validationConfig) {
   validationConfig.applyfields.push('recordstate')
   var recordstateobj = {
     inputname: 'recordstate',
+    inputtextval:'recordstate',
     fieldtypename: 'boolean',
     fieldvalidatename: 'boolean',
     fieldmaxlength: '4'
@@ -334,7 +359,7 @@ let consolidatedPayload = function () {
 
     return testbase
   }
-  o.payload2 = function (testbase, evalModulename,validationConfig) {
+  o.payload2 = function (testbase, evalModulename, validationConfig) {
     testbase.schemaBaseValidatorPayload = createModPayLoad(validationConfig)
     testbase.apiUrl = '/' + evalModulename + dep.create
     testbase.responseCode = 200
@@ -487,11 +512,8 @@ let consolidatedPayload = function () {
       testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-
-      let fieldtype = validationConfig.validationmap.filter(
-        o1 => o1.inputname == entry
-      )[0].fieldtypename
-
+      let fieldtype=controlPayset(validationConfig,entry);
+       
       if (fieldtype == 'DATE') {
         o1.daterange = {
           startdate: new Date(
@@ -540,9 +562,7 @@ let consolidatedPayload = function () {
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = validationConfig.validationmap.filter(
-        o1 => o1.inputname == entry
-      )[0].fieldtypename
+      let fieldtype = controlPayset(validationConfig,entry)
 
       if (fieldtype == 'DATE') {
         o1.daterange = {
@@ -595,9 +615,7 @@ let consolidatedPayload = function () {
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = validationConfig.validationmap.filter(
-        o1 => o1.inputname == entry
-      )[0].fieldtypename
+      let fieldtype = controlPayset(validationConfig,entry)
 
       if (fieldtype == 'DATE') {
         o1.daterange = {
@@ -660,9 +678,7 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-    let fieldtype = validationConfig.validationmap.filter(
-      o1 => o1.inputname == entry
-    )[0].fieldtypename
+    let fieldtype = controlPayset(validationConfig,entry)
 
     if (fieldtype == 'DATE') {
       o1.daterange = {
@@ -684,9 +700,7 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-    let fieldtype = validationConfig.validationmap.filter(
-      o1 => o1.inputname == entry
-    )[0].fieldtypename
+    let fieldtype = controlPayset(validationConfig,entry)
 
     if (fieldtype == 'DATE') {
       o1.daterange = {

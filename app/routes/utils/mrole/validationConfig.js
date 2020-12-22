@@ -5,7 +5,7 @@ let validationmap = [
     inputname: "roleid",
     inputplaceholder: "Role",
     fieldtypename: "STRING",
-    fieldvalidatename: "string",
+    fieldvalidatename: "number",
     fieldmaxlength: "80"
   },
   {
@@ -14,7 +14,7 @@ let validationmap = [
     inputtextval: "modulename",
     inputplaceholder: "Module",
     fieldtypename: "STRING",
-    fieldvalidatename: "string",
+    fieldvalidatename: "number",
     fieldmaxlength: "80"
   },
   {
@@ -24,7 +24,7 @@ let validationmap = [
     inputplaceholder: "accesstype",
     fieldtypename: "STRING",
     fieldvalidatename: "string",
-    fieldmaxlength: "80"
+    fieldmaxlength: "2"
   }
 ];
 let applyfields = ["rolename", "modulename", "accesstype"];

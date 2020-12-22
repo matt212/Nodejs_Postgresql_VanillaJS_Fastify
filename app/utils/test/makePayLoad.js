@@ -7,6 +7,11 @@ function makeid (length) {
   }
   return result
 }
+function getRandomInt (min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
 function validateEmail (email) {
   const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(email)
@@ -63,7 +68,10 @@ function getCurrentDate () {
 }
 
 let makepayload = function (validationConfig) {
-  let apply = validationConfig.applyfields
+  //let apply = validationConfig.applyfields
+  let apply = validationConfig.validationmap.map(function (doctor) {
+    return doctor.inputname
+  })
   let validationmap = validationConfig.validationmap
   let interimObj = {}
 
@@ -80,9 +88,7 @@ let makepayload = function (validationConfig) {
         interimObj[doctors.inputname] = makeid(doctors.fieldmaxlength)
       }
       if (doctors.fieldvalidatename == 'number') {
-        interimObj[doctors.inputname] = Math.round(
-          parseInt(makeidnumber(doctors.fieldmaxlength))
-        )
+        interimObj[doctors.inputname] = getRandomInt(1, doctors.fieldmaxlength)
       }
       if (doctors.fieldvalidatename == 'mobile') {
         interimObj[doctors.inputname] = Math.round(
@@ -94,6 +100,45 @@ let makepayload = function (validationConfig) {
       }
       if (doctors.fieldvalidatename == 'date') {
         interimObj[doctors.inputname] = getCurrentDate()
+      }
+      interimObj.recordstate = true
+    }
+  })
+  return interimObj
+}
+let makepayloadControl = function (validationConfig) {
+  //let apply = validationConfig.applyfields
+  let apply = validationConfig.validationmap.map(function (doctor) {
+    return doctor.inputtextval
+  })
+  let validationmap = validationConfig.validationmap
+  let interimObj = {}
+
+  apply.forEach(function (entry) {
+    let doctors = validationmap.filter(function (doctor) {
+      return doctor.inputtextval == entry // if truthy then keep item
+    })[0]
+
+    if (doctors != undefined) {
+      if (
+        doctors.fieldvalidatename == 'string' ||
+        doctors.fieldvalidatename == 'passwordvalidation'
+      ) {
+        interimObj[doctors.inputtextval] = makeid(doctors.fieldmaxlength)
+      }
+      if (doctors.fieldvalidatename == 'number') {
+        interimObj[doctors.inputtextval] = getRandomInt(1, doctors.fieldmaxlength)
+      }
+      if (doctors.fieldvalidatename == 'mobile') {
+        interimObj[doctors.inputtextval] = Math.round(
+          parseInt(makeidnumber(doctors.fieldmaxlength))
+        )
+      }
+      if (doctors.fieldvalidatename == 'email') {
+        interimObj[doctors.inputtextval] = genEmail()
+      }
+      if (doctors.fieldvalidatename == 'date') {
+        interimObj[doctors.inputtextval] = getCurrentDate()
       }
       interimObj.recordstate = true
     }
@@ -120,4 +165,4 @@ let makeMaxlenghtpayload = function (interncontent, entry) {
   return interim
 }
 
-module.exports = { makepayload, makeMaxlenghtpayload }
+module.exports = { makepayload, makeMaxlenghtpayload,makepayloadControl }
