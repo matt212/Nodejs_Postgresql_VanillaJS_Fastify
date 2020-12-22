@@ -53,7 +53,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
       testbase.apiUrl = '/' + evalModulename + dep.create
       testbase.responseCode = 200
       testbase.payload = entry
-console.log(testbase)
+console.log(testbase.payload)
       genericApiPost(testbase).then(function (data) {
         resolve(data.body.createdId)
       })
@@ -334,7 +334,8 @@ let consolidatedPayload = function () {
 
     return testbase
   }
-  o.payload2 = function (testbase, evalModulename) {
+  o.payload2 = function (testbase, evalModulename,validationConfig) {
+    testbase.schemaBaseValidatorPayload = createModPayLoad(validationConfig)
     testbase.apiUrl = '/' + evalModulename + dep.create
     testbase.responseCode = 200
     testbase.payload = testbase.schemaBaseValidatorPayload

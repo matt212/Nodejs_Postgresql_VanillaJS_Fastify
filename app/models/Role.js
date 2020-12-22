@@ -3,7 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('role', {
         rolename: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(45),
             allowNull: true,
             unique: true
         },
@@ -14,9 +14,9 @@ module.exports = function(sequelize, DataTypes) {
             autoIncrement: true
         },
         recordstate: {
-            type: DataTypes.STRING,
+            type: DataTypes.BOOLEAN,
             allowNull: true,
-            defaultValue: 'active'
+            defaultValue: true
         },
 
     }, {

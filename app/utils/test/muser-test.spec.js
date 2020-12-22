@@ -118,7 +118,7 @@ describe('Begin Tests', function () {
     it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
         .consolidatedPayload()
-        .payload2(testbase, evalModulename)
+        .payload2(testbase, evalModulename,validationConfig)
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.Message.should.equal('Record SuccessFully Inserted')
         genSpecs.expect(data.body.createdId).to.be.a('number')
