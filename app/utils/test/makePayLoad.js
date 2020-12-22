@@ -7,6 +7,45 @@ function makeid (length) {
   }
   return result
 }
+function validateEmail (email) {
+  const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return re.test(email)
+}
+function genEmail () {
+  var strValues = 'abcdefg12345'
+  var strEmail = ''
+  var strTmp
+  for (var i = 0; i < 10; i++) {
+    strTmp = strValues.charAt(Math.round(strValues.length * Math.random()))
+    strEmail = strEmail + strTmp
+  }
+  strTmp = ''
+  strEmail = strEmail + '@'
+  for (var j = 0; j < 8; j++) {
+    strTmp = strValues.charAt(Math.round(strValues.length * Math.random()))
+    strEmail = strEmail + strTmp
+  }
+  strEmail = strEmail + '.com'
+  return strEmail
+}
+
+function makeEmail () {
+  var strValues = 'abcdefgh12345'
+  var strEmail = ''
+  var strTmp
+  for (var i = 0; i < 10; i++) {
+    strTmp = strValues.charAt(Math.round(strValues.length * Math.random()))
+    strEmail = strEmail + strTmp
+  }
+  strTmp = ''
+  strEmail = strEmail + '@'
+  for (var j = 0; j < 8; j++) {
+    strTmp = strValues.charAt(Math.round(strValues.length * Math.random()))
+    strEmail = strEmail + strTmp
+  }
+  strEmail = strEmail + '.com'
+  return strEmail
+}
 function makeidnumber (length) {
   var result = ''
   var characters = '0123456789'
@@ -34,18 +73,26 @@ let makepayload = function (validationConfig) {
     })[0]
 
     if (doctors != undefined) {
-      if (doctors.fieldtypename == 'STRING') {
+      if (
+        doctors.fieldvalidatename == 'string' ||
+        doctors.fieldvalidatename == 'passwordvalidation'
+      ) {
         interimObj[doctors.inputname] = makeid(doctors.fieldmaxlength)
       }
-      if (
-        doctors.fieldtypename == 'INTEGER' ||
-        doctors.fieldtypename == 'BIGINT'
-      ) {
+      if (doctors.fieldvalidatename == 'number') {
         interimObj[doctors.inputname] = Math.round(
           parseInt(makeidnumber(doctors.fieldmaxlength))
         )
       }
-      if (doctors.fieldtypename == 'DATE') {
+      if (doctors.fieldvalidatename == 'mobile') {
+        interimObj[doctors.inputname] = Math.round(
+          parseInt(makeidnumber(doctors.fieldmaxlength))
+        )
+      }
+      if (doctors.fieldvalidatename == 'email') {
+        interimObj[doctors.inputname] = genEmail()
+      }
+      if (doctors.fieldvalidatename == 'date') {
         interimObj[doctors.inputname] = getCurrentDate()
       }
       interimObj.recordstate = true
@@ -60,7 +107,11 @@ let makeMaxlenghtpayload = function (interncontent, entry) {
     typeof interncontent[entry] == 'string' ||
     typeof interncontent[entry] == 'boolean'
   ) {
-    interim = interncontent[entry] + 'AA'
+    if (validateEmail(interncontent[entry])) {
+      interim = makeid(1000) + interncontent[entry]
+    } else {
+      interim = interncontent[entry] + 'AA'
+    }
   }
   if (typeof interncontent[entry] == 'number') {
     interim = parseInt(interncontent[entry].toString() + 10000)

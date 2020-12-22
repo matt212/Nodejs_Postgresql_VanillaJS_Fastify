@@ -65,6 +65,7 @@
     "ModuleEval": "mocha ./app/utils/test/employees-test.spec.js --timeout 10000 --exit",
     "LoginEval": "mocha ./app/utils/test/login.spec.js --timeout 10000 --exit",
     "ModEval": "mocha ./app/utils/test/modname-test.spec.js --timeout 10000 --exit",
+    "MuserEval": "mocha ./app/utils/test/muser-test.spec.js --timeout 10000 --exit",
     "app": "cd ./app/utils && node app.js",
     "perfapp": "cd ./app/utils && node --prof app.js",
     "cluster": "node ./app/utils/cluster.js",
@@ -77,7 +78,8 @@
     "createDB_updated": "npx run-func ./app/utils/dbDump/databaseUtils.js pgcreateDb",
     "applychangesDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").applychangesDB()'",
     "pgRestore": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgRestore()'",
-    "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'"
+    "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'",
+    "poliEval": "mocha ./app/utils/test/poli-test.spec.js --timeout 10000 --exit"
   },
   "repository": {
     "type": "git",

@@ -1,5 +1,5 @@
 let testbase = {
-  evalModulename: 'employees'
+  evalModulename: 'muser'
 }
 let genSpecs = require('./Generic.spec.js')
 let validationConfig = require('../../routes/utils/' +

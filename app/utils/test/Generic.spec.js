@@ -53,7 +53,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
       testbase.apiUrl = '/' + evalModulename + dep.create
       testbase.responseCode = 200
       testbase.payload = entry
-
+console.log(testbase)
       genericApiPost(testbase).then(function (data) {
         resolve(data.body.createdId)
       })

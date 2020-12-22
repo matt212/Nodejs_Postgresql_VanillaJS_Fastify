@@ -52,18 +52,22 @@ describe('Begin Tests', function () {
 
           let fieldtype = validationConfig.validationmap.filter(
             o => o.inputname == entry.key
-          )[0].fieldtypename
+          )[0].fieldvalidatename
           if (fieldtype == 'boolean') {
             data.body.message.should.equal(
               `body.${entry.key} should be boolean`
             )
-          } else if (fieldtype == 'DATE') {
+          } else if (fieldtype == 'date') {
             data.body.message.should.equal(
               `body.${entry.key} should match format "date-time"`
             )
-          } else if (fieldtype == 'INTEGER' || fieldtype == 'BIGINT') {
+          } else if (fieldtype == 'number') {
             data.body.message.should.equal(
               `body.${entry.key} should be integer`
+            )
+          }else if (fieldtype == 'email') {
+            data.body.message.should.equal(
+              `body.${entry.key} should match format "email"`
             )
           } else {
             data.body.message.should.equal(
