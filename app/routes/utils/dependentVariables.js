@@ -1219,7 +1219,7 @@ let SearchTypeGroupBy = (req, res, a) => {
     })
 }
 let bulkCreate = (req, res) => {
-  var lime = req.body
+  var lime = req.body.payset
   models[mod.Name]
     .bulkCreate(lime)
     .then(function (x) {

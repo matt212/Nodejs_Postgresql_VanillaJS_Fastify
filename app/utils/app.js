@@ -40,14 +40,13 @@ fastify.register(require('fastify-secure-session'), {
 })
 fastify.register(require('../../app/config/baseAuth'))
 fastify.register(require('../routes/customauth'), { prefix: '/' })
-fastify.register(require('../routes/utils/misc/jynerso'), { prefix: '/black-squadron' })
-let baseroutes=require('../config/baseRoute')
-baseroutes.forEach(function(dt)
-{  
- 
- fastify.register(require(`../routes/${dt.val}`), { prefix: dt.val })
+fastify.register(require('../routes/utils/misc/jynerso'), {
+  prefix: '/black-squadron'
 })
-
+let baseroutes = require('../config/baseRoute')
+baseroutes.forEach(function (dt) {
+  fastify.register(require(`../routes/${dt.val}`), { prefix: dt.val })
+})
 
 // Run the server!
 fastify.listen(3011, function (err, address) {
@@ -56,7 +55,6 @@ fastify.listen(3011, function (err, address) {
     process.exit(1)
   }
   console.log(`App Server listening on port ${address}`)
-  
 })
 fastify.register(require('fastify-socket.io'), {
   // put your options here

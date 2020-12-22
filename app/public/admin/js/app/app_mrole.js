@@ -14,7 +14,8 @@
      exceldata: '/' + currentmodulename + '/api/exportexcel/',
      uploaddata: '/' + currentmodulename + '/api/uploadcontent/',
      getpaginatesearchtypegroupby: '/' + currentmodulename + '/api/searchtypegroupby/',
-     getpaginatemodnamesearchtypegroupby: '/' + currentmodname + '/api/searchtypegroupby/',
+     getpaginatemodnamesearchtypegroupby: '/' + currentmodname + '/api/searchtypegroupbyId/',
+     getpaginateRolesearchtypegroupby: '/' + currentrolemodname + '/api/searchtypegroupbyId/',
      exportexcelcalc: '/' + currentmodulename + '/api/exportexcelcalc/',
      pivotresult: '/' + currentmodulename + '/api/pivotresult/',
      deletemrole: '/' + currentmodulename + '/api/destroy'
@@ -42,7 +43,7 @@
          },
          getpaginatesearchtypegroupby: function(base) {
 
-
+            
              ajaxbase.payload = base.datapayload
              ajaxbase.url = baseurlobj.getpaginatesearchtypegroupby;
 
@@ -53,20 +54,34 @@
          },
          getpaginatemodnamesearchtypegroupby: function(base) {
 
-
+            
              ajaxbase.payload = base.datapayload
              ajaxbase.url = baseurlobj.getpaginatemodnamesearchtypegroupby;
-
+               
+            
              return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
                  ajaxbase.response = argument;
                  return argument;
              })
          },
+         getpaginateRolesearchtypegroupby: function(base) {
+
+            
+            ajaxbase.payload = base.datapayload
+            ajaxbase.url = baseurlobj.getpaginateRolesearchtypegroupby;
+              
+           
+            return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
+                ajaxbase.response = argument;
+                return argument;
+            })
+        },
          insert: function(base) {
 
 
-             return basemod_modal.insertrole(base).then(basemod_modal.mrolepayloadformat).then(basemod_modal.insertmrole).then(function(data) {
-
+             //return basemod_modal.insertrole(base).then(basemod_modal.mrolepayloadformat).then(basemod_modal.insertmrole).then(function(data) {
+                base=basemod_modal.mrolepayloadformat(base)
+                return basemod_modal.insertmrole(base).then(function(data) {
                  //console.log(data)
                  ajaxbase.response = data;
                  return ajaxbase;
@@ -220,7 +235,7 @@
                  inputtextval: doct.inputtextval
              };
          });
-         console.log(doct)
+         
          doct.forEach(function(element) {
              if (multiselects[element.inputtextval] != undefined) {
                  interns[element.inputtextval] = multiselects[element.inputtextval][0][element.inputname]
@@ -253,19 +268,24 @@
          var internmodname = interns.modulename.map(function(doctor) {
              return { modnameID: doctor }
          })
-
-         var a = cartesianProduct([internmodname, internaccesstype, roles, isactivearr]);
+         var internrolename = interns.rolename.map(function(doctor) {
+            return { rolenameID: doctor }
+        }) 
+        
+         var a = cartesianProduct([internmodname, internaccesstype, internrolename, isactivearr]);
 
          var providedre = a.map(function(country) {
              return {
                  modulename: country[0].modnameID,
                  accesstype: country[1].accesstype,
-                 rolename: country[2].mroleID,
+                 rolename: country[2].rolenameID,
                  recordstate: country[3].recordstate
              };
          });
 
-         base.datapayload = providedre
+         let o={}
+         o.payset=providedre 
+         base.datapayload = o
          return base;
      },
      afterhtmlpopulate: function() {
@@ -431,6 +451,7 @@ console.log(coremulti)
  let basemultiselectaccess = {
 
      multiselectmodular: function(arg) {
+         console.log(arg.fieldname)
          var multiselectconfig = {
              selectevent: '#in' + arg.fieldname,
              fieldkey: arg.fieldkey,
@@ -440,6 +461,7 @@ console.log(coremulti)
 
          //multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, this["onchange" + arg.fieldname])
          multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function(data) {
+             
              multiselects[arg.fieldname] = data;
 
          })
@@ -453,7 +475,9 @@ console.log(coremulti)
          filtparam.searchparam = internar;
          filtparam.searchparammetafilter = []
          filtparam.ispaginate = true
+         filtparam.disableDate=true
          base.datapayload = filtparam
+         
 
          return base;
      },
@@ -488,6 +512,28 @@ console.log(coremulti)
              })
          })
      },
+     remotefuncrolename: function(data) {
+        return new Promise(function(resolve, reject) {
+            var arin = []
+            var intern = {}
+            intern[data.fieldname] = data.fieldval
+            arin.push(intern)
+            intern = {}
+            var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(arin)
+            basefunction().getpaginateRolesearchtypegroupby(internbase).then(function(argument) {
+                var sets = argument.rows;
+                var internfield = Object.keys(sets[0])
+                sets = sets.map(function(doctor) {
+                    return { // return what new object will look like
+                        key: data.fieldname,
+                        text: doctor[internfield[0]],
+                        val: doctor[internfield[1]]
+                    };
+                });
+                resolve(sets)
+            })
+        })
+    },
      remotefuncaccesstype: function(data) {
          return new Promise(function(resolve, reject) {
              resolve(accesstypecontent)

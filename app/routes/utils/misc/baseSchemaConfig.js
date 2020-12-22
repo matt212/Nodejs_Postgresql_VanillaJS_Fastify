@@ -231,16 +231,6 @@ const searchPivotbodyJsonSchema = {
 }
 const searchGroupbybodyJsonSchema = {
   type: 'object',
-  required: [
-    'searchparam',
-    'daterange',
-    'colsearch',
-    'datecolsearch',
-    'pageSize',
-    'pageno',
-    'searchparamkey',
-    'searchtype'
-  ],
   properties: {
     searchparam: {
       type: 'array',
@@ -273,7 +263,51 @@ const searchGroupbybodyJsonSchema = {
       type: 'string',
       allOf: commonConfig
     }
-  }
+  },
+  allOf: [
+    {
+      if: {
+        properties: {
+          disableDate: {
+            enum: [true]
+          }
+        }
+      },
+      then: {
+        required: ['searchparam', 'pageSize', 'pageno']
+      },
+      else: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
+          'datecolsearch',
+          'daterange'
+        ]
+      }
+    },
+    {
+      if: {
+        properties: {
+          searchtype: {
+            enum: ['consolidatesearch']
+          }
+        }
+      },
+      then: {
+        required: [
+          'searchparam',
+          'pageSize',
+          'pageno',
+          'basesearcharconsolidated'
+        ]
+      },
+      else: {
+        required: ['searchparam', 'pageSize', 'pageno']
+      }
+    }
+  ]
+  
 }
 const headersJsonSchema = {
   type: 'object',

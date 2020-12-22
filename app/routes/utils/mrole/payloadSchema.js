@@ -19,6 +19,7 @@ let insertUpdateSchema = {
     allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
   }
 }
+
 let baseupdatefunction = {
   insertUpdateSchema,
   mroleid: {
@@ -37,7 +38,16 @@ const updateSchema = {
   required: ['rolename', 'modulename', 'accesstype', 'recordstate', 'mroleid'],
   properties: baseupdatefunction
 }
-
+let insertUpdateBulkSchema = {
+  payset: {
+    type: 'array',
+    items: insertUpdateSchema
+  }
+}
+const insertBulkSchema = {
+  body: insertUpdateBulkSchema,
+  headers: baseSchema.headersJsonSchema
+}
 const insertLoadSchema = {
   body: insertSchema,
   headers: baseSchema.headersJsonSchema
@@ -51,6 +61,7 @@ module.exports = {
   searchLoadSchema: baseSchema.searchLoadSchema,
   insertLoadSchema: insertLoadSchema,
   updateLoadSchema: updateLoadSchema,
+  insertBulkLoadSchema:insertBulkSchema,
   searchGroupbyJsonSchema: baseSchema.searchGroupbyJsonSchema,
   searchPivotJsonSchema: baseSchema.searchPivotJsonSchema
 }

@@ -18,7 +18,7 @@ let base = {
   YpageSize: 20,
   Ypageno: 0,
   pivotinternload: true,
-  searchtype: "Columnwise",
+  searchtype:"NoFilter",
   //for Muti control access data for EDIT AND update across use interimdatapayload child object of base
   interimdatapayload: {}
 };
@@ -1639,6 +1639,7 @@ let baseloadsegments = {
     //filterparam.colsearch = "createdAt";
 
     filterparam.searchparam = ["NA"];
+    filterparam.searchtype="NoFilter";
     filterparam.daterange = datefilter;
     base.pageno = (base.pageno === undefined) ? 0 : base.pageno;
     base.pageSize = (base.pageSize === undefined) ? 20 : base.pageSize;

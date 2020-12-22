@@ -143,6 +143,7 @@ async function routes (fastify, options) {
     async (request, reply) => {
       dep.assignVariables(mod)
       dep.deleteHardRecord(request, reply)
+      
     }
   )
   fastify.post(
@@ -155,6 +156,18 @@ async function routes (fastify, options) {
     async (request, reply) => {
       dep.assignVariables(mod)
       dep.pivotResult(request, reply, mod)
+    }
+  )
+  fastify.post(
+    dep.routeUrls.bulkCreate,
+    {
+      config: dep.cGzip,
+      schema: validatorSchema.insertBulkLoadSchema,
+      preValidation: [fastify.authenticate]
+    },
+    async (request, reply) => {
+      dep.assignVariables(mod)
+      dep.bulkCreate(request, reply)
     }
   )
 }

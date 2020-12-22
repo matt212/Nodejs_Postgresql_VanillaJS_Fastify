@@ -1,8 +1,8 @@
 let validationmap = [
   {
-    inputtype: "textbox",
+    inputtype: "multiselect",
+    inputname: "rolename",
     inputtextval: "rolename",
-    inputname: "roleid",
     inputplaceholder: "Role",
     fieldtypename: "STRING",
     fieldvalidatename: "number",
