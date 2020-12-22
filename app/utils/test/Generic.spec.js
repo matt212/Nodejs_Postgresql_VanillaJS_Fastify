@@ -50,14 +50,14 @@ let controlPayset=function(validationConfig,entry)
   if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
      fieldtype = validationConfig.validationmap.filter(
       o1 => o1.inputtextval == entry
-    )[0].fieldtypename
+    )[0]
   
   }
   else
   {
      fieldtype = validationConfig.validationmap.filter(
       o1 => o1.inputname == entry
-    )[0].fieldtypename
+    )[0]
     
   }
   return fieldtype
@@ -514,7 +514,7 @@ let consolidatedPayload = function () {
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
       let fieldtype=controlPayset(validationConfig,entry);
        
-      if (fieldtype == 'DATE') {
+      if (fieldtype.fieldtypename == 'DATE') {
         o1.daterange = {
           startdate: new Date(
             testbase.schemaBaseValidatorPayload[entry]
@@ -526,9 +526,9 @@ let consolidatedPayload = function () {
         o1.datecolsearch = entry
         o1.disableDate = false
       } else if (
-        fieldtype == 'boolean' ||
-        fieldtype == 'BIGINT' ||
-        fieldtype == 'INTEGER'
+        fieldtype.fieldtypename == 'boolean' ||
+        fieldtype.fieldtypename == 'BIGINT' ||
+        fieldtype.fieldtypename == 'INTEGER'
       ) {
         o1.searchparam = [
           {
@@ -537,12 +537,22 @@ let consolidatedPayload = function () {
         ]
         o1.disableDate = true
         o1.searchtype = 'Columnwise'
-      } else if (fieldtype == 'STRING') {
+      } else if (fieldtype.fieldtypename == 'STRING') {
         let interimval = testbase.schemaBaseValidatorPayload[entry]
-
+        if (
+          fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+        ) {
+          if (fieldtype.fieldvalidatename == 'number') {
+            interimval=interimval;
+          }
+        }
+        else
+        {
+          interimval=interimval.toLowerCase()
+        }   
         o1.searchparam = [
           {
-            [entry]: [interimval.toLowerCase()]
+            [entry]: [interimval]
           }
         ]
         o1.disableDate = true
@@ -564,7 +574,7 @@ let consolidatedPayload = function () {
 
       let fieldtype = controlPayset(validationConfig,entry)
 
-      if (fieldtype == 'DATE') {
+      if (fieldtype.fieldtypename == 'DATE') {
         o1.daterange = {
           startdate: new Date(
             testbase.schemaBaseValidatorPayloadAr[0][entry]
@@ -576,9 +586,9 @@ let consolidatedPayload = function () {
         o1.datecolsearch = entry
         o1.disableDate = false
       } else if (
-        fieldtype == 'boolean' ||
-        fieldtype == 'BIGINT' ||
-        fieldtype == 'INTEGER'
+        fieldtype.fieldtypename == 'boolean' ||
+        fieldtype.fieldtypename == 'BIGINT' ||
+        fieldtype.fieldtypename == 'INTEGER'
       ) {
         o1.searchparam = [
           {
@@ -590,13 +600,25 @@ let consolidatedPayload = function () {
         ]
         o1.disableDate = true
         o1.searchtype = 'Columnwise'
-      } else if (fieldtype == 'STRING') {
+      } else if (fieldtype.fieldtypename == 'STRING') {
         let interimval1 = testbase.schemaBaseValidatorPayloadAr[0][entry]
         let interimval2 = testbase.schemaBaseValidatorPayloadAr[1][entry]
-
+        if (
+          fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+        ) {
+          if (fieldtype.fieldvalidatename == 'number') {
+            interimval1=interimval1;
+            interimval2=interimval2;
+          }
+        }
+        else
+        {
+          interimval1=interimval1.toLowerCase()
+          interimval2=interimval2.toLowerCase()
+        }
         o1.searchparam = [
           {
-            [entry]: [interimval1.toLowerCase(), interimval2.toLowerCase()]
+            [entry]: [interimval1, interimval2]
           }
         ]
         o1.disableDate = true
@@ -615,7 +637,7 @@ let consolidatedPayload = function () {
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = controlPayset(validationConfig,entry)
+      let fieldtype = controlPayset(validationConfig,entry).fieldtypename
 
       if (fieldtype == 'DATE') {
         o1.daterange = {
@@ -678,7 +700,7 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-    let fieldtype = controlPayset(validationConfig,entry)
+    let fieldtype = controlPayset(validationConfig,entry).fieldtypename
 
     if (fieldtype == 'DATE') {
       o1.daterange = {
@@ -700,7 +722,7 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-    let fieldtype = controlPayset(validationConfig,entry)
+    let fieldtype = controlPayset(validationConfig,entry).fieldtypename
 
     if (fieldtype == 'DATE') {
       o1.daterange = {

@@ -49,10 +49,21 @@ describe('Begin Tests', function () {
           .payload1(testbase, entry, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
+          let fieldtype = ''
+          console.log(entry.key)
 
-          let fieldtype = validationConfig.validationmap.filter(
-            o => o.inputname == entry.key
-          )[0].fieldvalidatename
+          if (
+            validationConfig.validationmap[0].hasOwnProperty('inputtextval')
+          ) {
+            fieldtype = validationConfig.validationmap.filter(
+              o => o.inputtextval == entry.key
+            )[0].fieldvalidatename
+          } else {
+            fieldtype = validationConfig.validationmap.filter(
+              o => o.inputname == entry.key
+            )[0].fieldvalidatename
+          }
+
           if (fieldtype == 'boolean') {
             data.body.message.should.equal(
               `body.${entry.key} should be boolean`
@@ -65,7 +76,7 @@ describe('Begin Tests', function () {
             data.body.message.should.equal(
               `body.${entry.key} should be integer`
             )
-          }else if (fieldtype == 'email') {
+          } else if (fieldtype == 'email') {
             data.body.message.should.equal(
               `body.${entry.key} should match format "email"`
             )
@@ -86,9 +97,18 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload1(testbase, entry, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          let fieldtype = validationConfig.validationmap.filter(
-            o => o.inputname == entry.key
-          )[0]
+          console.log(entry.key)
+          if (
+            validationConfig.validationmap[0].hasOwnProperty('inputtextval')
+          ) {
+            fieldtype = validationConfig.validationmap.filter(
+              o => o.inputtextval == entry.key
+            )[0]
+          } else {
+            fieldtype = validationConfig.validationmap.filter(
+              o => o.inputname == entry.key
+            )[0]
+          }
           if (fieldtype.fieldtypename == 'boolean') {
             data.body.message.should.equal(
               `body.${entry.key} should be boolean`
@@ -105,6 +125,14 @@ describe('Begin Tests', function () {
             data.body.message.should.equal(
               `body.${entry.key} should be <= 9223372036854776000`
             )
+          } else if (
+            fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+          ) {
+            if (fieldtype.fieldvalidatename == 'number') {
+              data.body.message.should.equal(
+                `body.${entry.key} should be <= 2147483648`
+              )
+            }
           } else {
             data.body.message.should.equal(
               `body.${entry.key} should NOT be longer than ${fieldtype.fieldmaxlength} characters`
@@ -114,11 +142,11 @@ describe('Begin Tests', function () {
       })
     })
   })
-  describe(/**/ '****************Valid Record Insertion Validation Test Cases****************', function () {
+  describe('****************Valid Record Insertion Validation Test Cases****************', function () {
     it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
         .consolidatedPayload()
-        .payload2(testbase, evalModulename)
+        .payload2(testbase, evalModulename, validationConfig)
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.Message.should.equal('Record SuccessFully Inserted')
         genSpecs.expect(data.body.createdId).to.be.a('number')

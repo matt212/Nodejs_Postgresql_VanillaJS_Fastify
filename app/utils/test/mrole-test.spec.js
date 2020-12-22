@@ -51,7 +51,7 @@ describe('Begin Tests', function () {
           data.body.error.should.equal('Bad Request')
           let fieldtype = ''
           console.log(entry.key)
-          
+
           if (
             validationConfig.validationmap[0].hasOwnProperty('inputtextval')
           ) {
@@ -97,9 +97,18 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload1(testbase, entry, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          let fieldtype = validationConfig.validationmap.filter(
-            o => o.inputname == entry.key
-          )[0]
+          console.log(entry.key)
+          if (
+            validationConfig.validationmap[0].hasOwnProperty('inputtextval')
+          ) {
+            fieldtype = validationConfig.validationmap.filter(
+              o => o.inputtextval == entry.key
+            )[0]
+          } else {
+            fieldtype = validationConfig.validationmap.filter(
+              o => o.inputname == entry.key
+            )[0]
+          }
           if (fieldtype.fieldtypename == 'boolean') {
             data.body.message.should.equal(
               `body.${entry.key} should be boolean`
@@ -116,6 +125,14 @@ describe('Begin Tests', function () {
             data.body.message.should.equal(
               `body.${entry.key} should be <= 9223372036854776000`
             )
+          } else if (
+            fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+          ) {
+            if (fieldtype.fieldvalidatename == 'number') {
+              data.body.message.should.equal(
+                `body.${entry.key} should be <= 2147483648`
+              )
+            }
           } else {
             data.body.message.should.equal(
               `body.${entry.key} should NOT be longer than ${fieldtype.fieldmaxlength} characters`
@@ -537,4 +554,3 @@ describe('Begin Tests', function () {
     })
   })
 })
-    
