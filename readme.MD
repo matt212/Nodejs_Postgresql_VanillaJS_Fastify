@@ -89,4 +89,4 @@ In case of error running sh Files Follow below
   > `yarn ModuleEval`
 - ### `Release notes 22 Dec 2020`
   >Dynamic Bolierplate generation completed for dataType Strings , Integers and BigInt data types config based
-  
+  >for rbac modname,muser modules migrated to fastify with their respective 43 and 63 mocha chai test cases
