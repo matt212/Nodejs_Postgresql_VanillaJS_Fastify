@@ -338,8 +338,13 @@
                  //multiselectfunc[data.inputtextval].destroy(data.inputtextval)
                  multiselectfunc[data.inputtextval].destroy(data.inputname)
                  var internsets = data.vals
+                 
+                 console.log(interncontent);
                  ///normalize array
                  var coremulti = interncontent.map2(function(da) {
+                     console.log(da);
+                     console.log(data.inputtextval)
+                     console.log(da[data.inputtextval + "id"]);
                      var y = (da[data.inputtextval].indexOf(',') != -1 ? da[data.inputtextval].split(',') : da[data.inputtextval]);
                      var x = (da[data.inputtextval + "id"].indexOf(',') != -1 ? da[data.inputtextval + "id"].split(',') : da[data.inputtextval + "id"]);
                      return {
@@ -388,7 +393,7 @@ console.log(coremulti)
      },
      tablechkbox: function(arg) {},
      formatresponse: function(data) {
-
+console.log(data);
          var res = this.formatserverfieldmap(data)
         
          var result = equijoin(res, validationmap, "key", "inputtextval",
