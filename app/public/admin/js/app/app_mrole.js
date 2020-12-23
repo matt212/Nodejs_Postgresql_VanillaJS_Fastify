@@ -344,10 +344,11 @@ console.log(JSON.stringify(interncontent));
                  var coremulti = interncontent.map2(function(da) {
                     var y = (da[data.inputCustomMapping].indexOf(',') != -1 ? da[data.inputCustomMapping].split(',') : da[data.inputCustomMapping]);
                     //var x = (da[data.inputtextval + "id"].indexOf(',') != -1 ? da[data.inputtextval + "id"].split(',') : da[data.inputtextval + "id"]);
+                    console.log(y)
                     console.log(data)
                     console.log(da)
                     var xy = basemod_modal.getidfromobj(data.inputtextval)
-                    
+                    console.log(xy);
                     var x = (da[xy].toString().indexOf(',') != -1 ? da[xy].split(',') : da[xy]);
                     
                     return {
@@ -451,7 +452,8 @@ console.log(JSON.stringify(interncontent));
         var basesets = validationmap.filter(function(dt) {
             return dt.inputtextval == val
         }).map(function(dt) {
-            return dt.inputname;
+            //return dt.inputname;
+            return dt.inputCustomMapping
 
         })
         return basesets.toString();

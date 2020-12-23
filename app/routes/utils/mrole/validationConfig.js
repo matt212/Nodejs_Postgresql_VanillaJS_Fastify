@@ -11,7 +11,7 @@ let validationmap = [
   },
   {
     inputtype: "multiselect",
-    inputname: "modulenameid",
+    inputname: "modnameid",
     inputtextval: "mname",
     inputCustomMapping:"modulename",
     inputplaceholder: "Module",
