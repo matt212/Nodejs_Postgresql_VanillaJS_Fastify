@@ -1600,6 +1600,17 @@ let deleteHardRecord = (req, res) => {
       res.send(affectedRows)
     })
 }
+let customeDestroy = (req, res) => {
+  models[mod.Name]
+    .destroy({
+      where: {
+        [mod.id]: req.body[mod.id]
+      }
+    })
+    .then(affectedRows => {
+      res.send(affectedRows)
+    })
+}
 let pivotResult = (req, res, a) => {
   let async = require('async')
   let tempDep = pivotTransform(req)
