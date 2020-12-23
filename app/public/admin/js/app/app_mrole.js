@@ -235,18 +235,19 @@
                  inputtextval: doct.inputtextval
              };
          });
-         
+         console.log(doct);
+         console.log(JSON.stringify(multiselects));
          doct.forEach(function(element) {
              if (multiselects[element.inputtextval] != undefined) {
-                 interns[element.inputtextval] = multiselects[element.inputtextval][0][element.inputname]
+                 interns[element.inputtextval] = multiselects[element.inputtextval][0][element.inputtextval]
              } else {
                  interns[element.inputtextval] = base.editrecord[0][element.inputname].split(',')
              }
          });
          var rolobh = {};
          var roles = []
-
-
+        
+console.log(interns);
          var isactivearr = [];
          rolobh.mroleID = data.roleid;
          roles.push(rolobh);
@@ -265,7 +266,7 @@
          var internaccesstype = interns.accesstype.map(function(doctor) {
              return { accesstype: doctor }
          })
-         var internmodname = interns.modulename.map(function(doctor) {
+         var internmodname = interns.mname.map(function(doctor) {
              return { modnameID: doctor }
          })
          var internrolename = interns.rolename.map(function(doctor) {
@@ -276,9 +277,9 @@
 
          var providedre = a.map(function(country) {
              return {
-                 modulename: country[0].modnameID,
+                 modnameid: country[0].modnameID,
                  accesstype: country[1].accesstype,
-                 rolename: country[2].rolenameID,
+                 roleid: country[2].rolenameID,
                  recordstate: country[3].recordstate
              };
          });

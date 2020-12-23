@@ -109,14 +109,14 @@ let makepayload = function (validationConfig) {
 let makepayloadControl = function (validationConfig) {
   //let apply = validationConfig.applyfields
   let apply = validationConfig.validationmap.map(function (doctor) {
-    return doctor.inputtextval
+    return doctor.inputname
   })
   let validationmap = validationConfig.validationmap
   let interimObj = {}
 
   apply.forEach(function (entry) {
     let doctors = validationmap.filter(function (doctor) {
-      return doctor.inputtextval == entry // if truthy then keep item
+      return doctor.inputname == entry // if truthy then keep item
     })[0]
 
     if (doctors != undefined) {
@@ -124,21 +124,21 @@ let makepayloadControl = function (validationConfig) {
         doctors.fieldvalidatename == 'string' ||
         doctors.fieldvalidatename == 'passwordvalidation'
       ) {
-        interimObj[doctors.inputtextval] = makeid(doctors.fieldmaxlength)
+        interimObj[doctors.inputname] = makeid(doctors.fieldmaxlength)
       }
       if (doctors.fieldvalidatename == 'number') {
-        interimObj[doctors.inputtextval] = getRandomInt(1, doctors.fieldmaxlength)
+        interimObj[doctors.inputname] = getRandomInt(1, doctors.fieldmaxlength)
       }
       if (doctors.fieldvalidatename == 'mobile') {
-        interimObj[doctors.inputtextval] = Math.round(
+        interimObj[doctors.inputname] = Math.round(
           parseInt(makeidnumber(doctors.fieldmaxlength))
         )
       }
       if (doctors.fieldvalidatename == 'email') {
-        interimObj[doctors.inputtextval] = genEmail()
+        interimObj[doctors.inputname] = genEmail()
       }
       if (doctors.fieldvalidatename == 'date') {
-        interimObj[doctors.inputtextval] = getCurrentDate()
+        interimObj[doctors.inputname] = getCurrentDate()
       }
       interimObj.recordstate = true
     }

@@ -4,12 +4,12 @@ let insertUpdateSchema = {
     type: 'string',
     allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 2 }]
   },
-  rolename: {
+  roleid: {
     type: 'integer',
     minimum: 1,
     maximum: 2147483648
   },
-  modulename: {
+  modnameid: {
     type: 'integer',
     minimum: 1,
     maximum: 2147483648
@@ -30,12 +30,12 @@ let baseupdatefunction = {
 
 const insertSchema = {
   type: 'object',
-  required: ['rolename', 'modulename', 'accesstype', 'recordstate'],
+  required: ['roleid', 'modnameid', 'accesstype', 'recordstate'],
   properties: insertUpdateSchema
 }
 const updateSchema = {
   type: 'object',
-  required: ['rolename', 'modulename', 'accesstype', 'recordstate', 'mroleid'],
+  required: ['roleid', 'modnameid', 'accesstype', 'recordstate', 'mroleid'],
   properties: baseupdatefunction
 }
 let insertUpdateBulkSchema = {

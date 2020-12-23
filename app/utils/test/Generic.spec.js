@@ -1,7 +1,9 @@
 let Promises = require('bluebird')
 var supertest = require('supertest')
-var should = require('chai').should()
-var expect = require('chai').expect
+var chai = require("chai");
+chai.config.includeStack = true;
+var should = chai.should()
+var expect = chai.expect
 let tokenvalEval
 let loadModulePayLoad = {
   searchparam: ['NA'],
@@ -71,9 +73,11 @@ let createModPayLoad = function (validationConfig) {
   }
 }
 let customMultiInsertDelete = function (testbase, evalModulename) {
+  
   let o = {}
   o.multiInsert = function (entry) {
     return new Promise((resolve, reject) => {
+  try {
       testbase.apiUrl = '/' + evalModulename + dep.create
       testbase.responseCode = 200
       testbase.payload = entry
@@ -81,6 +85,11 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
         
         resolve(data.body.createdId)
       })
+      .catch(err => console.log(err)) 
+    } catch (error) {
+      console.log(error)
+      reject(error);
+    }
     })
   }
   o.multiDel = function (DelAr) {
@@ -92,7 +101,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
       testbase.payload = delObj
       genericApiPost(testbase).then(function (data) {
         resolve(data)
-      })
+      }).catch(err => console.log(err)) 
     })
   }
 
@@ -144,6 +153,7 @@ let customTestsInit = function (testbase, validationConfig) {
   return testbase
 }
 let loginsuccess = function (cred) {
+  try {
   return (promise = new Promise((resolve, reject) => {
     var user = cred
     server
@@ -161,12 +171,16 @@ let loginsuccess = function (cred) {
         resolve({ status: 'pass' })
       })
   }))
+} catch (error) {
+  console.error(error);
+}
 }
 let setevalModulename = function (data) {
   evalModulename = data
 }
 let genericApiPost = function (data) {
   return (promise = new Promise((resolve, reject) => {
+    try {
     server
       .post(data.apiUrl)
       .send(data.payload)
@@ -175,12 +189,15 @@ let genericApiPost = function (data) {
       .expect(data.responseCode)
       .end(function (err, res) {
         if (err) {
-          console.log(err)
-          reject(err)
+          //console.log({error:err.message,url:data.apiUrl, payload:JSON.stringify(data.payload)})
+          reject({error:err.message,url:data.apiUrl, payload:JSON.stringify(data.payload)});
         } else {
           resolve(res)
         }
       })
+    } catch (error) {
+      reject({error:true,payload:data});
+    }
   }))
 }
 let schemavalidatorPayload = function (baseapplyFields) {
@@ -270,7 +287,7 @@ let PrimarytestInit = function (testbase) {
 
             testbase.singleInsertID = data.singleInsertID
             resolve(testbase)
-          })
+          }).catch(err => console(err)) 
       })
   })
 }

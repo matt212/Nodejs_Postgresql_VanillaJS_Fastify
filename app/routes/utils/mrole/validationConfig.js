@@ -6,7 +6,7 @@ let validationmap = [
     inputCustomMapping:"rolename",
     inputplaceholder: "Rolename",
     fieldtypename: "STRING",
-    fieldvalidatename: "string",
+    fieldvalidatename: "number",
     fieldmaxlength: "80"
   },
   {
