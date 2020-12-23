@@ -1,3 +1,5 @@
+
+
 let selectArr = [];
 let basesearchobj = {};
 let basesearchar = new Array();
@@ -579,8 +581,8 @@ let reqops = {
     base.searchtype = "consolidatesearch";
     base.idstatus = true;
     base.excludedatecol = true;
-    var internsearchbar = baseloadsegments.moduleattributepopulate();
-
+    //var internsearchbar = baseloadsegments.moduleattributepopulate();
+    var internsearchbar =applyfields
     var cons = {};
     basesearcharconsolidated = [];
     cons.consolidatecol = internsearchbar;
