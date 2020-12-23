@@ -305,7 +305,8 @@
          base.editrecord = interncontent;
          $('#cltrl' + currentmoduleid).val(armroleid);
          var formatresponse = this.formatresponse(interncontent);
-
+console.log(JSON.stringify(formatresponse));
+console.log(JSON.stringify(interncontent));
          formatresponse.forEach2(function(data) {
 
              if (data.inputtype == "textbox") {
@@ -339,43 +340,45 @@
                  multiselectfunc[data.inputtextval].destroy(data.inputname)
                  var internsets = data.vals
                  
-                 console.log(interncontent);
                  ///normalize array
                  var coremulti = interncontent.map2(function(da) {
-                     console.log(da);
-                     console.log(data.inputtextval)
-                     console.log(da[data.inputtextval + "id"]);
-                     var y = (da[data.inputtextval].indexOf(',') != -1 ? da[data.inputtextval].split(',') : da[data.inputtextval]);
-                     var x = (da[data.inputtextval + "id"].indexOf(',') != -1 ? da[data.inputtextval + "id"].split(',') : da[data.inputtextval + "id"]);
-                     return {
-                         val: y,
-                         id: x
-                     }
-                 })
-console.log(coremulti)
+                    var y = (da[data.inputCustomMapping].indexOf(',') != -1 ? da[data.inputCustomMapping].split(',') : da[data.inputCustomMapping]);
+                    //var x = (da[data.inputtextval + "id"].indexOf(',') != -1 ? da[data.inputtextval + "id"].split(',') : da[data.inputtextval + "id"]);
+                    console.log(data)
+                    console.log(da)
+                    var xy = basemod_modal.getidfromobj(data.inputtextval)
+                    
+                    var x = (da[xy].toString().indexOf(',') != -1 ? da[xy].split(',') : da[xy]);
+                    
+                    return {
+                        val: y,
+                        id: x
+                    }
+                })
+
                  ///one to one array 
                  var ids = coremulti[0].id
                  if (Array.isArray(ids)) {
-                     var intens = []
-                     ids.forEach2(function(d, i) {
+                    var intens = []
+                    ids.forEach2(function(d, i) {
+                        var r = {}
+                        r.id = d
+                        r.val = coremulti[0].val[i]
+                        intens.push(r)
+                        r = {}
 
-                         var r = {}
-                         r.id = d
-                         r.val = coremulti[0].val[i]
-                         intens.push(r)
-                         r = {}
+                    })
 
-                     })
+                    /*get id from response*/
+                    intens.forEach2(function(dat) {
 
-                     /*get id from response*/
-                     intens.forEach2(function(dat) {
-
-                         multiselectfunc[data.inputtextval].onsearchtext(data.inputname, dat.val, parseInt(dat.id));
-                     })
-                 } else {
-
-                     multiselectfunc[data.inputtextval].onsearchtext(data.inputname, coremulti[0].val, parseInt(coremulti[0].id));
-                 }
+                        multiselectfunc[data.inputtextval].onsearchtext(data.inputtextval, dat.val, parseInt(dat.id));
+                    })
+                } else {
+                    
+                    multiselectfunc[data.inputtextval].onsearchtext(data.inputtextval, coremulti[0].val, parseInt(coremulti[0].id));
+                }
+            
              }
          })
          //active comma denominator
@@ -393,20 +396,22 @@ console.log(coremulti)
      },
      tablechkbox: function(arg) {},
      formatresponse: function(data) {
-console.log(data);
+
          var res = this.formatserverfieldmap(data)
-        
-         var result = equijoin(res, validationmap, "key", "inputtextval",
+                 
+         var result = equijoin(res, validationmap, "key", "inputCustomMapping",
              ({
                  vals
              }, {
                  inputtype,
                  inputtextval,
-                 inputname
+                 inputname,
+                 inputCustomMapping
              }) => ({
                  inputtype,
                  inputtextval,
                  inputname,
+                 inputCustomMapping,
                  vals
              }));
 
@@ -435,12 +440,22 @@ console.log(data);
 
                  var p = {}
                  p.fieldname = data.inputtextval
-                 p.fieldkey = data.inputname
+                 //p.fieldkey = data.inputname
+                 p.fieldkey = data.inputtextval
 
                  basemultiselectaccess.multiselectmodular(p);
              }
          })
-     }
+     },
+     getidfromobj: function(val) {
+        var basesets = validationmap.filter(function(dt) {
+            return dt.inputtextval == val
+        }).map(function(dt) {
+            return dt.inputname;
+
+        })
+        return basesets.toString();
+    }
  }
 
  let accesstypecontent = [{
@@ -456,7 +471,7 @@ console.log(data);
  let basemultiselectaccess = {
 
      multiselectmodular: function(arg) {
-         console.log(arg.fieldname)
+         
          var multiselectconfig = {
              selectevent: '#in' + arg.fieldname,
              fieldkey: arg.fieldkey,
@@ -494,7 +509,7 @@ console.log(data);
 
          return base;
      },
-     remotefuncmodulename: function(data) {
+     remotefuncmname: function(data) {
          return new Promise(function(resolve, reject) {
 
              var arin = []

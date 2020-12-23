@@ -2,11 +2,11 @@
 
 module.exports = function(sequelize, DataTypes) {
     return sequelize.define('mrole', {
-        rolename: {
+        roleid: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-        modulename: {
+        modnameid: {
             type: DataTypes.INTEGER,
             allowNull: true
         },

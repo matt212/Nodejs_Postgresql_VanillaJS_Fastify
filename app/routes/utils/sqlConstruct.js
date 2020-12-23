@@ -203,9 +203,9 @@ let mrole = {
     a:
       'select a.mroleid, a.recordstate,rl.roleid AS roleid,n.modnameid as modID, n.Mname as Modulename,n.Mname as mname,rl.rolename as Rolename, a.accesstype as accesstype  from mrole a ' +
       'left join modname n ' +
-      'on a.modulename::int=n.modnameid ' +
+      'on a.modnameid::int=n.modnameid ' +
       'left join role rl ' +
-      'on rl.roleid=a.rolename::int ' +
+      'on rl.roleid=a.roleid::int ' +
       'where a.recordstate=true '
   },
   basesearchtype: function (tunnel) {

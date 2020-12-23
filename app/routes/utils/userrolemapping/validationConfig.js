@@ -10,8 +10,8 @@ let validationmap = [
   },
   {
     inputtype: "multiselect",
-    inputtextval: "username",
     inputname: "muserid",
+    inputtextval: "username",
     inputplaceholder: "username",
     fieldtypename: "STRING",
     fieldvalidatename: "string",
