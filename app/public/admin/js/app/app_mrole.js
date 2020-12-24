@@ -21,7 +21,7 @@ let baseurlobj = {
     '/' + currentrolemodname + '/api/searchtypegroupbyId/',
   exportexcelcalc: '/' + currentmodulename + '/api/exportexcelcalc/',
   pivotresult: '/' + currentmodulename + '/api/pivotresult/',
-  deletemrole: '/' + currentmodulename + '/api/Destroy/'
+  deletemrole: '/' + currentmodulename + '/api/customDestroy/'
 }
 
 let basefunction = function () {
