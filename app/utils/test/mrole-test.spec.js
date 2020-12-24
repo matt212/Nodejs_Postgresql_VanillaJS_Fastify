@@ -24,6 +24,7 @@ describe('Begin Tests', function () {
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
+    
     testbase.schemaValValidatorPayload.forEach(function (entry) {
       it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
         testbase = genSpecs
@@ -40,7 +41,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-/*
+
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
       it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
@@ -50,19 +51,11 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           let fieldtype = ''
-          console.log(entry.key)
-
-          if (
-            validationConfig.validationmap[0].hasOwnProperty('inputtextval')
-          ) {
-            fieldtype = validationConfig.validationmap.filter(
-              o => o.inputtextval == entry.key
-            )[0].fieldvalidatename
-          } else {
+          
             fieldtype = validationConfig.validationmap.filter(
               o => o.inputname == entry.key
             )[0].fieldvalidatename
-          }
+          
 
           if (fieldtype == 'boolean') {
             data.body.message.should.equal(
@@ -97,18 +90,12 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload1(testbase, entry, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          console.log(entry.key)
-          if (
-            validationConfig.validationmap[0].hasOwnProperty('inputtextval')
-          ) {
-            fieldtype = validationConfig.validationmap.filter(
-              o => o.inputtextval == entry.key
-            )[0]
-          } else {
+          
+          
             fieldtype = validationConfig.validationmap.filter(
               o => o.inputname == entry.key
             )[0]
-          }
+          
           if (fieldtype.fieldtypename == 'boolean') {
             data.body.message.should.equal(
               `body.${entry.key} should be boolean`
@@ -142,6 +129,7 @@ describe('Begin Tests', function () {
       })
     })
   })
+  
   describe('****************Valid Record Insertion Validation Test Cases****************', function () {
     it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -154,6 +142,7 @@ describe('Begin Tests', function () {
       })
     })
   })
+  
   describe('****************Invalid Record Updation by Schema Removal Validation Test Cases****************', function () {
     it(`For  Update Operation test cases By passing as removing UpdatedID in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -205,6 +194,7 @@ describe('Begin Tests', function () {
       })
     })
   })
+  
   describe('****************Parent Payload Validation Test Cases****************', function () {
     describe('****************Dates SearchParam Validation Test Cases****************', function () {
       it(`without date filter payload `, function () {
@@ -391,7 +381,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-
+/*
   describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`Searching for ${entry} and getting expected Multi recordset `, function () {

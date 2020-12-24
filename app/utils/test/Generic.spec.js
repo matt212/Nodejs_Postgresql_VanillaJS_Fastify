@@ -130,6 +130,16 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
   return o
 }
 let customTestsInit = function (testbase, validationConfig) {
+  let appField={}
+  if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
+    appField = validationConfig.validationmap.map(function (doctor) {
+      return doctor.inputname
+    })
+  }
+  else
+  {
+    appField=validationConfig.applyfields
+  }
   testbase.schemaBaseValidatorPayload = createModPayLoad(validationConfig)
 
   /*Generate multi insert payloads by passing second parameter as number recordset to generate*/
@@ -137,17 +147,17 @@ let customTestsInit = function (testbase, validationConfig) {
 
   /*Schema validatior with removing one by ony fields*/
   testbase.schemaValValidatorPayload = schemaValueValidatorPayload(
-    validationConfig.applyfields,
+    appField,
     testbase.schemaBaseValidatorPayload
   )
   /*Schema validatior with blank fields one by ony fields*/
   testbase.schemaValValidatorPayloadBlank = schemaValueValidatorPayloadBlank(
-    validationConfig.applyfields,
+    appField,
     testbase.schemaBaseValidatorPayload
   )
   /*Schema validatior with Max  fields validations one by ony fields*/
   testbase.schemaValValidatorPayloadMaxLenght = schemaValValidatorPayloadMaxLenght(
-    validationConfig.applyfields,
+    appField,
     testbase.schemaBaseValidatorPayload
   )
   return testbase
