@@ -1600,13 +1600,12 @@ let deleteHardRecord = (req, res) => {
       res.send(affectedRows)
     })
 }
-let customDestroy = (req, res,delobj) => {
-  console.log(Object.keys(delobj));
-  console.log(req.body[Object.keys(delobj)]);
+let customDestroy = (req, res) => {
+  let delobj=req.body.delObj
   models[mod.Name]
     .destroy({
       where: {
-        [Object.keys(delobj)]: req.body[Object.keys(delobj)]
+        [Object.keys(delobj)]: req.body.delObj[Object.keys(delobj)]
       }
     })
     .then(affectedRows => {

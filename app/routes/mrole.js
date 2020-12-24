@@ -176,9 +176,7 @@ async function routes (fastify, options) {
     },
     async (request, reply) => {
       dep.assignVariables(mod)
-      var o={}
-      o.roleid=request.body.roleid
-      dep.customDestroy(request, reply,o)
+      dep.customDestroy(request, reply)
     }
   )
   

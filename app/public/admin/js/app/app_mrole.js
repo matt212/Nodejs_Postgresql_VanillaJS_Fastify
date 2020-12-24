@@ -287,7 +287,9 @@ let basemod_modal = {
 
     let o = {}
     o.payset = providedre
-    o.roleid = interns.roleid[0]
+    o.delObj = {
+      roleid: interns.roleid[0]
+    }
     base.datapayload = o
     return base
   },
@@ -547,16 +549,19 @@ let basemultiselectaccess = {
         .getpaginatemodnamesearchtypegroupby(internbase)
         .then(function (argument) {
           var sets = argument.rows
-          var internfield = Object.keys(sets[0])
-          sets = sets.map(function (doctor) {
-            return {
-              // return what new object will look like
-              key: data.fieldname,
-              text: doctor[internfield[0]],
-              val: doctor[internfield[1]]
-            }
-          })
-          resolve(sets)
+          console.log()
+          if (sets[0] != undefined) {
+            var internfield = Object.keys(sets[0])
+            sets = sets.map(function (doctor) {
+              return {
+                // return what new object will look like
+                key: data.fieldname,
+                text: doctor[internfield[0]],
+                val: doctor[internfield[1]]
+              }
+            })
+            resolve(sets)
+          }
         })
     })
   },
