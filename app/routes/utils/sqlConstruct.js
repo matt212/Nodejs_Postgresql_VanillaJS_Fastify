@@ -213,7 +213,7 @@ let mrole = {
       'select   Rolename, ' +
       "string_agg(distinct Modulename,',')as Modulename," +
       "string_agg(distinct accesstype,',') as Accesstype ,recordstate," +
-      "string_agg(distinct ModID::text,',') as modulenameid, string_agg(distinct ModID::text,',') as mname , " +
+      "string_agg(distinct ModID::text,',') as modnameid, string_agg(distinct ModID::text,',') as mname , " +
       "string_agg(distinct roleid::text,',') as mroleID," +
       'ROLEID as RoleID from ' +
       '( ' +

@@ -25,7 +25,6 @@ async function routes (fastify, options) {
       )
     }
   )
-
   fastify.post(
     dep.routeUrls.searchtype[0],
     {
@@ -104,7 +103,6 @@ async function routes (fastify, options) {
       dep.exportExcel(request, reply, mod, fastify)
     }
   )
-
   fastify.post(
     dep.routeUrls.uploadcontent,
     {
@@ -170,6 +168,20 @@ async function routes (fastify, options) {
       dep.bulkCreate(request, reply)
     }
   )
+  fastify.post(
+    dep.routeUrls.customDestroy,
+    {
+      config: dep.cGzip,
+      preValidation: [fastify.authenticate]
+    },
+    async (request, reply) => {
+      dep.assignVariables(mod)
+      var o={}
+      o.roleid=request.body.roleid
+      dep.customDestroy(request, reply,o)
+    }
+  )
+  
 }
 
 module.exports = routes

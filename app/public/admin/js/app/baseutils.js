@@ -633,7 +633,7 @@ let reqops = {
       "[name^='__']"
     );
     var data = $fields.formToJSON();
-    console.log(data);
+    
     /*var doctors = data.map(function(doctor) {
                var o = {};
                o[doctor.position] = doctor.positionval;
@@ -1201,7 +1201,7 @@ let htmlpopulate = {
     });
   },
   htmlpopulatetable: function (arg) {
-    console.log(arg);
+    
     $("#basetable tbody")
       .children()
       .remove();

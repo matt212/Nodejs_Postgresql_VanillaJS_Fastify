@@ -1600,11 +1600,13 @@ let deleteHardRecord = (req, res) => {
       res.send(affectedRows)
     })
 }
-let customeDestroy = (req, res) => {
+let customDestroy = (req, res,delobj) => {
+  console.log(Object.keys(delobj));
+  console.log(req.body[Object.keys(delobj)]);
   models[mod.Name]
     .destroy({
       where: {
-        [mod.id]: req.body[mod.id]
+        [Object.keys(delobj)]: req.body[Object.keys(delobj)]
       }
     })
     .then(affectedRows => {
@@ -1788,7 +1790,8 @@ let routeUrls = {
   searchtypegroupbyId: '/api/searchtypegroupbyId/',
   delete: '/api/delete/',
   pivotresult: '/api/pivotresult/',
-  bulkCreate: '/api/bulkCreate/'
+  bulkCreate: '/api/bulkCreate/',
+  customDestroy: '/api/customDestroy/'
 }
 // models.userrolemapping.sync({alter: true}).then(function() {
 // }).catch(e => {
@@ -1915,6 +1918,7 @@ let baseUtilsRoutes = {
 }
 module.exports = {
   datatransformutils,
+  customDestroy,
   deleteHardRecord,
   cGzip,
   baseUtilsRoutes,

@@ -21,7 +21,7 @@ let baseurlobj = {
     '/' + currentrolemodname + '/api/searchtypegroupbyId/',
   exportexcelcalc: '/' + currentmodulename + '/api/exportexcelcalc/',
   pivotresult: '/' + currentmodulename + '/api/pivotresult/',
-  deletemrole: '/' + currentmodulename + '/api/delete/'
+  deletemrole: '/' + currentmodulename + '/api/Destroy/'
 }
 
 let basefunction = function () {
@@ -238,17 +238,16 @@ let basemod_modal = {
         interns[element.inputname] =
           multiselects[element.inputname][0][element.inputtextval]
       } else {
-        interns[element.inputtextval] = base.editrecord[0][
-          element.inputtextval
-        ].split(',')
+        let vals = base.editrecord[0][element.inputname]
+        if (vals.toString().indexOf(',') > -1) {
+          interns[element.inputname] = vals.split(',')
+        } else {
+          interns[element.inputname] = [vals]
+        }
       }
     })
-    var rolobh = {}
-    var roles = []
 
     var isactivearr = []
-    rolobh.mroleID = data.roleid
-    roles.push(rolobh)
     var isactivearrayobj = {}
     var isactiveparam = base.datapayload.recordstate
     // console.log(base.datapayload.recordstate)
@@ -258,7 +257,7 @@ let basemod_modal = {
       isactivearrayobj.recordstate = false
     }
     isactivearr.push(isactivearrayobj)
-
+    console.log(interns)
     var internaccesstype = interns.accesstype.map(function (doctor) {
       return { accesstype: doctor }
     })
@@ -288,6 +287,7 @@ let basemod_modal = {
 
     let o = {}
     o.payset = providedre
+    o.roleid = interns.roleid[0]
     base.datapayload = o
     return base
   },
@@ -304,6 +304,7 @@ let basemod_modal = {
   },
   ontdedit: function (arg) {
     var armroleid = $(arg).attr('data-tbledit-type')
+
     ajaxbase.isedit = true
     var interncontent = ajaxbase[currentmodulename].rows
 
@@ -365,7 +366,7 @@ let basemod_modal = {
           //var x = (da[data.inputtextval + "id"].indexOf(',') != -1 ? da[data.inputtextval + "id"].split(',') : da[data.inputtextval + "id"]);
 
           var xy = basemod_modal.getidfromobj(data.inputtextval)
-
+          console.log(data.inputtextval)
           var x =
             da[xy].toString().indexOf(',') != -1 ? da[xy].split(',') : da[xy]
 
@@ -377,6 +378,7 @@ let basemod_modal = {
 
         ///one to one array
         var ids = coremulti[0].id
+        console.log(ids)
         if (Array.isArray(ids)) {
           var intens = []
           ids.forEach2(function (d, i) {
@@ -473,8 +475,8 @@ let basemod_modal = {
         return dt.inputtextval == val
       })
       .map(function (dt) {
-        //return dt.inputname;
-        return dt.inputCustomMapping
+        return dt.inputname
+        //return dt.inputCustomMapping
       })
     return basesets.toString()
   }
