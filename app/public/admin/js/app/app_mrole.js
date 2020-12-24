@@ -90,7 +90,7 @@ let basefunction = function () {
     },
     update: function (base) {
       base = basemod_modal.mrolepayloadformat(base)
-      console.log(base)
+      
       return this.deleterecord(base)
         .then(basemod_modal.insertmrole)
         .then(function (data) {
@@ -257,7 +257,7 @@ let basemod_modal = {
       isactivearrayobj.recordstate = false
     }
     isactivearr.push(isactivearrayobj)
-    console.log(interns)
+    
     var internaccesstype = interns.accesstype.map(function (doctor) {
       return { accesstype: doctor }
     })
@@ -366,7 +366,7 @@ let basemod_modal = {
           //var x = (da[data.inputtextval + "id"].indexOf(',') != -1 ? da[data.inputtextval + "id"].split(',') : da[data.inputtextval + "id"]);
 
           var xy = basemod_modal.getidfromobj(data.inputtextval)
-          console.log(data.inputtextval)
+          
           var x =
             da[xy].toString().indexOf(',') != -1 ? da[xy].split(',') : da[xy]
 
@@ -378,7 +378,7 @@ let basemod_modal = {
 
         ///one to one array
         var ids = coremulti[0].id
-        console.log(ids)
+        
         if (Array.isArray(ids)) {
           var intens = []
           ids.forEach2(function (d, i) {
@@ -508,7 +508,7 @@ let basemultiselectaccess = {
     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
       data
     ) {
-      console.log(data)
+      
       multiselects[arg.secondaryKey] = data
     })
     multiselectfunc[arg.fieldname].init()
