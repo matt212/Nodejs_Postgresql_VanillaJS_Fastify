@@ -115,7 +115,7 @@ module.exports.pgQueryStream = function (sql) {
 
 
 module.exports.query = function (sql) {
-    
+    console.log(sql);
     return new Promise((resolve, reject) => {
         pool.connect(function (err, client, release) {
             if (err) {

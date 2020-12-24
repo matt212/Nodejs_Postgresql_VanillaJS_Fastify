@@ -579,16 +579,20 @@ let basemultiselectaccess = {
         .getpaginateRolesearchtypegroupby(internbase)
         .then(function (argument) {
           var sets = argument.rows
-          var internfield = Object.keys(sets[0])
-          sets = sets.map(function (doctor) {
-            return {
-              // return what new object will look like
-              key: data.fieldname,
-              text: doctor[internfield[0]],
-              val: doctor[internfield[1]]
-            }
-          })
-          resolve(sets)
+          if(sets[0]!=undefined)
+          {
+            var internfield = Object.keys(sets[0])
+            sets = sets.map(function (doctor) {
+              return {
+                // return what new object will look like
+                key: data.fieldname,
+                text: doctor[internfield[0]],
+                val: doctor[internfield[1]]
+              }
+            })
+            resolve(sets)  
+          }
+          
         })
     })
   },
