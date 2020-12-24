@@ -1,6 +1,7 @@
 let testbase = {
   evalModulename: 'mrole'
 }
+const { resolve } = require('bluebird')
 let genSpecs = require('./Generic.spec.js')
 let validationConfig = require('../../routes/utils/' +
   testbase.evalModulename +
@@ -9,12 +10,23 @@ validationConfig = genSpecs.validationconfigInit(validationConfig)
 /*for getting and passing to rest of tests fields and validationConfig*/
 testbase = genSpecs.customTestsInit(testbase, validationConfig)
 genSpecs.setevalModulename(testbase.evalModulename)
+
 describe('Begin Tests', function () {
   before(function (done) {
-    genSpecs.PrimarytestInit(testbase).then(function (data) {
-      console.log('*****Multi Records are inserted sucessfully*****')
-      testbase = data
-      done()
+    let a1 = validationConfig.validationmap
+      .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
+      .filter(Boolean)
+
+    genSpecs.ModularizeDataGen(a1).then(function (data) {
+      console.log(data)
+      testbase = genSpecs.customTestsInit(testbase, validationConfig)
+      genSpecs.setevalModulename(testbase.evalModulename)
+
+      genSpecs.PrimarytestInit(testbase).then(function (data) {
+        console.log('*****Multi Records are inserted sucessfully*****')
+        testbase = data
+        done()
+      })
     })
   })
   after(function (done) {
@@ -24,7 +36,6 @@ describe('Begin Tests', function () {
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
-    
     testbase.schemaValValidatorPayload.forEach(function (entry) {
       it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
         testbase = genSpecs
@@ -41,7 +52,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-
+  /*
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
       it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
@@ -381,7 +392,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-/*
+
   describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`Searching for ${entry} and getting expected Multi recordset `, function () {

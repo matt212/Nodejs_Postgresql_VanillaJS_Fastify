@@ -1,7 +1,7 @@
 let Promises = require('bluebird')
 var supertest = require('supertest')
-var chai = require("chai");
-chai.config.includeStack = true;
+var chai = require('chai')
+chai.config.includeStack = true
 var should = chai.should()
 var expect = chai.expect
 let tokenvalEval
@@ -46,21 +46,16 @@ var server = supertest.agent('http://localhost:3011')
 
 // UNIT test begin
 
-let controlPayset=function(validationConfig,entry)
-{
-  let fieldtype=""
+let controlPayset = function (validationConfig, entry) {
+  let fieldtype = ''
   if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
-     fieldtype = validationConfig.validationmap.filter(
+    fieldtype = validationConfig.validationmap.filter(
       o1 => o1.inputtextval == entry
     )[0]
-  
-  }
-  else
-  {
-     fieldtype = validationConfig.validationmap.filter(
+  } else {
+    fieldtype = validationConfig.validationmap.filter(
       o1 => o1.inputname == entry
     )[0]
-    
   }
   return fieldtype
 }
@@ -73,23 +68,22 @@ let createModPayLoad = function (validationConfig) {
   }
 }
 let customMultiInsertDelete = function (testbase, evalModulename) {
-  
   let o = {}
   o.multiInsert = function (entry) {
     return new Promise((resolve, reject) => {
-  try {
-      testbase.apiUrl = '/' + evalModulename + dep.create
-      testbase.responseCode = 200
-      testbase.payload = entry
-      genericApiPost(testbase).then(function (data) {
-        
-        resolve(data.body.createdId)
-      })
-      .catch(err => console.log(err)) 
-    } catch (error) {
-      console.log(error)
-      reject(error);
-    }
+      try {
+        testbase.apiUrl = '/' + evalModulename + dep.create
+        testbase.responseCode = 200
+        testbase.payload = entry
+        genericApiPost(testbase)
+          .then(function (data) {
+            resolve(data.body.createdId)
+          })
+          .catch(err => console.log(err))
+      } catch (error) {
+        console.log(error)
+        reject(error)
+      }
     })
   }
   o.multiDel = function (DelAr) {
@@ -99,9 +93,11 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
       testbase.apiUrl = '/' + evalModulename + dep.delete
       testbase.responseCode = 200
       testbase.payload = delObj
-      genericApiPost(testbase).then(function (data) {
-        resolve(data)
-      }).catch(err => console.log(err)) 
+      genericApiPost(testbase)
+        .then(function (data) {
+          resolve(data)
+        })
+        .catch(err => console.log(err))
     })
   }
 
@@ -130,15 +126,13 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
   return o
 }
 let customTestsInit = function (testbase, validationConfig) {
-  let appField={}
+  let appField = {}
   if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
     appField = validationConfig.validationmap.map(function (doctor) {
       return doctor.inputname
     })
-  }
-  else
-  {
-    appField=validationConfig.applyfields
+  } else {
+    appField = validationConfig.applyfields
   }
   testbase.schemaBaseValidatorPayload = createModPayLoad(validationConfig)
 
@@ -164,26 +158,53 @@ let customTestsInit = function (testbase, validationConfig) {
 }
 let loginsuccess = function (cred) {
   try {
-  return (promise = new Promise((resolve, reject) => {
-    var user = cred
-    server
-      .post('/login')
-      .send(user)
-      .expect('Content-type', /json/)
-      .expect(200)
-      .end(function (err, res) {
-        if (err) {
-          resolve({ status: 'fail', content: err })
-        }
+    return (promise = new Promise((resolve, reject) => {
+      var user = cred
+      server
+        .post('/login')
+        .send(user)
+        .expect('Content-type', /json/)
+        .expect(200)
+        .end(function (err, res) {
+          if (err) {
+            resolve({ status: 'fail', content: err })
+          }
 
-        res.body.status.should.equal('success')
-        res.body.redirect.should.equal('/' + evalModulename)
-        resolve({ status: 'pass' })
-      })
-  }))
-} catch (error) {
-  console.error(error);
+          res.body.status.should.equal('success')
+          res.body.redirect.should.equal('/' + evalModulename)
+          resolve({ status: 'pass' })
+        })
+    }))
+  } catch (error) {
+    console.error(error)
+  }
 }
+let ModularizeDataGen = function (applyfields) {
+  return (promise = new Promise((resolve, reject) => {
+    Promises.mapSeries(applyfields, ModularizeDataGen1)
+      .then(a => {
+        resolve(a)
+      })
+      .catch(err => console.log(err))
+  }))
+}
+let ModularizeDataGen1 = function (a) {
+  return (promise = new Promise((resolve, reject) => {
+    let testbase = {
+      evalModulename: a
+    }
+
+    let validationConfig = require('../../routes/utils/' +
+      testbase.evalModulename +
+      '/validationConfig.js')
+    validationConfig = validationconfigInit(validationConfig)
+    /*for getting and passing to rest of tests fields and validationConfig*/
+    testbase = customTestsInit(testbase, validationConfig)
+    setevalModulename(testbase.evalModulename)
+    PrimarytestInit(testbase).then(function (data) {
+      resolve(data)
+    })
+  }))
 }
 let setevalModulename = function (data) {
   evalModulename = data
@@ -191,22 +212,26 @@ let setevalModulename = function (data) {
 let genericApiPost = function (data) {
   return (promise = new Promise((resolve, reject) => {
     try {
-    server
-      .post(data.apiUrl)
-      .send(data.payload)
-      .set('x-access-token', data.token)
-      .expect('Content-type', /json/)
-      .expect(data.responseCode)
-      .end(function (err, res) {
-        if (err) {
-          //console.log({error:err.message,url:data.apiUrl, payload:JSON.stringify(data.payload)})
-          reject({error:err.message,url:data.apiUrl, payload:JSON.stringify(data.payload)});
-        } else {
-          resolve(res)
-        }
-      })
+      server
+        .post(data.apiUrl)
+        .send(data.payload)
+        .set('x-access-token', data.token)
+        .expect('Content-type', /json/)
+        .expect(data.responseCode)
+        .end(function (err, res) {
+          if (err) {
+            //console.log({error:err.message,url:data.apiUrl, payload:JSON.stringify(data.payload)})
+            reject({
+              error: err.message,
+              url: data.apiUrl,
+              payload: JSON.stringify(data.payload)
+            })
+          } else {
+            resolve(res)
+          }
+        })
     } catch (error) {
-      reject({error:true,payload:data});
+      reject({ error: true, payload: data })
     }
   }))
 }
@@ -297,7 +322,8 @@ let PrimarytestInit = function (testbase) {
 
             testbase.singleInsertID = data.singleInsertID
             resolve(testbase)
-          }).catch(err => console(err)) 
+          })
+          .catch(err => console(err))
       })
   })
 }
@@ -329,7 +355,7 @@ let validationconfigInit = function (validationConfig) {
   validationConfig.applyfields.push('recordstate')
   var recordstateobj = {
     inputname: 'recordstate',
-    inputtextval:'recordstate',
+    inputtextval: 'recordstate',
     fieldtypename: 'boolean',
     fieldvalidatename: 'boolean',
     fieldmaxlength: '4'
@@ -337,7 +363,7 @@ let validationconfigInit = function (validationConfig) {
   validationConfig.validationmap.push(recordstateobj)
   return validationConfig
 }
-let FirstTimeloadCurrentModule = function (data) {
+let FirstTimeloadCurrentModule = function () {
   return (promise = new Promise((resolve, reject) => {
     server.post('/logout').end(function (err, data) {
       server
@@ -349,7 +375,7 @@ let FirstTimeloadCurrentModule = function (data) {
             reject(err)
           }
 
-          data.statusCode.should.equal(302)
+          res.statusCode.should.equal(302)
           // data.body.status.should.equal('success')
           // data.body.redirect.should.equal('/login')
           resolve((cred = { username: 'krennic', password: 'orson' }))
@@ -539,8 +565,8 @@ let consolidatedPayload = function () {
       testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-      let fieldtype=controlPayset(validationConfig,entry);
-       
+      let fieldtype = controlPayset(validationConfig, entry)
+
       if (fieldtype.fieldtypename == 'DATE') {
         o1.daterange = {
           startdate: new Date(
@@ -570,13 +596,11 @@ let consolidatedPayload = function () {
           fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
         ) {
           if (fieldtype.fieldvalidatename == 'number') {
-            interimval=interimval;
+            interimval = interimval
           }
+        } else {
+          interimval = interimval.toLowerCase()
         }
-        else
-        {
-          interimval=interimval.toLowerCase()
-        }   
         o1.searchparam = [
           {
             [entry]: [interimval]
@@ -599,7 +623,7 @@ let consolidatedPayload = function () {
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = controlPayset(validationConfig,entry)
+      let fieldtype = controlPayset(validationConfig, entry)
 
       if (fieldtype.fieldtypename == 'DATE') {
         o1.daterange = {
@@ -634,14 +658,12 @@ let consolidatedPayload = function () {
           fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
         ) {
           if (fieldtype.fieldvalidatename == 'number') {
-            interimval1=interimval1;
-            interimval2=interimval2;
+            interimval1 = interimval1
+            interimval2 = interimval2
           }
-        }
-        else
-        {
-          interimval1=interimval1.toLowerCase()
-          interimval2=interimval2.toLowerCase()
+        } else {
+          interimval1 = interimval1.toLowerCase()
+          interimval2 = interimval2.toLowerCase()
         }
         o1.searchparam = [
           {
@@ -664,7 +686,7 @@ let consolidatedPayload = function () {
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = controlPayset(validationConfig,entry).fieldtypename
+      let fieldtype = controlPayset(validationConfig, entry).fieldtypename
 
       if (fieldtype == 'DATE') {
         o1.daterange = {
@@ -700,16 +722,13 @@ let consolidatedPayload = function () {
         testbase.schemaBaseValidatorPayload[
           Object.keys(testbase.schemaBaseValidatorPayload)[0]
         ]
-        console.log(searchVal);
-        if(Number.isInteger(searchVal))
-        {
-          searchVal = searchVal
-        }
-        else
-        {
-          searchVal = searchVal.substring(0, 3)
-        }
-      
+      console.log(searchVal)
+      if (Number.isInteger(searchVal)) {
+        searchVal = searchVal
+      } else {
+        searchVal = searchVal.substring(0, 3)
+      }
+
       o1.basesearcharconsolidated = [
         {
           consolidatecol: validationConfig.applyfields,
@@ -736,7 +755,7 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-    let fieldtype = controlPayset(validationConfig,entry).fieldtypename
+    let fieldtype = controlPayset(validationConfig, entry).fieldtypename
 
     if (fieldtype == 'DATE') {
       o1.daterange = {
@@ -758,7 +777,7 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-    let fieldtype = controlPayset(validationConfig,entry).fieldtypename
+    let fieldtype = controlPayset(validationConfig, entry).fieldtypename
 
     if (fieldtype == 'DATE') {
       o1.daterange = {
@@ -855,6 +874,8 @@ module.exports = {
   expect,
   dep,
   Promises,
+  ModularizeDataGen,
+  ModularizeDataGen1,
   consolidatedPayload,
   validationconfigInit,
   customMultiInsertDelete,
