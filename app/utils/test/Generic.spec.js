@@ -156,6 +156,13 @@ let customTestsInit = function (testbase, validationConfig) {
   )
   return testbase
 }
+let removeJsonAttrs = function (json, attrs) {
+  return JSON.parse(
+    JSON.stringify(json, function (k, v) {
+      return attrs.indexOf(k) !== -1 ? undefined : v
+    })
+  )
+}
 let loginsuccess = function (cred) {
   try {
     return (promise = new Promise((resolve, reject) => {
@@ -235,6 +242,34 @@ let genericApiPost = function (data) {
     }
   }))
 }
+let idmapping = function (validationmap,a, b) {
+  
+  let arr3 = a.map((item, i) => Object.assign({}, item, b[i]))
+
+  let a1 = removeJsonAttrs(arr3, ['recordstate'])
+  
+  var ar2 = []
+  a1.forEach(function (b) {
+    var o = {
+      [getidfromobj(validationmap, Object.keys(b)[0])]: b[Object.keys(b)[0]],
+      [getidfromobj(validationmap, Object.keys(b)[1])]: b[Object.keys(b)[1]]
+    }
+    ar2.push(o)
+  })
+  
+  return ar2
+}
+let getidfromobj = function (validationmap, val) {
+  var basesets = validationmap
+    .filter(function (dt) {
+      return dt.inputtextval == val
+    })
+    .map(function (dt) {
+      return dt.inputname
+      //return dt.inputCustomMapping
+    })
+  return basesets.toString()
+}
 let schemavalidatorPayload = function (baseapplyFields) {
   var interimAr = []
   var internprimaryAr = baseapplyFields
@@ -292,6 +327,34 @@ let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
   })
 
   return interimAr
+}
+let initMultiPayloadforSearch=function(data,validationmap,ap)
+{
+  let ar1=[];
+  
+ap.forEach(function (entry) {
+  
+  let b1=data.filter(a => a.evalModulename == entry).map(function(doctor) {
+    return { 
+      a1:doctor.schemaBaseValidatorPayloadAr,
+      a2:doctor.schemaValValidatorPayload,
+      a3:doctor.schemaValValidatorPayloadBlank,
+      a4:doctor.schemaValValidatorPayloadMaxLenght,
+      a5:doctor.DelAr
+    };
+});
+
+//console.log(b1[0].a1);
+//console.log(b1[0].a5);
+ar1.push(b1[0].a1)
+//console.log(b1[0].a2);
+})
+//console.log(ar1[0])
+//console.log(ar1[1])
+let o=idmapping(validationmap,ar1[0],ar1[1])
+
+return o
+
 }
 let genPayloadByNum = function (validationConfig, num) {
   var interim = []
@@ -874,6 +937,8 @@ module.exports = {
   expect,
   dep,
   Promises,
+  idmapping,
+  initMultiPayloadforSearch,
   ModularizeDataGen,
   ModularizeDataGen1,
   consolidatedPayload,
@@ -895,5 +960,6 @@ module.exports = {
   schemaValueValidatorPayloadBlank,
   genericApiPost,
   PrimarytestInit,
-  dataCleanUp
+  dataCleanUp,
+  getidfromobj
 }
