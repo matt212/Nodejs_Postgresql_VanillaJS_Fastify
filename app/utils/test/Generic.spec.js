@@ -362,7 +362,8 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
 
     let interimObj = b1[0].a5.map(function (a) {
       return {
-        [getidfromobjinputParent(validationmap, entry)]: a
+        [getidfromobjinputParent(validationmap, entry)]: a,
+        accesstype: 'AA'
       }
     })
     ar2.push(interimObj)
@@ -378,8 +379,29 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
       Object.assign({}, item, ar2[1][i])
     )
   }
-
-  return o
+  let o1 = {
+    searchtype: o.searchtype.map((item, i) =>
+      Object.assign(
+        {},
+        item,
+        [
+          { accesstype: 'AA', recordstate: true },
+          { accesstype: 'AA', recordstate: true }
+        ][i]
+      )
+    ),
+    insertUpdateDelete: o.insertUpdateDelete.map((item, i) =>
+      Object.assign(
+        {},
+        item,
+        [
+          { accesstype: 'AA', recordstate: true },
+          { accesstype: 'AA', recordstate: true }
+        ][i]
+      )
+    )
+  }
+  return o1
 }
 let genPayloadByNum = function (validationConfig, num) {
   var interim = []
