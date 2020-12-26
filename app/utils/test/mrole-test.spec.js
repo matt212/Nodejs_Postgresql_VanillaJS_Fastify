@@ -16,22 +16,27 @@ describe('Begin Tests', function () {
     let a1 = validationConfig.validationmap
       .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
       .filter(Boolean)
-
     genSpecs.ModularizeDataGen(a1).then(function (data) {
       let a = genSpecs.initMultiPayloadforSearch(
         data,
         validationConfig.validationmap,
         a1
       )
-      console.log(a.searchtype)
-      console.log('---------------')
-      console.log(a.insertUpdateDelete)
-      testbase = genSpecs.customTestsInit(testbase, validationConfig)
+      // console.log(a.searchtype)
+      // console.log(a.insertUpdateDelete)
+      //console.log(a.insertUpdateDelete[0])
+      testbase.searchtype1 = a.searchtype
+      testbase.insertUpdateDelete1 = a.insertUpdateDelete
+      testbase = genSpecs.customTestsInitMultiControl(
+        testbase,
+        validationConfig
+      )
       genSpecs.setevalModulename(testbase.evalModulename)
-
       genSpecs.PrimarytestInit(testbase).then(function (data) {
         console.log('*****Multi Records are inserted sucessfully*****')
         testbase = data
+        //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
+        console.log(Object.keys(testbase))
         done()
       })
     })
@@ -59,7 +64,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-  /*
+
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
       it(`For insert Operation test case By assigning ${entry.key} as blank/empty from payload to Evaluate  if schema validator is throwing field specific error or not `, function () {
@@ -69,11 +74,10 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           let fieldtype = ''
-          
-            fieldtype = validationConfig.validationmap.filter(
-              o => o.inputname == entry.key
-            )[0].fieldvalidatename
-          
+
+          fieldtype = validationConfig.validationmap.filter(
+            o => o.inputname == entry.key
+          )[0].fieldvalidatename
 
           if (fieldtype == 'boolean') {
             data.body.message.should.equal(
@@ -108,12 +112,10 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload1(testbase, entry, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          
-          
-            fieldtype = validationConfig.validationmap.filter(
-              o => o.inputname == entry.key
-            )[0]
-          
+          fieldtype = validationConfig.validationmap.filter(
+            o => o.inputname == entry.key
+          )[0]
+
           if (fieldtype.fieldtypename == 'boolean') {
             data.body.message.should.equal(
               `body.${entry.key} should be boolean`
@@ -147,7 +149,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-  
+
   describe('****************Valid Record Insertion Validation Test Cases****************', function () {
     it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -160,7 +162,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-  
+
   describe('****************Invalid Record Updation by Schema Removal Validation Test Cases****************', function () {
     it(`For  Update Operation test cases By passing as removing UpdatedID in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -212,7 +214,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-  
+
   describe('****************Parent Payload Validation Test Cases****************', function () {
     describe('****************Dates SearchParam Validation Test Cases****************', function () {
       it(`without date filter payload `, function () {
@@ -298,34 +300,6 @@ describe('Begin Tests', function () {
           )
         })
       })
-      Object.keys(testbase.schemaBaseValidatorPayloadAr[0]).forEach(function (
-        entry
-      ) {
-        it(`Sorting ${entry} Ascending and evaluating if it is should not be breaking`, function () {
-          testbase = genSpecs
-            .consolidatedPayload()
-            .payload26(testbase, entry, evalModulename)
-          //  console.log(testbase.payload)
-          return genSpecs.genericApiPost(testbase).then(function (data) {
-            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
-            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
-          })
-        })
-      })
-      Object.keys(testbase.schemaBaseValidatorPayloadAr[0]).forEach(function (
-        entry
-      ) {
-        it(`Sorting ${entry} Descending and evaluating if it is should not be breaking`, function () {
-          testbase = genSpecs
-            .consolidatedPayload()
-            .payload27(testbase, entry, evalModulename)
-          //  console.log(testbase.payload)
-          return genSpecs.genericApiPost(testbase).then(function (data) {
-            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
-            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
-          })
-        })
-      })
       it(`filter with pageSize as NaN  payload `, function () {
         testbase = genSpecs
           .consolidatedPayload()
@@ -375,17 +349,46 @@ describe('Begin Tests', function () {
           )
         })
       })
-
+      Object.keys(testbase.schemaBaseValidatorPayloadAr[0]).forEach(function (
+        entry
+      ) {
+        it(`Sorting ${entry} Ascending and evaluating if it is should not be breaking`, function () {
+          testbase = genSpecs
+            .consolidatedPayload()
+            .payload26(testbase, entry, evalModulename)
+          //  console.log(testbase.payload)
+          return genSpecs.genericApiPost(testbase).then(function (data) {
+            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+          })
+        })
+      })
+      Object.keys(testbase.schemaBaseValidatorPayloadAr[0]).forEach(function (
+        entry
+      ) {
+        it(`Sorting ${entry} Descending and evaluating if it is should not be breaking`, function () {
+          testbase = genSpecs
+            .consolidatedPayload()
+            .payload27(testbase, entry, evalModulename)
+          //  console.log(testbase.payload)
+          return genSpecs.genericApiPost(testbase).then(function (data) {
+            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+          })
+        })
+      })
+      console.log(console.log(Object.keys(testbase)))
+      /*
       describe('****************Search Features Single/SingleColumn Test Cases****************', function () {
-        Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (
+        Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
           entry
         ) {
           it(`Searching for ${entry} and getting expected single recordset `, function () {
             testbase = genSpecs
               .consolidatedPayload()
-              .payload17(testbase, entry, evalModulename, validationConfig)
+              .payload171(testbase, entry, evalModulename, validationConfig,schemaBaseValidatorPayloadAr1[0])
             return genSpecs.genericApiPost(testbase).then(function (data) {
-              let interimval = testbase.schemaBaseValidatorPayload[entry]
+              let interimval = testbase.schemaBaseValidatorPayloadAr1[0][entry]
               if (Number.isInteger(interimval)) {
                 genSpecs
                   .expect(parseInt(data.body.rows[0][entry]))
@@ -396,10 +399,12 @@ describe('Begin Tests', function () {
             })
           })
         })
-      })
+      })*/
     })
   })
-
+  console.log('-----------------')
+  console.log(Object.keys(testbase))
+  /*
   describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`Searching for ${entry} and getting expected Multi recordset `, function () {

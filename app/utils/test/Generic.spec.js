@@ -159,6 +159,42 @@ let customTestsInit = function (testbase, validationConfig) {
   )
   return testbase
 }
+let customTestsInitMultiControl = function (testbase, validationConfig) {
+  let appField = {}
+  let p={}
+  if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
+    appField = validationConfig.validationmap.map(function (doctor) {
+      return doctor.inputname
+    })
+  } else {
+    appField = validationConfig.applyfields
+  }
+  testbase.schemaBaseValidatorPayload = testbase.insertUpdateDelete1[0]
+
+  /*Generate multi insert payloads by passing second parameter as number recordset to generate*/
+  testbase.schemaBaseValidatorPayloadAr = testbase.insertUpdateDelete1
+
+/*Generate multi searchtypepayload for mulitselect multicolumn test cases*/
+
+  testbase.schemaBaseValidatorPayloadAr1 = testbase.searchtype1
+
+  /*Schema validatior with removing one by ony fields*/
+  testbase.schemaValValidatorPayload = schemaValueValidatorPayload(
+    appField,
+    testbase.schemaBaseValidatorPayload
+  )
+  /*Schema validatior with blank fields one by ony fields*/
+  testbase.schemaValValidatorPayloadBlank = schemaValueValidatorPayloadBlank(
+    appField,
+    testbase.schemaBaseValidatorPayload
+  )
+  /*Schema validatior with Max  fields validations one by ony fields*/
+  testbase.schemaValValidatorPayloadMaxLenght = schemaValValidatorPayloadMaxLenght(
+    appField,
+    testbase.schemaBaseValidatorPayload
+  )
+  return testbase
+}
 let removeJsonAttrs = function (json, attrs) {
   return JSON.parse(
     JSON.stringify(json, function (k, v) {
@@ -351,19 +387,19 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
       .map(function (doctor) {
         return {
           a1: doctor.schemaBaseValidatorPayloadAr,
-          a2: doctor.schemaValValidatorPayload,
+          a2: doctor.schemaBaseValidatorPayload,
           a3: doctor.schemaValValidatorPayloadBlank,
           a4: doctor.schemaValValidatorPayloadMaxLenght,
-          a5: doctor.DelAr
+          a5: doctor.DelAr,
+          a6:doctor.singleInsertID
         }
       })
 
-    //console.log(b1[0].a1);
+    
 
     let interimObj = b1[0].a5.map(function (a) {
       return {
-        [getidfromobjinputParent(validationmap, entry)]: a,
-        accesstype: 'AA'
+        [getidfromobjinputParent(validationmap, entry)]: a
       }
     })
     ar2.push(interimObj)
@@ -832,7 +868,7 @@ let consolidatedPayload = function () {
         testbase.schemaBaseValidatorPayload[
           Object.keys(testbase.schemaBaseValidatorPayload)[0]
         ]
-      console.log(searchVal)
+      
       if (Number.isInteger(searchVal)) {
         searchVal = searchVal
       } else {
@@ -978,12 +1014,71 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     return testbase
   }
+  (o.payload171 = function (
+    testbase,
+    entry,
+    evalModulename,
+    validationConfig,
+    schemaBaseValidatorPayload1
+  ) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 200
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    let fieldtype = controlPayset(validationConfig, entry)
+
+    if (fieldtype.fieldtypename == 'DATE') {
+      o1.daterange = {
+        startdate: new Date(
+          schemaBaseValidatorPayload1[entry]
+        ).toLocaleDateString(),
+        enddate: new Date(
+          schemaBaseValidatorPayload1[entry]
+        ).toLocaleDateString()
+      }
+      o1.datecolsearch = entry
+      o1.disableDate = false
+    } else if (
+      fieldtype.fieldtypename == 'boolean' ||
+      fieldtype.fieldtypename == 'BIGINT' ||
+      fieldtype.fieldtypename == 'INTEGER'
+    ) {
+      o1.searchparam = [
+        {
+          [entry]: [schemaBaseValidatorPayload1[entry]]
+        }
+      ]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    } else if (fieldtype.fieldtypename == 'STRING') {
+      let interimval = schemaBaseValidatorPayload1[entry]
+      if (
+        fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+      ) {
+        if (fieldtype.fieldvalidatename == 'number') {
+          interimval = interimval
+        }
+      } else {
+        interimval = interimval.toLowerCase()
+      }
+      o1.searchparam = [
+        {
+          [entry]: [interimval]
+        }
+      ]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    }
+
+    testbase.payload = o1
+    return testbase
+  })
   return o
 }
 module.exports = {
   expect,
   dep,
   Promises,
+  customTestsInitMultiControl,
   idmapping,
   initMultiPayloadforSearch,
   ModularizeDataGen,
