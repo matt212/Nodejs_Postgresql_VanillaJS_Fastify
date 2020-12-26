@@ -18,8 +18,14 @@ describe('Begin Tests', function () {
       .filter(Boolean)
 
     genSpecs.ModularizeDataGen(a1).then(function (data) {
-     let a=genSpecs.initMultiPayloadforSearch(data,validationConfig.validationmap,a1);
-     console.log(a);
+      let a = genSpecs.initMultiPayloadforSearch(
+        data,
+        validationConfig.validationmap,
+        a1
+      )
+      console.log(a.searchtype)
+      console.log('---------------')
+      console.log(a.insertUpdateDelete)
       testbase = genSpecs.customTestsInit(testbase, validationConfig)
       genSpecs.setevalModulename(testbase.evalModulename)
 

@@ -109,8 +109,11 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
     return new Promise((resolve, reject) => {
       Promises.mapSeries(testbase.schemaBaseValidatorPayloadAr, o.multiInsert)
         .then(a => {
-          a.singleInsertID = o.singleInsertID
-          resolve(a)
+          var o1 = {
+            singleInsertID: o.singleInsertID,
+            a: a
+          }
+          resolve(o1)
         })
         .catch(err => console.log(err))
     })
@@ -242,12 +245,11 @@ let genericApiPost = function (data) {
     }
   }))
 }
-let idmapping = function (validationmap,a, b) {
-  
+let idmapping = function (validationmap, a, b) {
   let arr3 = a.map((item, i) => Object.assign({}, item, b[i]))
 
   let a1 = removeJsonAttrs(arr3, ['recordstate'])
-  
+
   var ar2 = []
   a1.forEach(function (b) {
     var o = {
@@ -256,7 +258,7 @@ let idmapping = function (validationmap,a, b) {
     }
     ar2.push(o)
   })
-  
+
   return ar2
 }
 let getidfromobj = function (validationmap, val) {
@@ -270,6 +272,18 @@ let getidfromobj = function (validationmap, val) {
     })
   return basesets.toString()
 }
+let getidfromobjinputParent = function (validationmap, val) {
+  var basesets = validationmap
+    .filter(function (dt) {
+      return dt.inputParent == val
+    })
+    .map(function (dt) {
+      return dt.inputname
+      //return dt.inputCustomMapping
+    })
+  return basesets.toString()
+}
+
 let schemavalidatorPayload = function (baseapplyFields) {
   var interimAr = []
   var internprimaryAr = baseapplyFields
@@ -328,33 +342,44 @@ let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
 
   return interimAr
 }
-let initMultiPayloadforSearch=function(data,validationmap,ap)
-{
-  let ar1=[];
-  
-ap.forEach(function (entry) {
-  
-  let b1=data.filter(a => a.evalModulename == entry).map(function(doctor) {
-    return { 
-      a1:doctor.schemaBaseValidatorPayloadAr,
-      a2:doctor.schemaValValidatorPayload,
-      a3:doctor.schemaValValidatorPayloadBlank,
-      a4:doctor.schemaValValidatorPayloadMaxLenght,
-      a5:doctor.DelAr
-    };
-});
+let initMultiPayloadforSearch = function (data, validationmap, ap) {
+  let ar1 = []
+  let ar2 = []
+  ap.forEach(function (entry) {
+    let b1 = data
+      .filter(a => a.evalModulename == entry)
+      .map(function (doctor) {
+        return {
+          a1: doctor.schemaBaseValidatorPayloadAr,
+          a2: doctor.schemaValValidatorPayload,
+          a3: doctor.schemaValValidatorPayloadBlank,
+          a4: doctor.schemaValValidatorPayloadMaxLenght,
+          a5: doctor.DelAr
+        }
+      })
 
-//console.log(b1[0].a1);
-//console.log(b1[0].a5);
-ar1.push(b1[0].a1)
-//console.log(b1[0].a2);
-})
-//console.log(ar1[0])
-//console.log(ar1[1])
-let o=idmapping(validationmap,ar1[0],ar1[1])
+    //console.log(b1[0].a1);
 
-return o
+    let interimObj = b1[0].a5.map(function (a) {
+      return {
+        [getidfromobjinputParent(validationmap, entry)]: a
+      }
+    })
+    ar2.push(interimObj)
 
+    ar1.push(b1[0].a1)
+    //console.log(b1[0].a2);
+  })
+  //console.log(ar1[0])
+  //console.log(ar1[1])
+  let o = {
+    searchtype: idmapping(validationmap, ar1[0], ar1[1]),
+    insertUpdateDelete: ar2[0].map((item, i) =>
+      Object.assign({}, item, ar2[1][i])
+    )
+  }
+
+  return o
 }
 let genPayloadByNum = function (validationConfig, num) {
   var interim = []
@@ -381,8 +406,8 @@ let PrimarytestInit = function (testbase) {
           )
           .then(function (data) {
             console.log('*****Multi Records are inserted sucessfully*****')
-            testbase.DelAr = data
 
+            testbase.DelAr = data.a
             testbase.singleInsertID = data.singleInsertID
             resolve(testbase)
           })
