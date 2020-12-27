@@ -161,7 +161,7 @@ let customTestsInit = function (testbase, validationConfig) {
 }
 let customTestsInitMultiControl = function (testbase, validationConfig) {
   let appField = {}
-  let p={}
+  let p = {}
   if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
     appField = validationConfig.validationmap.map(function (doctor) {
       return doctor.inputname
@@ -172,9 +172,10 @@ let customTestsInitMultiControl = function (testbase, validationConfig) {
   testbase.schemaBaseValidatorPayload = testbase.insertUpdateDelete1[0]
 
   /*Generate multi insert payloads by passing second parameter as number recordset to generate*/
+
   testbase.schemaBaseValidatorPayloadAr = testbase.insertUpdateDelete1
 
-/*Generate multi searchtypepayload for mulitselect multicolumn test cases*/
+  /*Generate multi searchtypepayload for mulitselect multicolumn test cases*/
 
   testbase.schemaBaseValidatorPayloadAr1 = testbase.searchtype1
 
@@ -288,9 +289,15 @@ let idmapping = function (validationmap, a, b) {
 
   var ar2 = []
   a1.forEach(function (b) {
+    
+    
     var o = {
-      [getidfromobj(validationmap, Object.keys(b)[0])]: b[Object.keys(b)[0]],
-      [getidfromobj(validationmap, Object.keys(b)[1])]: b[Object.keys(b)[1]]
+      /*get id */
+      // [getidfromobj(validationmap, Object.keys(b)[0])]: b[Object.keys(b)[0]],
+      // [getidfromobj(validationmap, Object.keys(b)[1])]: b[Object.keys(b)[1]]
+      /*assign apply field custommapping */
+      [getidfromobjinputCustomMapping(validationmap, Object.keys(b)[0])]: b[Object.keys(b)[0]],
+      [getidfromobjinputCustomMapping(validationmap, Object.keys(b)[1])]: b[Object.keys(b)[1]]
     }
     ar2.push(o)
   })
@@ -305,6 +312,17 @@ let getidfromobj = function (validationmap, val) {
     .map(function (dt) {
       return dt.inputname
       //return dt.inputCustomMapping
+    })
+  return basesets.toString()
+}
+let getidfromobjinputCustomMapping = function (validationmap, val) {
+  var basesets = validationmap
+    .filter(function (dt) {
+      return dt.inputtextval == val
+    })
+    .map(function (dt) {
+      
+      return dt.inputCustomMapping
     })
   return basesets.toString()
 }
@@ -391,11 +409,9 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
           a3: doctor.schemaValValidatorPayloadBlank,
           a4: doctor.schemaValValidatorPayloadMaxLenght,
           a5: doctor.DelAr,
-          a6:doctor.singleInsertID
+          a6: doctor.singleInsertID
         }
       })
-
-    
 
     let interimObj = b1[0].a5.map(function (a) {
       return {
@@ -407,8 +423,8 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
     ar1.push(b1[0].a1)
     //console.log(b1[0].a2);
   })
-  //console.log(ar1[0])
-  //console.log(ar1[1])
+
+  console.log(ar1[0].map((item, i) => Object.assign({}, item, ar1[1][i])))
   let o = {
     searchtype: idmapping(validationmap, ar1[0], ar1[1]),
     insertUpdateDelete: ar2[0].map((item, i) =>
@@ -868,7 +884,7 @@ let consolidatedPayload = function () {
         testbase.schemaBaseValidatorPayload[
           Object.keys(testbase.schemaBaseValidatorPayload)[0]
         ]
-      
+
       if (Number.isInteger(searchVal)) {
         searchVal = searchVal
       } else {
@@ -1014,7 +1030,65 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     return testbase
   }
-  (o.payload171 = function (
+    o.payload171 = function (
+      testbase,
+      entry,
+      evalModulename,
+      validationConfig,
+      schemaBaseValidatorPayload1
+    ) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      testbase.responseCode = 200
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+      let fieldtype = controlPayset(validationConfig, entry)
+
+      if (fieldtype.fieldtypename == 'DATE') {
+        o1.daterange = {
+          startdate: new Date(
+            schemaBaseValidatorPayload1[entry]
+          ).toLocaleDateString(),
+          enddate: new Date(
+            schemaBaseValidatorPayload1[entry]
+          ).toLocaleDateString()
+        }
+        o1.datecolsearch = entry
+        o1.disableDate = false
+      } else if (
+        fieldtype.fieldtypename == 'boolean' ||
+        fieldtype.fieldtypename == 'BIGINT' ||
+        fieldtype.fieldtypename == 'INTEGER'
+      ) {
+        o1.searchparam = [
+          {
+            [entry]: [schemaBaseValidatorPayload1[entry]]
+          }
+        ]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      } else if (fieldtype.fieldtypename == 'STRING') {
+        let interimval = schemaBaseValidatorPayload1[entry]
+        if (
+          fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+        ) {
+          if (fieldtype.fieldvalidatename == 'number') {
+            interimval = interimval
+          }
+        } else {
+          interimval = interimval.toLowerCase()
+        }
+        o1.searchparam = [
+          {
+            [entry]: [interimval]
+          }
+        ]
+        o1.disableDate = true
+        o1.searchtype = 'Columnwise'
+      }
+
+      testbase.payload = o1
+      return testbase
+    }
+  o.payload181 = function (
     testbase,
     entry,
     evalModulename,
@@ -1024,15 +1098,20 @@ let consolidatedPayload = function () {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     testbase.responseCode = 200
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-    let fieldtype = controlPayset(validationConfig, entry)
 
+    let fieldtype = controlPayset(validationConfig, entry)
+    
+    if(fieldtype==undefined)
+    {
+      console.log(entry)
+    }
     if (fieldtype.fieldtypename == 'DATE') {
       o1.daterange = {
         startdate: new Date(
-          schemaBaseValidatorPayload1[entry]
+          schemaBaseValidatorPayload1[0][entry]
         ).toLocaleDateString(),
         enddate: new Date(
-          schemaBaseValidatorPayload1[entry]
+          schemaBaseValidatorPayload1[0][entry]
         ).toLocaleDateString()
       }
       o1.datecolsearch = entry
@@ -1044,34 +1123,39 @@ let consolidatedPayload = function () {
     ) {
       o1.searchparam = [
         {
-          [entry]: [schemaBaseValidatorPayload1[entry]]
+          [entry]: [
+            schemaBaseValidatorPayload1[0][entry],
+            schemaBaseValidatorPayload1[1][entry]
+          ]
         }
       ]
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
     } else if (fieldtype.fieldtypename == 'STRING') {
-      let interimval = schemaBaseValidatorPayload1[entry]
+      let interimval1 = schemaBaseValidatorPayload1[0][entry]
+      let interimval2 = schemaBaseValidatorPayload1[1][entry]
       if (
         fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
       ) {
         if (fieldtype.fieldvalidatename == 'number') {
-          interimval = interimval
+          interimval1 = interimval1
+          interimval2 = interimval2
         }
       } else {
-        interimval = interimval.toLowerCase()
+        interimval1 = interimval1.toLowerCase()
+        interimval2 = interimval2.toLowerCase()
       }
       o1.searchparam = [
         {
-          [entry]: [interimval]
+          [entry]: [interimval1, interimval2]
         }
       ]
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
     }
-
     testbase.payload = o1
     return testbase
-  })
+  }
   return o
 }
 module.exports = {
