@@ -36,15 +36,16 @@ describe('Begin Tests', function () {
         console.log('*****Multi Records are inserted sucessfully*****')
         testbase = data
         //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
-        
+
         done()
       })
     })
   })
   after(function (done) {
-    genSpecs.dataCleanUp(testbase).then(function () {
-      done()
-    })
+    // genSpecs.dataCleanUp(testbase).then(function () {
+    //   done()
+    // })
+    done()
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
@@ -395,53 +396,77 @@ describe('Begin Tests', function () {
             })
           })
         })
-        
-        
-      describe('****************Search Features Single/SingleColumn Test Cases****************', function () {
-        it(`PayLoad Init `, function () {
-        
-        Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
-          entry
-        ) {
-          it(`Searching for ${entry} and getting expected single recordset `, function () {
-            testbase = genSpecs
-              .consolidatedPayload()
-              .payload171(testbase, entry, evalModulename, validationConfig,schemaBaseValidatorPayloadAr1[0])
-            return genSpecs.genericApiPost(testbase).then(function (data) {
-              let interimval = testbase.schemaBaseValidatorPayloadAr1[0][entry]
-              if (Number.isInteger(interimval)) {
-                genSpecs
-                  .expect(parseInt(data.body.rows[0][entry]))
-                  .to.equal(interimval)
-              } else {
-                genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+
+        describe('****************Search Features Single/SingleColumn Test Cases****************', function () {
+          it(`PayLoad Init `, function () {
+            Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(
+              function (entry) {
+                it(`Searching for ${entry} and getting expected single recordset `, function () {
+                  testbase = genSpecs
+                    .consolidatedPayload()
+                    .payload171(
+                      testbase,
+                      entry,
+                      evalModulename,
+                      validationConfig,
+                      schemaBaseValidatorPayloadAr1[0]
+                    )
+                  return genSpecs
+                    .genericApiPost(testbase)
+                    .then(function (data) {
+                      let interimval =
+                        testbase.schemaBaseValidatorPayloadAr1[0][entry]
+                      if (Number.isInteger(interimval)) {
+                        genSpecs
+                          .expect(parseInt(data.body.rows[0][entry]))
+                          .to.equal(interimval)
+                      } else {
+                        genSpecs
+                          .expect(data.body.rows[0][entry])
+                          .to.equal(interimval)
+                      }
+                    })
+                })
               }
-            })
+            )
           })
         })
-      })
-      })
       })
     })
   })
 
   it(`PayLoad Init `, function () {
     describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
-      delete testbase.schemaBaseValidatorPayloadAr1[0].recordstate;
+      delete testbase.schemaBaseValidatorPayloadAr1[0].recordstate
       Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
         entry
       ) {
         it(`Searching for ${entry} and getting expected Multi recordset `, function () {
           testbase = genSpecs
             .consolidatedPayload()
-            .payload181(testbase, entry, evalModulename, validationConfig,testbase.schemaBaseValidatorPayloadAr1)
+            .payload181(
+              testbase,
+              entry,
+              evalModulename,
+              validationConfig,
+              testbase.schemaBaseValidatorPayloadAr1
+            )
 
           return genSpecs.genericApiPost(testbase).then(function (data) {
+            console.log(
+              data.body.count +
+                '--------' +
+                entry +
+                '-----------------' +
+                testbase.schemaBaseValidatorPayloadAr1[0][entry]
+            )
+
             var payloadCount = parseInt(
-              testbase.schemaBaseValidatorPayloadAr.length
+              testbase.schemaBaseValidatorPayloadAr1.length
             )
             genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
             var searchAssert = data.body.rows
+
             var firstSet = searchAssert.filter(
               word =>
                 (word[entry] = testbase.schemaBaseValidatorPayloadAr1[0][entry])

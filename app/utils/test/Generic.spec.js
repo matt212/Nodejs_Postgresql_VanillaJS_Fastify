@@ -61,12 +61,11 @@ let controlPayset = function (validationConfig, entry) {
 }
 let controlPaysetMulti = function (validationConfig, entry) {
   let fieldtype = ''
-  
-  
-    fieldtype = validationConfig.validationmap.filter(
-      o1 => o1.inputCustomMapping == entry
-    )[0]
-    console.log(entry+"---------"+fieldtype);
+
+  fieldtype = validationConfig.validationmap.filter(
+    o1 => o1.inputCustomMapping == entry
+  )[0]
+
   return fieldtype
 }
 
@@ -299,15 +298,17 @@ let idmapping = function (validationmap, a, b) {
 
   var ar2 = []
   a1.forEach(function (b) {
-    
-    
     var o = {
       /*get id */
       // [getidfromobj(validationmap, Object.keys(b)[0])]: b[Object.keys(b)[0]],
       // [getidfromobj(validationmap, Object.keys(b)[1])]: b[Object.keys(b)[1]]
       /*assign apply field custommapping */
-      [getidfromobjinputCustomMapping(validationmap, Object.keys(b)[0])]: b[Object.keys(b)[0]],
-      [getidfromobjinputCustomMapping(validationmap, Object.keys(b)[1])]: b[Object.keys(b)[1]]
+      [getidfromobjinputCustomMapping(validationmap, Object.keys(b)[0])]: b[
+        Object.keys(b)[0]
+      ],
+      [getidfromobjinputCustomMapping(validationmap, Object.keys(b)[1])]: b[
+        Object.keys(b)[1]
+      ]
     }
     ar2.push(o)
   })
@@ -331,7 +332,6 @@ let getidfromobjinputCustomMapping = function (validationmap, val) {
       return dt.inputtextval == val
     })
     .map(function (dt) {
-      
       return dt.inputCustomMapping
     })
   return basesets.toString()
@@ -434,7 +434,6 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
     //console.log(b1[0].a2);
   })
 
-  console.log(ar1[0].map((item, i) => Object.assign({}, item, ar1[1][i])))
   let o = {
     searchtype: idmapping(validationmap, ar1[0], ar1[1]),
     insertUpdateDelete: ar2[0].map((item, i) =>
@@ -1040,64 +1039,64 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     return testbase
   }
-    o.payload171 = function (
-      testbase,
-      entry,
-      evalModulename,
-      validationConfig,
-      schemaBaseValidatorPayload1
-    ) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      testbase.responseCode = 200
-      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-      let fieldtype = controlPayset(validationConfig, entry)
+  o.payload171 = function (
+    testbase,
+    entry,
+    evalModulename,
+    validationConfig,
+    schemaBaseValidatorPayload1
+  ) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 200
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    let fieldtype = controlPayset(validationConfig, entry)
 
-      if (fieldtype.fieldtypename == 'DATE') {
-        o1.daterange = {
-          startdate: new Date(
-            schemaBaseValidatorPayload1[entry]
-          ).toLocaleDateString(),
-          enddate: new Date(
-            schemaBaseValidatorPayload1[entry]
-          ).toLocaleDateString()
-        }
-        o1.datecolsearch = entry
-        o1.disableDate = false
-      } else if (
-        fieldtype.fieldtypename == 'boolean' ||
-        fieldtype.fieldtypename == 'BIGINT' ||
-        fieldtype.fieldtypename == 'INTEGER'
-      ) {
-        o1.searchparam = [
-          {
-            [entry]: [schemaBaseValidatorPayload1[entry]]
-          }
-        ]
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
-      } else if (fieldtype.fieldtypename == 'STRING') {
-        let interimval = schemaBaseValidatorPayload1[entry]
-        if (
-          fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
-        ) {
-          if (fieldtype.fieldvalidatename == 'number') {
-            interimval = interimval
-          }
-        } else {
-          interimval = interimval.toLowerCase()
-        }
-        o1.searchparam = [
-          {
-            [entry]: [interimval]
-          }
-        ]
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
+    if (fieldtype.fieldtypename == 'DATE') {
+      o1.daterange = {
+        startdate: new Date(
+          schemaBaseValidatorPayload1[entry]
+        ).toLocaleDateString(),
+        enddate: new Date(
+          schemaBaseValidatorPayload1[entry]
+        ).toLocaleDateString()
       }
-
-      testbase.payload = o1
-      return testbase
+      o1.datecolsearch = entry
+      o1.disableDate = false
+    } else if (
+      fieldtype.fieldtypename == 'boolean' ||
+      fieldtype.fieldtypename == 'BIGINT' ||
+      fieldtype.fieldtypename == 'INTEGER'
+    ) {
+      o1.searchparam = [
+        {
+          [entry]: [schemaBaseValidatorPayload1[entry]]
+        }
+      ]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    } else if (fieldtype.fieldtypename == 'STRING') {
+      let interimval = schemaBaseValidatorPayload1[entry]
+      if (
+        fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+      ) {
+        if (fieldtype.fieldvalidatename == 'number') {
+          interimval = interimval
+        }
+      } else {
+        interimval = interimval.toLowerCase()
+      }
+      o1.searchparam = [
+        {
+          [entry]: [interimval]
+        }
+      ]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
     }
+
+    testbase.payload = o1
+    return testbase
+  }
   o.payload181 = function (
     testbase,
     entry,
@@ -1110,9 +1109,8 @@ let consolidatedPayload = function () {
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
     let fieldtype = controlPaysetMulti(validationConfig, entry)
-    
-    if(fieldtype==undefined)
-    {
+
+    if (fieldtype == undefined) {
       console.log(entry)
     }
     if (fieldtype.fieldtypename == 'DATE') {
@@ -1144,17 +1142,17 @@ let consolidatedPayload = function () {
     } else if (fieldtype.fieldtypename == 'STRING') {
       let interimval1 = schemaBaseValidatorPayload1[0][entry]
       let interimval2 = schemaBaseValidatorPayload1[1][entry]
-      if (
-        fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
-      ) {
-        if (fieldtype.fieldvalidatename == 'number') {
-          interimval1 = interimval1
-          interimval2 = interimval2
-        }
-      } else {
-        interimval1 = interimval1.toLowerCase()
-        interimval2 = interimval2.toLowerCase()
-      }
+      // if (
+      //   fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+      // ) {
+      //   if (fieldtype.fieldvalidatename == 'number') {
+      //     interimval1 = interimval1
+      //     interimval2 = interimval2
+      //   }
+      // } else {
+      interimval1 = interimval1.toLowerCase()
+      interimval2 = interimval2.toLowerCase()
+      //      }
       o1.searchparam = [
         {
           [entry]: [interimval1, interimval2]

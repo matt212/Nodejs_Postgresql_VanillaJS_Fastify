@@ -104,6 +104,7 @@ module.exports.pgQueryStream = function (sql) {
 //pipe 1,000,000 rows to stdout without blowing up your memory usage
 
 module.exports.query = function (sql) {
+  
   return new Promise((resolve, reject) => {
     pool.connect(function (err, client, release) {
       if (err) {
