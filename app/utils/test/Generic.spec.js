@@ -59,6 +59,16 @@ let controlPayset = function (validationConfig, entry) {
   }
   return fieldtype
 }
+let controlPaysetMulti = function (validationConfig, entry) {
+  let fieldtype = ''
+  
+  
+    fieldtype = validationConfig.validationmap.filter(
+      o1 => o1.inputCustomMapping == entry
+    )[0]
+    console.log(entry+"---------"+fieldtype);
+  return fieldtype
+}
 
 let createModPayLoad = function (validationConfig) {
   if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
@@ -1099,7 +1109,7 @@ let consolidatedPayload = function () {
     testbase.responseCode = 200
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-    let fieldtype = controlPayset(validationConfig, entry)
+    let fieldtype = controlPaysetMulti(validationConfig, entry)
     
     if(fieldtype==undefined)
     {

@@ -427,6 +427,7 @@ describe('Begin Tests', function () {
 
   it(`PayLoad Init `, function () {
     describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
+      delete testbase.schemaBaseValidatorPayloadAr1[0].recordstate;
       Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
         entry
       ) {
