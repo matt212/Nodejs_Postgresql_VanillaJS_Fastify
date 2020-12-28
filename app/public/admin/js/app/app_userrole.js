@@ -477,6 +477,7 @@
              console.log(internbase)
              basefunction().getpaginatemodnamesearchtypegroupby(internbase).then(function(argument) {
                  var sets = argument.rows;
+                 if (sets[0] != undefined) {
                  var internfield = Object.keys(sets[0])
                  sets = sets.map(function(doctor) {
                      return { // return what new object will look like
@@ -486,6 +487,7 @@
                      };
                  });
                  resolve(sets)
+                }
              })
          })
      },
@@ -504,6 +506,7 @@
              console.log(internbase)
              basefunction().getpaginateusersearchtypegroupby(internbase).then(function(argument) {
                  var sets = argument.rows;
+                 if (sets[0] != undefined) {
                  var internfield = Object.keys(sets[0])
                  sets = sets.map(function(doctor) {
                      return { // return what new object will look like
@@ -513,6 +516,7 @@
                      };
                  });
                  resolve(sets)
+                }
              })
          })
      },

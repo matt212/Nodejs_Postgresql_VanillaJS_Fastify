@@ -549,7 +549,7 @@ let basemultiselectaccess = {
         .getpaginatemodnamesearchtypegroupby(internbase)
         .then(function (argument) {
           var sets = argument.rows
-          console.log()
+          
           if (sets[0] != undefined) {
             var internfield = Object.keys(sets[0])
             sets = sets.map(function (doctor) {
