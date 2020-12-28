@@ -45,7 +45,7 @@ fastify.register(require('../routes/utils/misc/jynerso'), {
 })
 let baseroutes = require('../config/baseRoute')
 baseroutes.forEach(function (dt) {
-  fastify.register(require(`../routes/${dt.val}`), { prefix: dt.val })
+  fastify.register(require(`../routes/${dt.val}`), { prefix: dt.key })
 })
 
 // Run the server!

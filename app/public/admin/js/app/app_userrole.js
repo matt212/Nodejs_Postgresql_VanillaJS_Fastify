@@ -14,11 +14,11 @@
      exceldata: '/' + currentmodulename + '/api/exportexcel/',
      uploaddata: '/' + currentmodulename + '/api/uploadcontent/',
      getpaginatesearchtypegroupby: '/' + currentmodulename + '/api/searchtypegroupby/',
-     getpaginatemodnamesearchtypegroupby: '/' + currentrolemodname + '/api/searchtypegroupby/',
+     getpaginatemodnamesearchtypegroupby: '/' + currentrolemodname + '/api/searchtypegroupbyId/',
      exportexcelcalc: '/' + currentmodulename + '/api/exportexcelcalc/',
      pivotresult: '/' + currentmodulename + '/api/pivotresult/',
      deletemrole: '/' + currentmodulename + '/api/destroy',
-     getpaginateusersearchtypegroupby: '/' + currentmuser + '/api/searchtypegroupby/',
+     getpaginateusersearchtypegroupby: '/' + currentmuser + '/api/searchtypegroupbyId/',
  }
 
  let basefunction = function() {
@@ -232,7 +232,7 @@
          var rolobh = {};
          var roles = []
 
-
+             console.log(interns);
          var isactivearr = [];
          rolobh.mroleID = data.roleid;
          roles.push(rolobh);
@@ -265,8 +265,9 @@
                  recordstate: country[2].recordstate
              };
          });
-
-         base.datapayload = providedre
+         let o = {}
+         o.payset = providedre
+         base.datapayload = o
          return base;
      },
      afterhtmlpopulate: function() {
@@ -398,7 +399,7 @@
                  p.fieldname = data.inputtextval
                  //p.fieldkey = data.inputname
                  p.fieldkey = data.inputtextval
-
+                 p.secondaryKey = data.inputname 
                  basemultiselectaccess.multiselectmodular(p);
              }
          })
@@ -479,6 +480,8 @@
                  var sets = argument.rows;
                  if (sets[0] != undefined) {
                  var internfield = Object.keys(sets[0])
+                 console.log(sets);
+                 console.log(internfield);
                  sets = sets.map(function(doctor) {
                      return { // return what new object will look like
                          key: data.fieldname,

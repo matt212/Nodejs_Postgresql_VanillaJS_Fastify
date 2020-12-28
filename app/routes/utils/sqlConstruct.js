@@ -413,7 +413,7 @@ let userrole = {
       'from ' +
       '( ' +
       this.basesqlscrp.a +
-      'and ' +
+      ' ' +
       tunnel.arg.daterange +
       tunnel.arg.selector +
       ' ) as a ' +
@@ -430,7 +430,7 @@ let userrole = {
       'from ' +
       '( ' +
       this.basesqlscrp.a +
-      'and ' +
+      ' ' +
       tunnel.arg.daterange +
       tunnel.arg.selector +
       ' ) as a ' +
