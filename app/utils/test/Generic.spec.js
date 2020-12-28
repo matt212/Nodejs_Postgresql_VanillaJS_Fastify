@@ -851,22 +851,21 @@ let consolidatedPayload = function () {
       testbase,
       entry,
       evalModulename,
-      validationConfig,
-      schemaBaseValidatorPayloadAr1
+      validationConfig
     ) {
       testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = controlPaysetMulti(validationConfig, entry).fieldtypename
+      let fieldtype = controlPayset(validationConfig, entry).fieldtypename
 
       if (fieldtype == 'DATE') {
         o1.daterange = {
           startdate: new Date(
-            schemaBaseValidatorPayloadAr1[0][entry]
+            testbase.schemaBaseValidatorPayloadAr[0][entry]
           ).toLocaleDateString(),
           enddate: new Date(
-            schemaBaseValidatorPayloadAr1[0][entry]
+            testbase.schemaBaseValidatorPayloadAr[0][entry]
           ).toLocaleDateString()
         }
         o1.datecolsearch = entry
@@ -875,7 +874,7 @@ let consolidatedPayload = function () {
         /*there cannot be multi boolean Filter */
       } else {
         o1.searchparam = multicolumngenAr(
-          schemaBaseValidatorPayloadAr1[0],
+          testbase.schemaBaseValidatorPayloadAr[0],
           entry
         )
 
@@ -1040,7 +1039,44 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     return testbase
   }
+  o.payload191 = function (
+    testbase,
+    entry,
+    evalModulename,
+    validationConfig,
+    schemaBaseValidatorPayloadAr1
+  ) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 200
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
+    let fieldtype = controlPaysetMulti(validationConfig, entry).fieldtypename
+
+    if (fieldtype == 'DATE') {
+      o1.daterange = {
+        startdate: new Date(
+          schemaBaseValidatorPayloadAr1[0][entry]
+        ).toLocaleDateString(),
+        enddate: new Date(
+          schemaBaseValidatorPayloadAr1[0][entry]
+        ).toLocaleDateString()
+      }
+      o1.datecolsearch = entry
+      o1.disableDate = false
+    } else if (fieldtype == 'boolean') {
+      /*there cannot be multi boolean Filter */
+    } else {
+      o1.searchparam = multicolumngenAr(
+        schemaBaseValidatorPayloadAr1[0],
+        entry
+      )
+
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    }
+    testbase.payload = o1
+    return testbase
+  }
   o.payload231 = function (testbase, entry, evalModulename, validationConfig) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     testbase.responseCode = 400

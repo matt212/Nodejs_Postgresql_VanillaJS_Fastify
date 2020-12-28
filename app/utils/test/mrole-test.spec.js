@@ -1,7 +1,7 @@
 let testbase = {
   evalModulename: 'mrole'
 }
-const { resolve } = require('bluebird')
+
 let genSpecs = require('./Generic.spec.js')
 let validationConfig = require('../../routes/utils/' +
   testbase.evalModulename +
@@ -453,14 +453,6 @@ describe('Begin Tests', function () {
             )
 
           return genSpecs.genericApiPost(testbase).then(function (data) {
-            console.log(
-              data.body.count +
-                '--------' +
-                entry +
-                '-----------------' +
-                testbase.schemaBaseValidatorPayloadAr1[0][entry]
-            )
-
             var payloadCount = parseInt(
               testbase.schemaBaseValidatorPayloadAr1.length
             )
@@ -492,7 +484,7 @@ describe('Begin Tests', function () {
         it(`Searching for ${entry} and getting expected Multi recordset `, function () {
           testbase = genSpecs
             .consolidatedPayload()
-            .payload19(
+            .payload191(
               testbase,
               entry,
               evalModulename,
