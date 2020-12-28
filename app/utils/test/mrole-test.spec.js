@@ -42,10 +42,9 @@ describe('Begin Tests', function () {
     })
   })
   after(function (done) {
-    // genSpecs.dataCleanUp(testbase).then(function () {
-    //   done()
-    // })
-    done()
+    genSpecs.dataCleanUp(testbase).then(function () {
+      done()
+    })
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
@@ -67,7 +66,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
@@ -109,7 +107,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************Schema MaxLenght Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       testbase.schemaValValidatorPayloadMaxLenght.forEach(function (entry) {
@@ -157,7 +154,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************Valid Record Insertion Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
@@ -172,7 +168,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************Invalid Record Updation by Schema Removal Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       it(`For  Update Operation test cases By passing as removing UpdatedID in the  payload to Evaluate   if we are getting valid return field `, function () {
@@ -232,7 +227,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************Parent Payload Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       describe('****************Dates SearchParam Validation Test Cases****************', function () {
@@ -434,9 +428,8 @@ describe('Begin Tests', function () {
       })
     })
   })
-
-  it(`PayLoad Init `, function () {
-    describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
+  describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
+      it(`PayLoad Init `, function () {
       delete testbase.schemaBaseValidatorPayloadAr1[0].recordstate
       Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
         entry
@@ -499,7 +492,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************Consolidated Search Across all column except auto generated dates and boolean Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       it(`Consolidated ResultSet Search working as expected`, function () {
@@ -518,19 +510,19 @@ describe('Begin Tests', function () {
       })
     })
   })
-
-  it(`Consolidated ResultSet Search param as undefined working as expected`, function () {
-    testbase = genSpecs
-      .consolidatedPayload()
-      .payload21(testbase, evalModulename)
-
-    return genSpecs.genericApiPost(testbase).then(function (data) {
-      data.body.message.should.equal(
-        `body should have required property \'.basesearcharconsolidated\'`
-      )
+  describe('****************Consolidated ResultSet Search param as undefined working as expected****************', function () {
+    it(`init`, function () {
+      testbase = genSpecs
+        .consolidatedPayload()
+        .payload21(testbase, evalModulename)
+  
+      return genSpecs.genericApiPost(testbase).then(function (data) {
+        data.body.message.should.equal(
+          `body should have required property \'.basesearcharconsolidated\'`
+        )
+      })
     })
   })
-
   describe('****************undefined Searchparam values Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
@@ -556,7 +548,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************undefined Searchparam Key Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
@@ -597,7 +588,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************undefined Pivot  Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       it(`filter with XpageSize as undefined  payload `, function () {
