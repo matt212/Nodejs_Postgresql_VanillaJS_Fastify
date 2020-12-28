@@ -851,21 +851,22 @@ let consolidatedPayload = function () {
       testbase,
       entry,
       evalModulename,
-      validationConfig
+      validationConfig,
+      schemaBaseValidatorPayloadAr1
     ) {
       testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
       testbase.responseCode = 200
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
-      let fieldtype = controlPayset(validationConfig, entry).fieldtypename
+      let fieldtype = controlPaysetMulti(validationConfig, entry).fieldtypename
 
       if (fieldtype == 'DATE') {
         o1.daterange = {
           startdate: new Date(
-            testbase.schemaBaseValidatorPayload[entry]
+            schemaBaseValidatorPayloadAr1[0][entry]
           ).toLocaleDateString(),
           enddate: new Date(
-            testbase.schemaBaseValidatorPayload[entry]
+            schemaBaseValidatorPayloadAr1[0][entry]
           ).toLocaleDateString()
         }
         o1.datecolsearch = entry
@@ -874,7 +875,7 @@ let consolidatedPayload = function () {
         /*there cannot be multi boolean Filter */
       } else {
         o1.searchparam = multicolumngenAr(
-          testbase.schemaBaseValidatorPayload,
+          schemaBaseValidatorPayloadAr1[0],
           entry
         )
 
@@ -1039,6 +1040,57 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     return testbase
   }
+
+  o.payload231 = function (testbase, entry, evalModulename, validationConfig) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 400
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+    let fieldtype = controlPayset(validationConfig, entry).fieldtypename
+
+    if (fieldtype == 'DATE') {
+      o1.daterange = {
+        [undefined]: new Date(
+          testbase.schemaBaseValidatorPayload[entry]
+        ).toLocaleDateString(),
+        [undefined]: new Date(
+          testbase.schemaBaseValidatorPayload[entry]
+        ).toLocaleDateString()
+      }
+      o1.datecolsearch = entry
+      o1.disableDate = false
+    } else {
+      o1.searchparam = [
+        { ['undefined']: [testbase.schemaBaseValidatorPayload[entry]] }
+      ]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    }
+    testbase.payload = o1
+    return testbase
+  }
+  o.payload221 = function (testbase, entry, evalModulename, validationConfig) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 400
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+    let fieldtype = controlPaysetMulti(validationConfig, entry).fieldtypename
+
+    if (fieldtype == 'DATE') {
+      o1.daterange = {
+        startdate: undefined,
+        enddate: undefined
+      }
+      o1.datecolsearch = entry
+      o1.disableDate = false
+    } else {
+      o1.searchparam = [{ [entry]: [undefined] }]
+      o1.disableDate = true
+      o1.searchtype = 'Columnwise'
+    }
+    testbase.payload = o1
+    return testbase
+  }
   o.payload171 = function (
     testbase,
     entry,
@@ -1161,6 +1213,33 @@ let consolidatedPayload = function () {
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
     }
+    testbase.payload = o1
+    return testbase
+  }
+  o.payload201 = function (testbase, evalModulename, validationConfig,{a=schemaBaseValidatorPayloadAr1}) {
+    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+    testbase.responseCode = 200
+    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+    Object.keys(a[0])[0]
+    var searchVal =
+    a[0][
+        Object.keys(a[0])[0]
+      ]
+
+    if (Number.isInteger(searchVal)) {
+      searchVal = searchVal
+    } else {
+      searchVal = searchVal.substring(0, 3)
+    }
+
+    o1.basesearcharconsolidated = [
+      {
+        consolidatecol: validationConfig.applyfields,
+        consolidatecolval: searchVal
+      }
+    ]
+    o1.disableDate = true
+    o1.searchtype = 'consolidatesearch'
     testbase.payload = o1
     return testbase
   }

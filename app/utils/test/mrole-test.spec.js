@@ -484,27 +484,45 @@ describe('Begin Tests', function () {
       })
     })
   })
-  /*  describe('****************Search Features Multi/MultiColumn Test Cases****************', function () {
-    Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
-      it(`Searching for ${entry} and getting expected Multi recordset `, function () {
-        testbase = genSpecs
-          .consolidatedPayload()
-          .payload19(testbase, entry, evalModulename, validationConfig)
+  describe('****************Search Features Multi/MultiColumn Test Cases****************', function () {
+    it(`PayLoad Init `, function () {
+      Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
+        entry
+      ) {
+        it(`Searching for ${entry} and getting expected Multi recordset `, function () {
+          testbase = genSpecs
+            .consolidatedPayload()
+            .payload19(
+              testbase,
+              entry,
+              evalModulename,
+              validationConfig,
+              testbase.schemaBaseValidatorPayloadAr1
+            )
 
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+          return genSpecs.genericApiPost(testbase).then(function (data) {
+            genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+          })
         })
       })
     })
   })
-  describe('****************Consolidated Search Across all column except auto generated dates and boolean Test Cases****************', function () {
-    it(`Consolidated ResultSet Search working as expected`, function () {
-      testbase = genSpecs
-        .consolidatedPayload()
-        .payload20(testbase, evalModulename, validationConfig)
 
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+  describe('****************Consolidated Search Across all column except auto generated dates and boolean Test Cases****************', function () {
+    it(`PayLoad Init `, function () {
+      it(`Consolidated ResultSet Search working as expected`, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload201(
+            testbase,
+            evalModulename,
+            validationConfig,
+            testbase.schemaBaseValidatorPayloadAr1
+          )
+
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+        })
       })
     })
   })
@@ -520,101 +538,120 @@ describe('Begin Tests', function () {
       )
     })
   })
+
   describe('****************undefined Searchparam values Test Cases****************', function () {
-    Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
-      it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
-        testbase = genSpecs
-          .consolidatedPayload()
-          .payload22(testbase, entry, evalModulename, validationConfig)
+    it(`PayLoad Init `, function () {
+      Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
+        entry
+      ) {
+        it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
+          testbase = genSpecs
+            .consolidatedPayload()
+            .payload221(testbase, entry, evalModulename, validationConfig)
 
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          if (data.body.statusCode === undefined) {
-            data.body.status.should.equal(`${entry} is undefined`)
-          } else {
-            data.body.message.should.equal(
-              `body.daterange should have required property \'startdate\'`
-            )
-          }
+          return genSpecs.genericApiPost(testbase).then(function (data) {
+            if (data.body.statusCode === undefined) {
+              data.body.status.should.equal(`${entry} is undefined`)
+            } else {
+              data.body.message.should.equal(
+                `body.daterange should have required property \'startdate\'`
+              )
+            }
 
-          //
+            //
+          })
         })
       })
     })
   })
+
   describe('****************undefined Searchparam Key Test Cases****************', function () {
-    Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
-      it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
-        testbase = genSpecs
-          .consolidatedPayload()
-          .payload23(testbase, entry, evalModulename, validationConfig)
-
-        return genSpecs.genericApiPost(testbase).then(function (data) {
-          if (
-            data.body.statusCode === undefined &&
-            testbase.schemaBaseValidatorPayload[entry] != undefined
-          ) {
-            data.body.status.should.equal(
-              `key of ${testbase.schemaBaseValidatorPayload[entry]} is undefined`
+    it(`PayLoad Init `, function () {
+      Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
+        entry
+      ) {
+        it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
+          testbase = genSpecs
+            .consolidatedPayload()
+            .payload231(
+              testbase,
+              entry,
+              evalModulename,
+              validationConfig,
+              testbase.schemaBaseValidatorPayloadAr1
             )
-          } else if (testbase.schemaBaseValidatorPayload[entry] === undefined) {
-            data.body.status.should.equal(`key of  is undefined`)
-          } else {
-            data.body.message.should.equal(
-              `body.daterange should have required property \'startdate\'`
-            )
-          }
 
-          //
+          return genSpecs.genericApiPost(testbase).then(function (data) {
+            if (
+              data.body.statusCode === undefined &&
+              testbase.schemaBaseValidatorPayloadAr1[entry] != undefined
+            ) {
+              data.body.status.should.equal(
+                `key of ${testbase.schemaBaseValidatorPayloadAr1[entry]} is undefined`
+              )
+            } else if (
+              testbase.schemaBaseValidatorPayloadAr1[entry] === undefined
+            ) {
+              data.body.status.should.equal(`key of  is undefined`)
+            } else {
+              data.body.message.should.equal(
+                `body.daterange should have required property \'startdate\'`
+              )
+            }
+
+            //
+          })
         })
       })
     })
   })
 
   describe('****************undefined Pivot  Test Cases****************', function () {
-    it(`filter with XpageSize as undefined  payload `, function () {
-      testbase = genSpecs
-        .consolidatedPayload()
-        .payload28(testbase, evalModulename)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        //console.log(data.body);
-        data.body.message.should.equal(
-          `body should have required property \'.XpageSize\'`
-        )
+    it(`PayLoad Init `, function () {
+      it(`filter with XpageSize as undefined  payload `, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload28(testbase, evalModulename)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          //console.log(data.body);
+          data.body.message.should.equal(
+            `body should have required property \'.XpageSize\'`
+          )
+        })
       })
-    })
-    it(`filter with Xpageno as undefined  payload `, function () {
-      testbase = genSpecs
-        .consolidatedPayload()
-        .payload29(testbase, evalModulename)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        //console.log(data.body);
-        data.body.message.should.equal(
-          `body should have required property \'.Xpageno\'`
-        )
+      it(`filter with Xpageno as undefined  payload `, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload29(testbase, evalModulename)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          //console.log(data.body);
+          data.body.message.should.equal(
+            `body should have required property \'.Xpageno\'`
+          )
+        })
       })
-    })
-    it(`filter with YpageSize as undefined  payload `, function () {
-      testbase = genSpecs
-        .consolidatedPayload()
-        .payload30(testbase, evalModulename)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        //console.log(data.body);
-        data.body.message.should.equal(
-          `body should have required property \'.YpageSize\'`
-        )
+      it(`filter with YpageSize as undefined  payload `, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload30(testbase, evalModulename)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          //console.log(data.body);
+          data.body.message.should.equal(
+            `body should have required property \'.YpageSize\'`
+          )
+        })
       })
-    })
-    it(`filter with Ypageno as undefined  payload `, function () {
-      testbase = genSpecs
-        .consolidatedPayload()
-        .payload31(testbase, evalModulename)
-      return genSpecs.genericApiPost(testbase).then(function (data) {
-        //console.log(data.body);
-        data.body.message.should.equal(
-          `body should have required property \'.Ypageno\'`
-        )
+      it(`filter with Ypageno as undefined  payload `, function () {
+        testbase = genSpecs
+          .consolidatedPayload()
+          .payload31(testbase, evalModulename)
+        return genSpecs.genericApiPost(testbase).then(function (data) {
+          //console.log(data.body);
+          data.body.message.should.equal(
+            `body should have required property \'.Ypageno\'`
+          )
+        })
       })
     })
   })
-  */
 })
