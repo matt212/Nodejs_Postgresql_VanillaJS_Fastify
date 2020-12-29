@@ -1,14 +1,8 @@
-let testbase = {
-  evalModulename: 'modname'
-}
 let genSpecs = require('./Generic.spec.js')
-let validationConfig = require('../../routes/utils/' +
-  testbase.evalModulename +
-  '/validationConfig.js')
-validationConfig = genSpecs.validationconfigInit(validationConfig)
-/*for getting and passing to rest of tests fields and validationConfig*/
-testbase = genSpecs.customTestsInit(testbase, validationConfig)
-genSpecs.setevalModulename(testbase.evalModulename)
+let l1=genSpecs.metaTestcaseGen("modname");
+testbase=l1.a
+validationConfig=l1.b
+
 describe('Begin Tests', function () {
   before(function (done) {
     genSpecs.PrimarytestInit(testbase).then(function (data) {

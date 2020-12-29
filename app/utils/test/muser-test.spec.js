@@ -1,14 +1,9 @@
-let testbase = {
-  evalModulename: 'muser'
-}
 let genSpecs = require('./Generic.spec.js')
-let validationConfig = require('../../routes/utils/' +
-  testbase.evalModulename +
-  '/validationConfig.js')
-validationConfig = genSpecs.validationconfigInit(validationConfig)
-/*for getting and passing to rest of tests fields and validationConfig*/
-testbase = genSpecs.customTestsInit(testbase, validationConfig)
-genSpecs.setevalModulename(testbase.evalModulename)
+let l1=genSpecs.metaTestcaseGen("muser");
+testbase=l1.a
+validationConfig=l1.b
+
+
 describe('Begin Tests', function () {
   before(function (done) {
     genSpecs.PrimarytestInit(testbase).then(function (data) {
@@ -349,6 +344,11 @@ describe('Begin Tests', function () {
               .consolidatedPayload()
               .payload17(testbase, entry, evalModulename, validationConfig)
             return genSpecs.genericApiPost(testbase).then(function (data) {
+              if(entry=="password")
+              {
+                console.log(testbase.payload)
+                console.log(data.body)
+              }
               let interimval = testbase.schemaBaseValidatorPayload[entry]
               if (Number.isInteger(interimval)) {
                 genSpecs

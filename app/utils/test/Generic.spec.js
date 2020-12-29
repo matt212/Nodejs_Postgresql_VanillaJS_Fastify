@@ -137,6 +137,21 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
   }
   return o
 }
+let metaTestcaseGen=function(a)
+{
+  let testbase = {
+    evalModulename: a
+  }
+  let validationConfig = require('../../routes/utils/' +
+    testbase.evalModulename +
+    '/validationConfig.js')
+  validationConfig = validationconfigInit(validationConfig)
+  /*for getting and passing to rest of tests fields and validationConfig*/
+  testbase = customTestsInit(testbase, validationConfig)
+  setevalModulename(testbase.evalModulename)
+  return {a:testbase,b:validationConfig};
+  
+}
 let customTestsInit = function (testbase, validationConfig) {
   let appField = {}
   if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
@@ -801,6 +816,10 @@ let consolidatedPayload = function () {
           if (fieldtype.fieldvalidatename == 'number') {
             interimval = interimval
           }
+          else
+          {
+            interimval = interimval.toLowerCase()  
+          }
         } else {
           interimval = interimval.toLowerCase()
         }
@@ -863,6 +882,11 @@ let consolidatedPayload = function () {
           if (fieldtype.fieldvalidatename == 'number') {
             interimval1 = interimval1
             interimval2 = interimval2
+          }
+          else
+          {
+          interimval1 = interimval1.toLowerCase()
+          interimval2 = interimval2.toLowerCase()
           }
         } else {
           interimval1 = interimval1.toLowerCase()
@@ -1316,6 +1340,7 @@ module.exports = {
   expect,
   dep,
   Promises,
+  metaTestcaseGen,
   MultiControlTestCaseGen,
   customTestsInitMultiControl,
   idmapping,
