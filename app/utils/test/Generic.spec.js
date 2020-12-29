@@ -168,6 +168,38 @@ let customTestsInit = function (testbase, validationConfig) {
   )
   return testbase
 }
+let MultiControlTestCaseGen = function (testbase, validationConfig) {
+  return (promise = new Promise((resolve, reject) => {
+    try {
+      let a1 = validationConfig.validationmap
+        .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
+        .filter(Boolean)
+      ModularizeDataGen(a1).then(function (data) {
+        let a = initMultiPayloadforSearch(
+          data,
+          validationConfig.validationmap,
+          a1
+        )
+        // console.log(a.searchtype)
+        // console.log(a.insertUpdateDelete)
+        //console.log(a.insertUpdateDelete[0])
+        testbase.searchtype1 = a.searchtype
+        testbase.insertUpdateDelete1 = a.insertUpdateDelete
+        testbase = customTestsInitMultiControl(testbase, validationConfig)
+        setevalModulename(testbase.evalModulename)
+        PrimarytestInit(testbase).then(function (data) {
+          console.log('*****Multi Records are inserted sucessfully*****')
+          //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
+          resolve(data)
+        })
+      })
+      .catch(err => console.log(err))
+    } catch (error) {
+      console.log(error)
+      reject(error)
+    }
+  }))
+}
 let customTestsInitMultiControl = function (testbase, validationConfig) {
   let appField = {}
   let p = {}
@@ -1066,10 +1098,7 @@ let consolidatedPayload = function () {
     } else if (fieldtype == 'boolean') {
       /*there cannot be multi boolean Filter */
     } else {
-      o1.searchparam = multicolumngenAr(
-        schemaBaseValidatorPayloadAr1[0],
-        entry
-      )
+      o1.searchparam = multicolumngenAr(schemaBaseValidatorPayloadAr1[0], entry)
 
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
@@ -1252,15 +1281,17 @@ let consolidatedPayload = function () {
     testbase.payload = o1
     return testbase
   }
-  o.payload201 = function (testbase, evalModulename, validationConfig,{a=schemaBaseValidatorPayloadAr1}) {
+  o.payload201 = function (
+    testbase,
+    evalModulename,
+    validationConfig,
+    { a = schemaBaseValidatorPayloadAr1 }
+  ) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     testbase.responseCode = 200
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
     Object.keys(a[0])[0]
-    var searchVal =
-    a[0][
-        Object.keys(a[0])[0]
-      ]
+    var searchVal = a[0][Object.keys(a[0])[0]]
 
     if (Number.isInteger(searchVal)) {
       searchVal = searchVal
@@ -1285,6 +1316,7 @@ module.exports = {
   expect,
   dep,
   Promises,
+  MultiControlTestCaseGen,
   customTestsInitMultiControl,
   idmapping,
   initMultiPayloadforSearch,
