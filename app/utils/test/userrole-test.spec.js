@@ -1,45 +1,15 @@
-let testbase = {
-  evalModulename: 'userrolemapping'
-}
-
 let genSpecs = require('./Generic.spec.js')
-let validationConfig = require('../../routes/utils/' +
-  testbase.evalModulename +
-  '/validationConfig.js')
-validationConfig = genSpecs.validationconfigInit(validationConfig)
-/*for getting and passing to rest of tests fields and validationConfig*/
-testbase = genSpecs.customTestsInit(testbase, validationConfig)
-genSpecs.setevalModulename(testbase.evalModulename)
+let l1=genSpecs.metaTestcaseGen("userrolemapping");
+testbase=l1.a
 
 describe('Begin Tests', function () {
   before(function (done) {
-    let a1 = validationConfig.validationmap
-      .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
-      .filter(Boolean)
-    genSpecs.ModularizeDataGen(a1).then(function (data) {
-      let a = genSpecs.initMultiPayloadforSearch(
-        data,
-        validationConfig.validationmap,
-        a1
-      )
-      // console.log(a.searchtype)
-      // console.log(a.insertUpdateDelete)
-      //console.log(a.insertUpdateDelete[0])
-      testbase.searchtype1 = a.searchtype
-      testbase.insertUpdateDelete1 = a.insertUpdateDelete
-      testbase = genSpecs.customTestsInitMultiControl(
-        testbase,
-        validationConfig
-      )
-      genSpecs.setevalModulename(testbase.evalModulename)
-      genSpecs.PrimarytestInit(testbase).then(function (data) {
-        console.log('*****Multi Records are inserted sucessfully*****')
-        testbase = data
-        //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
-
-        done()
-      })
+    genSpecs.MultiControlTestCaseGen(testbase,l1.b).then(function(data)
+    {
+      testbase=data;
+      done()
     })
+    .catch(err => console.log(err))
   })
   after(function (done) {
     genSpecs.dataCleanUp(testbase).then(function () {
@@ -66,7 +36,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-  /*
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
@@ -636,5 +605,5 @@ describe('Begin Tests', function () {
         })
       })
     })
-  })*/
+  })
 })
