@@ -1,15 +1,22 @@
 let genSpecs = require('./Generic.spec.js')
-let l1=genSpecs.metaTestcaseGen("userrolemapping");
-testbase=l1.a
+let l1 = genSpecs.metaTestcaseGen('userrolemapping')
+testbase = l1.a
 
 describe('Begin Tests', function () {
   before(function (done) {
-    genSpecs.MultiControlTestCaseGen(testbase,l1.b).then(function(data)
-    {
-      testbase=data;
-      done()
-    })
-    .catch(err => console.log(err))
+    genSpecs
+      .customRefentialModnameInsert('mrole')
+      .then(function (data) {
+        console.log(data)
+        done()
+        // genSpecs.MultiControlTestCaseGen(testbase,l1.b).then(function(data)
+        // {
+        //   testbase=data;
+        //   done()
+        // })
+        // .catch(err => console.log(err))
+      })
+      .catch(err => console.log(err))
   })
   after(function (done) {
     genSpecs.dataCleanUp(testbase).then(function () {
@@ -36,6 +43,7 @@ describe('Begin Tests', function () {
       })
     })
   })
+  /*
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
@@ -605,5 +613,5 @@ describe('Begin Tests', function () {
         })
       })
     })
-  })
+  })*/
 })

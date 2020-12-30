@@ -137,8 +137,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
   }
   return o
 }
-let metaTestcaseGen=function(a)
-{
+let metaTestcaseGen = function (a) {
   let testbase = {
     evalModulename: a
   }
@@ -149,8 +148,7 @@ let metaTestcaseGen=function(a)
   /*for getting and passing to rest of tests fields and validationConfig*/
   testbase = customTestsInit(testbase, validationConfig)
   setevalModulename(testbase.evalModulename)
-  return {a:testbase,b:validationConfig};
-  
+  return { a: testbase, b: validationConfig }
 }
 let customTestsInit = function (testbase, validationConfig) {
   let appField = {}
@@ -189,26 +187,27 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
       let a1 = validationConfig.validationmap
         .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
         .filter(Boolean)
-      ModularizeDataGen(a1).then(function (data) {
-        let a = initMultiPayloadforSearch(
-          data,
-          validationConfig.validationmap,
-          a1
-        )
-        // console.log(a.searchtype)
-        // console.log(a.insertUpdateDelete)
-        //console.log(a.insertUpdateDelete[0])
-        testbase.searchtype1 = a.searchtype
-        testbase.insertUpdateDelete1 = a.insertUpdateDelete
-        testbase = customTestsInitMultiControl(testbase, validationConfig)
-        setevalModulename(testbase.evalModulename)
-        PrimarytestInit(testbase).then(function (data) {
-          console.log('*****Multi Records are inserted sucessfully*****')
-          //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
-          resolve(data)
+      ModularizeDataGen(a1)
+        .then(function (data) {
+          let a = initMultiPayloadforSearch(
+            data,
+            validationConfig.validationmap,
+            a1
+          )
+          // console.log(a.searchtype)
+          // console.log(a.insertUpdateDelete)
+          //console.log(a.insertUpdateDelete[0])
+          testbase.searchtype1 = a.searchtype
+          testbase.insertUpdateDelete1 = a.insertUpdateDelete
+          testbase = customTestsInitMultiControl(testbase, validationConfig)
+          setevalModulename(testbase.evalModulename)
+          PrimarytestInit(testbase).then(function (data) {
+            console.log('*****Multi Records are inserted sucessfully*****')
+            //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
+            resolve(data)
+          })
         })
-      })
-      .catch(err => console.log(err))
+        .catch(err => console.log(err))
     } catch (error) {
       console.log(error)
       reject(error)
@@ -312,6 +311,38 @@ let ModularizeDataGen1 = function (a) {
 let setevalModulename = function (data) {
   evalModulename = data
 }
+let customRefentialModnameInsert = function (modulename) {
+  return new Promise((resolve, reject) => {
+    let l1 = metaTestcaseGen(modulename)
+
+    MultiControlTestCaseGen(l1.a, l1.b)
+      .then(function (data) {
+        testbase.token = data.token
+        insertMochaScript(data, modulename).then(function (dt) {
+          resolve(dt)
+        })
+      })
+      .catch(err => console.log(err))
+  })
+}
+let insertMochaScript = function (payload, evalModname) {
+  return new Promise((resolve, reject) => {
+    testbase = consolidatedPayload().payload202(
+      payload.insertUpdateDelete1[0],
+      evalModname
+    )
+
+    genericApiPost(testbase)
+      .then(function (data) {
+        let resp = {
+          a: payload.insertUpdateDelete1,
+          b: data.body
+        }
+        resolve(resp)
+      })
+      .catch(err => console.log(err))
+  })
+}
 let genericApiPost = function (data) {
   return (promise = new Promise((resolve, reject) => {
     try {
@@ -334,6 +365,7 @@ let genericApiPost = function (data) {
           }
         })
     } catch (error) {
+      console.log(error)
       reject({ error: true, payload: data })
     }
   }))
@@ -635,7 +667,7 @@ let consolidatedPayload = function () {
     testbase.apiUrl = '/' + evalModulename + dep.create
     testbase.responseCode = 200
     testbase.payload = testbase.schemaBaseValidatorPayload
-
+    console.log(testbase)
     return testbase
   }
   o.payload3 = function (testbase, evalModulename) {
@@ -815,10 +847,8 @@ let consolidatedPayload = function () {
         ) {
           if (fieldtype.fieldvalidatename == 'number') {
             interimval = interimval
-          }
-          else
-          {
-            interimval = interimval.toLowerCase()  
+          } else {
+            interimval = interimval.toLowerCase()
           }
         } else {
           interimval = interimval.toLowerCase()
@@ -882,11 +912,9 @@ let consolidatedPayload = function () {
           if (fieldtype.fieldvalidatename == 'number') {
             interimval1 = interimval1
             interimval2 = interimval2
-          }
-          else
-          {
-          interimval1 = interimval1.toLowerCase()
-          interimval2 = interimval2.toLowerCase()
+          } else {
+            interimval1 = interimval1.toLowerCase()
+            interimval2 = interimval2.toLowerCase()
           }
         } else {
           interimval1 = interimval1.toLowerCase()
@@ -1334,13 +1362,21 @@ let consolidatedPayload = function () {
     testbase.payload = o1
     return testbase
   }
+  o.payload202 = function (payload, evalModulename) {
+    testbase.apiUrl = '/' + evalModulename + dep.create
+    testbase.responseCode = 200
+    testbase.payload = payload
+    return testbase
+  }
   return o
 }
 module.exports = {
   expect,
   dep,
   Promises,
+  insertMochaScript,
   metaTestcaseGen,
+  customRefentialModnameInsert,
   MultiControlTestCaseGen,
   customTestsInitMultiControl,
   idmapping,
