@@ -6,15 +6,18 @@ describe('Begin Tests', function () {
   before(function (done) {
     genSpecs
       .customRefentialModnameInsert('mrole')
-      .then(function (data) {
-        console.log(data)
-        done()
-        // genSpecs.MultiControlTestCaseGen(testbase,l1.b).then(function(data)
-        // {
-        //   testbase=data;
-        //   done()
-        // })
-        // .catch(err => console.log(err))
+      .then(function (dt) {
+        console.log(dt)
+        //  console.log(l1.b)
+        //console.log(genSpecs.getParentfromValidationMap(l1.b))
+        genSpecs
+          .MultiControlTestCaseGen(testbase, l1.b)
+          .then(function (data) {
+            testbase = data
+            console.log(testbase)
+            done()
+          })
+          .catch(err => console.log(err))
       })
       .catch(err => console.log(err))
   })

@@ -181,6 +181,13 @@ let customTestsInit = function (testbase, validationConfig) {
   )
   return testbase
 }
+let getParentfromValidationMap=function(validationConfig)
+{
+  let a1 = validationConfig.validationmap
+        .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
+        .filter(Boolean)
+  return a1      
+}
 let MultiControlTestCaseGen = function (testbase, validationConfig) {
   return (promise = new Promise((resolve, reject) => {
     try {
@@ -199,6 +206,7 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
           //console.log(a.insertUpdateDelete[0])
           testbase.searchtype1 = a.searchtype
           testbase.insertUpdateDelete1 = a.insertUpdateDelete
+          testbase.baseData=a.baseData
           testbase = customTestsInitMultiControl(testbase, validationConfig)
           setevalModulename(testbase.evalModulename)
           PrimarytestInit(testbase).then(function (data) {
@@ -303,6 +311,7 @@ let ModularizeDataGen1 = function (a) {
     /*for getting and passing to rest of tests fields and validationConfig*/
     testbase = customTestsInit(testbase, validationConfig)
     setevalModulename(testbase.evalModulename)
+    
     PrimarytestInit(testbase).then(function (data) {
       resolve(data)
     })
@@ -317,6 +326,7 @@ let customRefentialModnameInsert = function (modulename) {
 
     MultiControlTestCaseGen(l1.a, l1.b)
       .then(function (data) {
+        
         testbase.token = data.token
         insertMochaScript(data, modulename).then(function (dt) {
           resolve(dt)
@@ -328,7 +338,7 @@ let customRefentialModnameInsert = function (modulename) {
 let insertMochaScript = function (payload, evalModname) {
   return new Promise((resolve, reject) => {
     testbase = consolidatedPayload().payload202(
-      payload.insertUpdateDelete1[0],
+      payload.insertUpdateDelete1,
       evalModname
     )
 
@@ -336,7 +346,8 @@ let insertMochaScript = function (payload, evalModname) {
       .then(function (data) {
         let resp = {
           a: payload.insertUpdateDelete1,
-          b: data.body
+          b: data.body,
+          c:payload.schemaBaseValidatorPayloadAr1
         }
         resolve(resp)
       })
@@ -488,6 +499,7 @@ let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
 let initMultiPayloadforSearch = function (data, validationmap, ap) {
   let ar1 = []
   let ar2 = []
+  //console.log(data);
   ap.forEach(function (entry) {
     let b1 = data
       .filter(a => a.evalModulename == entry)
@@ -539,7 +551,8 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
           { accesstype: 'AA', recordstate: true }
         ][i]
       )
-    )
+    ),
+    baseData:data
   }
   return o1
 }
@@ -667,7 +680,7 @@ let consolidatedPayload = function () {
     testbase.apiUrl = '/' + evalModulename + dep.create
     testbase.responseCode = 200
     testbase.payload = testbase.schemaBaseValidatorPayload
-    console.log(testbase)
+    
     return testbase
   }
   o.payload3 = function (testbase, evalModulename) {
@@ -1363,9 +1376,11 @@ let consolidatedPayload = function () {
     return testbase
   }
   o.payload202 = function (payload, evalModulename) {
-    testbase.apiUrl = '/' + evalModulename + dep.create
+    testbase.apiUrl = '/' + evalModulename + dep.bulkCreate
     testbase.responseCode = 200
-    testbase.payload = payload
+    let o = {}
+    o.payset=payload
+    testbase.payload = o
     return testbase
   }
   return o
@@ -1375,6 +1390,7 @@ module.exports = {
   dep,
   Promises,
   insertMochaScript,
+  getParentfromValidationMap,
   metaTestcaseGen,
   customRefentialModnameInsert,
   MultiControlTestCaseGen,
