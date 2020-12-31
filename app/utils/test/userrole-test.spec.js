@@ -8,8 +8,9 @@ describe('Begin Tests', function () {
       .customRefentialModnameInsert('mrole')
       .then(function (dt) {
         console.log(dt)
-        //  console.log(l1.b)
-        //console.log(genSpecs.getParentfromValidationMap(l1.b))
+        //console.log(l1.a)
+        //done()
+        console.log(genSpecs.getParentfromValidationMap(l1.b))
         genSpecs
           .MultiControlTestCaseGen(testbase, l1.b)
           .then(function (data) {
