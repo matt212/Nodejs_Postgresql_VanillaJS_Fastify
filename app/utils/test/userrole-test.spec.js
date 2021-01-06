@@ -1,26 +1,23 @@
 let genSpecs = require('./Generic.spec.js')
 let l1 = genSpecs.metaTestcaseGen('userrolemapping')
 testbase = l1.a
-
+console.log(l1.a)
 describe('Begin Tests', function () {
   before(function (done) {
-    genSpecs
-      .customRefentialModnameInsert('mrole')
-      .then(function (dt) {
-        console.log(dt)
-        //console.log(l1.a)
-        //done()
-        console.log(genSpecs.getParentfromValidationMap(l1.b))
-        genSpecs
-          .MultiControlTestCaseGen(testbase, l1.b)
-          .then(function (data) {
-            testbase = data
-            console.log(testbase)
-            done()
-          })
-          .catch(err => console.log(err))
-      })
-      .catch(err => console.log(err))
+    genSpecs.referentialCustomStack('mrole', l1).then(function (data) {
+      //console.log(data)
+      //console.log(data.a[0])
+      //console.log(data.b[0])
+      done()
+    })
+    // genSpecs
+    //   .MultiControlTestCaseGen(testbase, l1.b)
+    //   .then(function (data) {
+    //     testbase = data
+    //     console.log(testbase)
+    //     done()
+    //   })
+    //   .catch(err => console.log(err))
   })
   after(function (done) {
     genSpecs.dataCleanUp(testbase).then(function () {

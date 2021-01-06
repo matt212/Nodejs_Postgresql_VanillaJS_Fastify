@@ -40,6 +40,7 @@ let dep = require('../../../app/routes/utils/dependentVariables').routeUrls
 let datatransformutils = require('../../../app/routes/utils/dependentVariables')
   .datatransformutils
 let createModulePayLoad = require('./makePayLoad.js')
+const { resolve } = require('bluebird')
 // This agent refers to PORT where program is running.
 
 var server = supertest.agent('http://localhost:3011')
@@ -150,6 +151,51 @@ let metaTestcaseGen = function (a) {
   setevalModulename(testbase.evalModulename)
   return { a: testbase, b: validationConfig }
 }
+let referentialCustomStack = function (s1, l1) {
+  return (promise = new Promise((resolve, reject) => {
+    customRefentialModnameInsert(s1)
+      .then(function (dt) {
+        //console.log(dt)
+
+        //done()
+        var inter1 = []
+        var inter2 = []
+        getParentfromValidationMap(l1.b).forEach(function (val) {
+          let p1 = getContentFieldsfromValidationMap(l1.b, val)[0]
+          var lime1 = dt.b.map(function (d2) {
+            let p = {
+              [p1.a1]: d2[p1.a1]
+            }
+            return p
+          })
+          var lime2 = dt.c.map(function (d2) {
+            let p = {
+              [p1.a2]: d2[p1.a2]
+            }
+            return p
+          })
+
+          if (
+            lime1.filter(e => e[p1.a1] != undefined).length > 0 &&
+            lime2.filter(e => e[p1.a2] != undefined).length > 0
+          ) {
+            inter1.push({ a: lime1, b: lime2 })
+          } else {
+            inter2.push({ a: p1.a1 })
+          }
+        })
+
+        // console.log(inter1[0].a)
+        // console.log(inter1[0].b)
+        // console.log(inter2[0].a)
+        resolve({
+          a: inter1,
+          b: inter2
+        })
+      })
+      .catch(err => console.log(err))
+  }))
+}
 let customTestsInit = function (testbase, validationConfig) {
   let appField = {}
   if (validationConfig.validationmap[0].hasOwnProperty('inputtextval')) {
@@ -181,12 +227,28 @@ let customTestsInit = function (testbase, validationConfig) {
   )
   return testbase
 }
-let getParentfromValidationMap=function(validationConfig)
-{
+let getParentfromValidationMap = function (validationConfig) {
   let a1 = validationConfig.validationmap
-        .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
-        .filter(Boolean)
-  return a1      
+    .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
+    .filter(Boolean)
+  return a1
+}
+let getIDfromValidationMap = function (validationConfig) {
+  let a1 = validationConfig.validationmap
+    .filter(a => a.inputname != 'recordstate')
+    .map(a => (a.inputname != undefined ? a.inputname : undefined))
+  return a1
+}
+let getContentFieldsfromValidationMap = function (validationConfig, val) {
+  let a1 = validationConfig.validationmap
+    .filter(function (dt) {
+      return dt.inputParent == val
+    })
+    .map(function (dt) {
+      return { a1: dt.inputname, a2: dt.inputtextval }
+      //return dt.inputCustomMapping
+    })
+  return a1
 }
 let MultiControlTestCaseGen = function (testbase, validationConfig) {
   return (promise = new Promise((resolve, reject) => {
@@ -206,7 +268,7 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
           //console.log(a.insertUpdateDelete[0])
           testbase.searchtype1 = a.searchtype
           testbase.insertUpdateDelete1 = a.insertUpdateDelete
-          testbase.baseData=a.baseData
+          testbase.baseData = a.baseData
           testbase = customTestsInitMultiControl(testbase, validationConfig)
           setevalModulename(testbase.evalModulename)
           PrimarytestInit(testbase).then(function (data) {
@@ -311,7 +373,7 @@ let ModularizeDataGen1 = function (a) {
     /*for getting and passing to rest of tests fields and validationConfig*/
     testbase = customTestsInit(testbase, validationConfig)
     setevalModulename(testbase.evalModulename)
-    
+
     PrimarytestInit(testbase).then(function (data) {
       resolve(data)
     })
@@ -326,7 +388,6 @@ let customRefentialModnameInsert = function (modulename) {
 
     MultiControlTestCaseGen(l1.a, l1.b)
       .then(function (data) {
-        
         testbase.token = data.token
         insertMochaScript(data, modulename).then(function (dt) {
           resolve(dt)
@@ -347,7 +408,7 @@ let insertMochaScript = function (payload, evalModname) {
         let resp = {
           a: payload.insertUpdateDelete1,
           b: data.body,
-          c:payload.schemaBaseValidatorPayloadAr1
+          c: payload.schemaBaseValidatorPayloadAr1
         }
         resolve(resp)
       })
@@ -552,7 +613,7 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
         ][i]
       )
     ),
-    baseData:data
+    baseData: data
   }
   return o1
 }
@@ -680,7 +741,7 @@ let consolidatedPayload = function () {
     testbase.apiUrl = '/' + evalModulename + dep.create
     testbase.responseCode = 200
     testbase.payload = testbase.schemaBaseValidatorPayload
-    
+
     return testbase
   }
   o.payload3 = function (testbase, evalModulename) {
@@ -1379,7 +1440,7 @@ let consolidatedPayload = function () {
     testbase.apiUrl = '/' + evalModulename + dep.bulkCreate
     testbase.responseCode = 200
     let o = {}
-    o.payset=payload
+    o.payset = payload
     testbase.payload = o
     return testbase
   }
@@ -1389,6 +1450,9 @@ module.exports = {
   expect,
   dep,
   Promises,
+  getContentFieldsfromValidationMap,
+  referentialCustomStack,
+  getIDfromValidationMap,
   insertMochaScript,
   getParentfromValidationMap,
   metaTestcaseGen,
