@@ -7,7 +7,7 @@ let validationmap = [
     inputCustomMapping:"rolename",
     inputParent:"role",
     fieldtypename: "STRING",
-    fieldvalidatename: "string",
+    fieldvalidatename: "number",
     fieldmaxlength: "80"
   },
   {
@@ -18,7 +18,7 @@ let validationmap = [
     inputParent:"muser",
     inputplaceholder: "username",
     fieldtypename: "STRING",
-    fieldvalidatename: "string",
+    fieldvalidatename: "number",
     fieldmaxlength: "80"
   }
 ];

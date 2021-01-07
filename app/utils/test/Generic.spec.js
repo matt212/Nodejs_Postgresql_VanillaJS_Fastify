@@ -269,6 +269,7 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
           testbase.searchtype1 = a.searchtype
           testbase.insertUpdateDelete1 = a.insertUpdateDelete
           testbase.baseData = a.baseData
+          testbase.singleDataSet = a.singleDataSet
           testbase = customTestsInitMultiControl(testbase, validationConfig)
           setevalModulename(testbase.evalModulename)
           PrimarytestInit(testbase).then(function (data) {
@@ -397,6 +398,8 @@ let customRefentialModnameInsert = function (modulename) {
   })
 }
 let insertMochaScript = function (payload, evalModname) {
+  console.log(payload.singleDataSet);
+  console.log(payload.insertUpdateDelete1)
   return new Promise((resolve, reject) => {
     testbase = consolidatedPayload().payload202(
       payload.insertUpdateDelete1,
@@ -560,6 +563,7 @@ let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
 let initMultiPayloadforSearch = function (data, validationmap, ap) {
   let ar1 = []
   let ar2 = []
+  let ar3 = []
   //console.log(data);
   ap.forEach(function (entry) {
     let b1 = data
@@ -580,12 +584,17 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
         [getidfromobjinputParent(validationmap, entry)]: a
       }
     })
+    let interimObj1 ={
+        [getidfromobjinputParent(validationmap, entry)]: b1[0].a6
+      }
+    console.log(b1[0].a5)
+    console.log(b1[0].a6)
     ar2.push(interimObj)
-
     ar1.push(b1[0].a1)
+    ar3.push(interimObj1)
     //console.log(b1[0].a2);
   })
-
+  
   let o = {
     searchtype: idmapping(validationmap, ar1[0], ar1[1]),
     insertUpdateDelete: ar2[0].map((item, i) =>
@@ -613,8 +622,11 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
         ][i]
       )
     ),
-    baseData: data
+    baseData: data,
+    singleDataSet:ar3
+
   }
+  
   return o1
 }
 let genPayloadByNum = function (validationConfig, num) {
@@ -1354,7 +1366,7 @@ let consolidatedPayload = function () {
     let fieldtype = controlPaysetMulti(validationConfig, entry)
 
     if (fieldtype == undefined) {
-      console.log(entry)
+      
     }
     if (fieldtype.fieldtypename == 'DATE') {
       o1.daterange = {

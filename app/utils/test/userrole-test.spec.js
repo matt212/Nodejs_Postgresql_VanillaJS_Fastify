@@ -1,12 +1,22 @@
 let genSpecs = require('./Generic.spec.js')
 let l1 = genSpecs.metaTestcaseGen('userrolemapping')
 testbase = l1.a
-console.log(l1.a)
+
+//console.log(l1.a.schemaBaseValidatorPayload)
+//console.log(l1.a.schemaBaseValidatorPayloadAr)
 describe('Begin Tests', function () {
   before(function (done) {
     genSpecs.referentialCustomStack('mrole', l1).then(function (data) {
-      //console.log(data)
-      //console.log(data.a[0])
+     // console.log(data)
+      //console.log(data.a[0].a)
+      //console.log(data.a[0].b)
+      data.a[0].a.forEach(function(k1,i)
+      {
+        l1.a.schemaBaseValidatorPayloadAr[i]={...l1.a.schemaBaseValidatorPayloadAr[i], ...k1};
+        //console.log(k1);
+        //console.log(l1.a.schemaBaseValidatorPayload);
+      })
+      //console.log(l1.a.schemaBaseValidatorPayloadAr);
       //console.log(data.b[0])
       done()
     })
