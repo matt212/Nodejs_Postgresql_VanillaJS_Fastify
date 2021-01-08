@@ -2,57 +2,27 @@ let genSpecs = require('./Generic.spec.js')
 let l1 = genSpecs.metaTestcaseGen('userrolemapping')
 testbase = l1.a
 
-//console.log(l1.a.schemaBaseValidatorPayload)
-//console.log(l1.a.schemaBaseValidatorPayloadAr)
 describe('Begin Tests', function () {
   before(function (done) {
-    genSpecs.referentialCustomStack('mrole', l1).then(function (dt) {
-      // console.log(data)
-      //console.log(data.a[0].a)
-      //console.log(data.a[0].b)
-      // console.log(dt)
-
-      dt.a[0].a.forEach(function (k1, i) {
-        if (i < 2) {
-          l1.a.schemaBaseValidatorPayloadAr[i] = {
-            ...l1.a.schemaBaseValidatorPayloadAr[i],
-            ...k1
-          }
-        }
-
-        //console.log(k1);
-        //console.log(l1.a.schemaBaseValidatorPayload);
+    genSpecs
+      .referentialCustomStack('mrole', l1)
+      .then(function (dt) {
+        testbase = dt.a
+        genSpecs
+          .MultiControlTestCaseGen(testbase, l1.b)
+          .then(function (data) {
+            testbase = data
+            done()
+          })
+          .catch(err => console.log(err))
       })
-      dt.a[0].a.forEach(function (k1, i) {
-        if ((i = 3)) {
-          l1.a.schemaBaseValidatorPayload = {
-            ...l1.a.schemaBaseValidatorPayload,
-            ...k1
-          }
-        }
-
-        //console.log(k1);
-        //console.log(l1.a.schemaBaseValidatorPayload);
-      })
-
-      console.log(l1.a.schemaBaseValidatorPayloadAr)
-      console.log(l1.a.schemaBaseValidatorPayload)
-      //console.log(data.b[0])
-      done()
-    })
-    // genSpecs
-    //   .MultiControlTestCaseGen(testbase, l1.b)
-    //   .then(function (data) {
-    //     testbase = data
-    //     console.log(testbase)
-    //     done()
-    //   })
-    //   .catch(err => console.log(err))
+      .catch(err => console.log(err))
   })
   after(function (done) {
-    genSpecs.dataCleanUp(testbase).then(function () {
-      done()
-    })
+    done()
+    // genSpecs.dataCleanUp(testbase).then(function () {
+    //   done()
+    // }).catch(err => console.log(err))
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
@@ -62,6 +32,7 @@ describe('Begin Tests', function () {
           testbase = genSpecs
             .consolidatedPayload()
             .payload1(testbase, entry, evalModulename)
+
           return genSpecs.genericApiPost(testbase).then(function (data) {
             data.body.statusCode.should.equal(400)
             data.body.error.should.equal('Bad Request')
@@ -74,7 +45,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-  /*
+
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
@@ -438,7 +409,7 @@ describe('Begin Tests', function () {
     })
   })
   describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
-      it(`PayLoad Init `, function () {
+    it(`PayLoad Init `, function () {
       delete testbase.schemaBaseValidatorPayloadAr1[0].recordstate
       Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
         entry
@@ -524,7 +495,7 @@ describe('Begin Tests', function () {
       testbase = genSpecs
         .consolidatedPayload()
         .payload21(testbase, evalModulename)
-  
+
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.message.should.equal(
           `body should have required property \'.basesearcharconsolidated\'`
@@ -644,5 +615,5 @@ describe('Begin Tests', function () {
         })
       })
     })
-  })*/
+  })
 })
