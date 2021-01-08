@@ -51,9 +51,9 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
-    "supertest": "^6.0.1",
-    "mocha": "^8.2.1"
+    "supertest": "^6.0.1"
   },
   "scripts": {
     "preinstall": "npm i -g mocha",

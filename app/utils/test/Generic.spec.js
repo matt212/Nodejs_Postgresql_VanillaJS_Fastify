@@ -189,10 +189,10 @@ let referentialCustomStack = function (s1, l1) {
         // console.log(inter1[0].a)
         // console.log(inter1[0].b)
         // console.log(inter2[0].a)
-       var dt={
-        a: inter1,
-        b: inter2
-      }
+        var dt = {
+          a: inter1,
+          b: inter2
+        }
         dt.a[0].a.forEach(function (k1, i) {
           if (i < 2) {
             l1.a.schemaBaseValidatorPayloadAr[i] = {
@@ -200,7 +200,7 @@ let referentialCustomStack = function (s1, l1) {
               ...k1
             }
           }
-  
+
           //console.log(k1);
           //console.log(l1.a.schemaBaseValidatorPayload);
         })
@@ -211,16 +211,10 @@ let referentialCustomStack = function (s1, l1) {
               ...k1
             }
           }
-  
+
           //console.log(k1);
           //console.log(l1.a.schemaBaseValidatorPayload);
         })
-  
-        console.log(l1.a.schemaBaseValidatorPayloadAr)
-        console.log(l1.a.schemaBaseValidatorPayload)
-
-
-
 
         resolve(l1)
       })
