@@ -168,6 +168,7 @@ let referentialCustomStack = function (s1, l1) {
             }
             return p
           })
+
           var lime2 = dt.c.map(function (d2) {
             let p = {
               [p1.a2]: d2[p1.a2]
@@ -398,8 +399,6 @@ let customRefentialModnameInsert = function (modulename) {
   })
 }
 let insertMochaScript = function (payload, evalModname) {
-  console.log(payload.singleDataSet)
-  console.log(payload.insertUpdateDelete1)
   let produce = [...payload.singleDataSet, ...payload.insertUpdateDelete1]
   return new Promise((resolve, reject) => {
     testbase = consolidatedPayload().payload202(produce, evalModname)
@@ -410,8 +409,10 @@ let insertMochaScript = function (payload, evalModname) {
           a: payload.insertUpdateDelete1,
           b: data.body,
           c: payload.schemaBaseValidatorPayloadAr1,
-          d: payload.singleDataSet
+          d: payload.singleDataSet,
+          e: payload.schemaBaseValidatorPayload
         }
+
         resolve(resp)
       })
       .catch(err => console.log(err))
