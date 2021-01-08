@@ -86,16 +86,22 @@ In case of error running sh Files Follow below
   > `yarn ModuleEval`
 - ### `Release notes 21 Dec 2020`
   > 73 **Modular** Mocha test cases against 20,00,000 recordset with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
+  
   > `yarn ModuleEval`
 - ### `Release notes 22 Dec 2020`
   >Dynamic Bolierplate generation completed for dataType Strings , Integers and BigInt data types config based
-  >for rbac modname,muser modules migrated to fastify with their respective 43 and 63 mocha chai test cases
-  >for rbac role module migrated to fastify with its 43 mocha chai test cases
+  
+  >For rbac modname,muser modules migrated to fastify with their respective 43 and 63 mocha chai test cases
+  
+  >For rbac role module migrated to fastify with its 43 mocha chai test cases
   > `yarn ModEval`
   > `yarn roleEval`
 - ### `Release notes 9 Jan 2021`
   >Dynamic Bolierplate generation completed for dataType Strings , Integers and BigInt data types config based
-  >for rbac Module-Role Mapping  module migrated to fastify with their respective 43 and 63 mocha chai test cases
-  >for rbac user-Role Mapping  module migrated to fastify with its 37 mocha chai test cases respectively 
+
+  >For rbac Module-Role Mapping  module migrated to fastify with their respective 43 and 63 mocha chai test cases
+
+  >For rbac user-Role Mapping  module migrated to fastify with its 37 mocha chai test cases respectively 
+
   > `yarn mroleEval`
   > `yarn userroleEval`
