@@ -423,6 +423,7 @@ let customRefentialModnameInsert = function (modulename) {
   })
 }
 let insertMochaScript = function (payload, evalModname) {
+  
   let produce = [...payload.singleDataSet, ...payload.insertUpdateDelete1]
   return new Promise((resolve, reject) => {
     testbase = consolidatedPayload().payload202(produce, evalModname)
@@ -434,7 +435,8 @@ let insertMochaScript = function (payload, evalModname) {
           b: data.body,
           c: payload.schemaBaseValidatorPayloadAr1,
           d: payload.singleDataSet,
-          e: payload.schemaBaseValidatorPayload
+          e: payload.schemaBaseValidatorPayload,
+          f:payload
         }
 
         resolve(resp)

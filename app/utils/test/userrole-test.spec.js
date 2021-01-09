@@ -9,15 +9,17 @@ describe('Begin Tests', function () {
       .then(function (dt) {
         testbase = dt.a
         testbase.schemaBaseValidatorPayloadAr1 = dt.d.c
+        testbase.DelAr=dt.d.f.DelAr
+        testbase.singleInsertID=dt.d.f.singleInsertID
+        
         done()
       })
       .catch(err => console.log(err))
   })
   after(function (done) {
-    done()
-    // genSpecs.dataCleanUp(testbase).then(function () {
-    //   done()
-    // }).catch(err => console.log(err))
+    genSpecs.dataCleanUp(testbase).then(function () {
+      done()
+    }).catch(err => console.log(err))
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
@@ -40,7 +42,6 @@ describe('Begin Tests', function () {
       })
     })
   })
-
   describe('****************Schema Blank/Empty Validation Test Cases****************', function () {
     it(`PayLoad Init `, function () {
       testbase.schemaValValidatorPayloadBlank.forEach(function (entry) {
