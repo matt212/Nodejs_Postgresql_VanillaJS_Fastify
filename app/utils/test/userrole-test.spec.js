@@ -8,13 +8,8 @@ describe('Begin Tests', function () {
       .referentialCustomStack('mrole', l1)
       .then(function (dt) {
         testbase = dt.a
-        genSpecs
-          .MultiControlTestCaseGen(testbase, l1.b)
-          .then(function (data) {
-            testbase = data
-            done()
-          })
-          .catch(err => console.log(err))
+        testbase.schemaBaseValidatorPayloadAr1 = dt.d.c
+        done()
       })
       .catch(err => console.log(err))
   })
