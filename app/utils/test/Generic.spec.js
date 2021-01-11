@@ -140,6 +140,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
 }
 let massDelete = function (testbase) {
   return (promise = new Promise((resolve, reject) => {
+    
     Promises.mapSeries(testbase.Deletesampledatset, baseDataCleanUp).then(
       function (a) {
         resolve(a)
@@ -310,6 +311,7 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
             console.log('*****Multi Records are inserted sucessfully*****')
             //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
             resolve(data)
+            testbase.baseData.push(data);
           })
         })
         .catch(err => console.log(err))
@@ -445,7 +447,14 @@ let insertMochaScript = function (payload, evalModname) {
 
     genericApiPost(testbase)
       .then(function (data) {
-        let resp = {
+
+     let tempdata=data.body.map(function (dt) {
+      return dt[evalModname+"id"].toString()
+      
+    })
+Deletesampledatset.push({a1:evalModname,a2:tempdata})
+
+let resp = {
           a: payload.insertUpdateDelete1,
           b: data.body,
           c: payload.schemaBaseValidatorPayloadAr1,
@@ -454,6 +463,7 @@ let insertMochaScript = function (payload, evalModname) {
           f: payload,
           g: Deletesampledatset
         }
+
 
         resolve(resp)
       })
@@ -707,6 +717,7 @@ let PrimarytestInit = function (testbase) {
 
             testbase.DelAr = data.a
             testbase.singleInsertID = data.singleInsertID
+            
             resolve(testbase)
           })
           .catch(err => console(err))

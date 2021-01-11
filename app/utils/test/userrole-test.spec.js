@@ -20,7 +20,7 @@ describe('Begin Tests', function () {
   after(function (done) {
     
       genSpecs.dataCleanUp(testbase).then(function () {
-        
+        console.log(testbase.Deletesampledatset);
         genSpecs.massDelete(testbase).then(function () {
         done()
       })  
