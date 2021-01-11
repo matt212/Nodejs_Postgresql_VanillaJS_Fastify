@@ -1,20 +1,32 @@
 let genSpecs = require('./Generic.spec.js')
-let l1=genSpecs.metaTestcaseGen("mrole");
-testbase=l1.a
+let l1 = genSpecs.metaTestcaseGen('mrole')
+testbase = l1.a
 
 describe('Begin Tests', function () {
   before(function (done) {
-    genSpecs.MultiControlTestCaseGen(testbase,l1.b).then(function(data)
-    {
-      testbase=data;
-      done()
-    })
-    .catch(err => console.log(err))
+    genSpecs
+      .MultiControlTestCaseGen(testbase, l1.b)
+      .then(function (data) {
+        testbase = data
+
+        done()
+      })
+      .catch(err => console.log(err))
   })
   after(function (done) {
-    genSpecs.dataCleanUp(testbase).then(function () {
+    let Deletesampledatset = testbase.baseData.map(function (dt) {
+      return {
+        a1: dt.evalModulename,
+        a2: (dt.DelAr.join(',') + ',' + dt.singleInsertID).split(',')
+      }
+    })
+
+    testbase.Deletesampledatset = Deletesampledatset
+    //genSpecs.dataCleanUp(testbase).then(function () {
+    genSpecs.massDelete(testbase).then(function () {
       done()
     })
+    //})
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
@@ -399,7 +411,7 @@ describe('Begin Tests', function () {
     })
   })
   describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
-      it(`PayLoad Init `, function () {
+    it(`PayLoad Init `, function () {
       delete testbase.schemaBaseValidatorPayloadAr1[0].recordstate
       Object.keys(testbase.schemaBaseValidatorPayloadAr1[0]).forEach(function (
         entry
@@ -485,7 +497,7 @@ describe('Begin Tests', function () {
       testbase = genSpecs
         .consolidatedPayload()
         .payload21(testbase, evalModulename)
-  
+
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.message.should.equal(
           `body should have required property \'.basesearcharconsolidated\'`

@@ -310,8 +310,9 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
           PrimarytestInit(testbase).then(function (data) {
             console.log('*****Multi Records are inserted sucessfully*****')
             //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
-            resolve(data)
+            
             testbase.baseData.push(data);
+            resolve(testbase)
           })
         })
         .catch(err => console.log(err))
