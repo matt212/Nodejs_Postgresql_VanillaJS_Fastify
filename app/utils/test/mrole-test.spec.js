@@ -8,25 +8,15 @@ describe('Begin Tests', function () {
       .MultiControlTestCaseGen(testbase, l1.b)
       .then(function (data) {
         testbase = data
-
         done()
       })
       .catch(err => console.log(err))
   })
   after(function (done) {
-    let Deletesampledatset = testbase.baseData.map(function (dt) {
-      return {
-        a1: dt.evalModulename,
-        a2: (dt.DelAr.join(',') + ',' + dt.singleInsertID).split(',')
-      }
-    })
-
-    testbase.Deletesampledatset = Deletesampledatset
-    //genSpecs.dataCleanUp(testbase).then(function () {
+    testbase = genSpecs.DeleteAssimilation(testbase)
     genSpecs.massDelete(testbase).then(function () {
       done()
     })
-    //})
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {

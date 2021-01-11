@@ -7,11 +7,7 @@ describe('Begin Tests', function () {
     genSpecs
       .referentialCustomStack('mrole', l1)
       .then(function (dt) {
-        testbase = dt.a
-        testbase.schemaBaseValidatorPayloadAr1 = dt.d.c
-        testbase.DelAr = dt.d.f.DelAr
-        testbase.singleInsertID = dt.d.f.singleInsertID
-        testbase.Deletesampledatset = dt.d.g
+        testbase = genSpecs.customAssignModularAssign(testbase, dt)
 
         done()
       })
