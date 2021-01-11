@@ -138,6 +138,15 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
   }
   return o
 }
+let massDelete = function (testbase) {
+  return (promise = new Promise((resolve, reject) => {
+    Promises.mapSeries(testbase.Deletesampledatset, baseDataCleanUp).then(
+      function (a) {
+        resolve(a)
+      }
+    )
+  }))
+}
 let metaTestcaseGen = function (a) {
   let testbase = {
     evalModulename: a
@@ -423,7 +432,13 @@ let customRefentialModnameInsert = function (modulename) {
   })
 }
 let insertMochaScript = function (payload, evalModname) {
-  
+  let Deletesampledatset = payload.baseData.map(function (dt) {
+    return {
+      a1: dt.evalModulename,
+      a2: (dt.DelAr.join(',') + ',' + dt.singleInsertID).split(',')
+    }
+  })
+
   let produce = [...payload.singleDataSet, ...payload.insertUpdateDelete1]
   return new Promise((resolve, reject) => {
     testbase = consolidatedPayload().payload202(produce, evalModname)
@@ -436,7 +451,8 @@ let insertMochaScript = function (payload, evalModname) {
           c: payload.schemaBaseValidatorPayloadAr1,
           d: payload.singleDataSet,
           e: payload.schemaBaseValidatorPayload,
-          f:payload
+          f: payload,
+          g: Deletesampledatset
         }
 
         resolve(resp)
@@ -694,6 +710,18 @@ let PrimarytestInit = function (testbase) {
             resolve(testbase)
           })
           .catch(err => console(err))
+      })
+  })
+}
+let baseDataCleanUp = function (dt) {
+  return new Promise((resolve, reject) => {
+    testbase.DelAr = dt.a2
+    testbase.evalModulename = dt.a1
+
+    customMultiInsertDelete(testbase, testbase.evalModulename)
+      .multiDelete(testbase.DelAr)
+      .then(function (data) {
+        resolve('success')
       })
   })
 }
@@ -1495,6 +1523,8 @@ module.exports = {
   expect,
   dep,
   Promises,
+  baseDataCleanUp,
+  massDelete,
   getContentFieldsfromValidationMap,
   referentialCustomStack,
   getIDfromValidationMap,
