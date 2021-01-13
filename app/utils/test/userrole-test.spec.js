@@ -14,14 +14,14 @@ describe('Begin Tests', function () {
       .catch(err => console.log(err))
   })
   after(function (done) {
-    genSpecs
-      .dataCleanUp(testbase)
-      .then(function () {
-        genSpecs.massDelete(testbase).then(function () {
+    genSpecs.dataCleanUp(testbase).then(
+      genSpecs
+        .massDelete(testbase)
+        .then(function () {
           done()
         })
-      })
-      .catch(err => console.log(err))
+        .catch(err => console.log(err))
+    )
   })
 
   describe('****************Schema Removal Validation Test Cases****************', function () {
