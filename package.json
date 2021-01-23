@@ -81,8 +81,7 @@
     "createDB_updated": "npx run-func ./app/utils/dbDump/databaseUtils.js pgcreateDb",
     "applychangesDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").applychangesDB()'",
     "pgRestore": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgRestore()'",
-    "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'",
-    "poliEval": "mocha ./app/utils/test/poli-test.spec.js --timeout 10000 --exit"
+    "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'"
   },
   "repository": {
     "type": "git",
