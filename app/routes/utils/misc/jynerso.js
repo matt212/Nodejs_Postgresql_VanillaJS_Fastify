@@ -101,20 +101,23 @@ async function routes (fastify, options) {
     var req = {}
     req.body = request.body
     var mainapp = req.body
-    
-      applymodel(mainapp)
-        .then(applyApp)
-        .then(applyroutes)
-        .then(applyserverValidationConfig)
-        .then(applyserverschemaValidator)
-        .then(applyMochaChaiTestCases)
-        .then(swaggerdocs)
-        .then(applyMultiControls)
-        .then(applyhtml)
-        .then(packageJsonUpdate)
-        .then(superadminUpdate)
+    console.log(mainapp[0])
+    applymodel(mainapp)
+      .then(applyApp)
+      .then(applyroutes)
+      .then(applyserverValidationConfig)
+      .then(applyserverschemaValidator)
+      .then(applyMochaChaiTestCases)
+      .then(swaggerdocs)
+      .then(applyMultiControls)
+      .then(applyhtml)
+      .then(packageJsonUpdate)
+      .then(superadminUpdate)
       .then(function (data) {
-        reply.send({ a: 'run  yarn applychangesDB ',b:`run yarn ${mainapp[0].datapayloadModulename}Eval` })
+        reply.send({
+          a: 'run  yarn applychangesDB ',
+          b: `run yarn ${mainapp[0].datapayloadModulename}Eval`
+        })
       })
       .catch(e => {
         reply.send(e)

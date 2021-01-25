@@ -221,8 +221,8 @@
                 return o;
             });
 
-            $("#jsonatt1").html(JSON.stringify(arintern, null, "\t"))
-            $("#jsonatt2").html(JSON.stringify(swaggerJson, null, "\t"))
+            $("#jsonatt1").text(JSON.stringify(arintern, null, "\t"))
+            $("#jsonatt2").text(JSON.stringify(swaggerJson, null, "\t"))
         });
     })
 
@@ -241,60 +241,15 @@
         return re;
     }
     function base_server() {
-        var non_multiserver_client = [{ "inputtype": "textbox", "inputname": "firstname", "inputplaceholder": "meh", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "lastname", "inputplaceholder": "last name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "age", "inputplaceholder": "age", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "5" }, { "inputtype": "textbox", "inputname": "phone", "inputplaceholder": "mobile", "fieldtypename": "INTEGER", "fieldvalidatename": "mobile", "fieldmaxlength": "15" }]
-        var server_client = [{
-            "inputtype": "textbox",
-            "inputname": "firstname",
-            "inputplaceholder": "meh",
-            "fieldtypename": "STRING",
-            "fieldvalidatename": "string",
-            "fieldmaxlength": "80"
-        }, {
-            "inputtype": "textbox",
-            "inputname": "lastname",
-            "inputplaceholder": "last name",
-            "fieldtypename": "STRING",
-            "fieldvalidatename": "string",
-            "fieldmaxlength": "80"
-        }, {
-            "inputtype": "textbox",
-            "inputname": "age",
-            "inputplaceholder": "age",
-            "fieldtypename": "INTEGER",
-            "fieldvalidatename": "number",
-            "fieldmaxlength": "5"
-        }, {
-            "inputtype": "textbox",
-            "inputname": "phone",
-            "inputplaceholder": "mobile",
-            "fieldtypename": "BIGINT",
-            "fieldvalidatename": "mobile",
-            "fieldmaxlength": "15"
-        }
-            // , {
-            //     "inputtype": "checkbox",
-            //     "inputtypemod": "modname",
-            //     "inputtypeVal": "mname",
-            //     "inputtypeID": "modnameid",
-            //     "inputname": "modnameid",
-            //     "inputplaceholder": "Gender",
-            //     "fieldtypename": "ARRAY(DataTypes.INTEGER)",
-            //     "fieldvalidatename": "number",
-            //     "fieldmaxlength": "80"
-            // }
-        ]
-        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true }
-            // ,{
-            //     "type": "array",
-            //     "fieldname": "modnameid",
-            //     "format": "array",
-            //     "example": [1, 2]
-            // }
-        ]
-        // var server_client=$("#jsonatt1").val();
-        // var swagger=$("#jsonatt2").val();
+      
+        
+        
+    var server_client=$("#jsonatt1").html();
+      var swagger=$("#jsonatt2").html();
         console.log(swagger);
         console.log(server_client);
+        swagger=JSON.parse(swagger)
+        server_client=JSON.parse(server_client)
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}
         ajaxbase.method = "jedha"
