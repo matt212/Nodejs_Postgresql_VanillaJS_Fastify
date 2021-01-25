@@ -1,0 +1,205 @@
+paths:
+  /gender/api/load/:
+    post:
+      tags:
+        - gender
+      summary: Initial load
+      description: ''
+      operationId: genderLoad
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/loadDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/genderSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+  /gender/api/searchtype:
+    post:
+      tags:
+        - gender
+      summary: Multiselect multicolumn search
+      description: ''
+      operationId: genderSearchtype
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/SearchDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/genderSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+  /gender/api/create/:
+    post:
+      tags:
+        - gender
+      summary: Create record
+      description: ''
+      operationId: genderCreate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Create record
+          required: true
+          schema:
+            $ref: '#/definitions/gender'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /gender/api/update/:
+    post:
+      tags:
+        - gender
+      summary: Update record
+      description: ''
+      operationId: genderUpdate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: update record
+          required: true
+          schema:
+            $ref: '#/definitions/genderUpdateDefinitions'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /gender/api/searchtypegroupby/:
+    post:
+      tags:
+        - gender
+      summary: Multiselect populate api for employee
+      description: ''
+      operationId: genderSearchtypegroupby
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/groupByDefinitions'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /gender/api/uploadcontent:
+    post:
+      tags:
+        - gender
+      summary: Uploads a file.
+      operationId: genderUpload
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+      responses:
+        '200':
+          description: Invalid input
+  /gender/api/delete/:
+    post:
+      tags:
+        - gender
+      summary: Delete record
+      description: ''
+      operationId: genderDelete
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Delete record
+          required: true
+          schema:
+            $ref: '#/definitions/genderId'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /gender/api/pivotresult/:
+    post:
+      tags:
+        - gender
+      summary: Pivot operations for both axis
+      description: ''
+      operationId: genderPivot
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: >-
+            give pivot results and also we can also club 'genderSearchtype' api
+            for filteration purposes of pivot
+          required: true
+          schema:
+            $ref: '#/definitions/pivotDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/genderSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+definitions:
+  genderUpdateDefinitions:
+    allOf:
+      - $ref: '#/definitions/gender'
+      - $ref: '#/definitions/genderId'
+  genderSearchtypeResponseDefinitions:
+    type: object
+    properties:
+      rows:
+        type: array
+        items:
+          $ref: '#/definitions/genderSearchtypeResponse'
+      count:
+        $ref: '#/definitions/rowCount'
+  genderSearchtypeResponse:
+    allOf:
+      - $ref: '#/definitions/gender'
+      - $ref: '#/definitions/genderId'
+  gender:
+    type: object
+    properties:
+      name:
+        type: string
+        example: sample text
+    xml:
+      name: basePayLoad
+  genderId:
+    type: object
+    properties:
+      genderid:
+        type: integer
+        format: int64
+        example: 1676213
