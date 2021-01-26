@@ -326,7 +326,7 @@ function applyMultiControls (mainapp) {
           return argument;
       })
     },`
-        var onchkscaffolding = `onMultiControlChk: function (data) {
+        var onchkscaffolding = `on{Modname}Control: function (data) {
         // var key = $(data).data().key;
         // var val = $(data).data().value;
         // var filterparam={}
@@ -340,6 +340,9 @@ function applyMultiControls (mainapp) {
         //   multiselect.removeFromArray(key,val)
         // }
         // console.log(basesearchar)
+  },onMultiControlChk:function(data)
+  {
+
   },`
         var baseOffLoad = `$(function () {
     basemod_modal.modalpopulate()
@@ -356,13 +359,28 @@ function applyMultiControls (mainapp) {
   basefunction().{Modname}MultiKeysLoad(current{Modname}.text).then(function (data) {
     data.rows.forEach((elem, index) => {
       $("#overlaycontent").append(\`<div class="checkbox tablechk">
-      <label><input type="checkbox" id="cltrl\${currentmodname.id}" 
+      <label><input type="checkbox" id="cltrl\${current{Modname}.id}\${elem[current{Modname}.id]}" 
       onclick="javascript:basemod_modal.onMultiControlChk(this)" 
       data-key="\${current{Modname}.id}"
-      data-val="[\${elem[currentmodname.id]}]"  
+      data-val="[\${elem[current{Modname}.id]}]"  
       value="[\${elem[current{Modname}.id]}]">\${elem[current{Modname}.text]}
       <span class="checkbox-material"><span class="check"></span></span></label></div>\`)
     })
+  });
+}`
+var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==current{Modname}.name) {
+  basefunction().{Modname}MultiKeysLoad(current{Modname}.text).then(function (data) {
+    data.rows.forEach((elem, index) => {
+      internhtmlcontent=internhtmlcontent+\`<div class="custom-control custom-radio">
+      <label><input type="radio" class="custom-control-input" id="cltrl\${current{Modname}.id}\${elem[current{Modname}.id]}" 
+      onclick="javascript:basemod_modal.on{Modname}Control(this)" 
+      data-key="\${current{Modname}.id}"
+      name="customRadio"
+      data-val="[\${elem[current{Modname}.id]}]"  
+      value="[\${elem[current{Modname}.id]}]">\${elem[current{Modname}.text]}
+      <span class="checkbox-material"><span class="check"></span></span></label></div>\`
+    })
+    $('#overlaycontent').append(\`<div class='form-group'>\${internhtmlcontent}</div>\`)
   });
 }`
 
@@ -372,6 +390,11 @@ function applyMultiControls (mainapp) {
         mainapp[0].server_client.forEach(element => {
           //server_client.forEach(element => {
           if (element.inputtype != 'textbox') {
+            
+            onchkscaffolding=onchkscaffolding.replace(
+              /{Modname}/g,
+              element.inputtypemod
+            )
             multiControlsScripts = multiControlsScripts.replace(
               '//onchkcapture',
               '\n ' + onchkscaffolding
@@ -384,9 +407,18 @@ function applyMultiControls (mainapp) {
               /{Modname}/g,
               element.inputtypemod
             )
+            radioCode = radioCode.replace(
+              /{Modname}/g,
+              element.inputtypemod
+            )
+            
             multiControlsScripts = multiControlsScripts.replace(
               '//checkboxCode',
               '\n ' + checkboxCode
+            )
+            multiControlsScripts = multiControlsScripts.replace(
+              '//radioCode',
+              '\n ' + radioCode
             )
             appsgenerator = appsgenerator.replace(
               '//definition',
@@ -505,11 +537,13 @@ var multiControlsScripts = `let basemod_modal = {
     let redlime = doChunk(interset, 2)
     $("#overlaycontent").empty();
     var htmlcontent = "";
+    var internhtmlcontent="";
     redlime.forEach(function(item) {
 
         htmlcontent += \`<div class=\"row\">\`
         item.forEach2(function(element) {
-
+             //radioCode
+             else   
              //checkboxCode
              else {
                 htmlcontent += \`<div class="form-group overlaytxtalign col-md-5">
@@ -523,6 +557,7 @@ var multiControlsScripts = `let basemod_modal = {
             }
 
         })
+        
         htmlcontent += \`</div>\`
     })
 
