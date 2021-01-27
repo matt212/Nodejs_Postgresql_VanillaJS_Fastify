@@ -241,17 +241,17 @@
         return re;
     }
     function base_server() {
-      
-        
-        
-    var server_client=$("#jsonatt1").html();
-      var swagger=$("#jsonatt2").html();
+
+
+
+        var server_client = $("#jsonatt1").html();
+        var swagger = $("#jsonatt2").html();
         console.log(swagger);
         console.log(server_client);
-        swagger=JSON.parse(swagger)
-        server_client=JSON.parse(server_client)
-        server_client=[ { "inputtype": "textbox", "inputname": "name", "inputplaceholder": "Please enter name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "checkbox", "inputtypemod": "gender", "inputtypeVal": "name", "inputtypeID": "genderid", "inputname": "genderid", "inputplaceholder": "Please select gender", "fieldtypename": "ARRAY(DataTypes.INTEGER)", "fieldvalidatename": "number", "fieldmaxlength": "80" } ]
-        swagger=[ { "type": "string", "fieldname": "name", "example": "sample text" }, { "type": "array", "fieldname": "genderid", "format": "array", "example": [ 1, 2 ] } ]
+        swagger = JSON.parse(swagger)
+        server_client = JSON.parse(server_client)
+        //server_client=[ { "inputtype": "textbox", "inputname": "name", "inputplaceholder": "Please enter name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "checkbox", "inputtypemod": "gender", "inputtypeVal": "name", "inputtypeID": "genderid", "inputname": "genderid", "inputplaceholder": "Please select gender", "fieldtypename": "ARRAY(DataTypes.INTEGER)", "fieldvalidatename": "number", "fieldmaxlength": "80" } ]
+        //swagger=[ { "type": "string", "fieldname": "name", "example": "sample text" }, { "type": "array", "fieldname": "genderid", "format": "array", "example": [ 1, 2 ] } ]
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}
         ajaxbase.method = "jedha"
