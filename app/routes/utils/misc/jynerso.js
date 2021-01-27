@@ -293,6 +293,62 @@ function createdb (mainapp) {
     }
   })
 }
+var radiomultiInitControl = function (redlime) {
+  var r1="";
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'radio') {
+      r1 =
+        r1 +
+        `if (element.inputtype == "radio" && element.inputtypemod==current${dt.inputtypemod}.name) {
+    basefunction().${dt.inputtypemod}MultiKeysLoad(current${dt.inputtypemod}.text).then(function (data) {
+      data.rows.forEach((elem, index) => {
+        internhtmlcontent=internhtmlcontent+\`<div class="custom-control custom-radio">
+        <label><input type="radio" class="custom-control-input" id="cltrl\${current${dt.inputtypemod}.id}\${elem[current${dt.inputtypemod}.id]}" 
+        onclick="javascript:basemod_modal.on${dt.inputtypemod}Control(this)" 
+        data-key="\${current${dt.inputtypemod}.id}"
+        name="customRadio"
+        data-val="\${elem[current${dt.inputtypemod}.id]}"  
+        value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
+        </label></div>\`
+      })
+      $('#overlaycontent').append(\`<div class='form-group'>\${internhtmlcontent}</div>\`)
+    });
+  }`
+    }
+  })
+  return r1
+}
+var radioMultiControl = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'radio') {
+      r1 =
+        r1 +
+        ` on${dt.inputtypemod}Control: function (data) {
+    var key = $(data).data().key;
+    var val = $(data).data().val;
+   if ($(data)[0].checked) {
+    current{Modname}.data={[key]:val}
+   }
+   else {
+     delete current{Modname}.data[key]
+   }
+}`
+    }
+  })
+  return r1
+}
+
+let multiInsertCode = function (redlime) {
+  var r1 = `{ ...arg.datapayload,`
+  redlime.forEach(function (dt) {
+    if (dt.inputtype != 'textbox') {
+      r1 = r1 + `...current${dt.inputtypemod}.data `
+    }
+  })
+  r1 = r1 + `}`
+  return r1
+}
 function applyMultiControls (mainapp) {
   return new Promise((resolve, reject) => {
     try {
@@ -326,23 +382,9 @@ function applyMultiControls (mainapp) {
           return argument;
       })
     },`
-        var onchkscaffolding = `on{Modname}Control: function (data) {
-        // var key = $(data).data().key;
-        // var val = $(data).data().value;
-        // var filterparam={}
-        // console.log($(data)[0].checked)
-        // if ($(data)[0].checked) {
-    
-        //   filterparam=datatransformutils.addArrayinJson(basesearchar,key,val)
-        //   multiselect.updateNameById(basesearchar, key, filterparam[0][key]);  
-        // }
-        // else {
-        //   multiselect.removeFromArray(key,val)
-        // }
-        // console.log(basesearchar)
-  },onMultiControlChk:function(data)
-  {
-
+        var onchkscaffolding =
+          radioMultiControl(mainapp[0].server_client) +
+          `,onMultiControlChk:function(data){
   },`
         var baseOffLoad = `$(function () {
     basemod_modal.modalpopulate()
@@ -368,7 +410,7 @@ function applyMultiControls (mainapp) {
     })
   });
 }`
-var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==current{Modname}.name) {
+        var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==current{Modname}.name) {
   basefunction().{Modname}MultiKeysLoad(current{Modname}.text).then(function (data) {
     data.rows.forEach((elem, index) => {
       internhtmlcontent=internhtmlcontent+\`<div class="custom-control custom-radio">
@@ -376,8 +418,8 @@ var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==curre
       onclick="javascript:basemod_modal.on{Modname}Control(this)" 
       data-key="\${current{Modname}.id}"
       name="customRadio"
-      data-val="[\${elem[current{Modname}.id]}]"  
-      value="[\${elem[current{Modname}.id]}]">\${elem[current{Modname}.text]}
+      data-val="\${elem[current{Modname}.id]}"  
+      value="\${elem[current{Modname}.id]}">\${elem[current{Modname}.text]}
       <span class="checkbox-material"><span class="check"></span></span></label></div>\`
     })
     $('#overlaycontent').append(\`<div class='form-group'>\${internhtmlcontent}</div>\`)
@@ -387,17 +429,23 @@ var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==curre
         var c = ''
         var d = ''
         var e = ''
+
+        //{ ...arg.datapayload, ...current{Modname}.data }
+
         mainapp[0].server_client.forEach(element => {
           //server_client.forEach(element => {
           if (element.inputtype != 'textbox') {
-            
-            onchkscaffolding=onchkscaffolding.replace(
+            onchkscaffolding = onchkscaffolding.replace(
               /{Modname}/g,
               element.inputtypemod
             )
             multiControlsScripts = multiControlsScripts.replace(
               '//onchkcapture',
               '\n ' + onchkscaffolding
+            )
+            multiControlsScripts = multiControlsScripts.replace(
+              '//insertpayloadData',
+              '\n ' + multiInsertCode(mainapp[0].server_client)
             )
             baseMod = baseMod.replace(/{Modname}/g, element.inputtypemod)
             baseMod = baseMod.replace(/{name}/g, element.inputtypemod)
@@ -407,18 +455,15 @@ var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==curre
               /{Modname}/g,
               element.inputtypemod
             )
-            radioCode = radioCode.replace(
-              /{Modname}/g,
-              element.inputtypemod
-            )
-            
+            radioCode = radioCode.replace(/{Modname}/g, element.inputtypemod)
+
             multiControlsScripts = multiControlsScripts.replace(
               '//checkboxCode',
               '\n ' + checkboxCode
             )
             multiControlsScripts = multiControlsScripts.replace(
               '//radioCode',
-              '\n ' + radioCode
+              '\n ' + radiomultiInitControl(mainapp[0].server_client)
             )
             appsgenerator = appsgenerator.replace(
               '//definition',
@@ -557,7 +602,7 @@ var multiControlsScripts = `let basemod_modal = {
             }
 
         })
-        
+
         htmlcontent += \`</div>\`
     })
 
@@ -587,6 +632,9 @@ baseCheckbox:\`<div class="checkbox tablechk">
          $('#basetable tbody tr td:nth-child(1) input:checkbox').attr('onclick', 'javascript:basemod_modal.tablechkbox(this)')
          //$("a[href='#sales-chart'").hide()
      },
+     payloadformat: function (arg) {
+      return //insertpayloadData
+    },
      ontdedit: function(arg) {
 
          var armodid = $(arg).attr('data-tbledit-type')
@@ -605,7 +653,11 @@ baseCheckbox:\`<div class="checkbox tablechk">
              if (data.inputtype == "textbox") {
                  $("#cltrl" + data.inputname).val(data.vals)
                  $("#cltrl" + data.inputname).removeAttr('data-form-type');
-             }  else if (data.inputtype == "checkbox") {
+             }
+             else if (data.inputtype == "radio") {
+              $(\`#overlaycontent .form-group .custom-control.custom-radio  [data-val="\${data.vals}"]\`).prop("checked", true)
+             }
+               else if (data.inputtype == "checkbox") {
               $(\`#overlaycontent .checkbox.tablechk [type="checkbox"]\`).each(function (index) {
                 $(this).attr("checked", false)
               })

@@ -58,7 +58,7 @@
          insert: function(base) {
 
 
-             ajaxbase.payload = base.datapayload
+             ajaxbase.payload = basemod_modal.payloadformat(base)
              ajaxbase.url = baseurlobj.createdata;
 
              return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
@@ -70,7 +70,7 @@
          update: function(base) {
 
 
-             ajaxbase.payload = base.datapayload
+             ajaxbase.payload = basemod_modal.payloadformat(base)
              ajaxbase.url = baseurlobj.updatedata;
 
              return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {

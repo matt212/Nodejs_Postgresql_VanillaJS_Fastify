@@ -647,7 +647,7 @@ let reqops = {
 
     if (ajaxbase.isedit) {
       base.datapayload = data;
-      base.datapayload.recordstate = base.interimdatapayload.recordstate;
+      base.datapayload.recordstate = base.interimdatapayload.recordstate == undefined ? base.datapayload.recordstate : base.interimdatapayload.recordstate;
       basefunction()
         .update(base)
         .then(function (argument) {
