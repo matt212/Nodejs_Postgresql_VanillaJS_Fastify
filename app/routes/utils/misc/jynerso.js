@@ -101,7 +101,7 @@ async function routes (fastify, options) {
     var req = {}
     req.body = request.body
     var mainapp = req.body
-    console.log(mainapp[0])
+
     applymodel(mainapp)
       .then(applyApp)
       .then(applyroutes)
@@ -294,19 +294,21 @@ function createdb (mainapp) {
   })
 }
 var radiomultiInitControl = function (redlime) {
-  var r1="";
+  var r1 = ''
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'radio') {
       r1 =
         r1 +
+        (r1 != '' ? 'else ' : ' ') +
         `if (element.inputtype == "radio" && element.inputtypemod==current${dt.inputtypemod}.name) {
+          var internhtmlcontent=""
     basefunction().${dt.inputtypemod}MultiKeysLoad(current${dt.inputtypemod}.text).then(function (data) {
       data.rows.forEach((elem, index) => {
         internhtmlcontent=internhtmlcontent+\`<div class="custom-control custom-radio">
         <label><input type="radio" class="custom-control-input" id="cltrl\${current${dt.inputtypemod}.id}\${elem[current${dt.inputtypemod}.id]}" 
         onclick="javascript:basemod_modal.on${dt.inputtypemod}Control(this)" 
         data-key="\${current${dt.inputtypemod}.id}"
-        name="customRadio"
+        name="customRadio${dt.inputtypemod}"
         data-val="\${elem[current${dt.inputtypemod}.id]}"  
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
@@ -324,29 +326,45 @@ var radioMultiControl = function (redlime) {
     if (dt.inputtype == 'radio') {
       r1 =
         r1 +
-        ` on${dt.inputtypemod}Control: function (data) {
+        `on${dt.inputtypemod}Control: function (data) {
     var key = $(data).data().key;
     var val = $(data).data().val;
    if ($(data)[0].checked) {
-    current{Modname}.data={[key]:val}
+    current${dt.inputtypemod}.data={[key]:val}
    }
    else {
-     delete current{Modname}.data[key]
+     delete current${dt.inputtypemod}.data[key]
    }
-}`
+},`
     }
   })
   return r1
 }
 
 let multiInsertCode = function (redlime) {
-  var r1 = `{ ...arg.datapayload,`
+  var r1 = `{ ...arg.datapayload`
   redlime.forEach(function (dt) {
     if (dt.inputtype != 'textbox') {
-      r1 = r1 + `...current${dt.inputtypemod}.data `
+      r1 = r1 + `,...current${dt.inputtypemod}.data `
     }
   })
   r1 = r1 + `}`
+
+  return r1
+}
+let baseinitControl = function (redlime) {
+  var r1 = ' '
+  redlime.forEach(function (dt) {
+    if (dt.inputtype != 'textbox') {
+      r1 =
+        r1 +
+        `let current${dt.inputtypemod}={
+        name:"${dt.inputtypemod}",
+        id:"${dt.inputtypeID}",
+        text:"${dt.inputtypeVal}",
+      };`
+    }
+  })
   return r1
 }
 function applyMultiControls (mainapp) {
@@ -360,13 +378,9 @@ function applyMultiControls (mainapp) {
       based = based.filter(function (doctor) {
         return doctor.inputtype != 'textbox' // if truthy then keep item
       })
-      console.log(based.length)
-      if (based.length <= 1) {
-        var baseMod = `let current{Modname}={
-        name:"{name}",
-        id:"{id}",
-        text:"{text}",
-      };`
+
+      if (based.length >= 1) {
+        var baseMod = baseinitControl(mainapp[0].server_client)
         //definition
         var currentInitialization =
           "getcurrentMod{modulename}groupby: '/' + current{modulename}.name + '/api/searchtypegroupbyId/',"
@@ -384,7 +398,7 @@ function applyMultiControls (mainapp) {
     },`
         var onchkscaffolding =
           radioMultiControl(mainapp[0].server_client) +
-          `,onMultiControlChk:function(data){
+          `onMultiControlChk:function(data){
   },`
         var baseOffLoad = `$(function () {
     basemod_modal.modalpopulate()
@@ -411,6 +425,7 @@ function applyMultiControls (mainapp) {
   });
 }`
         var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==current{Modname}.name) {
+          var internhtmlcontent=" "
   basefunction().{Modname}MultiKeysLoad(current{Modname}.text).then(function (data) {
     data.rows.forEach((elem, index) => {
       internhtmlcontent=internhtmlcontent+\`<div class="custom-control custom-radio">
@@ -443,10 +458,7 @@ function applyMultiControls (mainapp) {
               '//onchkcapture',
               '\n ' + onchkscaffolding
             )
-            multiControlsScripts = multiControlsScripts.replace(
-              '//insertpayloadData',
-              '\n ' + multiInsertCode(mainapp[0].server_client)
-            )
+
             baseMod = baseMod.replace(/{Modname}/g, element.inputtypemod)
             baseMod = baseMod.replace(/{name}/g, element.inputtypemod)
             baseMod = baseMod.replace(/{id}/g, element.inputtypeID)
@@ -465,6 +477,11 @@ function applyMultiControls (mainapp) {
               '//radioCode',
               '\n ' + radiomultiInitControl(mainapp[0].server_client)
             )
+            multiControlsScripts = multiControlsScripts.replace(
+              '//insertpayloadData',
+              '\n ' + multiInsertCode(mainapp[0].server_client)
+            )
+
             appsgenerator = appsgenerator.replace(
               '//definition',
               '\n ' + baseMod
@@ -507,8 +524,8 @@ function applyMultiControls (mainapp) {
             /baseOffLoad/g,
             '\n' + baseOffLoad
           )
-          var replaces = `let basemod_modal = {afterhtmlpopulate: function() {}}`
-
+          var replaces = `let basemod_modal = {afterhtmlpopulate: function(){},payloadformat: function (arg) {return arg.datapayload}}`
+          console.log(multiControlsScripts)
           appsgenerator = appsgenerator.replace(
             replaces,
             '\n' + beautify(multiControlsScripts, { indent_size: 2 })
@@ -759,7 +776,7 @@ function applyroutes (mainapp) {
   return new Promise((resolve, reject) => {
     try {
       var appsgenerator = fs.readFileSync('../config/baseRoute.json', 'utf8')
-      console.log(mainapp[0].datapayloadModulename)
+
       appsgenerator = addbaseRoutes(
         appsgenerator,
         mainapp[0].datapayloadModulename,

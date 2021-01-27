@@ -113,4 +113,4 @@
      }
  }
  //baseOffLoad
- let basemod_modal = {afterhtmlpopulate: function() {}}
+ let basemod_modal = {afterhtmlpopulate: function(){},payloadformat: function (arg) {return arg.datapayload}}
