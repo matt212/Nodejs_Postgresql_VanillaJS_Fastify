@@ -293,6 +293,52 @@ function createdb (mainapp) {
     }
   })
 }
+var checkboxEditPopulate = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'checkbox') {
+      r1 =
+        r1 +`current${dt.inputtypemod}.data[data.inputname]=data.vals`
+    }
+  })
+  return r1;
+}
+var radioEditPopulate = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'radio') {
+      r1 =
+        r1 +`current${dt.inputtypemod}.data=data.vals`
+    }
+  })
+  return r1;
+}
+var checkboxmultiInitControl = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'checkbox') {
+      r1 =
+        r1 +
+        (r1 != '' ? 'else ' : ' ') +
+        `if (element.inputtype == "checkbox" && element.inputtypemod==current${dt.inputtypemod}.name) {
+          var internhtmlcontent=" "
+    basefunction().${dt.inputtypemod}MultiKeysLoad(current${dt.inputtypemod}.text).then(function (data) {
+      data.rows.forEach((elem, index) => {
+        internhtmlcontent=internhtmlcontent+\`<div class="custom-control custom-checkbox">
+        <label><input type="checkbox" class="custom-control-input" id="cltrl\${current${dt.inputtypemod}.id}\${elem[current${dt.inputtypemod}.id]}" 
+        onclick="javascript:basemod_modal.on${dt.inputtypemod}Control(this)" 
+        data-key="\${current${dt.inputtypemod}.id}"
+        data-val="\${elem[current${dt.inputtypemod}.id]}"  
+        value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
+        </label></div>\`
+      })
+      $('#overlaycontent').append(\`<div class='form-group'>\${internhtmlcontent}</div>\`)
+    });
+  }`
+    }
+  })
+  return r1
+}
 var radiomultiInitControl = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
@@ -340,6 +386,26 @@ var radioMultiControl = function (redlime) {
   })
   return r1
 }
+var checkboxMultiControl = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'checkbox') {
+      r1 =
+        r1 +
+        `on${dt.inputtypemod}Control: function (data) {
+    var key = $(data).data().key;
+    var val = $(data).data().val;
+    if ($(data)[0].checked) {
+      current${dt.inputtypemod}.data[key] = [...current${dt.inputtypemod}.data[key], ...[val]]
+    }
+    else {
+      current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => item !== val)
+    }
+},`
+    }
+  })
+  return r1
+}
 
 let multiInsertCode = function (redlime) {
   var r1 = `{ ...arg.datapayload`
@@ -352,6 +418,7 @@ let multiInsertCode = function (redlime) {
 
   return r1
 }
+
 let baseinitControl = function (redlime) {
   var r1 = ' '
   redlime.forEach(function (dt) {
@@ -362,6 +429,7 @@ let baseinitControl = function (redlime) {
         name:"${dt.inputtypemod}",
         id:"${dt.inputtypeID}",
         text:"${dt.inputtypeVal}",
+        ${dt.inputtype=="checkbox" ? `data:{"${dt.inputtypeID}":[]}` : " "}
       };`
     }
   })
@@ -397,8 +465,7 @@ function applyMultiControls (mainapp) {
       })
     },`
         var onchkscaffolding =
-          radioMultiControl(mainapp[0].server_client) +
-          `onMultiControlChk:function(data){
+          radioMultiControl(mainapp[0].server_client) +'  ' +checkboxMultiControl(mainapp[0].server_client)+` onMultiControlChk:function(data){
   },`
         var baseOffLoad = `$(function () {
     basemod_modal.modalpopulate()
@@ -411,35 +478,8 @@ function applyMultiControls (mainapp) {
       }
     })
   })`
-        var checkboxCode = `if (element.inputtype == "checkbox" && element.inputtypemod==current{Modname}.name) {
-  basefunction().{Modname}MultiKeysLoad(current{Modname}.text).then(function (data) {
-    data.rows.forEach((elem, index) => {
-      $("#overlaycontent").append(\`<div class="checkbox tablechk">
-      <label><input type="checkbox" id="cltrl\${current{Modname}.id}\${elem[current{Modname}.id]}" 
-      onclick="javascript:basemod_modal.onMultiControlChk(this)" 
-      data-key="\${current{Modname}.id}"
-      data-val="[\${elem[current{Modname}.id]}]"  
-      value="[\${elem[current{Modname}.id]}]">\${elem[current{Modname}.text]}
-      <span class="checkbox-material"><span class="check"></span></span></label></div>\`)
-    })
-  });
-}`
-        var radioCode = `if (element.inputtype == "radio" && element.inputtypemod==current{Modname}.name) {
-          var internhtmlcontent=" "
-  basefunction().{Modname}MultiKeysLoad(current{Modname}.text).then(function (data) {
-    data.rows.forEach((elem, index) => {
-      internhtmlcontent=internhtmlcontent+\`<div class="custom-control custom-radio">
-      <label><input type="radio" class="custom-control-input" id="cltrl\${current{Modname}.id}\${elem[current{Modname}.id]}" 
-      onclick="javascript:basemod_modal.on{Modname}Control(this)" 
-      data-key="\${current{Modname}.id}"
-      name="customRadio"
-      data-val="\${elem[current{Modname}.id]}"  
-      value="\${elem[current{Modname}.id]}">\${elem[current{Modname}.text]}
-      <span class="checkbox-material"><span class="check"></span></span></label></div>\`
-    })
-    $('#overlaycontent').append(\`<div class='form-group'>\${internhtmlcontent}</div>\`)
-  });
-}`
+        
+        
 
         var c = ''
         var d = ''
@@ -458,20 +498,25 @@ function applyMultiControls (mainapp) {
               '//onchkcapture',
               '\n ' + onchkscaffolding
             )
+            multiControlsScripts = multiControlsScripts.replace(
+              '//editCheckbox',
+              '\n ' + checkboxEditPopulate(mainapp[0].server_client)
+            )
+            multiControlsScripts = multiControlsScripts.replace(
+              '//editRadio',
+              '\n ' + radioEditPopulate(mainapp[0].server_client)
+            )
 
             baseMod = baseMod.replace(/{Modname}/g, element.inputtypemod)
             baseMod = baseMod.replace(/{name}/g, element.inputtypemod)
             baseMod = baseMod.replace(/{id}/g, element.inputtypeID)
             baseMod = baseMod.replace(/{text}/g, element.inputtypeVal)
-            checkboxCode = checkboxCode.replace(
-              /{Modname}/g,
-              element.inputtypemod
-            )
-            radioCode = radioCode.replace(/{Modname}/g, element.inputtypemod)
+            
+            
 
             multiControlsScripts = multiControlsScripts.replace(
               '//checkboxCode',
-              '\n ' + checkboxCode
+              '\n ' + checkboxmultiInitControl(mainapp[0].server_client)
             )
             multiControlsScripts = multiControlsScripts.replace(
               '//radioCode',
@@ -525,7 +570,7 @@ function applyMultiControls (mainapp) {
             '\n' + baseOffLoad
           )
           var replaces = `let basemod_modal = {afterhtmlpopulate: function(){},payloadformat: function (arg) {return arg.datapayload}}`
-          console.log(multiControlsScripts)
+          
           appsgenerator = appsgenerator.replace(
             replaces,
             '\n' + beautify(multiControlsScripts, { indent_size: 2 })
@@ -605,7 +650,7 @@ var multiControlsScripts = `let basemod_modal = {
         htmlcontent += \`<div class=\"row\">\`
         item.forEach2(function(element) {
              //radioCode
-             else   
+                
              //checkboxCode
              else {
                 htmlcontent += \`<div class="form-group overlaytxtalign col-md-5">
@@ -673,15 +718,18 @@ baseCheckbox:\`<div class="checkbox tablechk">
              }
              else if (data.inputtype == "radio") {
               $(\`#overlaycontent .form-group .custom-control.custom-radio  [data-val="\${data.vals}"]\`).prop("checked", true)
+              //editRadio
              }
                else if (data.inputtype == "checkbox") {
               $(\`#overlaycontent .checkbox.tablechk [type="checkbox"]\`).each(function (index) {
                 $(this).attr("checked", false)
               })
               data.vals.forEach(function (dr) {
-                $(\`#overlaycontent .checkbox.tablechk  [data-val='\${dr}']\`).attr("checked", true)
-              })
                 
+                $(\`#overlaycontent .form-group .custom-control.custom-checkbox  [data-val='\${dr}']\`).prop("checked", true)
+                
+              })
+              //editCheckbox
              }
          })
          //active comma denominator

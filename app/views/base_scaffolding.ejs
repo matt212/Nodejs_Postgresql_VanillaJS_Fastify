@@ -250,8 +250,8 @@
         console.log(server_client);
         swagger=JSON.parse(swagger)
         server_client=JSON.parse(server_client)
-        server_client=[ { "inputtype": "textbox", "inputname": "name", "inputplaceholder": "Please enter your name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "radio", "inputtypemod": "gender", "inputtypeVal": "name", "inputtypeID": "genderid", "inputname": "genderid", "inputplaceholder": "Please select your gender", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" } ]
-        swagger=[ { "type": "string", "fieldname": "name", "example": "sample text" }, { "type": "integer", "fieldname": "genderid", "format": "int64", "example": 20 } ]
+        server_client=[ { "inputtype": "textbox", "inputname": "name", "inputplaceholder": "Please enter name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "checkbox", "inputtypemod": "gender", "inputtypeVal": "name", "inputtypeID": "genderid", "inputname": "genderid", "inputplaceholder": "Please select gender", "fieldtypename": "ARRAY(DataTypes.INTEGER)", "fieldvalidatename": "number", "fieldmaxlength": "80" } ]
+        swagger=[ { "type": "string", "fieldname": "name", "example": "sample text" }, { "type": "array", "fieldname": "genderid", "format": "array", "example": [ 1, 2 ] } ]
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}
         ajaxbase.method = "jedha"
