@@ -668,15 +668,14 @@ var multiControlsScripts = `let basemod_modal = {
         htmlcontent += \`</div>\`
     })
 
-    var chkcontent = \`<input type="hidden" name="\${currentmoduleid}" value="0" id="cltrl\${currentmoduleid}"> <div class="form-group overlaytxtalign col-md-5">
-        <div class="col-sm-offset-2 col-sm-15">
-        <div>
-        <label>
-        \${this.baseCheckbox}
-        </label>
-        </div>
-        </div>
-        </div>\`;
+    var chkcontent = \`<input type="hidden" name="\${currentmoduleid}" value="0" id="cltrl\${currentmoduleid}"> 
+    <div class="form-group overlaytxtalign col-md-5"><div class="col-sm-offset-2 col-sm-15"><div><label><div class="checkbox tablechk">
+   <label>
+   <input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value="true"><span class="checkbox-material"><span class="check"></span></span> Remember me
+   <span class="checkbox-material">
+   </span> 
+   </label>
+   </div></label></div></div></div>\`;
 
     $("#overlaycontent").html(htmlcontent + chkcontent);
 },
