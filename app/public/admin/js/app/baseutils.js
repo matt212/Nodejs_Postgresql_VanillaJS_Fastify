@@ -214,7 +214,8 @@ $(function () {
         console.log(red.split(' ')[5].split('=')[1])*/
   //$(".sidebar-toggle").click();
   $('.form-horizontal input:text').on('keydown keyup change', function () {
-    var sel = $('.form-horizontal input:text[data-form-type]').length
+    var sel = $('.form-horizontal input:text[data-form-type] input:checkbox[data-form-type]').length
+    console.log(sel);
     if (sel <= 0) {
       $('#btnmodalsub').prop('disabled', false)
     } else {
@@ -1477,6 +1478,7 @@ let tableops = {
       $(argument).val(false)
       base.interimdatapayload.recordstate = false
     }
+    reqops.formvalidation(argument)
   }
 }
 /*field validation*/
@@ -1544,6 +1546,7 @@ var baseobjvalidation = {
         .parent()
         .find('label')
         .attr('class', 'control-label-format')
+        
       $(argument).attr('data-form-type', 'true')
     } else {
       $(argument)
@@ -1570,6 +1573,29 @@ var baseobjvalidation = {
         .attr('class', 'hide')
       $(argument).removeAttr('data-form-type')
     }
+  },
+  checkboxvalidation: function (argument) {
+    
+    if ($(argument).is(':checked')) {
+      $(argument)
+        .parent()
+        .find('label')
+        .attr('class', 'hide')
+      $(argument).removeAttr('data-form-type')
+    } else {
+      $(argument)
+        .parent()
+        .find('label')
+        .attr('class', 'control-label-format')
+      $(argument).attr('data-form-type', 'true')
+      
+    }
+  },
+  radiovalidation: function (argument) {
+    
+      $(argument).removeAttr('data-form-type')
+      validationListener();
+    
   },
   genvalidation: function (argument) {
     if (argument.value == '') {
@@ -1600,6 +1626,12 @@ var baseobjvalidation = {
       case 'name':
         this.textvalidation(internset.content)
         break
+      case 'checkbox':
+        this.checkboxvalidation(internset.content)
+        break
+      case 'radio':
+        this.radiovalidation(internset.content)
+          break    
       case 'passwordvalidation':
         this.passwordvalidation(internset.content)
         break

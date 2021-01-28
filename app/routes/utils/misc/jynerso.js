@@ -359,7 +359,7 @@ var radiomultiInitControl = function (redlime) {
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
       })
-      $('#overlaycontent').append(\`<div class='form-group'>\${internhtmlcontent}</div>\`)
+      $('#overlaycontent').append(\`<div class='form-group' onclick="javascript:reqops.formvalidation(this)" data-attribute="radio" data-form-type="true">\${internhtmlcontent}</div>\`)
     });
   }`
     }
@@ -467,15 +467,20 @@ function applyMultiControls (mainapp) {
         var onchkscaffolding =
           radioMultiControl(mainapp[0].server_client) +'  ' +checkboxMultiControl(mainapp[0].server_client)+` onMultiControlChk:function(data){
   },`
-        var baseOffLoad = `$(function () {
+        var baseOffLoad = `let validationListener=function()
+        {
+         var sel = $('.form-horizontal input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+         
+         if (sel <= 0) {
+           $('#btnmodalsub').prop('disabled', false)
+         } else {
+           $('#btnmodalsub').prop('disabled', true)
+         }
+        }
+    $(function () {
     basemod_modal.modalpopulate()
-    $(".form-horizontal input:text").on("keydown keyup change", function () {
-      var sel = $('.form-horizontal input:text[data-form-type]').length;
-      if (sel <= 0) {
-        $('#btnmodalsub').prop('disabled', false)
-      } else {
-        $('#btnmodalsub').prop('disabled', true)
-      }
+    $('.form-horizontal input[type="text"], input[type="checkbox"]').on("keydown keyup change", function () {
+      validationListener
     })
   })`
         
@@ -671,7 +676,7 @@ var multiControlsScripts = `let basemod_modal = {
     var chkcontent = \`<input type="hidden" name="\${currentmoduleid}" value="0" id="cltrl\${currentmoduleid}"> 
     <div class="form-group overlaytxtalign col-md-5"><div class="col-sm-offset-2 col-sm-15"><div><label><div class="checkbox tablechk">
    <label>
-   <input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value="true"><span class="checkbox-material"><span class="check"></span></span> Remember me
+   <input type="checkbox" id="cltrlrecordstate" data-attribute="checkbox" data-form-type="true" onclick="javascript:tableops.onchk(this)" value="true"><span class="checkbox-material"><span class="check"></span></span> Remember me
    <span class="checkbox-material">
    </span> 
    </label>
