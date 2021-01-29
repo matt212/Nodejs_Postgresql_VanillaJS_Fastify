@@ -530,6 +530,15 @@ function applyMultiControls (mainapp) {
               '//radioCode',
               '\n ' + radiomultiInitControl(mainapp[0].server_client)
             )
+            if(checkboxmultiInitControl(mainapp[0].server_client)!==""&&radiomultiInitControl(mainapp[0].server_client)!=="")
+            {
+              console.log("---------------------herer")
+              multiControlsScripts = multiControlsScripts.replace(
+                '//rchkelse',
+                '\n ' + 'else'
+              )
+            }
+            
             multiControlsScripts = multiControlsScripts.replace(
               '//insertpayloadData',
               '\n ' + multiInsertCode(mainapp[0].server_client)
@@ -658,7 +667,7 @@ var multiControlsScripts = `let basemod_modal = {
         htmlcontent += \`<div class=\"row\">\`
         item.forEach2(function(element) {
              //radioCode
-                
+             //rchkelse   
              //checkboxCode
              else {
                 htmlcontent += \`<div class="form-group overlaytxtalign col-md-5">
