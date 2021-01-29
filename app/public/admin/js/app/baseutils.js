@@ -1591,6 +1591,16 @@ var baseobjvalidation = {
       
     }
   },
+  checkboxvalidationMulti: function (argument) {
+    
+    if ($(argument).is(':checked')) {
+      $(argument).parents(":eq(3)").find(`.form-group`).removeAttr('data-form-type')
+      
+    } else {
+      $(argument).parents(":eq(3)").find(`.form-group`).attr('data-form-type', 'true')
+      
+    }
+  },
   radiovalidation: function (argument) {
     
       $(argument).removeAttr('data-form-type')
@@ -1629,6 +1639,9 @@ var baseobjvalidation = {
       case 'checkbox':
         this.checkboxvalidation(internset.content)
         break
+      case 'checkboxMulti':
+          this.checkboxvalidationMulti(internset.content)
+          break  
       case 'radio':
         this.radiovalidation(internset.content)
           break    

@@ -328,11 +328,12 @@ var checkboxmultiInitControl = function (redlime) {
         <label><input type="checkbox" class="custom-control-input" id="cltrl\${current${dt.inputtypemod}.id}\${elem[current${dt.inputtypemod}.id]}" 
         onclick="javascript:basemod_modal.on${dt.inputtypemod}Control(this)" 
         data-key="\${current${dt.inputtypemod}.id}"
-        data-val="\${elem[current${dt.inputtypemod}.id]}"  
+        data-val="\${elem[current${dt.inputtypemod}.id]}"
+        data-attribute="checkboxMulti"       
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
       })
-      $('#overlaycontent').append(\`<div class='form-group'>\${internhtmlcontent}</div>\`)
+      $('#overlaycontent').append(\`<div class="form-group" data-attribute="checkboxMulti"  data-form-type="true">\${internhtmlcontent}</div>\`)
     });
   }`
     }
@@ -401,6 +402,8 @@ var checkboxMultiControl = function (redlime) {
     else {
       current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => item !== val)
     }
+    reqops.formvalidation(data);
+     validationListener()
 },`
     }
   })
@@ -480,7 +483,7 @@ function applyMultiControls (mainapp) {
     $(function () {
     basemod_modal.modalpopulate()
     $('.form-horizontal input[type="text"], input[type="checkbox"]').on("keydown keyup change", function () {
-      validationListener
+      validationListener()
     })
   })`
         
