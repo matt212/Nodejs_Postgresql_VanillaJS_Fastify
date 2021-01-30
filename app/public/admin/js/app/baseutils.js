@@ -1602,12 +1602,33 @@ var baseobjvalidation = {
       
     } else {
       
-      $(argument)
-      .parents(":eq(2)")
-      .find('.lblhide')
-      .attr('class', 'control-label-format')
-      $(argument).parents(":eq(4)").find(`.form-group`).attr('data-form-type', 'true')
       
+       
+      
+      if(this.checkboxvalidationSecondary(argument))
+      {
+        $(argument)
+        .parents(":eq(2)")
+        .find('.lblhide')
+        .attr('class', 'control-label-format')
+        $(argument).parents(":eq(4)").find(`.form-group`).attr('data-form-type', 'true')
+      }
+      //console.log([namesake].data[$(argument).attr("data-key")].length)
+    }
+  },
+  checkboxvalidationSecondary:function(argument)
+  {
+    
+    var namesake=`current${$(argument).attr("data-parentVal")}`
+    var condt=eval(namesake).data[$(argument).attr("data-key")].length
+   
+    if(condt<=0)
+    {
+      return true
+    }
+    else
+    {
+      return false
     }
   },
   radiovalidation: function (argument) {
