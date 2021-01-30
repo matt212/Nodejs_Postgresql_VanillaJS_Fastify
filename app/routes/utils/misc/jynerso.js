@@ -183,10 +183,25 @@ function superadminUpdate (mainapp) {
 function applyMochaChaiTestCases (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync(
-        '../ref/tests/Employees-test.spec.js',
-        'utf8'
-      )
+
+      var r2=(mainapp[0].server_client).filter((r1)=>r1.inputtype!="textbox")
+      var appsgenerator=" "
+      console.log("((((((((((mocha))))))))))");
+      console.log(r2.length);
+      if(r2.length>=1)
+      {
+        appsgenerator = fs.readFileSync(
+          '../ref/tests/Employees-test-referential.spec.js',
+          'utf8'
+        )
+      }
+      else
+      {
+        appsgenerator = fs.readFileSync(
+          '../ref/tests/Employees-test.spec.js',
+          'utf8'
+        ) 
+      }
       appsgenerator = appsgenerator.replace(
         /employees/g,
         mainapp[0].datapayloadModulename

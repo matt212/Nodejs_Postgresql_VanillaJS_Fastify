@@ -307,9 +307,11 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
       let a1 = validationConfig.validationmap
         .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
         .filter(Boolean)
+
       ModularizeDataGen(a1)
         .then(function (data) {
           let a = initMultiPayloadforSearch(
+            testbase.evalModulename,
             data,
             validationConfig.validationmap,
             a1
@@ -328,6 +330,7 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
             //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
 
             testbase.baseData.push(data)
+
             resolve(testbase)
           })
         })
@@ -512,7 +515,12 @@ let genericApiPost = function (data) {
   }))
 }
 let idmapping = function (validationmap, a, b) {
-  let arr3 = a.map((item, i) => Object.assign({}, item, b[i]))
+  let arr3 = ''
+  if (b != undefined) {
+    arr3 = a.map((item, i) => Object.assign({}, item, b[i]))
+  } else {
+    arr3 = a
+  }
 
   let a1 = removeJsonAttrs(arr3, ['recordstate'])
 
@@ -626,11 +634,11 @@ let schemaValValidatorPayloadMaxLenght = function (baseapplyFields, baseObj) {
 
   return interimAr
 }
-let initMultiPayloadforSearch = function (data, validationmap, ap) {
+let initMultiPayloadforSearch = function (dt, data, validationmap, ap) {
   let ar1 = []
   let ar2 = []
   let ar3 = []
-  //console.log(data);
+
   ap.forEach(function (entry) {
     let b1 = data
       .filter(a => a.evalModulename == entry)
@@ -663,40 +671,24 @@ let initMultiPayloadforSearch = function (data, validationmap, ap) {
   let o = {
     searchtype: idmapping(validationmap, ar1[0], ar1[1]),
     insertUpdateDelete: ar2[0].map((item, i) =>
-      Object.assign({}, item, ar2[1][i])
+      Object.assign({}, item, ar2[1] != undefined ? ar2[1][i] : ar1[0][i])
     ),
     singleDataSet: [Object.assign({}, ...ar3)]
   }
+
+  let internAccesstypes = [
+    { accesstype: 'AA', recordstate: true },
+    { accesstype: 'AA', recordstate: true }
+  ]
   let o1 = {
     searchtype: o.searchtype.map((item, i) =>
-      Object.assign(
-        {},
-        item,
-        [
-          { accesstype: 'AA', recordstate: true },
-          { accesstype: 'AA', recordstate: true }
-        ][i]
-      )
+      Object.assign({}, item, dt == 'mrole' ? internAccesstypes[i] : [])
     ),
     insertUpdateDelete: o.insertUpdateDelete.map((item, i) =>
-      Object.assign(
-        {},
-        item,
-        [
-          { accesstype: 'AA', recordstate: true },
-          { accesstype: 'AA', recordstate: true }
-        ][i]
-      )
+      Object.assign({}, item, dt == 'mrole' ? internAccesstypes[i] : [])
     ),
     singleDataSet: o.singleDataSet.map((item, i) =>
-      Object.assign(
-        {},
-        item,
-        [
-          { accesstype: 'AA', recordstate: true },
-          { accesstype: 'AA', recordstate: true }
-        ][i]
-      )
+      Object.assign({}, item, dt == 'mrole' ? internAccesstypes[i] : [])
     ),
     baseData: data
   }
