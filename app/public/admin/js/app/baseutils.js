@@ -1594,10 +1594,19 @@ var baseobjvalidation = {
   checkboxvalidationMulti: function (argument) {
     
     if ($(argument).is(':checked')) {
-      $(argument).parents(":eq(3)").find(`.form-group`).removeAttr('data-form-type')
+      $(argument)
+        .parents(":eq(2)")
+        .find('.control-label-format')
+        .attr('class', 'lblhide')
+      $(argument).parents(":eq(4)").find(`.form-group`).removeAttr('data-form-type')
       
     } else {
-      $(argument).parents(":eq(3)").find(`.form-group`).attr('data-form-type', 'true')
+      
+      $(argument)
+      .parents(":eq(2)")
+      .find('.lblhide')
+      .attr('class', 'control-label-format')
+      $(argument).parents(":eq(4)").find(`.form-group`).attr('data-form-type', 'true')
       
     }
   },

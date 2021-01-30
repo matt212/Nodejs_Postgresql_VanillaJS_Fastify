@@ -348,7 +348,12 @@ var checkboxmultiInitControl = function (redlime) {
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
       })
-      $('#overlaycontent').append(\`<div class="form-group" data-attribute="checkboxMulti"  data-form-type="true">\${internhtmlcontent}</div>\`)
+      $('#overlaycontent').append(\`<div class="form-group" data-attribute="checkboxMulti"  data-form-type="true">
+             <div class="col-sm-15">
+                    <label class="lblhide" id="lblmsg\${current${dt.inputtypemod}.id}">
+                    <i class="fa fa-bell-o"></i> Please select ${dt.inputtypemod}
+                    </label>\${internhtmlcontent}</div>
+                    </div></div>\`)
     });
   }`
     }
@@ -375,7 +380,12 @@ var radiomultiInitControl = function (redlime) {
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
       })
-      $('#overlaycontent').append(\`<div class='form-group' onclick="javascript:reqops.formvalidation(this)" data-attribute="radio" data-form-type="true">\${internhtmlcontent}</div>\`)
+      $('#overlaycontent').append(\`<div class='form-group' onclick="javascript:reqops.formvalidation(this)" data-attribute="radio" data-form-type="true">
+      <div class="col-sm-15">
+                    <label class="lblhide" id="lblmsg\${current${dt.inputtypemod}.id}">
+                    <i class="fa fa-bell-o"></i> Please select ${dt.inputtypemod}
+                    </label>
+      \${internhtmlcontent}</div></div>\`)
     });
   }`
     }
@@ -688,7 +698,7 @@ var multiControlsScripts = `let basemod_modal = {
                 htmlcontent += \`<div class="form-group overlaytxtalign col-md-5">
                     <div class="col-sm-15">
                     <label class="lblhide" id="lblmsg\${element.inputname}">
-                    <i class="fa fa-bell-o"></i> Input with warning
+                    <i class="fa fa-bell-o"></i>  \${element.inputname} is required
                     </label>
                     <input type="text" data-attribute="\${element.fieldvalidatename}" class="form-control" maxLength="\${element.fieldmaxlength}"
                     data-form-type="false" onkeyup="javascript:reqops.formvalidation(this)" id="cltrl\${element.inputname}" placeholder="\${element.inputplaceholder.capitalize()}">
@@ -703,8 +713,13 @@ var multiControlsScripts = `let basemod_modal = {
     var chkcontent = \`<input type="hidden" name="\${currentmoduleid}" value="0" id="cltrl\${currentmoduleid}"> 
     <div class="form-group overlaytxtalign col-md-5"><div class="col-sm-offset-2 col-sm-15"><div><label><div class="checkbox tablechk">
    <label>
+   <div class="col-sm-15">
+                    <label class="lblhide" id="lblmsgrecordstate">
+                    <i class="fa fa-bell-o"></i> Please select Active
+                    </label>
    <input type="checkbox" id="cltrlrecordstate" data-attribute="checkbox" data-form-type="true" onclick="javascript:tableops.onchk(this)" value="true"><span class="checkbox-material"><span class="check"></span></span> Remember me
    <span class="checkbox-material">
+   </div>
    </span> 
    </label>
    </div></label></div></div></div>\`;
