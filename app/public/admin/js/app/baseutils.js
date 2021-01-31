@@ -214,8 +214,10 @@ $(function () {
         console.log(red.split(' ')[5].split('=')[1])*/
   //$(".sidebar-toggle").click();
   $('.form-horizontal input:text').on('keydown keyup change', function () {
-    var sel = $('.form-horizontal input:text[data-form-type] input:checkbox[data-form-type]').length
-    console.log(sel);
+    var sel = $(
+      '.form-horizontal input:text[data-form-type] input:checkbox[data-form-type]'
+    ).length
+    console.log(sel)
     if (sel <= 0) {
       $('#btnmodalsub').prop('disabled', false)
     } else {
@@ -1546,7 +1548,7 @@ var baseobjvalidation = {
         .parent()
         .find('label')
         .attr('class', 'control-label-format')
-        
+
       $(argument).attr('data-form-type', 'true')
     } else {
       $(argument)
@@ -1575,7 +1577,6 @@ var baseobjvalidation = {
     }
   },
   checkboxvalidation: function (argument) {
-    
     if ($(argument).is(':checked')) {
       $(argument)
         .parent()
@@ -1588,54 +1589,45 @@ var baseobjvalidation = {
         .find('label')
         .attr('class', 'control-label-format')
       $(argument).attr('data-form-type', 'true')
-      
     }
   },
   checkboxvalidationMulti: function (argument) {
-    
     if ($(argument).is(':checked')) {
       $(argument)
-        .parents(":eq(2)")
+        .parents(':eq(2)')
         .find('.control-label-format')
         .attr('class', 'lblhide')
-      $(argument).parents(":eq(4)").find(`.form-group`).removeAttr('data-form-type')
-      
+      $(argument)
+        .parents(':eq(4)')
+        .find(`.form-group`)
+        .removeAttr('data-form-type')
     } else {
-      
-      
-       
-      
-      if(this.checkboxvalidationSecondary(argument))
-      {
+      if (this.checkboxvalidationSecondary(argument)) {
         $(argument)
-        .parents(":eq(2)")
-        .find('.lblhide')
-        .attr('class', 'control-label-format')
-        $(argument).parents(":eq(4)").find(`.form-group`).attr('data-form-type', 'true')
+          .parents(':eq(2)')
+          .find('.lblhide')
+          .attr('class', 'control-label-format')
+        $(argument)
+          .parents(':eq(4)')
+          .find(`.form-group`)
+          .attr('data-form-type', 'true')
       }
       //console.log([namesake].data[$(argument).attr("data-key")].length)
     }
   },
-  checkboxvalidationSecondary:function(argument)
-  {
-    
-    var namesake=`current${$(argument).attr("data-parentVal")}`
-    var condt=eval(namesake).data[$(argument).attr("data-key")].length
-   
-    if(condt<=0)
-    {
+  checkboxvalidationSecondary: function (argument) {
+    var namesake = `current${$(argument).attr('data-parentVal')}`
+    var condt = eval(namesake).data[$(argument).attr('data-key')].length
+
+    if (condt <= 0) {
       return true
-    }
-    else
-    {
+    } else {
       return false
     }
   },
   radiovalidation: function (argument) {
-    
-      $(argument).removeAttr('data-form-type')
-      validationListener();
-    
+    $(argument).removeAttr('data-form-type')
+    validationListener()
   },
   genvalidation: function (argument) {
     if (argument.value == '') {
@@ -1670,11 +1662,11 @@ var baseobjvalidation = {
         this.checkboxvalidation(internset.content)
         break
       case 'checkboxMulti':
-          this.checkboxvalidationMulti(internset.content)
-          break  
+        this.checkboxvalidationMulti(internset.content)
+        break
       case 'radio':
         this.radiovalidation(internset.content)
-          break    
+        break
       case 'passwordvalidation':
         this.passwordvalidation(internset.content)
         break

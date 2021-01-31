@@ -344,7 +344,8 @@ var checkboxmultiInitControl = function (redlime) {
         onclick="javascript:basemod_modal.on${dt.inputtypemod}Control(this)" 
         data-key="\${current${dt.inputtypemod}.id}"
         data-val="\${elem[current${dt.inputtypemod}.id]}"
-        data-attribute="checkboxMulti"       
+        data-attribute="checkboxMulti"
+        data-parentVal="\${current${dt.inputtypemod}.name}"       
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
       })
