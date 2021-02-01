@@ -6,6 +6,7 @@ let validationmap = [
     inputCustomMapping:"rolename",
     inputParent:"role",
     inputplaceholder: "Rolename",
+    selecttype:"single",
     fieldtypename: "STRING",
     fieldvalidatename: "number",
     fieldmaxlength: "80"
@@ -14,6 +15,7 @@ let validationmap = [
     inputtype: "multiselect",
     inputname: "modnameid",
     inputtextval: "mname",
+    selecttype:"multi",
     inputCustomMapping:"modulename",
     inputParent:"modname",
     inputplaceholder: "Module",

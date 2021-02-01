@@ -467,6 +467,7 @@ let basemod_modal = {
         //p.fieldkey = data.inputname
         p.fieldkey = data.inputtextval
         p.secondaryKey = data.inputname
+        p.selecttype=data.selecttype
         basemultiselectaccess.multiselectmodular(p)
       }
     })
@@ -502,6 +503,8 @@ let basemultiselectaccess = {
     var multiselectconfig = {
       selectevent: '#in' + arg.fieldname,
       fieldkey: arg.fieldkey,
+      selecttype:arg.selecttype,
+      selecttype:arg.selecttype,
       placeholder: arg.fieldname,
       remotefunc: this['remotefunc' + arg.fieldname]
     }
@@ -510,6 +513,8 @@ let basemultiselectaccess = {
     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
       data
     ) {
+      console.log(arg.secondaryKey)
+      console.log(data)
       multiselects[arg.secondaryKey] = data
     })
     multiselectfunc[arg.fieldname].init()
