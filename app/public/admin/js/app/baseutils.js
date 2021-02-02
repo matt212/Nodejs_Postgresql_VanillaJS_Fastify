@@ -1922,6 +1922,22 @@ let datatransformutils = {
       })
     )
   },
+  getCartesian:function(object) {
+    return Object.entries(object).reduce((r, [k, v]) => {
+        var temp = [];
+        r.forEach(s =>
+            (Array.isArray(v) ? v : [v]).forEach(w =>
+                (w && typeof w === 'object' ? datatransformutils.getCartesian(w) : [w]).forEach(x =>
+                    temp.push(Object.assign({}, s, { [k]: x }))
+                )
+            )
+        );
+        return temp;
+    }, [{}]);
+},
+flat: v => v && typeof v === 'object'
+? Object.values(v).flatMap(datatransformutils.flat)
+: v,
   getparentchildAR: function (r1) {
     var key = Object.keys(r1[0])[0]
     var o = {

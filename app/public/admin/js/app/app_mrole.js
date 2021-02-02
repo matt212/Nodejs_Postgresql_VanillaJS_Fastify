@@ -4,6 +4,7 @@ let currentrolemodname = 'role'
 let currentmodname = 'modname'
 
 let multiselects = {}
+
 let multiselectfunc = {}
 
 let baseurlobj = {
@@ -72,10 +73,8 @@ let basefunction = function () {
       })
     },
     insert: function (base) {
-      //return basemod_modal.insertrole(base).then(basemod_modal.mrolepayloadformat).then(basemod_modal.insertmrole).then(function(data) {
       base = basemod_modal.mrolepayloadformat(base)
       return basemod_modal.insertmrole(base).then(function (data) {
-        //console.log(data)
         ajaxbase.response = data
         return ajaxbase
       })
@@ -203,92 +202,24 @@ let basemod_modal = {
     })
   },
   mrolepayloadformat: function (data) {
-    var interns = {}
-
-    /*  if (multiselects.modulename != undefined) {
-             modulename = multiselects.modulename[0].mname
-
-         } else {
-
-             modulename = base.editrecord[0].mname.split(',')
-         }
-         if (multiselects.accesstype != undefined) {
-             accesstype = multiselects.accesstype[0].accesstype
-         } else {
-
-             accesstype = base.editrecord[0].accesstype.split(',')
-         }
-
-*/
-
-    var doct = validationmap
-      .filter(function (doc) {
-        return doc.inputtype == 'multiselect' // if truthy then keep item
-      })
-      .map(function (doct) {
-        return {
-          // return what new object will look like
-          inputname: doct.inputname,
-          inputtextval: doct.inputtextval
-        }
-      })
-
-    doct.forEach(function (element) {
-      if (multiselects[element.inputname] != undefined) {
-        interns[element.inputname] =
-          multiselects[element.inputname][0][element.inputtextval]
-      } else {
-        let vals = base.editrecord[0][element.inputname]
-        if (vals.toString().indexOf(',') > -1) {
-          interns[element.inputname] = vals.split(',')
-        } else {
-          interns[element.inputname] = [vals]
-        }
-      }
-    })
-
-    var isactivearr = []
-    var isactivearrayobj = {}
-    var isactiveparam = base.datapayload.recordstate
-    // console.log(base.datapayload.recordstate)
-    if (isactiveparam != undefined || isactiveparam === true) {
-      isactivearrayobj.recordstate = true
-    } else {
-      isactivearrayobj.recordstate = false
+    var isactivearrayobj = {
+      recordstate: base.interimdatapayload.recordstate
     }
-    isactivearr.push(isactivearrayobj)
-
-    var internaccesstype = interns.accesstype.map(function (doctor) {
-      return { accesstype: doctor }
-    })
-    var internmodname = interns.modnameid.map(function (doctor) {
-      return { modnameID: doctor }
-    })
-
-    var internrolename = interns.roleid.map(function (doctor) {
-      return { rolenameID: doctor }
-    })
-
-    var a = cartesianProduct([
-      internmodname,
-      internaccesstype,
-      internrolename,
-      isactivearr
-    ])
-
-    var providedre = a.map(function (country) {
-      return {
-        modnameid: country[0].modnameID,
-        accesstype: country[1].accesstype,
-        roleid: country[2].rolenameID,
-        recordstate: country[3].recordstate
+    //flatting multiselects objects
+    var temp = Object.fromEntries(
+      Object.entries(multiselects).map(([k, v]) => [
+        k,
+        datatransformutils.flat(v)
+      ])
+    )
+    let b = { ...temp, ...isactivearrayobj }
+    //apply cartesion for multiselects objects
+    var interns = datatransformutils.getCartesian(b)
+    let o = {
+      payset: interns,
+      delObj: {
+        roleid: interns[0].roleid
       }
-    })
-
-    let o = {}
-    o.payset = providedre
-    o.delObj = {
-      roleid: interns.roleid[0]
     }
     base.datapayload = o
     return base
@@ -302,7 +233,6 @@ let basemod_modal = {
       'onclick',
       'javascript:basemod_modal.tablechkbox(this)'
     )
-    //$("a[href='#sales-chart'").hide()
   },
   ontdedit: function (arg) {
     var armroleid = $(arg).attr('data-tbledit-type')
@@ -467,7 +397,7 @@ let basemod_modal = {
         //p.fieldkey = data.inputname
         p.fieldkey = data.inputtextval
         p.secondaryKey = data.inputname
-        p.selecttype=data.selecttype
+        p.selecttype = data.selecttype
         basemultiselectaccess.multiselectmodular(p)
       }
     })
@@ -503,8 +433,8 @@ let basemultiselectaccess = {
     var multiselectconfig = {
       selectevent: '#in' + arg.fieldname,
       fieldkey: arg.fieldkey,
-      selecttype:arg.selecttype,
-      selecttype:arg.selecttype,
+      selecttype: arg.selecttype,
+      selecttype: arg.selecttype,
       placeholder: arg.fieldname,
       remotefunc: this['remotefunc' + arg.fieldname]
     }
@@ -513,8 +443,6 @@ let basemultiselectaccess = {
     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
       data
     ) {
-      console.log(arg.secondaryKey)
-      console.log(data)
       multiselects[arg.secondaryKey] = data
     })
     multiselectfunc[arg.fieldname].init()
@@ -554,7 +482,7 @@ let basemultiselectaccess = {
         .getpaginatemodnamesearchtypegroupby(internbase)
         .then(function (argument) {
           var sets = argument.rows
-          
+
           if (sets[0] != undefined) {
             var internfield = Object.keys(sets[0])
             sets = sets.map(function (doctor) {
@@ -584,8 +512,7 @@ let basemultiselectaccess = {
         .getpaginateRolesearchtypegroupby(internbase)
         .then(function (argument) {
           var sets = argument.rows
-          if(sets[0]!=undefined)
-          {
+          if (sets[0] != undefined) {
             var internfield = Object.keys(sets[0])
             sets = sets.map(function (doctor) {
               return {
@@ -595,9 +522,8 @@ let basemultiselectaccess = {
                 val: doctor[internfield[1]]
               }
             })
-            resolve(sets)  
+            resolve(sets)
           }
-          
         })
     })
   },
