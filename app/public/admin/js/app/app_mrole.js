@@ -88,14 +88,14 @@ let basefunction = function () {
     },
     update: function (base) {
       base = basemod_modal.mrolepayloadformat(base)
-
-      return this.deleterecord(base)
-        .then(basemod_modal.insertmrole)
-        .then(function (data) {
-          //console.log(data)
-          ajaxbase.response = data
-          return ajaxbase
-        })
+console.log(base)
+      // return this.deleterecord(base)
+      //   .then(basemod_modal.insertmrole)
+      //   .then(function (data) {
+      //     //console.log(data)
+      //     ajaxbase.response = data
+      //     return ajaxbase
+      //   })
     },
     exportexcel: function (base) {
       ajaxbase.url = baseurlobj.exceldata
@@ -204,6 +204,7 @@ let basemod_modal = {
     var isactivearrayobj = {
       recordstate: base.interimdatapayload.recordstate
     }
+    console.log(multiselects);
     //flatting multiselects objects
     var temp = Object.fromEntries(
       Object.entries(multiselects).map(([k, v]) => [
@@ -251,51 +252,18 @@ let basemod_modal = {
     if (interncontent[0].recordstate) {
       $('#cltrlrecordstate').prop('checked', true)
       $('#cltrlrecordstate').val(true)
+      base.interimdatapayload.recordstate= true
       base.datapayload.recordstate = true
     } else {
       $('#cltrlrecordstate').prop('checked', false)
       $('#cltrlrecordstate').val(false)
+      base.interimdatapayload.recordstate= false
       base.datapayload.recordstate = false
     }
     $('#btnbutton').click()
   },
   tablechkbox: function (arg) {},
-  formatresponse: function (data) {
-    var res = this.formatserverfieldmap(data)
-
-    var result = equijoin(
-      res,
-      validationmap,
-      'key',
-      'inputCustomMapping',
-      (
-        { vals },
-        { inputtype, inputtextval, inputname, inputCustomMapping }
-      ) => ({
-        inputtype,
-        inputtextval,
-        inputname,
-        inputCustomMapping,
-        vals
-      })
-    )
-
-    return result
-  },
-  formatserverfieldmap: function (data) {
-    var applyfield = applyfields
-    var res = data.map(function (data) {
-      return applyfield.map(function (da) {
-        var y = data[da].indexOf(',') != -1 ? data[da].split(',') : data[da]
-
-        return {
-          key: da,
-          vals: y
-        }
-      })
-    })[0]
-    return res
-  },
+  
   populatemodularddl: function () {
     validationmap.forEach2(function (data) {
       if (data.inputtype == 'multiselect') {
@@ -309,17 +277,6 @@ let basemod_modal = {
         basemultiselectaccess.multiselectmodular(p)
       }
     })
-  },
-  getidfromobj: function (val) {
-    var basesets = validationmap
-      .filter(function (dt) {
-        return dt.inputtextval == val
-      })
-      .map(function (dt) {
-        return dt.inputname
-        //return dt.inputCustomMapping
-      })
-    return basesets.toString()
   }
 }
 
@@ -364,12 +321,10 @@ let basemultiselectaccess = {
     var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(arin)
     return internbase
   },
-  multiSelectCommonResponse: function (argument) {
-    var sets = argument.rows
-
-    if (sets[0] != undefined) {
-      var internfield = Object.keys(sets[0])
-      sets = sets.map(function (doctor) {
+  multiSelectCommonResponse: function (data,argument) {
+    
+      var internfield = Object.keys(argument.rows[0])
+    var  sets = argument.rows.map(function (doctor) {
         return {
           // return what new object will look like
           key: data.fieldname,
@@ -378,7 +333,7 @@ let basemultiselectaccess = {
         }
       })
       return sets
-    }
+    
   },
   htmlpopulatemodnamefilterparam: function (internar) {
     var filtparam = {}
@@ -408,7 +363,11 @@ let basemultiselectaccess = {
           basemultiselectaccess.multiSelectCommon(data)
         )
         .then(function (argument) {
-          resolve(basemultiselectaccess.multiSelectCommonResponse(argument))
+          var sets = argument.rows
+
+    if (sets[0] != undefined) {
+          resolve(basemultiselectaccess.multiSelectCommonResponse(data,argument))
+    }
         })
     })
   },
@@ -419,7 +378,11 @@ let basemultiselectaccess = {
           basemultiselectaccess.multiSelectCommon(data)
         )
         .then(function (argument) {
-          resolve(basemultiselectaccess.multiSelectCommonResponse(argument))
+          var sets = argument.rows
+
+    if (sets[0] != undefined) {
+          resolve(basemultiselectaccess.multiSelectCommonResponse(data,argument))
+    }
         })
     })
   },

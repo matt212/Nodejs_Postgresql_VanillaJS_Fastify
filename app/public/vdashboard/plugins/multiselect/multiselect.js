@@ -85,7 +85,7 @@ let multisel = function basemultiselect (selconfig, callback) {
       var objintern = {}
       objintern.fieldname = this.fieldname
       objintern.fieldval = this.fieldval
-
+       
       let interims = Object.values(multiselects)
         .map(str => {
           return str[0][objintern.fieldname]

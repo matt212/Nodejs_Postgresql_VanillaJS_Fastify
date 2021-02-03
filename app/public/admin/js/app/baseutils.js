@@ -1962,8 +1962,21 @@ let datatransformutils = {
     var res = obj.content.map(function (data) {
       return a1.map(function (da) {
         var inten = {}
+
         obj.multiselectfunc[da.inputtextval].destroy(da.inputtextval)
         if (data[da.inputCustomMapping].indexOf(',') != -1) {
+          /**check and assign values to multiselect control */
+          if (isNaN(parseInt(data[da.inputname].split(',')[0]))) {
+            multiselects[da.inputname] = [{
+                 [da.inputtextval]: data[da.inputname].split(',') 
+            }]
+          } else {
+            
+            multiselects[da.inputname] = [{
+                 [da.inputtextval]: data[da.inputname].split(',').map(Number) 
+            }]
+          }
+          /**end region */
           inten[da.inputtextval] = data[da.inputCustomMapping]
             .split(',')
             .map(function (dt, i) {
@@ -1974,6 +1987,16 @@ let datatransformutils = {
               }
             })
         } else {
+          if (isNaN(parseInt(data[da.inputname]))) {
+            multiselects[da.inputname] = [{
+                [da.inputtextval]: [data[da.inputname]] 
+            }]
+          } else {
+            multiselects[da.inputname] = [{
+                [da.inputtextval]: [parseInt(data[da.inputname])] 
+            }]
+          }
+
           inten[da.inputtextval] = {
             key: da.inputtextval,
             text:
