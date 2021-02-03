@@ -1962,6 +1962,7 @@ let datatransformutils = {
     var res = obj.content.map(function (data) {
       return a1.map(function (da) {
         var inten = {}
+        obj.multiselectfunc[da.inputtextval].destroy(da.inputtextval)
         if (data[da.inputCustomMapping].indexOf(',') != -1) {
           inten[da.inputtextval] = data[da.inputCustomMapping]
             .split(',')
@@ -1991,7 +1992,6 @@ let datatransformutils = {
       })
     })[0]
     res.forEach(function (dat) {
-      console.log(Object.keys(dat)[0])
       Object.values(dat).forEach(function (dt) {
         if (Array.isArray(dt)) {
           dt.forEach(function (dt1) {

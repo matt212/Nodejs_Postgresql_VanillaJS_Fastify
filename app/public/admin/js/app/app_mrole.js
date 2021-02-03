@@ -247,6 +247,7 @@ let basemod_modal = {
       validationmap,
       content: interncontent
     })
+
     if (interncontent[0].recordstate) {
       $('#cltrlrecordstate').prop('checked', true)
       $('#cltrlrecordstate').val(true)
@@ -354,6 +355,31 @@ let basemultiselectaccess = {
     })
     multiselectfunc[arg.fieldname].init()
   },
+  multiSelectCommon: function (data) {
+    var arin = []
+    var intern = {}
+    intern[data.fieldname] = data.fieldval
+    arin.push(intern)
+    intern = {}
+    var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(arin)
+    return internbase
+  },
+  multiSelectCommonResponse: function (argument) {
+    var sets = argument.rows
+
+    if (sets[0] != undefined) {
+      var internfield = Object.keys(sets[0])
+      sets = sets.map(function (doctor) {
+        return {
+          // return what new object will look like
+          key: data.fieldname,
+          text: doctor[internfield[0]],
+          val: doctor[internfield[1]]
+        }
+      })
+      return sets
+    }
+  },
   htmlpopulatemodnamefilterparam: function (internar) {
     var filtparam = {}
     filtparam.pageno = 0
@@ -377,60 +403,23 @@ let basemultiselectaccess = {
   },
   remotefuncmname: function (data) {
     return new Promise(function (resolve, reject) {
-      var arin = []
-      var intern = {}
-      intern[data.fieldname] = data.fieldval
-      arin.push(intern)
-      intern = {}
-      var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(
-        arin
-      )
       basefunction()
-        .getpaginatemodnamesearchtypegroupby(internbase)
+        .getpaginatemodnamesearchtypegroupby(
+          basemultiselectaccess.multiSelectCommon(data)
+        )
         .then(function (argument) {
-          var sets = argument.rows
-
-          if (sets[0] != undefined) {
-            var internfield = Object.keys(sets[0])
-            sets = sets.map(function (doctor) {
-              return {
-                // return what new object will look like
-                key: data.fieldname,
-                text: doctor[internfield[0]],
-                val: doctor[internfield[1]]
-              }
-            })
-            resolve(sets)
-          }
+          resolve(basemultiselectaccess.multiSelectCommonResponse(argument))
         })
     })
   },
   remotefuncrolename: function (data) {
     return new Promise(function (resolve, reject) {
-      var arin = []
-      var intern = {}
-      intern[data.fieldname] = data.fieldval
-      arin.push(intern)
-      intern = {}
-      var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(
-        arin
-      )
       basefunction()
-        .getpaginateRolesearchtypegroupby(internbase)
+        .getpaginateRolesearchtypegroupby(
+          basemultiselectaccess.multiSelectCommon(data)
+        )
         .then(function (argument) {
-          var sets = argument.rows
-          if (sets[0] != undefined) {
-            var internfield = Object.keys(sets[0])
-            sets = sets.map(function (doctor) {
-              return {
-                // return what new object will look like
-                key: data.fieldname,
-                text: doctor[internfield[0]],
-                val: doctor[internfield[1]]
-              }
-            })
-            resolve(sets)
-          }
+          resolve(basemultiselectaccess.multiSelectCommonResponse(argument))
         })
     })
   },
