@@ -245,8 +245,8 @@ let basemod_modal = {
     datatransformutils.editMultiSelect({
       multiselectfunc,
       validationmap,
-      content:interncontent
-      })
+      content: interncontent
+    })
     if (interncontent[0].recordstate) {
       $('#cltrlrecordstate').prop('checked', true)
       $('#cltrlrecordstate').val(true)
@@ -285,7 +285,6 @@ let basemod_modal = {
     var applyfield = applyfields
     var res = data.map(function (data) {
       return applyfield.map(function (da) {
-        
         var y = data[da].indexOf(',') != -1 ? data[da].split(',') : data[da]
 
         return {
