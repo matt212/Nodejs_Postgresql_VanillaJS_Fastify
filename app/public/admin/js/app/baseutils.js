@@ -1922,22 +1922,27 @@ let datatransformutils = {
       })
     )
   },
-  getCartesian:function(object) {
-    return Object.entries(object).reduce((r, [k, v]) => {
-        var temp = [];
+  getCartesian: function (object) {
+    return Object.entries(object).reduce(
+      (r, [k, v]) => {
+        var temp = []
         r.forEach(s =>
-            (Array.isArray(v) ? v : [v]).forEach(w =>
-                (w && typeof w === 'object' ? datatransformutils.getCartesian(w) : [w]).forEach(x =>
-                    temp.push(Object.assign({}, s, { [k]: x }))
-                )
-            )
-        );
-        return temp;
-    }, [{}]);
-},
-flat: v => v && typeof v === 'object'
-? Object.values(v).flatMap(datatransformutils.flat)
-: v,
+          (Array.isArray(v) ? v : [v]).forEach(w =>
+            (w && typeof w === 'object'
+              ? datatransformutils.getCartesian(w)
+              : [w]
+            ).forEach(x => temp.push(Object.assign({}, s, { [k]: x })))
+          )
+        )
+        return temp
+      },
+      [{}]
+    )
+  },
+  flat: v =>
+    v && typeof v === 'object'
+      ? Object.values(v).flatMap(datatransformutils.flat)
+      : v,
   getparentchildAR: function (r1) {
     var key = Object.keys(r1[0])[0]
     var o = {
@@ -1951,6 +1956,52 @@ flat: v => v && typeof v === 'object'
       return false
 
     return true
+  },
+  editMultiSelect: function (obj) {
+    var a1 = obj.validationmap
+    var res = obj.content.map(function (data) {
+      return a1.map(function (da) {
+        var inten = {}
+        if (data[da.inputCustomMapping].indexOf(',') != -1) {
+          inten[da.inputtextval] = data[da.inputCustomMapping]
+            .split(',')
+            .map(function (dt, i) {
+              return {
+                key: da.inputtextval,
+                text: dt,
+                vals: data[da.inputtextval].split(',')[i]
+              }
+            })
+        } else {
+          inten[da.inputtextval] = {
+            key: da.inputtextval,
+            text:
+              data[da.inputCustomMapping].indexOf(',') != -1
+                ? data[da.inputCustomMapping]
+                : data[da.inputCustomMapping],
+            vals:
+              data[da.inputtextval].indexOf(',') != -1
+                ? data[da.inputtextval]
+                : data[da.inputtextval]
+            //vals: y
+          }
+        }
+
+        return inten
+      })
+    })[0]
+    res.forEach(function (dat) {
+      console.log(Object.keys(dat)[0])
+      Object.values(dat).forEach(function (dt) {
+        if (Array.isArray(dt)) {
+          dt.forEach(function (dt1) {
+            obj.multiselectfunc[Object.keys(dat)[0]].onsearchtext(dt1)
+          })
+        } else {
+          obj.multiselectfunc[Object.keys(dat)[0]].onsearchtext(dt)
+        }
+      })
+    })
   },
   getminusincrement: function (a, b) {
     var ars = []

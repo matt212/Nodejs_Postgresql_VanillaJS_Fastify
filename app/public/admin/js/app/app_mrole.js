@@ -4,7 +4,6 @@ let currentrolemodname = 'role'
 let currentmodname = 'modname'
 
 let multiselects = {}
-
 let multiselectfunc = {}
 
 let baseurlobj = {
@@ -236,110 +235,18 @@ let basemod_modal = {
   },
   ontdedit: function (arg) {
     var armroleid = $(arg).attr('data-tbledit-type')
-
     ajaxbase.isedit = true
     var interncontent = ajaxbase[currentmodulename].rows
-
     interncontent = interncontent.filter(function (doctor) {
       return doctor[currentmoduleid] == armroleid
     })
     base.editrecord = interncontent
     $('#cltrl' + currentmoduleid).val(armroleid)
-    var formatresponse = this.formatresponse(interncontent)
-
-    formatresponse.forEach2(function (data) {
-      if (data.inputtype == 'textbox') {
-        $('#cltrl' + data.inputtextval).val(data.vals)
-        $('#cltrl' + data.inputtextval).removeAttr('data-form-type')
-      } else if (
-        data.inputtype == 'multiselect' &&
-        data.inputtextval == 'accesstype'
-      ) {
-        multiselectfunc[data.inputtextval].destroy(data.inputtextval)
-
-        var internsets = data.vals
-
-        if (Array.isArray(internsets)) {
-          var accesscontent = ''
-          internsets.forEach2(function (dat) {
-            accesscontent = accesstypecontent.filter(function (doctor) {
-              return doctor.val == dat
-            })
-            /*array*/
-            multiselectfunc[data.inputtextval].onsearchtext(
-              accesscontent[0].key,
-              accesscontent[0].text,
-              accesscontent[0].val
-            )
-          })
-        } else {
-          accesscontent = accesstypecontent.filter(function (doctor) {
-            return doctor.val == internsets
-          })
-          /*string*/
-          multiselectfunc[data.inputtextval].onsearchtext(
-            accesscontent[0].key,
-            accesscontent[0].text,
-            accesscontent[0].val
-          )
-        }
-      } else if (data.inputtype == 'multiselect') {
-        //multiselectfunc[data.inputtextval].destroy(data.inputtextval)
-
-        multiselectfunc[data.inputtextval].destroy(data.inputtextval)
-        var internsets = data.vals
-
-        ///normalize array
-        var coremulti = interncontent.map2(function (da) {
-          var y =
-            da[data.inputCustomMapping].indexOf(',') != -1
-              ? da[data.inputCustomMapping].split(',')
-              : da[data.inputCustomMapping]
-          //var x = (da[data.inputtextval + "id"].indexOf(',') != -1 ? da[data.inputtextval + "id"].split(',') : da[data.inputtextval + "id"]);
-
-          var xy = basemod_modal.getidfromobj(data.inputtextval)
-
-          var x =
-            da[xy].toString().indexOf(',') != -1 ? da[xy].split(',') : da[xy]
-
-          return {
-            val: y,
-            id: x
-          }
-        })
-
-        ///one to one array
-        var ids = coremulti[0].id
-
-        if (Array.isArray(ids)) {
-          var intens = []
-          ids.forEach2(function (d, i) {
-            var r = {}
-            r.id = d
-            r.val = coremulti[0].val[i]
-            intens.push(r)
-            r = {}
-          })
-
-          /*get id from response*/
-          intens.forEach2(function (dat) {
-            multiselectfunc[data.inputtextval].onsearchtext(
-              data.inputtextval,
-              dat.val,
-              parseInt(dat.id)
-            )
-          })
-        } else {
-          multiselectfunc[data.inputtextval].onsearchtext(
-            data.inputtextval,
-            coremulti[0].val,
-            parseInt(coremulti[0].id)
-          )
-        }
-      }
-    })
-    //active comma denominator
-    //console.log(interncontent[0].recordstate)
+    datatransformutils.editMultiSelect({
+      multiselectfunc,
+      validationmap,
+      content:interncontent
+      })
     if (interncontent[0].recordstate) {
       $('#cltrlrecordstate').prop('checked', true)
       $('#cltrlrecordstate').val(true)
@@ -378,6 +285,7 @@ let basemod_modal = {
     var applyfield = applyfields
     var res = data.map(function (data) {
       return applyfield.map(function (da) {
+        
         var y = data[da].indexOf(',') != -1 ? data[da].split(',') : data[da]
 
         return {

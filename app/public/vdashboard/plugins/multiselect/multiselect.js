@@ -147,25 +147,26 @@ let multisel = function basemultiselect (selconfig, callback) {
       var val = $(removecontent).data('selVal')
       var vals = $(removecontent).data('selVals')
 
-      this.onsearchtext(key, val, vals)
+      this.onsearchtext({ key: key, text: val, vals: vals })
       this.$input.focus()
       this.change(this.callbackfunc)
     }),
-    (me.onsearchtext = function (key, val, vals) {
+    (me.onsearchtext = function (obj) {
       // $("#dv_" + key).remove();
 
-      this.$el.find('#dv_' + key + ' ').html(' ')
-      this.$el.find('#dv_' + key + ' ').hide()
+      this.$el.find('#dv_' + obj.key + ' ').html(' ')
+      this.$el.find('#dv_' + obj.key + ' ').hide()
       //$("#dv_" + key).html(" ");
       //$("#dv_" + key).hide();
       // \"" + val + "\"
 
-      $('#cltrl_filter_' + key).val('')
+      $('#cltrl_filter_' + obj.key).val('')
 
-      this.assignsearchparams(key, vals)
-      var interntags = this.rendertags(key, val, vals)
+      this.assignsearchparams(obj.key, obj.vals)
+
+      var interntags = this.rendertags(obj.key, obj.text, obj.vals)
       //jquery
-      $('#cltrl_filter_chips_' + key).append(interntags)
+      $('#cltrl_filter_chips_' + obj.key).append(interntags)
     }),
     (me.rendertags = function (key, val, vals) {
       var divSpan = document.createElement('div')
@@ -330,7 +331,7 @@ let multisel = function basemultiselect (selconfig, callback) {
     }),
     (me.onremoteupate = function (editcontent) {
       editcontent.forEach(function (obj) {
-        me.onsearchtext(obj.key, obj.text, obj.val)
+        me.onsearchtext(obj)
       })
     }),
     (me.destroy = function (fieldname) {
