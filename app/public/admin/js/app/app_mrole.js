@@ -88,7 +88,7 @@ let basefunction = function () {
     },
     update: function (base) {
       base = basemod_modal.mrolepayloadformat(base)
-console.log(base)
+      console.log(base)
       // return this.deleterecord(base)
       //   .then(basemod_modal.insertmrole)
       //   .then(function (data) {
@@ -204,7 +204,7 @@ let basemod_modal = {
     var isactivearrayobj = {
       recordstate: base.interimdatapayload.recordstate
     }
-    console.log(multiselects);
+    console.log(multiselects)
     //flatting multiselects objects
     var temp = Object.fromEntries(
       Object.entries(multiselects).map(([k, v]) => [
@@ -252,18 +252,18 @@ let basemod_modal = {
     if (interncontent[0].recordstate) {
       $('#cltrlrecordstate').prop('checked', true)
       $('#cltrlrecordstate').val(true)
-      base.interimdatapayload.recordstate= true
+      base.interimdatapayload.recordstate = true
       base.datapayload.recordstate = true
     } else {
       $('#cltrlrecordstate').prop('checked', false)
       $('#cltrlrecordstate').val(false)
-      base.interimdatapayload.recordstate= false
+      base.interimdatapayload.recordstate = false
       base.datapayload.recordstate = false
     }
     $('#btnbutton').click()
   },
   tablechkbox: function (arg) {},
-  
+
   populatemodularddl: function () {
     validationmap.forEach2(function (data) {
       if (data.inputtype == 'multiselect') {
@@ -308,9 +308,7 @@ let basemultiselectaccess = {
     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
       data
     ) {
-      
-      multiselects[arg.secondaryKey]=data
-            
+      multiselects[arg.secondaryKey] = data
     })
     multiselectfunc[arg.fieldname].init()
   },
@@ -323,19 +321,17 @@ let basemultiselectaccess = {
     var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(arin)
     return internbase
   },
-  multiSelectCommonResponse: function (data,argument) {
-    
-      var internfield = Object.keys(argument.rows[0])
-    var  sets = argument.rows.map(function (doctor) {
-        return {
-          // return what new object will look like
-          key: data.fieldname,
-          text: doctor[internfield[0]],
-          val: doctor[internfield[1]]
-        }
-      })
-      return sets
-    
+  multiSelectCommonResponse: function (data, argument) {
+    var internfield = Object.keys(argument.rows[0])
+    var sets = argument.rows.map(function (doctor) {
+      return {
+        // return what new object will look like
+        key: data.fieldname,
+        text: doctor[internfield[0]],
+        val: doctor[internfield[1]]
+      }
+    })
+    return sets
   },
   htmlpopulatemodnamefilterparam: function (internar) {
     var filtparam = {}
@@ -367,9 +363,11 @@ let basemultiselectaccess = {
         .then(function (argument) {
           var sets = argument.rows
 
-    if (sets[0] != undefined) {
-          resolve(basemultiselectaccess.multiSelectCommonResponse(data,argument))
-    }
+          if (sets[0] != undefined) {
+            resolve(
+              basemultiselectaccess.multiSelectCommonResponse(data, argument)
+            )
+          }
         })
     })
   },
@@ -382,9 +380,11 @@ let basemultiselectaccess = {
         .then(function (argument) {
           var sets = argument.rows
 
-    if (sets[0] != undefined) {
-          resolve(basemultiselectaccess.multiSelectCommonResponse(data,argument))
-    }
+          if (sets[0] != undefined) {
+            resolve(
+              basemultiselectaccess.multiSelectCommonResponse(data, argument)
+            )
+          }
         })
     })
   },
