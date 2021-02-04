@@ -121,8 +121,11 @@ let multisel = function basemultiselect (selconfig, callback) {
           return e[key] != undefined
         })
         .map(function (doctor) {
+          console.log(isNaN(doctor[key][0]))
           return {
-            [key]: doctor[key].map(Number).remByVal(val)
+            [key]: isNaN(doctor[key][0])
+              ? doctor[key].remByVal(val)
+              : doctor[key].map(Number).remByVal(val)
           }
         })
 
