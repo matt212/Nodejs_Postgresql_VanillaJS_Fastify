@@ -308,7 +308,26 @@ let basemultiselectaccess = {
     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
       data
     ) {
-      multiselects[arg.secondaryKey] = data
+      console.log(data);
+      multiselects[arg.secondaryKey]=data
+      
+      // if(Array.isArray(data) && data.length>0)
+      // {
+      //   if(isNaN(Object.values(data[0])[0][0]))
+      //   {
+          
+      //     multiselects[arg.secondaryKey] =[{[arg.fieldname]: [...new Set(Object.values(data[0])[0])]}]
+      //   }
+      //   else
+      //   {
+      //     multiselects[arg.secondaryKey] = [{[arg.fieldname]:[...new Set(Object.values(data[0])[0].map(Number))]}]
+      //   }
+
+      // }else
+      // {
+      //   multiselects[arg.secondaryKey]=data
+      // }
+            
     })
     multiselectfunc[arg.fieldname].init()
   },

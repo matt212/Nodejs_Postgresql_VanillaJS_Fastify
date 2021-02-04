@@ -85,12 +85,11 @@ let multisel = function basemultiselect (selconfig, callback) {
       var objintern = {}
       objintern.fieldname = this.fieldname
       objintern.fieldval = this.fieldval
-       
-      let interims = Object.values(multiselects)
-        .map(str => {
-          return str[0][objintern.fieldname]
-        })
-        .filter(Boolean)[0]
+
+      let interims = undefined
+      if (this.basesearchar[0] != undefined) {
+        interims = Object.values(this.basesearchar[0])[0]
+      }
       if (interims != undefined) {
         if (interims.length >= 1 && this.selecttype == 'single') {
         } else {
@@ -116,13 +115,14 @@ let multisel = function basemultiselect (selconfig, callback) {
         .remove()
 
       var interncon = this.basesearchar
+
       interncon = interncon
         .filter(function (e) {
           return e[key] != undefined
         })
         .map(function (doctor) {
           return {
-            [key]: doctor[key].remByVal(val)
+            [key]: doctor[key].map(Number).remByVal(val)
           }
         })
 
