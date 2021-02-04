@@ -23,7 +23,17 @@ let baseurlobj = {
   pivotresult: '/' + currentmodulename + '/api/pivotresult/',
   deletemrole: '/' + currentmodulename + '/api/customDestroy/'
 }
+let validationListener = function () {
+  var sel = $(
+    '.form-horizontal input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]'
+  ).length
 
+  if (sel <= 0) {
+    $('#btnmodalsub').prop('disabled', false)
+  } else {
+    $('#btnmodalsub').prop('disabled', true)
+  }
+}
 let basefunction = function () {
   return {
     getpaginatesearchtype: function (base) {
@@ -131,9 +141,7 @@ let basemod_modal = {
       htmlcontent += '<div class="row">'
       item.forEach2(function (element) {
         if (element.inputtype == 'multiselect') {
-          htmlcontent += basemultiselectaccess.htmlpopulatemodular(
-            element.inputtextval
-          )
+          htmlcontent += basemultiselectaccess.htmlpopulatemodular(element)
         } else {
           htmlcontent +=
             '<div class="form-group overlaytxtalign col-md-5">' +
@@ -168,7 +176,7 @@ let basemod_modal = {
       '<div class="col-sm-offset-2 col-sm-15">' +
       '<div>' +
       '<label>' +
-      '<input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value="true"> Remember me' +
+      '<input type="checkbox" id="cltrlrecordstate" data-attribute="checkbox" data-form-type="true" onclick="javascript:tableops.onchk(this)" value="true"> Remember me' +
       '</label>' +
       '</div>' +
       '</div>' +
@@ -308,7 +316,14 @@ let basemultiselectaccess = {
     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
       data
     ) {
+      console.log(arg.secondaryKey)
       multiselects[arg.secondaryKey] = data
+
+      reqops.formvalidation(
+        $(`#overlaycontent [data-key='${arg.secondaryKey}']`)
+      )
+
+      validationListener()
     })
     multiselectfunc[arg.fieldname].init()
   },
@@ -394,16 +409,14 @@ let basemultiselectaccess = {
     })
   },
   htmlpopulatemodular: function (fieldname) {
-    var htmlcontents =
-      '<div class="form-group col-sm-6">' +
-      '<div class="col-sm-15">' +
-      '<label class="lblhide" id="lblmsgddlddlmulti">' +
-      '<i class="fa fa-bell-o"></i> Input with warning' +
-      '</label>' +
-      '<div id="in' +
-      fieldname +
-      '"></div>' +
-      '</div></div>'
+    var htmlcontents = `<div class="form-group col-sm-6"> 
+      <div class="col-sm-15">
+      <label class="lblhide" id="lblmsgddlddlmulti">
+      <i class="fa fa-bell-o"></i> Please Select ${fieldname.inputCustomMapping} 
+      </label>
+      <div onkeyup="javascript:reqops.formvalidation(this)" data-attribute="multiSelect"
+      data-key="${fieldname.inputname}" data-form-type="false" id="in${fieldname.inputtextval}"></div>
+      </div></div>`
     return htmlcontents
 
     //$(htmlcontents).insertBefore($("#overlaycontent.form-group.overlaytxtalign.col-md-12"))
@@ -413,45 +426,10 @@ let basemultiselectaccess = {
 $(function () {
   basemod_modal.modalpopulate()
   basemod_modal.populatemodularddl()
-  /*
-      basemultiselectaccess.multiselectaccesstype();
-      basemultiselectaccess.multiselectmodname();*/
-
-  $('.form-horizontal input:text').on('keydown keyup change', function () {
-    var sel = $('.form-horizontal input:text[data-form-type]').length
-
-    if (sel <= 0) {
-      $('#btnmodalsub').prop('disabled', false)
-    } else {
-      $('#btnmodalsub').prop('disabled', true)
+  $('.form-horizontal input[type="text"], input[type="checkbox"]').on(
+    'keydown keyup change',
+    function () {
+      validationListener()
     }
-  })
+  )
 })
-
-/*select  fields from one array to another array */
-/*var res = moduleattributes.map(function(data) {
-          return applyfields.map(function(da) {
-              return {
-                  [da]: data[da] }
-          })
-      })*/
-
-/*modularsel:function()
-     {
-         var interset = JSON.parse(validationmap.replace(/&quot;/g, '"'))
- interset.forEach2(function(element) {
-    console.log(element.inputname)
-
-var modmulti={}
-modmulti.fieldname=element.inputname
-modmulti.remotefunc="remotefunc"+modmulti.fieldname
-modmulti.onmultichange="onmultichange"+modmulti.fieldname
-multiselects["const"+modmulti.fieldname]=basemultiselectaccess.multiselectmodularaccesstype(basepopulate)
-multiselects["remotefunc"+modmulti.fieldname] = "remotefunc"+modmulti.fieldname
-multiselects["onmultichange"+modmulti.fieldname] = new Function('obj', 'dynamicmultiselects[obj.type]=obj.val;');
-
-
- })
-
-
-     }*/

@@ -217,7 +217,7 @@ $(function () {
     var sel = $(
       '.form-horizontal input:text[data-form-type] input:checkbox[data-form-type]'
     ).length
-    console.log(sel)
+
     if (sel <= 0) {
       $('#btnmodalsub').prop('disabled', false)
     } else {
@@ -701,7 +701,7 @@ let reqops = {
       })
   },
   formvalidation: function (argument) {
-    var fieldattr = $(arguments).attr('data-attribute')
+    var fieldattr = $(argument).attr('data-attribute')
 
     var internset = {}
     internset.content = argument
@@ -795,7 +795,7 @@ let multiselect = {
     internobj[fieldname] = fieldval.toLowerCase()
     let internbasearh = []
     internar.push(internobj)
-    console.log(internbasearh)
+
     if (basesearchar.length > 0) {
       //check if current search element and discard from metafilter
       internbasearh.push(basesearchar)
@@ -834,7 +834,7 @@ let multiselect = {
         $('#dv_' + fieldid + '').show()
 
         let internset = argument.rows
-        console.log(internbasesearchar)
+
         //remove already selected items from select object !
         if (internbasesearchar.length > 0) {
           var toRem = internbasesearchar.map(function (a) {
@@ -946,7 +946,7 @@ let multiselect = {
   },
 
   removefilterdiv: function (argument, key, val) {
-    $(arguments)
+    $(argument)
       .parent()
       .remove()
 
@@ -1336,7 +1336,6 @@ let ajaxutils = {
   },
   basepostmethodrawbody: function (ajaxbase) {
     return new Promise(function (resolve, reject) {
-      console.log('here')
       $.ajax(ajaxbase.url, {
         headers: ajaxbase.postauth.headers,
         //{action:'x',params:['a','b','c']}
@@ -1405,7 +1404,6 @@ let tableops = {
     basesearchar = basesearchar.filter(function (doctor) {
       return !Object.keys(doctor).includes(currentmoduleid) // if truthy then keep item
     })
-    console.log(basesearchar)
   },
   unchecktblall: function () {
     $('#tblchkmsg').hide()
@@ -1417,7 +1415,6 @@ let tableops = {
     this.clearfieldselection()
   },
   tblselectall: function () {
-    console.log($('#tblselectallchk').prop('checked'))
     if ($('#tblselectallchk').prop('checked')) {
       $('.tblkchk').prop('checked', true)
       $('#tblchkmsg').show()
@@ -1634,14 +1631,34 @@ var baseobjvalidation = {
       $(argument)
         .parent()
         .find('label')
+        .attr('class', 'hide')
+      $(argument).removeAttr('data-form-type')
+    } else {
+      $(argument)
+        .parent()
+        .find('label')
         .attr('class', 'control-label-format')
       $(argument).attr('data-form-type', 'true')
-    } else {
+    }
+  },
+  multiSelectValidation: function (argument) {
+    var fieldattr = $(argument).attr('data-key')
+
+    if (
+      Array.isArray(multiselects[fieldattr]) &&
+      multiselects[fieldattr].length
+    ) {
       $(argument)
         .parent()
         .find('label')
         .attr('class', 'hide')
       $(argument).removeAttr('data-form-type')
+    } else {
+      $(argument)
+        .parent()
+        .find('label')
+        .attr('class', 'control-label-format')
+      $(argument).attr('data-form-type', 'true')
     }
   },
   validationinterface: function (internset) {
@@ -1670,6 +1687,9 @@ var baseobjvalidation = {
       case 'passwordvalidation':
         this.passwordvalidation(internset.content)
         break
+      case 'multiSelect':
+        this.multiSelectValidation(internset.content)
+        break
       default:
         this.genvalidation(internset.content)
     }
@@ -1690,7 +1710,7 @@ let baseloadsegments = {
     filterparam.pageSize = base.pageSize
     filterparam.datecolsearch = base.datecolsearch
     base.datapayload = filterparam
-    console.log(base.datapayload)
+
     $('#dvreportcontainer').show()
     $('#dvparentfilterbar').show()
     $('#dvreportcontainer').addClass('loading-report-container')
@@ -1967,14 +1987,17 @@ let datatransformutils = {
         if (data[da.inputCustomMapping].indexOf(',') != -1) {
           /**check and assign values to multiselect control */
           if (isNaN(parseInt(data[da.inputname].split(',')[0]))) {
-            multiselects[da.inputname] = [{
-                 [da.inputtextval]: data[da.inputname].split(',') 
-            }]
+            multiselects[da.inputname] = [
+              {
+                [da.inputtextval]: data[da.inputname].split(',')
+              }
+            ]
           } else {
-            
-            multiselects[da.inputname] = [{
-                 [da.inputtextval]: data[da.inputname].split(',').map(Number) 
-            }]
+            multiselects[da.inputname] = [
+              {
+                [da.inputtextval]: data[da.inputname].split(',').map(Number)
+              }
+            ]
           }
           /**end region */
           inten[da.inputtextval] = data[da.inputCustomMapping]
@@ -1988,13 +2011,17 @@ let datatransformutils = {
             })
         } else {
           if (isNaN(parseInt(data[da.inputname]))) {
-            multiselects[da.inputname] = [{
-                [da.inputtextval]: [data[da.inputname]] 
-            }]
+            multiselects[da.inputname] = [
+              {
+                [da.inputtextval]: [data[da.inputname]]
+              }
+            ]
           } else {
-            multiselects[da.inputname] = [{
-                [da.inputtextval]: [parseInt(data[da.inputname])] 
-            }]
+            multiselects[da.inputname] = [
+              {
+                [da.inputtextval]: [parseInt(data[da.inputname])]
+              }
+            ]
           }
 
           inten[da.inputtextval] = {
