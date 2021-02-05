@@ -1,27 +1,29 @@
 let currentmodulename = 'mrole'
 let currentmoduleid = 'mroleid'
-let currentrolemodname = 'role'
+//multiSelectInit1
+let currentrole = 'role'
 let currentmodname = 'modname'
-
 let multiselects = {}
 let multiselectfunc = {}
 
 let baseurlobj = {
-  getpaginatesearchtypeurl: '/' + currentmodulename + '/api/searchtype/',
-  createdata: '/' + currentmodulename + '/api/bulkCreate/',
-  createdatarole: '/' + currentrolemodname + '/api/create/',
-  updatedata: '/' + currentmodulename + '/api/update/',
-  exceldata: '/' + currentmodulename + '/api/exportexcel/',
-  uploaddata: '/' + currentmodulename + '/api/uploadcontent/',
-  getpaginatesearchtypegroupby:
-    '/' + currentmodulename + '/api/searchtypegroupby/',
-  getpaginatemodnamesearchtypegroupby:
-    '/' + currentmodname + '/api/searchtypegroupbyId/',
+  getpaginatesearchtypeurl: `/${currentmodulename}/api/searchtype/`,
+  createdata: `/${currentmodulename}/api/bulkCreate/`,
+  //multiSelectInit2
   getpaginateRolesearchtypegroupby:
-    '/' + currentrolemodname + '/api/searchtypegroupbyId/',
-  exportexcelcalc: '/' + currentmodulename + '/api/exportexcelcalc/',
-  pivotresult: '/' + currentmodulename + '/api/pivotresult/',
-  deletemrole: '/' + currentmodulename + '/api/customDestroy/'
+  `/${currentrole}/api/searchtypegroupbyId/`,
+getpaginatemodnamesearchtypegroupby:
+  `/${currentmodname}/api/searchtypegroupbyId/`,  
+  updatedata: `/${currentmodulename}/api/update/`,
+  exceldata: `/${currentmodulename}/api/exportexcel/`,
+  uploaddata: `/${currentmodulename}/api/uploadcontent/`,
+  getpaginatesearchtypegroupby:
+    `/${currentmodulename}/api/searchtypegroupby/`,
+  getpaginatemodnamesearchtypegroupby:
+    `/${currentmodname}/api/searchtypegroupbyId/`,
+  exportexcelcalc:`/${currentmodulename}/api/exportexcelcalc/`,
+  pivotresult: `/${currentmodulename}/api/pivotresult/`,
+  deletemrole: `/${currentmodulename}/api/customDestroy/`
 }
 let validationListener = function () {
   var sel = $(
@@ -40,15 +42,12 @@ let basefunction = function () {
       ajaxbase.payload = base.datapayload
       ajaxbase.url = baseurlobj.getpaginatesearchtypeurl
       $("a[href$='revenue-chart']").tab('show')
-      //$("#trloader").show()
-      //$("#basetable tbody").slideUp("slow").hide();
-
+      
       $('table').addClass('loading')
       return ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
         ajaxbase.response = argument
         ajaxbase[currentmodulename] = argument
-        /*$("#trloader").hide()
-                 $("#basetable tbody").slideDown("slow").show();*/
+      
         $('table').removeClass('loading')
 
         return argument
@@ -63,6 +62,7 @@ let basefunction = function () {
         return argument
       })
     },
+    //multiSelectInit3
     getpaginatemodnamesearchtypegroupby: function (base) {
       ajaxbase.payload = base.datapayload
       ajaxbase.url = baseurlobj.getpaginatemodnamesearchtypegroupby
@@ -81,13 +81,6 @@ let basefunction = function () {
         return argument
       })
     },
-    insert: function (base) {
-      base = basemod_modal.mrolepayloadformat(base)
-      return basemod_modal.insertmrole(base).then(function (data) {
-        ajaxbase.response = data
-        return ajaxbase
-      })
-    },
     deleterecord: function (base) {
       ajaxbase.payload = base.datapayload
       ajaxbase.url = baseurlobj.deletemrole
@@ -96,16 +89,20 @@ let basefunction = function () {
         return base
       })
     },
+    insert: function (base) {
+    
+      base = basemod_modal.payloadformat(base)
+      ajaxbase.payload = base.datapayload
+      ajaxbase.url = baseurlobj.createdata
+      return new Promise(function (resolve, reject) {
+        ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
+          resolve(argument)
+        })
+      })
+    },
     update: function (base) {
-      base = basemod_modal.mrolepayloadformat(base)
+      base = basemod_modal.payloadformat(base)
       console.log(base)
-      // return this.deleterecord(base)
-      //   .then(basemod_modal.insertmrole)
-      //   .then(function (data) {
-      //     //console.log(data)
-      //     ajaxbase.response = data
-      //     return ajaxbase
-      //   })
     },
     exportexcel: function (base) {
       ajaxbase.url = baseurlobj.exceldata
@@ -184,35 +181,11 @@ let basemod_modal = {
 
     $('#overlaycontent').html(htmlcontent + chkcontent)
   },
-  insertrole: function (base) {
-    if (base.datapayload.rolename != undefined) {
-      var obj = {}
-      obj.rolename = base.datapayload.rolename
-      ajaxbase.payload = obj
-      ajaxbase.url = baseurlobj.createdatarole
-      return new Promise(function (resolve, reject) {
-        ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
-          resolve(argument)
-        })
-      })
-    }
-  },
-  insertmrole: function (base) {
-    /*var obj = {}
-         obj.rolename = base.datapayload.role*/
-    ajaxbase.payload = base.datapayload
-    ajaxbase.url = baseurlobj.createdata
-    return new Promise(function (resolve, reject) {
-      ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
-        resolve(argument)
-      })
-    })
-  },
-  mrolepayloadformat: function (data) {
+  //multiSelectInit8
+  payloadformat: function (base) {
     var isactivearrayobj = {
       recordstate: base.interimdatapayload.recordstate
     }
-    console.log(multiselects)
     //flatting multiselects objects
     var temp = Object.fromEntries(
       Object.entries(multiselects).map(([k, v]) => [
@@ -250,18 +223,21 @@ let basemod_modal = {
       return doctor[currentmoduleid] == armroleid
     })
     base.editrecord = interncontent
+    //multiSelectInit4
     $('#cltrl' + currentmoduleid).val(armroleid)
     datatransformutils.editMultiSelect({
       multiselectfunc,
       validationmap,
       content: interncontent
     })
-
+    $("[data-attribute='multiSelect']").removeAttr('data-form-type')
+    
     if (interncontent[0].recordstate) {
       $('#cltrlrecordstate').prop('checked', true)
       $('#cltrlrecordstate').val(true)
       base.interimdatapayload.recordstate = true
       base.datapayload.recordstate = true
+      $("cltrlrecordstate").removeAttr('data-form-type')
     } else {
       $('#cltrlrecordstate').prop('checked', false)
       $('#cltrlrecordstate').val(false)
@@ -271,14 +247,12 @@ let basemod_modal = {
     $('#btnbutton').click()
   },
   tablechkbox: function (arg) {},
-
+  //multiSelectInit5
   populatemodularddl: function () {
     validationmap.forEach2(function (data) {
       if (data.inputtype == 'multiselect') {
         var p = {}
         p.fieldname = data.inputtextval
-
-        //p.fieldkey = data.inputname
         p.fieldkey = data.inputtextval
         p.secondaryKey = data.inputname
         p.selecttype = data.selecttype
@@ -300,7 +274,7 @@ let accesstypecontent = [
     val: 'AA'
   }
 ]
-
+//multiSelectInit6
 let basemultiselectaccess = {
   multiselectmodular: function (arg) {
     var multiselectconfig = {
@@ -312,17 +286,14 @@ let basemultiselectaccess = {
       remotefunc: this['remotefunc' + arg.fieldname]
     }
 
-    //multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, this["onchange" + arg.fieldname])
+    
     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
       data
     ) {
-      console.log(arg.secondaryKey)
       multiselects[arg.secondaryKey] = data
-
       reqops.formvalidation(
         $(`#overlaycontent [data-key='${arg.secondaryKey}']`)
       )
-
       validationListener()
     })
     multiselectfunc[arg.fieldname].init()
@@ -425,6 +396,7 @@ let basemultiselectaccess = {
 
 $(function () {
   basemod_modal.modalpopulate()
+  //multiSelectInit7
   basemod_modal.populatemodularddl()
   $('.form-horizontal input[type="text"], input[type="checkbox"]').on(
     'keydown keyup change',

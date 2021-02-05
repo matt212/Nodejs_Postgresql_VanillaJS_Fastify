@@ -157,6 +157,11 @@
                     internobj.inputtypeVal = $(this.cells[2]).find('option:selected').text().trim()
                     internobj.inputtypeID = internobj.inputtypemod + "id"
                     internobj.inputParent= internobj.inputtypemod
+                    if (internobj.inputtype == "multiselect" || internobj.inputtype == "singleselect") {
+                    internobj.inputCustomMapping = internobj.inputtypemod
+                    internobj.selecttype= internobj.inputtype
+                    internobj.inputtextval=$(this.cells[2]).find('option:selected').text().trim()
+                    }
                 }
 
                 internobj.inputname = $(this.cells[3]).find('input').val().trim()
@@ -253,6 +258,8 @@
         server_client = JSON.parse(server_client)
         //server_client=[ { "inputtype": "textbox", "inputname": "name", "inputplaceholder": "Please enter name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "checkbox", "inputtypemod": "gender", "inputtypeVal": "name", "inputtypeID": "genderid", "inputname": "genderid", "inputplaceholder": "Please select gender", "fieldtypename": "ARRAY(DataTypes.INTEGER)", "fieldvalidatename": "number", "fieldmaxlength": "80" } ]
         //swagger=[ { "type": "string", "fieldname": "name", "example": "sample text" }, { "type": "array", "fieldname": "genderid", "format": "array", "example": [ 1, 2 ] } ]
+        server_client=[ { "inputtype": "singleselect", "inputtypemod": "role", "inputtypeVal": "rolename", "inputtypeID": "roleid", "inputParent": "role", "inputCustomMapping": "role", "selecttype": "singleselect", "inputtextval": "rolename", "inputname": "roleid", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "multiselect", "inputtypemod": "modname", "inputtypeVal": "mname", "inputtypeID": "modnameid", "inputParent": "modname", "inputCustomMapping": "modname", "selecttype": "multiselect", "inputtextval": "mname", "inputname": "modnameid", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" } ]
+        swagger=[ { "type": "integer", "fieldname": "roleid", "format": "int64", "example": 20 }, { "type": "integer", "fieldname": "modnameid", "format": "int64", "example": 20 } ]
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}
         ajaxbase.method = "jedha"

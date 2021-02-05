@@ -1978,9 +1978,10 @@ let datatransformutils = {
     return true
   },
   editMultiSelect: function (obj) {
-    var a1 = obj.validationmap
+    var a1 = obj.validationmap.filter((dt)=>dt.inputtype=="multiselect")
     var res = obj.content.map(function (data) {
       return a1.map(function (da) {
+        
         var inten = {}
 
         obj.multiselectfunc[da.inputtextval].destroy(da.inputtextval)

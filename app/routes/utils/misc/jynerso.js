@@ -103,16 +103,16 @@ async function routes (fastify, options) {
     var mainapp = req.body
 
     applymodel(mainapp)
-      .then(applyApp)
+      /*.then(applyApp)
       .then(applyroutes)
       .then(applyserverValidationConfig)
       .then(applyserverschemaValidator)
       .then(applyMochaChaiTestCases)
-      .then(swaggerdocs)
+      .then(swaggerdocs)*/
       .then(applyMultiControls)
-      .then(applyhtml)
+      /*.then(applyhtml)
       .then(packageJsonUpdate)
-      .then(superadminUpdate)
+      .then(superadminUpdate)*/
       .then(function (data) {
         reply.send({
           a: 'run  yarn applychangesDB ',
@@ -393,6 +393,142 @@ var radiomultiInitControl = function (redlime) {
   })
   return r1
 }
+var multiSelectControl = function (redlime) {
+  var r1 = ''
+  var baseContent=`let basemultiselectaccess = {
+    multiselectmodular: function (arg) {
+      var multiselectconfig = {
+        selectevent: '#in' + arg.fieldname,
+        fieldkey: arg.fieldkey,
+        selecttype: arg.selecttype,
+        selecttype: arg.selecttype,
+        placeholder: arg.fieldname,
+        remotefunc: this['remotefunc' + arg.fieldname]
+      }
+  
+      
+      multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
+        data
+      ) {
+        multiselects[arg.secondaryKey] = data
+        reqops.formvalidation(
+          $(\`#overlaycontent [data-key='\${arg.secondaryKey}']\`)
+        )
+        validationListener()
+      })
+      multiselectfunc[arg.fieldname].init()
+    },
+    multiSelectCommon: function (data) {
+      var arin = []
+      var intern = {}
+      intern[data.fieldname] = data.fieldval
+      arin.push(intern)
+      intern = {}
+      var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(arin)
+      return internbase
+    },
+    multiSelectCommonResponse: function (data, argument) {
+      var internfield = Object.keys(argument.rows[0])
+      var sets = argument.rows.map(function (doctor) {
+        return {
+          // return what new object will look like
+          key: data.fieldname,
+          text: doctor[internfield[0]],
+          val: doctor[internfield[1]]
+        }
+      })
+      return sets
+    },
+    htmlpopulatemodnamefilterparam: function (internar) {
+      var filtparam = {}
+      filtparam.pageno = 0
+      filtparam.pageSize = 20
+      filtparam.searchtype = 'Columnwise'
+      filtparam.searchparam = internar
+      filtparam.searchparammetafilter = []
+      filtparam.ispaginate = true
+      filtparam.disableDate = true
+      base.datapayload = filtparam
+  
+      return base
+    },
+    htmlpopulatemrolefilterparam: function (internar) {
+      var filtparam = {}
+      filtparam.modulename = internar.mname
+      filtparam.rolename = internar.roleid
+      base.datapayload = filtparam
+  
+      return base
+    },
+    htmlpopulatemodular: function (fieldname) {
+      var htmlcontents = \`<div class="form-group col-sm-6"> 
+        <div class="col-sm-15">
+        <label class="lblhide" id="lblmsgddlddlmulti">
+        <i class="fa fa-bell-o"></i> Please Select \${fieldname.inputCustomMapping} 
+        </label>
+        <div onkeyup="javascript:reqops.formvalidation(this)" data-attribute="multiSelect"
+        data-key="\${fieldname.inputname}" data-form-type="false" id="in\${fieldname.inputtextval}"></div>
+        </div></div>\`
+      return htmlcontents
+  
+      //$(htmlcontents).insertBefore($("#overlaycontent.form-group.overlaytxtalign.col-md-12"))
+    },`
+
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'multiselect') {
+      baseContent=baseContent+`\n remotefunc${dt.inputtextval}: function (data) {
+  return new Promise(function (resolve, reject) {
+    basefunction()
+      .getpaginate${dt.inputParent}searchtypegroupby(
+        basemultiselectaccess.multiSelectCommon(data)
+      )
+      .then(function (argument) {
+        var sets = argument.rows
+
+        if (sets[0] != undefined) {
+          resolve(
+            basemultiselectaccess.multiSelectCommonResponse(data, argument)
+          )
+        }
+      })
+  })
+},`
+    }
+  })
+  baseContent=baseContent+`}`
+  return baseContent
+}
+var interfaceMultiControl = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    
+    if (dt.inputtype == 'multiselect' || dt.inputtype == 'singleselect') {
+      r1=r1+`getcurrentMod${dt.inputParent}groupby: '/' + current${dt.inputParent} + '/api/searchtypegroupbyId/',`
+    }
+    else if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox' ) {
+      r1=r1+`getcurrentMod${dt.inputParent}groupby: '/' + current${dt.inputParent}.name + '/api/searchtypegroupbyId/',`
+    }
+  })
+  return r1;
+}
+var interfacelevel1MultiControl = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    if (dt.inputtype != 'textbox') {
+      r1=r1+`
+      getcurrentMod${dt.inputParent}groupby: function(base) {
+        ajaxbase.payload = base.datapayload
+        ajaxbase.url = baseurlobj.getcurrentMod${dt.inputParent}groupby;
+        return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
+            ajaxbase.response = argument;
+            return argument;
+        })
+      },`
+    }
+    
+  })
+  return r1;
+}
 var radioMultiControl = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
@@ -437,21 +573,51 @@ var checkboxMultiControl = function (redlime) {
 }
 
 let multiInsertCode = function (redlime) {
+  var isMulti = `return { ...arg.datapayload`
   var r1 = `{ ...arg.datapayload`
+  var r2=`{
+    var isactivearrayobj = {
+      recordstate: base.interimdatapayload.recordstate
+    }
+    //flatting multiselects objects
+    var temp = Object.fromEntries(
+      Object.entries(multiselects).map(([k, v]) => [
+        k,
+        datatransformutils.flat(v)
+      ])
+    )
+    let b = { ...temp, ...isactivearrayobj }
+    //apply cartesion for multiselects objects
+    var interns = datatransformutils.getCartesian(b)
+    let o = {
+      payset: interns,
+      delObj: {
+        ${redlime[0].inputtypeID}: interns[0].${redlime[0].inputtypeID}
+      }
+    }
+    base.datapayload = o
+    return base
+  }`
   redlime.forEach(function (dt) {
-    if (dt.inputtype != 'textbox') {
+    if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox') {
       r1 = r1 + `,...current${dt.inputtypemod}.data `
+      isMulti=false
+    }
+    else if (dt.inputtype == 'singleselect'|| dt.inputtype == 'multiselect') {
+      isMulti=true
     }
   })
   r1 = r1 + `}`
 
-  return r1
+  return (isMulti === true) ? r2 : r1;
 }
 
 let baseinitControl = function (redlime) {
   var r1 = ' '
+  var isMulti=''
   redlime.forEach(function (dt) {
-    if (dt.inputtype != 'textbox') {
+    
+    if (dt.inputtype == "radio" || dt.inputtype=="checkbox") {
       r1 =
         r1 +
         `let current${dt.inputtypemod}={
@@ -460,9 +626,20 @@ let baseinitControl = function (redlime) {
         text:"${dt.inputtypeVal}",
         ${dt.inputtype=="checkbox" ? `data:{"${dt.inputtypeID}":[]}` : " "}
       };`
+      
+    }
+    else if (dt.inputtype =="multiselect" || dt.inputtype =="singleselect")
+    {
+      isMulti=true
+      r1 =
+        r1 +
+        `let current${dt.inputParent} = '${dt.inputParent}'`
+
     }
   })
-  return r1
+  var multival=`let multiselects = {}
+  let multiselectfunc = {}`
+  return (isMulti === true) ? r1+'\n'+multival : r1;
 }
 function applyMultiControls (mainapp) {
   return new Promise((resolve, reject) => {
@@ -482,7 +659,9 @@ function applyMultiControls (mainapp) {
         var currentInitialization =
           "getcurrentMod{modulename}groupby: '/' + current{modulename}.name + '/api/searchtypegroupbyId/',"
         //initialization
-
+        var interfaceinit=interfaceMultiControl(mainapp[0].server_client)
+        var implementationinit=interfacelevel1MultiControl(mainapp[0].server_client)
+        
         //implementation
         var currentImplementation = `
     getcurrentMod{modulename}groupby: function(base) {
@@ -506,8 +685,10 @@ function applyMultiControls (mainapp) {
            $('#btnmodalsub').prop('disabled', true)
          }
         }
+        //multiSelectInit6
     $(function () {
     basemod_modal.modalpopulate()
+    //multiSelectInit7
     $('.form-horizontal input[type="text"], input[type="checkbox"]').on("keydown keyup change", function () {
       validationListener()
     })
@@ -556,6 +737,73 @@ function applyMultiControls (mainapp) {
               '//radioCode',
               '\n ' + radiomultiInitControl(mainapp[0].server_client)
             )
+            if (element.inputtype == 'multiselect') {
+              multiControlsScripts = multiControlsScripts.replace(
+                '//multiSelectInit8',
+                '\n ' + `if (element.inputtype == 'multiselect') {
+                  htmlcontent += basemultiselectaccess.htmlpopulatemodular(element)
+                } `
+              )
+              multiControlsScripts = multiControlsScripts.replace(
+                '//multiSelectInit4',
+                '\n ' + `datatransformutils.editMultiSelect({
+                  multiselectfunc,
+                  validationmap,
+                  content: interncontent
+                })
+                $("[data-attribute='multiSelect']").removeAttr('data-form-type')`
+              )
+              multiControlsScripts = multiControlsScripts.replace(
+                '//multiSelectInit5',
+                '\n ' + `populatemodularddl: function () {
+                  validationmap.forEach2(function (data) {
+                    if (data.inputtype == 'multiselect') {
+                      var p = {}
+                      p.fieldname = data.inputtextval
+                      p.fieldkey = data.inputtextval
+                      p.secondaryKey = data.inputname
+                      p.selecttype = data.selecttype
+                      basemultiselectaccess.multiselectmodular(p)
+                    }
+                  })
+                },`
+              )
+              multiControlsScripts = multiControlsScripts.replace(
+                '//multiSelectInit9',
+                '\n ' + `${element.inputtypemod}payloadformat: function (base) {
+                  var isactivearrayobj = {
+                    recordstate: base.interimdatapayload.recordstate
+                  }
+                  //flatting multiselects objects
+                  var temp = Object.fromEntries(
+                    Object.entries(multiselects).map(([k, v]) => [
+                      k,
+                      datatransformutils.flat(v)
+                    ])
+                  )
+                  let b = { ...temp, ...isactivearrayobj }
+                  //apply cartesion for multiselects objects
+                  var interns = datatransformutils.getCartesian(b)
+                  let o = {
+                    payset: interns,
+                    delObj: {
+                      roleid: interns[0].${element.inputtypeID}
+                    }
+                  }
+                  base.datapayload = o
+                  return base
+                },`
+              )
+              baseOffLoad = baseOffLoad.replace(
+                '//multiSelectInit6',
+                '\n ' + multiSelectControl(mainapp[0].server_client))
+              
+              baseOffLoad = baseOffLoad.replace(
+                '//multiSelectInit7',
+                '\n ' + `basemod_modal.populatemodularddl()`)
+              }
+            
+
             if(checkboxmultiInitControl(mainapp[0].server_client)!==""&&radiomultiInitControl(mainapp[0].server_client)!=="")
             {
               console.log("---------------------herer")
@@ -605,8 +853,8 @@ function applyMultiControls (mainapp) {
         })
         if (c != '') {
           appsgenerator = appsgenerator.replace(/definition/g, '\n' + baseMod)
-          appsgenerator = appsgenerator.replace(/initialization/g, '\n' + c)
-          appsgenerator = appsgenerator.replace(/implementation/g, '\n' + d)
+          appsgenerator = appsgenerator.replace(/initialization/g, '\n' + interfaceinit)
+          appsgenerator = appsgenerator.replace(/implementation/g, '\n' + implementationinit)
           appsgenerator = appsgenerator.replace(/groupBySets/g, '\n' + e)
           appsgenerator = appsgenerator.replace(
             /baseOffLoad/g,
@@ -692,7 +940,8 @@ var multiControlsScripts = `let basemod_modal = {
 
         htmlcontent += \`<div class=\"row\">\`
         item.forEach2(function(element) {
-             //radioCode
+          //multiSelectInit8   
+          //radioCode
              //rchkelse   
              //checkboxCode
              else {
@@ -736,13 +985,14 @@ baseCheckbox:\`<div class="checkbox tablechk">
    </label>
    </div>\`
   ,
+  //multiSelectInit9
      afterhtmlpopulate: function() {
          $('#basetable tbody tr td:last-child').attr('onclick', 'javascript:basemod_modal.ontdedit(this)')
          $('#basetable tbody tr td:nth-child(1) input:checkbox').attr('onclick', 'javascript:basemod_modal.tablechkbox(this)')
          //$("a[href='#sales-chart'").hide()
      },
      payloadformat: function (arg) {
-      return //insertpayloadData
+       //insertpayloadData
     },
      ontdedit: function(arg) {
 
@@ -756,7 +1006,7 @@ baseCheckbox:\`<div class="checkbox tablechk">
          base.editrecord = interncontent;
          $('#cltrl' + currentmoduleid).val(armodid);
          var formatresponse = this.formatresponse(interncontent);
-
+         //multiSelectInit4
          formatresponse.forEach2(function(data) {
 
              if (data.inputtype == "textbox") {
@@ -785,14 +1035,17 @@ baseCheckbox:\`<div class="checkbox tablechk">
              $('#cltrlrecordstate').prop('checked', true);
              $('#cltrlrecordstate').val(true);
              base.datapayload.recordstate = true
+             base.interimdatapayload.recordstate = true
          } else {
              $('#cltrlrecordstate').prop('checked', false);
              $('#cltrlrecordstate').val(false);
              base.datapayload.recordstate = false
+             base.interimdatapayload.recordstate = false
          }
          $("#btnbutton").click();
      },
      tablechkbox: function(arg) {},
+     //multiSelectInit5
      formatresponse: function(data) {
 
          var res = this.formatserverfieldmap(data)

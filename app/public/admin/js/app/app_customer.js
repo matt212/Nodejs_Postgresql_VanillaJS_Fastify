@@ -278,17 +278,13 @@
        } else if (data.inputtype == "radio") {
          $(`#overlaycontent .form-group .custom-control.custom-radio  [data-val="${data.vals}"]`).prop("checked", true)
 
-
        } else if (data.inputtype == "checkbox") {
          $(`#overlaycontent .checkbox.tablechk [type="checkbox"]`).each(function(index) {
            $(this).attr("checked", false)
          })
          data.vals.forEach(function(dr) {
-
            $(`#overlaycontent .form-group .custom-control.custom-checkbox  [data-val='${dr}']`).prop("checked", true)
-
          })
-
          currentgender.data[data.inputname] = data.vals
        }
      })
