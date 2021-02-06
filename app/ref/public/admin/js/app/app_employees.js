@@ -114,3 +114,4 @@
  }
  //baseOffLoad
  let basemod_modal = {afterhtmlpopulate: function(){},payloadformat: function (arg) {return arg.datapayload}}
+ //StaticMulitSelectData

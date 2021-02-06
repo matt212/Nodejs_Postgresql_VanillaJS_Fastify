@@ -475,7 +475,7 @@ var multiSelectControl = function (redlime) {
     },`
 
   redlime.forEach(function (dt) {
-    if (dt.inputtype == 'multiselect') {
+    if (dt.inputtype == 'multiselect' && dt.childcontent==undefined) {
       baseContent=baseContent+`\n remotefunc${dt.inputtextval}: function (data) {
   return new Promise(function (resolve, reject) {
     basefunction()
@@ -494,6 +494,15 @@ var multiSelectControl = function (redlime) {
   })
 },`
     }
+    else if (dt.inputtype == 'multiselect' && dt.childcontent!=undefined)
+    {
+      baseContent=baseContent+`remotefunc${dt.inputtextval}: function (data) {
+        return new Promise(function (resolve, reject) {
+          resolve(${dt.inputtextval}content)
+        })
+      },`
+
+    }
   })
   baseContent=baseContent+`}`
   return baseContent
@@ -502,10 +511,10 @@ var interfaceMultiControl = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
     
-    if (dt.inputtype == 'multiselect' || dt.inputtype == 'singleselect') {
+    if ((dt.inputtype == 'multiselect' || dt.inputtype == 'singleselect') && dt.childcontent==undefined ) {
       r1=r1+`getcurrentMod${dt.inputParent}groupby: '/' + current${dt.inputParent} + '/api/searchtypegroupbyId/',`
     }
-    else if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox' ) {
+    else if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox') {
       r1=r1+`getcurrentMod${dt.inputParent}groupby: '/' + current${dt.inputParent}.name + '/api/searchtypegroupbyId/',`
     }
   })
@@ -514,7 +523,7 @@ var interfaceMultiControl = function (redlime) {
 var interfacelevel1MultiControl = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
-    if (dt.inputtype != 'textbox') {
+    if (dt.inputtype != 'textbox' && dt.childcontent==undefined) {
       r1=r1+`
       getcurrentMod${dt.inputParent}groupby: function(base) {
         ajaxbase.payload = base.datapayload
@@ -612,6 +621,29 @@ let multiInsertCode = function (redlime) {
   return (isMulti === true) ? r2 : r1;
 }
 
+var StaticMulitSelectDataInitControl = function (redlime) {
+  var r1 = ''
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'multiselect'||dt.inputtype == 'singleselect') {
+      if(dt.childcontent!=undefined)
+      {
+        var ar1=[]
+        
+        dt.childcontent.forEach(function (dts) {
+          
+          var o={}
+          o.text=dts.text
+          o.val=dts.val
+          o.key=dt.inputname
+          ar1.push(o)
+        })
+        r1=r1+`let ${dt.inputname}content =${JSON.stringify(ar1, null, 4)}` 
+      }
+
+    }
+  })
+  return r1;
+}
 let baseinitControl = function (redlime) {
   var r1 = ' '
   var isMulti=''
@@ -631,9 +663,13 @@ let baseinitControl = function (redlime) {
     else if (dt.inputtype =="multiselect" || dt.inputtype =="singleselect")
     {
       isMulti=true
-      r1 =
+      if(dt.childcontent ==undefined)
+      {
+        r1 =
         r1 +
         `let current${dt.inputParent} = '${dt.inputParent}'`
+      }
+      
 
     }
   })
@@ -770,29 +806,7 @@ function applyMultiControls (mainapp) {
               )
               multiControlsScripts = multiControlsScripts.replace(
                 '//multiSelectInit9',
-                '\n ' + `${element.inputtypemod}payloadformat: function (base) {
-                  var isactivearrayobj = {
-                    recordstate: base.interimdatapayload.recordstate
-                  }
-                  //flatting multiselects objects
-                  var temp = Object.fromEntries(
-                    Object.entries(multiselects).map(([k, v]) => [
-                      k,
-                      datatransformutils.flat(v)
-                    ])
-                  )
-                  let b = { ...temp, ...isactivearrayobj }
-                  //apply cartesion for multiselects objects
-                  var interns = datatransformutils.getCartesian(b)
-                  let o = {
-                    payset: interns,
-                    delObj: {
-                      roleid: interns[0].${element.inputtypeID}
-                    }
-                  }
-                  base.datapayload = o
-                  return base
-                },`
+                '\n ' + ``
               )
               baseOffLoad = baseOffLoad.replace(
                 '//multiSelectInit6',
@@ -831,7 +845,7 @@ function applyMultiControls (mainapp) {
                 /{modulename}/g,
                 element.inputtypemod
               )
-              e = groupbyControlsPopulate(element.inputtypemod)
+              e = ((element.childcontent==undefined) ? groupbyControlsPopulate(element.inputtypemod) : ' ')
             } else {
               c =
                 c +
@@ -847,7 +861,7 @@ function applyMultiControls (mainapp) {
                   /{modulename}/g,
                   element.inputtypemod
                 )
-              e = e + '\n' + groupbyControlsPopulate(element.inputtypemod)
+              e = e + '\n' + ((element.childcontent==undefined) ? groupbyControlsPopulate(element.inputtypemod) : ' ') 
             }
           }
         })
@@ -866,6 +880,10 @@ function applyMultiControls (mainapp) {
             replaces,
             '\n' + beautify(multiControlsScripts, { indent_size: 2 })
           )
+          appsgenerator = appsgenerator.replace(
+            /StaticMulitSelectData/g,
+            '\n' + beautify(StaticMulitSelectDataInitControl(mainapp[0].server_client), { indent_size: 2 })
+          )
         }
       }
 
@@ -873,6 +891,7 @@ function applyMultiControls (mainapp) {
         /employees/g,
         mainapp[0].datapayloadModulename
       )
+      
       fs.writeFile(
         '../public/admin/js/app/app_' +
           mainapp[0].datapayloadModulename +
@@ -886,6 +905,7 @@ function applyMultiControls (mainapp) {
       reject(err)
     }
   })
+
 }
 function applyclientJS (mainapp) {
   return new Promise((resolve, reject) => {
