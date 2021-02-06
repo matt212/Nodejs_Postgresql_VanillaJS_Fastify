@@ -475,11 +475,11 @@ var multiSelectControl = function (redlime) {
     },`
 
   redlime.forEach(function (dt) {
-    if (dt.inputtype == 'multiselect' && dt.childcontent==undefined) {
+    if ((dt.inputtype == 'multiselect' || dt.inputtype == 'singleselect') && dt.childcontent==undefined) {
       baseContent=baseContent+`\n remotefunc${dt.inputtextval}: function (data) {
   return new Promise(function (resolve, reject) {
     basefunction()
-      .getpaginate${dt.inputParent}searchtypegroupby(
+      .getcurrentMod${dt.inputParent}groupby(
         basemultiselectaccess.multiSelectCommon(data)
       )
       .then(function (argument) {
@@ -512,10 +512,10 @@ var interfaceMultiControl = function (redlime) {
   redlime.forEach(function (dt) {
     
     if ((dt.inputtype == 'multiselect' || dt.inputtype == 'singleselect') && dt.childcontent==undefined ) {
-      r1=r1+`getcurrentMod${dt.inputParent}groupby: '/' + current${dt.inputParent} + '/api/searchtypegroupbyId/',`
+      r1=r1+`getcurrentMod${dt.inputParent}groupby: \`\${current${dt.inputParent}}/api/searchtypegroupbyId/\`,`
     }
     else if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox') {
-      r1=r1+`getcurrentMod${dt.inputParent}groupby: '/' + current${dt.inputParent}.name + '/api/searchtypegroupbyId/',`
+      r1=r1+`getcurrentMod${dt.inputParent}groupby: \`\${current${dt.inputParent}}.name/api/searchtypegroupbyId/\`,`
     }
   })
   return r1;
@@ -884,6 +884,44 @@ function applyMultiControls (mainapp) {
             /StaticMulitSelectData/g,
             '\n' + beautify(StaticMulitSelectDataInitControl(mainapp[0].server_client), { indent_size: 2 })
           )
+          
+          mainapp[0].server_client.forEach(function (dt) {
+            if (dt.inputtype == 'multiselect'||dt.inputtype == 'singleselect') {
+              if(dt.childcontent!=undefined)
+              {
+                appsgenerator = appsgenerator.replace(
+                  'createdata: `/${currentmodulename}/api/create/`',
+                  'createdata: `/${currentmodulename}/api/bulkCreate/`' 
+                )
+                //updateRecord
+                appsgenerator = appsgenerator.replace(
+                  '//updateRecord',
+                  '\n' + beautify(`base = basemod_modal.payloadformat(base)
+                  return this.deleterecord(base)
+                    .then(basemod_modal.insert)
+                    .then(function (data) {
+                      ajaxbase.response = data
+                      return ajaxbase
+                    })`, { indent_size: 2 })
+                )
+                
+              }
+              else
+              {
+                
+              }
+            }
+          })
+          appsgenerator = appsgenerator.replace(
+            /updateRecord/g,
+            '\n' + beautify(`ajaxbase.payload = basemod_modal.payloadformat(base).datapayload
+            ajaxbase.url = baseurlobj.updatedata;
+            return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
+                ajaxbase.response = argument;
+                return argument;
+            })`, { indent_size: 2 })
+          )
+          
         }
       }
 
@@ -1056,6 +1094,7 @@ baseCheckbox:\`<div class="checkbox tablechk">
              $('#cltrlrecordstate').val(true);
              base.datapayload.recordstate = true
              base.interimdatapayload.recordstate = true
+             $('#cltrlrecordstate').removeAttr('data-form-type')
          } else {
              $('#cltrlrecordstate').prop('checked', false);
              $('#cltrlrecordstate').val(false);
@@ -1070,7 +1109,7 @@ baseCheckbox:\`<div class="checkbox tablechk">
 
          var res = this.formatserverfieldmap(data)
         
-         var result = equijoin(res, validationmap, "key", "inputname",
+         var result = equijoin(res, validationmap, "key", "inputCustomMapping",
       ({
         vals
       }, {
