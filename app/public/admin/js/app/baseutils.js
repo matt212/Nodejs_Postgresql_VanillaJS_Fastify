@@ -1236,9 +1236,13 @@ let htmlpopulate = {
             fielddate = s[f]
           }
 
+          isStaticMappingCheckpoint =
+            validationmap.filter(dt => dt.childcontent != undefined).length <= 0
+              ? fielddate
+              : datatransformutils.staticValsMapping(f, fielddate)
           $('#basetable tbody tr')
             .last()
-            .append('<td>' + fielddate + '</td>')
+            .append('<td>' + isStaticMappingCheckpoint + '</td>')
         }
         $('#basetable tbody tr')
           .last()
@@ -1926,6 +1930,30 @@ let datatransformutils = {
       }
     })
   },
+  staticValsMapping: function (f, fielddate) {
+    var re = validationmap
+    var r1 = re.filter(dt => dt.inputtypemod == f)
+
+    if (Array.isArray(r1) && r1.length) {
+      if (r1[0].childcontent != undefined) {
+        var r2 = fielddate.includes(',') ? fielddate.split(',') : fielddate
+
+        var redlime = []
+        if (Array.isArray(r2) && r2.length) {
+          r2.forEach(function (dt) {
+            redlime.push(
+              r1[0].childcontent.filter(dt1 => dt1.val == dt)[0].text
+            )
+          })
+          return redlime.join(',')
+        } else {
+          return r1[0].childcontent.filter(dt1 => dt1.val == r2)[0].text
+        }
+      }
+    } else {
+      return fielddate
+    }
+  },
   rename: function (obj, oldName, newName) {
     if (!obj.hasOwnProperty(oldName)) {
       return false
@@ -1978,10 +2006,9 @@ let datatransformutils = {
     return true
   },
   editMultiSelect: function (obj) {
-    var a1 = obj.validationmap.filter((dt)=>dt.inputtype=="multiselect")
+    var a1 = obj.validationmap.filter(dt => dt.inputtype == 'multiselect')
     var res = obj.content.map(function (data) {
       return a1.map(function (da) {
-        
         var inten = {}
 
         obj.multiselectfunc[da.inputtextval].destroy(da.inputtextval)
@@ -2000,13 +2027,20 @@ let datatransformutils = {
               }
             ]
           }
+
           /**end region */
           inten[da.inputtextval] = data[da.inputCustomMapping]
             .split(',')
             .map(function (dt, i) {
               return {
                 key: da.inputtextval,
-                text: dt,
+                text:
+                  da.childcontent != undefined
+                    ? datatransformutils.staticValsMapping(
+                        da.inputCustomMapping,
+                        dt
+                      )
+                    : dt,
                 vals: data[da.inputtextval].split(',')[i]
               }
             })
@@ -2028,13 +2062,13 @@ let datatransformutils = {
           inten[da.inputtextval] = {
             key: da.inputtextval,
             text:
-              data[da.inputCustomMapping].indexOf(',') != -1
-                ? data[da.inputCustomMapping]
+              da.childcontent != undefined
+                ? datatransformutils.staticValsMapping(
+                    da.inputCustomMapping,
+                    data[da.inputCustomMapping]
+                  )
                 : data[da.inputCustomMapping],
-            vals:
-              data[da.inputtextval].indexOf(',') != -1
-                ? data[da.inputtextval]
-                : data[da.inputtextval]
+            vals: data[da.inputtextval]
             //vals: y
           }
         }
@@ -2042,6 +2076,7 @@ let datatransformutils = {
         return inten
       })
     })[0]
+
     res.forEach(function (dat) {
       Object.values(dat).forEach(function (dt) {
         if (Array.isArray(dt)) {

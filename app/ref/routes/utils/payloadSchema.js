@@ -13,7 +13,16 @@ let baseupdatefunction = {
     minimum: 1
   }
 }
-
+let insertUpdateBulkSchema = {
+  payset: {
+    type: 'array',
+    items: insertUpdateSchema
+  }
+}
+const insertBulkSchema = {
+  body: insertUpdateBulkSchema,
+  headers: baseSchema.headersJsonSchema
+}
 const insertSchema = {
   type: 'object',
   required: placeholder2,
@@ -38,6 +47,7 @@ module.exports = {
   searchLoadSchema: baseSchema.searchLoadSchema,
   insertLoadSchema: insertLoadSchema,
   updateLoadSchema: updateLoadSchema,
+  insertBulkLoadSchema:insertBulkSchema,
   searchGroupbyJsonSchema: baseSchema.searchGroupbyJsonSchema,
   searchPivotJsonSchema: baseSchema.searchPivotJsonSchema
 }

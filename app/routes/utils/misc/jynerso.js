@@ -103,16 +103,16 @@ async function routes (fastify, options) {
     var mainapp = req.body
 
     applymodel(mainapp)
-      /*.then(applyApp)
+      .then(applyApp)
       .then(applyroutes)
       .then(applyserverValidationConfig)
       .then(applyserverschemaValidator)
       .then(applyMochaChaiTestCases)
-      .then(swaggerdocs)*/
+      .then(swaggerdocs)
       .then(applyMultiControls)
-      /*.then(applyhtml)
+      .then(applyhtml)
       .then(packageJsonUpdate)
-      .then(superadminUpdate)*/
+      .then(superadminUpdate)
       .then(function (data) {
         reply.send({
           a: 'run  yarn applychangesDB ',
@@ -663,7 +663,7 @@ let baseinitControl = function (redlime) {
     else if (dt.inputtype =="multiselect" || dt.inputtype =="singleselect")
     {
       isMulti=true
-      if(dt.childcontent ==undefined)
+      if(dt.childcontent==undefined)
       {
         r1 =
         r1 +
@@ -1145,10 +1145,24 @@ baseCheckbox:\`<div class="checkbox tablechk">
 function applyhtml (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      var appsgenerator = fs.readFileSync(
-        '../ref/views/employees/employees.ejs',
-        'utf8'
-      )
+      let isMultiControl=(mainapp[0].server_client).map(a=>a.inputtype).includes('multiselect','singleselect')
+      var appsgenerator="";
+      if(isMultiControl)
+      {
+         appsgenerator = fs.readFileSync(
+          '../ref/views/employees/employees-multiselect.ejs',
+          'utf8'
+        )
+      }
+      else
+      {
+         appsgenerator = fs.readFileSync(
+          '../ref/views/employees/employees.ejs',
+          'utf8'
+        )
+
+      }
+      
       appsgenerator = appsgenerator.replace(
         /employees/g,
         mainapp[0].datapayloadModulename
@@ -1205,6 +1219,16 @@ function applyApp (mainapp) {
   return new Promise((resolve, reject) => {
     try {
       var appsgenerator = fs.readFileSync('../ref/routes/employees.js', 'utf8')
+      let isMultiControl=(mainapp[0].server_client).map(a=>a.inputtype).includes('multiselect','singleselect')
+      
+      if(isMultiControl)
+      {
+        appsgenerator = appsgenerator.replace(
+          'base',
+          mainapp[0].datapayloadModulename
+        )  
+      }
+      
       appsgenerator = appsgenerator.replace(
         /employees/g,
         mainapp[0].datapayloadModulename
@@ -1278,7 +1302,7 @@ function applyserverValidationConfig (mainapp) {
       )
       var filename = mainapp[0].server_client
       var applyFields = filename.map(function (doctor) {
-        return doctor.inputname
+        return doctor.inputCustomMapping
       })
 
       filename = JSON.stringify(filename, null, 2).replace(

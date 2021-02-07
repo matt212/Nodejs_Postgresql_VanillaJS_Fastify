@@ -31,7 +31,17 @@ let validationmap = [
     inputplaceholder: 'accesstype',
     fieldtypename: 'STRING',
     fieldvalidatename: 'string',
-    fieldmaxlength: '2'
+    fieldmaxlength: '2',
+    childcontent: [{
+      val: "VO",
+      text: "ViewOnly"
+    },
+    {
+      val: "AA",
+      text: "AllAccess"
+    }
+  ]
+
   }
 ]
 let applyfields = ['rolename', 'modulename', 'accesstype']

@@ -157,9 +157,11 @@
                     internobj.inputtypeVal = $(this.cells[2]).find('option:selected').text().trim()
                     internobj.inputtypeID = internobj.inputtypemod + "id"
                     internobj.inputParent= internobj.inputtypemod
-                    console.log(internobj.inputtype);
+                    internobj.inputCustomMapping=internobj.inputtypemod
+                    
                     if (internobj.inputtype == "multiselect" || internobj.inputtype == "singleselect") {
-                    internobj.inputCustomMapping = internobj.inputtypemod
+                    
+                    
                     internobj.selecttype= internobj.inputtype
                     internobj.inputtextval=$(this.cells[3]).find('input').val().trim()
                     internobj.inputtypemod=$(this.cells[3]).find('input').val().trim()
@@ -167,20 +169,29 @@
                     internobj.inputtypeID=$(this.cells[3]).find('input').val().trim()
                     internobj.inputParent=$(this.cells[3]).find('input').val().trim()
                     internobj.inputCustomMapping=$(this.cells[3]).find('input').val().trim()
+                    internobj.inputname = $(this.cells[3]).find('input').val().trim()
+                    internobj.inputtype="multiselect"
                     }
                     else if (internobj.inputtype == "multiselect-ajax" || internobj.inputtype == "singleselect-ajax") {
-                    internobj.inputCustomMapping = internobj.inputtypemod
-                    internobj.inputtype=internobj.inputtype.split('-')[0]
+                    internobj.inputname=$(this.cells[3]).find('input').val().trim().split('|')[0]
+                    internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim().split('|')[1]
                     internobj.selecttype= internobj.inputtype.split('-')[0]
-                    internobj.inputtextval=$(this.cells[2]).find('option:selected').text().trim()
+                    internobj.inputtextval=$(this.cells[2]).find('option:selected').text().trim().split('|')[0]
+                    internobj.inputtype="multiselect"
                     }
                 }
-
-                internobj.inputname = $(this.cells[3]).find('input').val().trim()
+                else
+                {
+                    internobj.inputCustomMapping=$(this.cells[3]).find('input').val().trim()
+                    internobj.inputname = $(this.cells[3]).find('input').val().trim()
+                
+                }
                 internobj.inputplaceholder = $(this.cells[4]).find('input').val().trim()
                 internobj.fieldtypename = $(this.cells[5]).find('option:selected').text().trim()
                 internobj.fieldvalidatename = $(this.cells[6]).find('option:selected').text().trim()
                 internobj.fieldmaxlength = $(this.cells[7]).find('input').val().trim()
+                
+                
 
 
 
@@ -272,8 +283,8 @@
         console.log(server_client);
         swagger = JSON.parse(swagger)
         server_client = JSON.parse(server_client)
-        server_client=[ { "inputtype": "singleselect", "inputtypemod": "role", "inputtypeVal": "rolename", "inputtypeID": "roleid", "inputParent": "role", "inputCustomMapping": "role", "selecttype": "singleselect", "inputtextval": "rolename", "inputname": "roleid", "inputplaceholder": "Please enter name", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "multiselect", "inputtypemod": "modname", "inputtypeVal": "mname", "inputtypeID": "modnameid", "inputParent": "modname", "inputCustomMapping": "modname", "selecttype": "multiselect", "inputtextval": "mname", "inputname": "modnameid", "inputplaceholder": "Please enter name", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "multiselect", "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "selecttype": "multiselect", "inputtextval": "accesstype", "inputname": "accesstype", "inputplaceholder": "Please enter name", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "childcontent": [ { "val": "VO", "text": "ViewOnly" }, { "val": "AA", "text": "AllAccess" } ] } ]
-        swagger=[ { "type": "integer", "fieldname": "roleid", "format": "int64", "example": 20 }, { "type": "integer", "fieldname": "modnameid", "format": "int64", "example": 20 }, { "type": "integer", "fieldname": "accesstype", "format": "int64", "example": 20 } ]
+        //server_client=[ { "inputtype": "multiselect", "inputtypemod": "role", "inputtypeVal": "rolename", "inputtypeID": "roleid", "inputParent": "role", "inputCustomMapping": "rolename", "inputname": "roleid", "selecttype": "singleselect", "inputtextval": "rolename", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "multiselect", "inputtypemod": "modname", "inputtypeVal": "mname", "inputtypeID": "modnameid", "inputParent": "modname", "inputCustomMapping": "modulename", "inputname": "modnameid", "selecttype": "multiselect", "inputtextval": "mname", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "multiselect", "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "selecttype": "multiselect", "inputtextval": "accesstype", "inputname": "accesstype", "inputplaceholder": "", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80", "childcontent": [ { "val": "VO", "text": "ViewOnly" }, { "val": "AA", "text": "AllAccess" } ] } ]
+        //swagger=[ { "type": "integer", "fieldname": "roleid", "format": "int64", "example": 20 }, { "type": "integer", "fieldname": "modnameid", "format": "int64", "example": 20 }, { "type": "string", "fieldname": "accesstype", "example": "sample text" } ]
        
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}

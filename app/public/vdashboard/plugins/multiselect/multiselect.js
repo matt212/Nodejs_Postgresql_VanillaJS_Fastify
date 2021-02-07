@@ -91,7 +91,7 @@ let multisel = function basemultiselect (selconfig, callback) {
         interims = Object.values(this.basesearchar[0])[0]
       }
       if (interims != undefined) {
-        if (interims.length >= 1 && this.selecttype == 'single') {
+        if (interims.length >= 1 && this.selecttype == 'singleselect') {
         } else {
           this.remotefunc(objintern).then(this.responsetransform)
         }

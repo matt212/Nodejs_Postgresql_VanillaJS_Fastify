@@ -157,6 +157,29 @@ async function routes (fastify, options) {
       dep.pivotResult(request, reply, mod)
     }
   )
+  fastify.post(
+    dep.routeUrls.bulkCreate,
+    {
+      config: dep.cGzip,
+      schema: validatorSchema.insertBulkLoadSchema,
+      preValidation: [fastify.authenticate]
+    },
+    async (request, reply) => {
+      dep.assignVariables(mod)
+      dep.bulkCreate(request, reply)
+    }
+  )
+  fastify.post(
+    dep.routeUrls.customDestroy,
+    {
+      config: dep.cGzip,
+      preValidation: [fastify.authenticate]
+    },
+    async (request, reply) => {
+      dep.assignVariables(mod)
+      dep.customDestroy(request, reply)
+    }
+  )
 }
 
 module.exports = routes
