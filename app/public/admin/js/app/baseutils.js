@@ -1244,6 +1244,9 @@ let htmlpopulate = {
             .last()
             .append('<td>' + isStaticMappingCheckpoint + '</td>')
         }
+        console.log(s[currentmoduleid])
+        console.log(s)
+        console.log(currentmoduleid)
         $('#basetable tbody tr')
           .last()
           .append(

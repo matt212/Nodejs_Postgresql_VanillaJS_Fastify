@@ -237,7 +237,6 @@ let mrole = {
       this.basesqlscrp.a +
       ' ' +
       tunnel.arg.daterange +
-      
       ' ) as a where a.recordstate=true  ' +
       tunnel.arg.selector +
       tunnel.arg.consolidatesearch +
@@ -394,7 +393,7 @@ let mrole = {
   }
 }
 /*mroleset*/
-let mroleset = {
+/*let mroleset = {
   basesqlscrp: {
     a:
       'select a.mroleid, a.recordstate,rl.roleid AS roleid,n.modnameid as modID, n.Mname as Modulename,n.Mname as mname,rl.rolename as Rolename, a.accesstype as accesstype  from mrole a ' +
@@ -588,7 +587,214 @@ let mroleset = {
       ';'
     )
   }
-}
+}*/
+/*
+let mroleset = {
+  basesqlscrp: {
+    a:
+      `select a.mrolesetid, a.recordstate,role.roleid as roleid,
+role.rolename as rolename,
+modname.modnameid as modnameid,
+modname.mname as modulename,
+modname.mname as mname,
+a.accesstype as accesstype
+from mroleset  as a
+ left join role  
+      on a.roleid::int=role.roleid
+ left join modname  
+      on a.modnameid::int=modname.modnameid
+ where a.recordstate=true`
+  },
+  basesearchtype: function (tunnel) {
+    return (
+      `select 
+string_agg(distinct roleid::text,',') as mrolesetid,
+
+string_agg(distinct rolename,',')as rolename,
+string_agg(distinct roleid::text,',')as roleid,
+string_agg(distinct modulename,',')as modulename,
+string_agg(distinct mname,',')as mname,
+string_agg(distinct modnameid::text,',')as modnameid,
+string_agg(distinct accesstype,',')as accesstype,
+string_agg(distinct accesstype::text,',')as accesstype from ` +
+      '( ' +
+      this.basesqlscrp.a +
+      ' ' +
+      tunnel.arg.daterange +
+      ' ) as a where a.recordstate=true  ' +
+      tunnel.arg.selector +
+      tunnel.arg.consolidatesearch +
+      'group by roleid ,rolename ,recordstate'
+    )
+  },
+  searchType: function (tunnel) {
+    return this.basesearchtype(tunnel) + base.paginationset(tunnel)
+  },
+  searchTypeCount: function (tunnel) {
+    return (
+      'select  count(*) as count  ' +
+      'from ' +
+      '( ' +
+      this.basesqlscrp.a +
+      ' ' +
+      tunnel.arg.daterange +
+      
+      ' ) as a where a.recordstate=true  ' +
+      tunnel.arg.selector +
+      tunnel.arg.consolidatesearch +
+      'group by roleid ,rolename ,recordstate'
+    )
+  },
+  searchTypeCountExplain: function (tunnel) {
+    return (
+      'Explain select  * ' +
+      'from ' +
+      '( ' +
+      this.basesqlscrp.a +
+      ' ' +
+      tunnel.arg.daterange +
+      tunnel.arg.selector +
+      ' ) as a ' +
+      tunnel.arg.consolidatesearch +
+      'group by roleid ,rolename ,recordstate'
+    )
+  },
+  searchtypegroupby: function (tunnel) {
+    return (
+      'select  a.' +
+      tunnel.tempDep.searchkey +
+      ' , ' +
+      tunnel.tempDep.searchparamkey +
+      '  from (' +
+      this.basesqlscrp.a +
+      ') as a where  ' +
+      tunnel.tempDep.selector +
+      ' ' +
+      tunnel.tempDep.colmetafilter +
+      ' group by ' +
+      tunnel.tempDep.searchkey +
+      ' ,' +
+      tunnel.tempDep.searchparamkey +
+      '  ORDER BY ' +
+      tunnel.tempDep.searchkey +
+      ' ' +
+      tunnel.tempDep.sortcolumnorder +
+      '  limit 20'
+    )
+  },
+  searchTypeFilter: function (tunnel) {
+    return this.basesearchtype(tunnel)
+  },
+  searchTypeFilterProgressBar: function (tunnel) {
+    return 'EXPLAIN (ANALYSE,FORMAT JSON)   ' + this.basesearchtype(tunnel)
+  },
+  SqlPivot: function (tunnel) {
+    return (
+      'select ' +
+      tunnel.arg1.resultsetselect +
+      " from (select coalesce(yaxis, 'total') as yaxis , " +
+      tunnel.arg1.resultsetinternrollup +
+      ' from (select yaxis , ' +
+      tunnel.arg1.resultsetinternrollup +
+      ' from (SELECT * ' +
+      'FROM   crosstab(' +
+      "'select  " +
+      tunnel.tempDep.baseYaxisparam +
+      ',' +
+      tunnel.tempDep.baseXaxisparam +
+      ',count(*)::int as cnt   from  ' +
+      ' (' +
+      this.basesqlscrp.a +
+      ' and ' +
+      tunnel.tempDep.dynamicquerydaterange +
+      '  ' +
+      tunnel.tempDep.selectordynamic +
+      '  ' +
+      tunnel.tempDep.consolidatesearchdynamic +
+      ') as a  ' +
+      "  group by Xaxis, Yaxis  order by  1,2 asc '," +
+      " 'select " +
+      tunnel.tempDep.baseXaxisparam +
+      ' from ' +
+      ' (' +
+      this.basesqlscrp.a +
+      '  and  ' +
+      tunnel.tempDep.dynamicquerydaterange +
+      '  ' +
+      tunnel.tempDep.selectordynamic +
+      '  ' +
+      tunnel.tempDep.consolidatesearchdynamic +
+      ') as a  ' +
+      ' group by Xaxis   order by 1 limit ' +
+      tunnel.tempDep.XpageSize +
+      ' offset ' +
+      tunnel.tempDep.Xnext_offset +
+      "')" +
+      'AS orders(' +
+      'Yaxis text,' +
+      tunnel.arg1.resultsetintern +
+      ') ) as Xaxisderived group by yaxis limit ' +
+      tunnel.tempDep.YpageSize +
+      ' offset ' +
+      tunnel.tempDep.Ynext_offset +
+      ') as a group by  rollup(yaxis) ) as a'
+    )
+  },
+  sqlstatementsprimaryPivot: function (tunnel) {
+    return (
+      'select count(*) as totalyaxiscnt from (select  ' +
+      tunnel.tempDep.baseYaxisparamprimary +
+      ' from (' +
+      this.basesqlscrp.a +
+      '   ' +
+      tunnel.tempDep.daterange +
+      '  ' +
+      tunnel.tempDep.selector +
+      '  ' +
+      tunnel.tempDep.consolidatesearch +
+      ') as a ' +
+      ' group by Yaxis ) as Yaxisderived'
+    )
+  },
+  sqlstatementsecondaryPivot: function (tunnel) {
+    return (
+      'select count(*) as totalxaxiscnt from (select  ' +
+      tunnel.tempDep.baseXaxisparamprimary +
+      ' from (' +
+      this.basesqlscrp.a +
+      '   ' +
+      tunnel.tempDep.daterange +
+      '  ' +
+      tunnel.tempDep.selector +
+      '  ' +
+      tunnel.tempDep.consolidatesearch +
+      ') as a   ' +
+      '  group by Xaxis ) as Xaxisderived'
+    )
+  },
+  sqlstatepivotcol: function (tunnel) {
+    return (
+      'select ' +
+      tunnel.tempDep.baseXaxisparamprimary +
+      ' from ' +
+      ' (' +
+      this.basesqlscrp.a +
+      '  ' +
+      tunnel.tempDep.daterange +
+      '  ' +
+      tunnel.tempDep.selector +
+      '  ' +
+      tunnel.tempDep.consolidatesearch +
+      ') as a ' +
+      ' group by Xaxis  order by 1 limit ' +
+      tunnel.tempDep.XpageSize +
+      ' offset ' +
+      tunnel.tempDep.Xnext_offset +
+      ';'
+    )
+  }
+}*/
+//newMultiControlSqlConstruct
 let userrole = {
   basesqlscrp: {
     a:
@@ -772,6 +978,7 @@ let userrole = {
 module.exports = {
   base: base,
   mrole: mrole,
-  userrole: userrole,
-  mroleset:mroleset
+  userrole: userrole
+  //mroleset:mroleset
+  //exportobj
 }
