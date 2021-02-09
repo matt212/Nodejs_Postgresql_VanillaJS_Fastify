@@ -104,34 +104,34 @@ In case of error running sh Files Follow below
 
   > `yarn userroleEval`
 
-  - ### `Release notes 20 Jan 2021`
+- ### `Release notes 20 Jan 2021`
 
   >For rbac test cases modularized
 
   > `yarn mroleEval`
 
   > `yarn userroleEval`
-  - ### `Release notes 27 Jan 2021`
+- ### `Release notes 27 Jan 2021`
 
   >applied multi control for radio scaffolding 
 
-  - ### `Release notes 27 Jan 2021`
+- ### `Release notes 27 Jan 2021`
 
   >applied multi control for radio scaffolding 
 
-  - ### `Release notes 29 Jan 2021`
+- ### `Release notes 29 Jan 2021`
 
   >bolierplate dynamic radio button and checkboxes validations applied
 
- - ### `Release notes 31 Jan 2021`
+- ### `Release notes 31 Jan 2021`
 
   >bolierplate dynamic radio button and checkboxes validations applied
 
-  - ### `Release notes 06 Feb 2021`
+- ### `Release notes 06 Feb 2021`
 
   >bolierplate for static mutliselect applied
   
-  - ### `Release notes 09 Feb 2021`
+- ### `Release notes 09 Feb 2021`
 
   >for boilerplate multi and single select static mapping for edit and default rendering case scenarios completed
 
