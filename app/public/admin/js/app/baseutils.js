@@ -1677,7 +1677,7 @@ var baseobjvalidation = {
       case 'mobile':
         this.mobilevalidation(internset.content)
         break
-      case 'name':
+      case 'string':
         this.textvalidation(internset.content)
         break
       case 'checkbox':

@@ -103,17 +103,17 @@ async function routes (fastify, options) {
     var mainapp = req.body
 
     applymodel(mainapp)
-      .then(applyApp)
+      /*.then(applyApp)
       .then(applyroutes)
       .then(applyserverValidationConfig)
       .then(applyserverschemaValidator)
       .then(applyMochaChaiTestCases)
       .then(swaggerdocs)
       .then(applyMultiControls)
-      .then(SqlConstructMulti)
       .then(applyhtml)
       .then(packageJsonUpdate)
-      .then(superadminUpdate)
+      .then(superadminUpdate)*/
+      .then(SqlConstructMulti)
       .then(function (data) {
         reply.send({
           a: 'run  yarn applychangesDB ',
@@ -519,7 +519,7 @@ var interfaceMultiControl = function (redlime) {
     } else if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox') {
       r1 =
         r1 +
-        `getcurrentMod${dt.inputParent}groupby: \`\${current${dt.inputParent}}.name/api/searchtypegroupbyId/\`,`
+        `getcurrentMod${dt.inputParent}groupby: \`\${current${dt.inputParent}.name}/api/searchtypegroupbyId/\`,`
     }
   })
   return r1
@@ -585,10 +585,68 @@ var checkboxMultiControl = function (redlime) {
   })
   return r1
 }
+let multiInsertCodeforCheckbox = function (redlime) {
+  var r1 = ` let internim={ datapayload:{ ...arg.datapayload`
+  var r2 = `
+    var isactivearrayobj = {
+      recordstate: base.interimdatapayload.recordstate
+    }
+    //flatting multiselects objects
+    var temp = Object.fromEntries(
+      Object.entries(internim.datapayload).map(([k, v]) => [
+        k,
+        datatransformutils.flat(v)
+      ])
+    )
+    let b = { ...temp, ...isactivearrayobj }
+    //apply cartesion for multiselects objects
+    var interns = datatransformutils.getCartesian(b)
+    let o = {
+      payset: interns,
+      delObj: {
+        ${redlime[0].inputtypeID}: interns[0].${redlime[0].inputtypeID}
+      }
+    }
+    base.datapayload = o
+    return base
+  `
+  redlime.forEach(function (dt) {
+    if (dt.inputtype == 'checkbox' || dt.inputtype == 'radio') {
+      r1 = r1 + `,...current${dt.inputtypemod}.data `
+    } else if (dt.inputtype == 'multiselect') {
+      if (r1.includes('multiselects')) {
+      } else {
+        r1 = r1 + `,...multiselects`
+      }
+    }
+  })
+  r1 = r1 + `}}`
 
+  return r1 + r2
+}
+
+let multiInsertCode = function (validationmap) {
+  let isMultiControl = validationmap.map(a => a.inputtype)
+
+  var conditions = ['multiselect', 'singleselect', 'checkbox']
+  var test2 = conditions.some(el => isMultiControl.includes(el))
+  if (test2) {
+    return multiInsertCodeforCheckbox(validationmap)
+  } else {
+    var r1 = ` return { datapayload:{ ...arg.datapayload`
+    validationmap.forEach(function (dt) {
+      if (dt.inputtype == 'radio') {
+        r1 = r1 + `,...current${dt.inputtypemod}.data `
+      }
+    })
+    r1 = r1 + '}\n}'
+    return r1
+  }
+}
+/*
 let multiInsertCode = function (redlime) {
   var isMulti = `return { ...arg.datapayload`
-  var r1 = `{ ...arg.datapayload`
+  var r1 = `return { datapayload:{ ...arg.datapayload`
   var r2 = `{
     var isactivearrayobj = {
       recordstate: base.interimdatapayload.recordstate
@@ -613,7 +671,7 @@ let multiInsertCode = function (redlime) {
     return base
   }`
   redlime.forEach(function (dt) {
-    if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox') {
+    if (dt.inputtype == 'radio' ) {
       r1 = r1 + `,...current${dt.inputtypemod}.data `
       isMulti = false
     } else if (
@@ -623,10 +681,10 @@ let multiInsertCode = function (redlime) {
       isMulti = true
     }
   })
-  r1 = r1 + `}`
+  r1 = r1 + `}}`
 
   return isMulti === true ? r2 : r1
-}
+}*/
 
 var StaticMulitSelectDataInitControl = function (redlime) {
   var r1 = ''
@@ -682,6 +740,10 @@ function applyMultiControls (mainapp) {
         '../ref/public/admin/js/app/app_employees.js',
         'utf8'
       )
+      appsgenerator = appsgenerator.replace(
+        '//insertpayloadData',
+        '\n ' + multiInsertCode(mainapp[0].server_client)
+      )
       var based = mainapp[0].server_client
       based = based.filter(function (doctor) {
         return doctor.inputtype != 'textbox' // if truthy then keep item
@@ -691,7 +753,7 @@ function applyMultiControls (mainapp) {
         var baseMod = baseinitControl(mainapp[0].server_client)
         //definition
         var currentInitialization =
-          "getcurrentMod{modulename}groupby: '/' + current{modulename}.name + '/api/searchtypegroupbyId/',"
+          "getcurrentMod{modulename}groupby: '/' + current{modulename.name} + '/api/searchtypegroupbyId/',"
         //initialization
         var interfaceinit = interfaceMultiControl(mainapp[0].server_client)
         var implementationinit = interfacelevel1MultiControl(
@@ -741,6 +803,7 @@ function applyMultiControls (mainapp) {
 
         mainapp[0].server_client.forEach(element => {
           //server_client.forEach(element => {
+
           if (element.inputtype != 'textbox') {
             onchkscaffolding = onchkscaffolding.replace(
               /{Modname}/g,
@@ -832,11 +895,6 @@ function applyMultiControls (mainapp) {
               )
             }
 
-            multiControlsScripts = multiControlsScripts.replace(
-              '//insertpayloadData',
-              '\n ' + multiInsertCode(mainapp[0].server_client)
-            )
-
             appsgenerator = appsgenerator.replace(
               '//definition',
               '\n ' + baseMod
@@ -893,7 +951,7 @@ function applyMultiControls (mainapp) {
             /baseOffLoad/g,
             '\n' + baseOffLoad
           )
-          var replaces = `let basemod_modal = {afterhtmlpopulate: function(){},payloadformat: function (arg) {return arg.datapayload}}`
+          var replaces = `afterhtmlpopulate: function(){}`
 
           appsgenerator = appsgenerator.replace(
             replaces,
@@ -911,30 +969,31 @@ function applyMultiControls (mainapp) {
           mainapp[0].server_client.forEach(function (dt) {
             if (
               dt.inputtype == 'multiselect' ||
-              dt.inputtype == 'singleselect'
+              dt.inputtype == 'singleselect' ||
+              dt.inputtype == 'checkbox'
             ) {
-              if (dt.childcontent != undefined) {
-                appsgenerator = appsgenerator.replace(
-                  'createdata: `/${currentmodulename}/api/create/`',
-                  'createdata: `/${currentmodulename}/api/bulkCreate/`'
-                )
-                //updateRecord
-                appsgenerator = appsgenerator.replace(
-                  '//updateRecord',
-                  '\n' +
-                    beautify(
-                      `base = basemod_modal.payloadformat(base)
+              //if (dt.childcontent != undefined) {
+              appsgenerator = appsgenerator.replace(
+                'createdata: `/${currentmodulename}/api/create/`',
+                'createdata: `/${currentmodulename}/api/bulkCreate/`'
+              )
+              //updateRecord
+              appsgenerator = appsgenerator.replace(
+                '//updateRecord',
+                '\n' +
+                  beautify(
+                    `base = basemod_modal.payloadformat(base)
                   return this.deleterecord(base)
                     .then(basemod_modal.insert)
                     .then(function (data) {
                       ajaxbase.response = data
                       return ajaxbase
                     })`,
-                      { indent_size: 2 }
-                    )
-                )
-              } else {
-              }
+                    { indent_size: 2 }
+                  )
+              )
+              // } else {
+              // }
             }
           })
           appsgenerator = appsgenerator.replace(
@@ -1014,7 +1073,7 @@ let groupbyControlsPopulate = function (modname) {
   return groupbyControlsPopulate
 }
 
-var multiControlsScripts = `let basemod_modal = {
+var multiControlsScripts = `
   modalpopulate: function() {
     var interset = validationmap
     let redlime = doChunk(interset, 2)
@@ -1076,9 +1135,6 @@ baseCheckbox:\`<div class="checkbox tablechk">
          $('#basetable tbody tr td:nth-child(1) input:checkbox').attr('onclick', 'javascript:basemod_modal.tablechkbox(this)')
          //$("a[href='#sales-chart'").hide()
      },
-     payloadformat: function (arg) {
-       //insertpayloadData
-    },
      ontdedit: function(arg) {
 
          var armodid = $(arg).attr('data-tbledit-type')
@@ -1165,18 +1221,18 @@ baseCheckbox:\`<div class="checkbox tablechk">
              })
          })[0]
          return res;
-     },
-     
- }`
+     }
+     `
 
 function applyhtml (mainapp) {
   return new Promise((resolve, reject) => {
     try {
-      let isMultiControl = mainapp[0].server_client
-        .map(a => a.inputtype)
-        .includes('multiselect', 'singleselect')
+      let isMultiControl = mainapp[0].server_client.map(a => a.inputtype)
+      //.includes('multiselect', 'singleselect')
+      var conditions = ['multiselect', 'singleselect']
+      var test2 = conditions.some(el => isMultiControl.includes(el))
       var appsgenerator = ''
-      if (isMultiControl) {
+      if (test2) {
         appsgenerator = fs.readFileSync(
           '../ref/views/employees/employees-multiselect.ejs',
           'utf8'
@@ -1245,16 +1301,23 @@ let SqlConstructMulti = function (mainapp) {
     try {
       let defaultmod = mainapp[0].datapayloadModulename
       let validationmap = mainapp[0].server_client
-      let isMultiControl = mainapp[0].server_client
-        .map(a => a.inputtype)
-        .includes('multiselect', 'singleselect')
+      let isMultiControl = mainapp[0].server_client.map(a => a.inputtype)
 
-      if (isMultiControl) {
+      var conditions = ['multiselect', 'singleselect', 'checkbox']
+      var test2 = conditions.some(el => isMultiControl.includes(el))
+      if (test2) {
         let selectparam = validationmap.map(function (dt) {
           var parentintern = dt.childcontent == undefined ? dt.inputParent : 'a'
-          return `${parentintern}.${dt.inputname} as ${dt.inputname}, 
-${parentintern}.${dt.inputtextval} as ${dt.inputCustomMapping},
-${parentintern}.${dt.inputtextval} as ${dt.inputtextval}`
+          if (dt.inputtype == 'textbox') {
+            return `a.${dt.inputname} as ${dt.inputname}`
+          } else if (dt.inputtype == 'checkbox') {
+            return `${parentintern}.${dt.inputname} as ${dt.inputname}, 
+            ${parentintern}.${dt.inputtextval} as ${dt.inputCustomMapping}`
+          } else {
+            return `${parentintern}.${dt.inputname} as ${dt.inputname}, 
+            ${parentintern}.${dt.inputtextval} as ${dt.inputCustomMapping},
+            ${parentintern}.${dt.inputtextval} as ${dt.inputtextval}`
+          }
         })
         var p1 = `select a.${defaultmod}id, a.recordstate,`
         //console.log(selectparam.join(",").split(","))
@@ -1285,6 +1348,15 @@ ${parentintern}.${dt.inputtextval} as ${dt.inputtextval}`
             return { r1, r2 }
           }
         }
+        let getTextgroupbyval = function () {
+          let interns = validationmap.filter(dt => dt.inputtype == "textbox")[0]
+
+          if (interns != undefined) {
+            
+            var r1 = `group by ${interns.inputname}`
+            return { r1}
+          }
+        }
 
         var consolidatedSecondary =
           basetable + joinparam.join('') + '\n where a.recordstate=true'
@@ -1293,10 +1365,20 @@ ${parentintern}.${dt.inputtextval} as ${dt.inputtextval}`
           consolidatedSelect + '\n' + consolidatedSecondary
         console.log(consolidatedSelectPrimary1)
         let selectSecondaryjoinparam = validationmap.map(function (dt) {
-          return `\n string_agg(distinct ${dt.inputCustomMapping},',')as ${dt.inputCustomMapping}|
+          if (dt.inputtype == 'textbox') {
+            return `\n 
+            ${dt.inputname}`
+          } else if (dt.inputtype == 'checkbox') {
+            return `\n 
+string_agg(distinct ${dt.inputCustomMapping},',')as ${dt.inputCustomMapping}|
+string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`
+          } else {
+            return `\n string_agg(distinct ${dt.inputCustomMapping},',')as ${dt.inputCustomMapping}|
 string_agg(distinct ${dt.inputtextval},',')as ${dt.inputtextval}|
 string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`
+          }
         })
+
         var consolidatedSelectPrimary = `select 
 ${getgroupbyval() === undefined ? ' ' : getgroupbyval().r1}
 ${[
@@ -1332,7 +1414,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-          ? 'group by recordstate'
+          ? getTextgroupbyval().r1+', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1354,7 +1436,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-          ? 'group by recordstate'
+        ? getTextgroupbyval().r1+', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1372,7 +1454,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-          ? 'group by recordstate'
+        ? getTextgroupbyval().r1+', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1534,6 +1616,8 @@ ${[
             resolve(mainapp)
           }
         )
+      } else {
+        resolve(mainapp)
       }
     } catch (err) {
       reject(err)
@@ -1545,11 +1629,11 @@ function applyApp (mainapp) {
   return new Promise((resolve, reject) => {
     try {
       var appsgenerator = fs.readFileSync('../ref/routes/employees.js', 'utf8')
-      let isMultiControl = mainapp[0].server_client
-        .map(a => a.inputtype)
-        .includes('multiselect', 'singleselect')
+      let isMultiControl = mainapp[0].server_client.map(a => a.inputtype)
 
-      if (isMultiControl) {
+      var conditions = ['multiselect', 'singleselect', 'checkbox']
+      var test2 = conditions.some(el => isMultiControl.includes(el))
+      if (test2) {
         appsgenerator = appsgenerator.replace(
           'base',
           mainapp[0].datapayloadModulename
