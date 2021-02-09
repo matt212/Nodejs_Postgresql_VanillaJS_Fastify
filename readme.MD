@@ -114,25 +114,17 @@ In case of error running sh Files Follow below
 - ### `Release notes 27 Jan 2021`
 
   >applied multi control for radio scaffolding 
-
-- ### `Release notes 27 Jan 2021`
-
-  >applied multi control for radio scaffolding 
-
+ 
 - ### `Release notes 29 Jan 2021`
 
-  >bolierplate dynamic radio button and checkboxes validations applied
-
-- ### `Release notes 31 Jan 2021`
-
-  >bolierplate dynamic radio button and checkboxes validations applied
-
+  >validations applied for bolierplate dynamic radio button and checkboxes with 
+ 
 - ### `Release notes 06 Feb 2021`
 
-  >bolierplate for static mutliselect applied
+  >for boilerplate multi and single select static mapping for edit and default rendering case scenarios completed
   
 - ### `Release notes 09 Feb 2021`
 
-  >for boilerplate multi and single select static mapping for edit and default rendering case scenarios completed
+  >Applied in  boilerplate multi and single select Dynamic SQLConstruct with 360 degree coverage 
 
   
