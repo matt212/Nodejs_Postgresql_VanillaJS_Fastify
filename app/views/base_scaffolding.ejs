@@ -19,6 +19,7 @@
                     <td>field type</td>
                     <td>validation type</td>
                     <td>length type</td>
+                    <td>isPrimary</td>
                     <td>BTN</td>
                     <td>add content BTN</td>
                 </tr>
@@ -113,7 +114,7 @@
 
         var regex = ['string', 'email', 'number', 'mobile', 'passwordvalidation', 'date']
         var ddlclientfieldtype = ['textbox', 'radio', 'checkbox', 'multiselect', 'singleselect', 'multiselect-ajax', 'singleselect-ajax']
-
+        var ddlinputisPrimary =[false,true] 
         function GetDynamicTextBox(value) {
 
             console.log(value)
@@ -138,6 +139,10 @@
                 re += '<option>' + element + '</option>'
             });
             re += '</td><td><input  type="number" min="1" max="100"  value="80" class="form-control">'
+            re += '</td><select name="" id="fieldtype_' + rowCount + '" class="formcom bredalpha"><option>STRING</option><option>INTEGER</option><option>BIGINT</option><option>boolean</option><option>ARRAY(DataTypes.INTEGER)</option><option>DATE</option></select></td><td><select name="" id="isPrimary_' + rowCount + '" class="formcom bredbeta">';
+            ddlinputisPrimary.forEach(function (element) {
+                re += '<option>' + element + '</option>'
+            });
             re += '</td>' + '<td><button type="button" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove-sign"></i></button></td>' + '<td><button type="button"  class="btn btn-primary base btn_Child"><i   class="glyphicon glyphicon-plus-sign"></i></button></td>'
             return re;
             //onclick="javascript:addcontent(this)"
@@ -190,9 +195,9 @@
                 internobj.fieldtypename = $(this.cells[5]).find('option:selected').text().trim()
                 internobj.fieldvalidatename = $(this.cells[6]).find('option:selected').text().trim()
                 internobj.fieldmaxlength = $(this.cells[7]).find('input').val().trim()
-
-
-
+                internobj.inputisPrimary=$(this.cells[8]).find('option:selected').text().trim()
+                internobj.inputisPrimary=internobj.inputisPrimary=="true"?true:false 
+                
 
 
                 var arinterns = []
@@ -211,6 +216,7 @@
                 })
                 if (arinterns.length > 0) {
                     internobj.childcontent = arinterns
+                    
                 }
 
                 arintern.push(internobj)
@@ -283,8 +289,8 @@
         console.log(server_client);
         swagger = JSON.parse(swagger)
         server_client = JSON.parse(server_client)
-        server_client = [{ "inputtype": "multiselect","inputisPrimary":true, "inputtypemod": "role", "inputtypeVal": "rolename", "inputtypeID": "roleid", "inputParent": "role", "inputCustomMapping": "rolename", "inputname": "roleid", "selecttype": "singleselect", "inputtextval": "rolename", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "multiselect","inputisPrimary":false, "inputtypemod": "modname", "inputtypeVal": "mname", "inputtypeID": "modnameid", "inputParent": "modname", "inputCustomMapping": "modulename", "inputname": "modnameid", "selecttype": "multiselect", "inputtextval": "mname", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80" }, { "inputtype": "multiselect","inputisPrimary":false, "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "selecttype": "multiselect", "inputtextval": "accesstype", "inputname": "accesstype", "inputplaceholder": "", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80", "childcontent": [{ "val": "VO", "text": "ViewOnly" }, { "val": "AA", "text": "AllAccess" }] }]
-        swagger = [{ "type": "integer", "fieldname": "roleid", "format": "int64", "example": 20 }, { "type": "integer", "fieldname": "modnameid", "format": "int64", "example": 20 }, { "type": "string", "fieldname": "accesstype", "example": "sample text" }]
+        server_client = [ { "inputtype": "multiselect", "inputtypemod": "role", "inputtypeVal": "rolename", "inputtypeID": "roleid", "inputParent": "role", "inputCustomMapping": "rolename", "inputname": "roleid", "selecttype": "multiselect", "inputtextval": "rolename", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": true }, { "inputtype": "multiselect", "inputtypemod": "modname", "inputtypeVal": "mname", "inputtypeID": "modnameid", "inputParent": "modname", "inputCustomMapping": "modulename", "inputname": "modnameid", "selecttype": "multiselect", "inputtextval": "mname", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false }, { "inputtype": "multiselect", "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "selecttype": "multiselect", "inputtextval": "accesstype", "inputname": "accesstype", "inputplaceholder": "", "fieldtypename": "STRING", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false, "childcontent": [ { "val": "VO", "text": "ViewOnly" }, { "val": "AA", "text": "AllAccess" } ] } ]
+        swagger = [ { "type": "integer", "fieldname": "roleid", "format": "int64", "example": 20 }, { "type": "integer", "fieldname": "modnameid", "format": "int64", "example": 20 }, { "type": "string", "fieldname": "accesstype", "example": "sample text" } ]
 
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}

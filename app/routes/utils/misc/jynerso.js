@@ -1306,7 +1306,7 @@ ${[
       .split('|')
       .map(string => string.trim())
   )
-].join(',\n')} from `
+].join(',\n')} , recordstate from `
         console.log(consolidatedSelectPrimary)
 
         //var collate=consolidatedSelectPrimary+consolidatedSelectPrimary1
