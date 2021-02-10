@@ -103,7 +103,7 @@ async function routes (fastify, options) {
     var mainapp = req.body
 
     applymodel(mainapp)
-      /*.then(applyApp)
+      .then(applyApp)
       .then(applyroutes)
       .then(applyserverValidationConfig)
       .then(applyserverschemaValidator)
@@ -112,7 +112,7 @@ async function routes (fastify, options) {
       .then(applyMultiControls)
       .then(applyhtml)
       .then(packageJsonUpdate)
-      .then(superadminUpdate)*/
+      .then(superadminUpdate)
       .then(SqlConstructMulti)
       .then(function (data) {
         reply.send({
@@ -309,7 +309,7 @@ var checkboxEditPopulate = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'checkbox') {
-      r1 = r1 + `current${dt.inputtypemod}.data[data.inputname]=data.vals`
+      r1 = r1 + `current${dt.inputtypemod}.data[data.key]=intern`
     }
   })
   return r1
@@ -318,7 +318,7 @@ var radioEditPopulate = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'radio') {
-      r1 = r1 + `current${dt.inputtypemod}.data=data.vals`
+      r1 = r1 + `current${dt.inputtypemod}.data=data.val`
     }
   })
   return r1
@@ -576,7 +576,7 @@ var checkboxMultiControl = function (redlime) {
       current${dt.inputtypemod}.data[key] = [...current${dt.inputtypemod}.data[key], ...[val]]
     }
     else {
-      current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => item !== val)
+      current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => parseInt(item) !== val)
     }
     reqops.formvalidation(data);
      validationListener()
@@ -585,8 +585,14 @@ var checkboxMultiControl = function (redlime) {
   })
   return r1
 }
-let multiInsertCodeforCheckbox = function (redlime) {
-  var r1 = ` let internim={ datapayload:{ ...arg.datapayload`
+let multiInsertCodeforCheckbox = function (redlime,mod) {
+  var r1 = `let updateIds; 
+  if(ajaxbase.isedit)
+   {
+    updateIds=arg.datapayload[currentmoduleid].split(',')
+    delete arg.datapayload[currentmoduleid]
+   }
+  let internim={ datapayload:{ ...arg.datapayload`
   var r2 = `
     var isactivearrayobj = {
       recordstate: base.interimdatapayload.recordstate
@@ -601,14 +607,47 @@ let multiInsertCodeforCheckbox = function (redlime) {
     let b = { ...temp, ...isactivearrayobj }
     //apply cartesion for multiselects objects
     var interns = datatransformutils.getCartesian(b)
-    let o = {
-      payset: interns,
-      delObj: {
-        ${redlime[0].inputtypeID}: interns[0].${redlime[0].inputtypeID}
+    if(ajaxbase.isedit)
+     {
+      updateIds.forEach(function(dt,i)
+     {
+      if(interns[i]==undefined)
+      {
+       base.datapayload={delObj: {[currentmoduleid]: dt}}
+       basefunction().deleterecord(base).then(function(dt){})
       }
-    }
-    base.datapayload = o
-    return base
+      else
+      {
+       interns[i][currentmoduleid] = dt
+      }
+     })
+     let a1=interns
+       a1.forEach(function(dt,i)
+       {
+         if(Object.keys(dt).includes(currentmoduleid))
+         {
+
+         }else
+         {
+           base.datapayload=dt
+           basefunction().singleInsert(base).then(function(dt) {})
+           delete interns[i]
+           console.log(interns);
+         }
+        
+       })
+      base.datapayload = interns.filter(Boolean)
+      return base
+     }
+     else
+     {
+      let o = {
+        payset: interns
+      }
+      base.datapayload = o
+      return base
+
+     }
   `
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'checkbox' || dt.inputtype == 'radio') {
@@ -625,13 +664,13 @@ let multiInsertCodeforCheckbox = function (redlime) {
   return r1 + r2
 }
 
-let multiInsertCode = function (validationmap) {
+let multiInsertCode = function (validationmap,mod) {
   let isMultiControl = validationmap.map(a => a.inputtype)
 
   var conditions = ['multiselect', 'singleselect', 'checkbox']
   var test2 = conditions.some(el => isMultiControl.includes(el))
   if (test2) {
-    return multiInsertCodeforCheckbox(validationmap)
+    return multiInsertCodeforCheckbox(validationmap,mod)
   } else {
     var r1 = ` return { datapayload:{ ...arg.datapayload`
     validationmap.forEach(function (dt) {
@@ -742,7 +781,7 @@ function applyMultiControls (mainapp) {
       )
       appsgenerator = appsgenerator.replace(
         '//insertpayloadData',
-        '\n ' + multiInsertCode(mainapp[0].server_client)
+        '\n ' + multiInsertCode(mainapp[0].server_client,mainapp[0].datapayloadModulename)
       )
       var based = mainapp[0].server_client
       based = based.filter(function (doctor) {
@@ -975,19 +1014,32 @@ function applyMultiControls (mainapp) {
               //if (dt.childcontent != undefined) {
               appsgenerator = appsgenerator.replace(
                 'createdata: `/${currentmodulename}/api/create/`',
-                'createdata: `/${currentmodulename}/api/bulkCreate/`'
+                'createdata: `/${currentmodulename}/api/bulkCreate/`\n,singleCreatedata: `/${currentmodulename}/api/create/`'
               )
+              appsgenerator = appsgenerator.replace('//SingleCreate',`singleInsert: function(base) {
+                ajaxbase.payload = base.datapayload
+                ajaxbase.url = baseurlobj.singleCreatedata;
+                return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
+                  ajaxbase.response = argument;
+                  return argument;
+                })
+              },`)
               //updateRecord
               appsgenerator = appsgenerator.replace(
                 '//updateRecord',
                 '\n' +
                   beautify(
-                    `base = basemod_modal.payloadformat(base)
-                  return this.deleterecord(base)
-                    .then(basemod_modal.insert)
-                    .then(function (data) {
-                      ajaxbase.response = data
-                      return ajaxbase
+                    `return Promise.mapSeries(basemod_modal.payloadformat(base).datapayload,function(dt)
+                    {
+                     ajaxbase.payload = dt
+                     ajaxbase.url = baseurlobj.updatedata;
+                     return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
+                       ajaxbase.response = argument;
+                       return argument;
+                     })
+                    }).then(a => {
+                      console.log(a)
+                      return a
                     })`,
                     { indent_size: 2 }
                   )
@@ -1146,23 +1198,28 @@ baseCheckbox:\`<div class="checkbox tablechk">
          })
          base.editrecord = interncontent;
          $('#cltrl' + currentmoduleid).val(armodid);
-         var formatresponse = this.formatresponse(interncontent);
+         var formatresponse = this.baseResponseformat(
+          validationmap,
+          interncontent[0]
+        )
          //multiSelectInit4
          formatresponse.forEach2(function(data) {
 
              if (data.inputtype == "textbox") {
-                 $("#cltrl" + data.inputname).val(data.vals)
-                 $("#cltrl" + data.inputname).removeAttr('data-form-type');
+                 $("#cltrl" + data.key).val(data.val)
+                 $("#cltrl" + data.key).removeAttr('data-form-type');
              }
              else if (data.inputtype == "radio") {
-              $(\`#overlaycontent .form-group .custom-control.custom-radio  [data-val="\${data.vals}"]\`).prop("checked", true)
+              $(\`#overlaycontent .form-group .custom-control.custom-radio  [data-val="\${data.key}"]\`).prop("checked", true)
               //editRadio
              }
                else if (data.inputtype == "checkbox") {
+                $('*[data-attribute="checkboxMulti"]').removeAttr('data-form-type');
               $(\`#overlaycontent .checkbox.tablechk [type="checkbox"]\`).each(function (index) {
                 $(this).attr("checked", false)
               })
-              data.vals.forEach(function (dr) {
+              var intern = data.val.includes(',') ? data.val.split(',') : [data.val]
+              intern.forEach(function (dr) {
                 
                 $(\`#overlaycontent .form-group .custom-control.custom-checkbox  [data-val='\${dr}']\`).prop("checked", true)
                 
@@ -1187,6 +1244,15 @@ baseCheckbox:\`<div class="checkbox tablechk">
          $("#btnbutton").click();
      },
      tablechkbox: function(arg) {},
+     baseResponseformat: function (validationmap, dt) {
+      return validationmap.map(function (dr) {
+        return {
+          key: dr.inputname,
+          val: dt[dr.inputname],
+          inputtype: dr.inputtype
+        }
+      })
+    },
      //multiSelectInit5
      formatresponse: function(data) {
 
@@ -1348,12 +1414,12 @@ let SqlConstructMulti = function (mainapp) {
             return { r1, r2 }
           }
         }
-        let getTextgroupbyval = function () {
+        let getTextgroupbyval = function (defaultmod) {
           let interns = validationmap.filter(dt => dt.inputtype == "textbox")[0]
 
           if (interns != undefined) {
             
-            var r1 = `group by ${interns.inputname}`
+            var r1 = `group by  ${interns.inputname}`
             return { r1}
           }
         }
@@ -1378,8 +1444,21 @@ string_agg(distinct ${dt.inputtextval},',')as ${dt.inputtextval}|
 string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`
           }
         })
-
-        var consolidatedSelectPrimary = `select 
+        baseSelect1=function(defaultmod)
+        {
+          let red=validationmap.filter(dt=>dt.inputtype=="textbox")
+          console.log(red)
+          if(red.length>=0)
+          {
+           return  `string_agg(distinct ${defaultmod}id::text,',')as ${defaultmod}id,`
+          }
+          else
+          {
+            return ' '
+          }
+        }
+        
+        var consolidatedSelectPrimary = `select ${baseSelect1(defaultmod)}
 ${getgroupbyval() === undefined ? ' ' : getgroupbyval().r1}
 ${[
   ...new Set(
@@ -1414,7 +1493,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-          ? getTextgroupbyval().r1+', recordstate'
+          ? getTextgroupbyval(defaultmod).r1+', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1436,7 +1515,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-        ? getTextgroupbyval().r1+', recordstate'
+        ? getTextgroupbyval(defaultmod).r1+', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1454,7 +1533,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-        ? getTextgroupbyval().r1+', recordstate'
+        ? getTextgroupbyval(defaultmod).r1+', recordstate'
           : getgroupbyval().r2
       }'
     )

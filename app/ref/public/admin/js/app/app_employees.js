@@ -79,6 +79,7 @@
          update: function(base) {
              //updateRecord
          },
+         //SingleCreate
          exportexcel: function(base) {
 
 
