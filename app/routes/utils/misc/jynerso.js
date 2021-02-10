@@ -1254,40 +1254,7 @@ baseCheckbox:\`<div class="checkbox tablechk">
       })
     },
      //multiSelectInit5
-     formatresponse: function(data) {
-
-         var res = this.formatserverfieldmap(data)
-        
-         var result = equijoin(res, validationmap, "key", "inputCustomMapping",
-      ({
-        vals
-      }, {
-        inputtype,
-        inputname
-      }) => ({
-        inputtype,
-        inputname,
-        vals
-      }));
-
-         return result;
-     },
-     formatserverfieldmap: function(data) {
-
-         var applyfield = applyfields;
-         var res = data.map(function(data) {
-             return applyfield.map(function(da) {
-
-                 //var y = (data[da].indexOf(',') != -1 ? data[da].split(',') : data[da]);
-                 var y = data[da]
-                 return {
-                     key: da,
-                     vals: y
-                 }
-             })
-         })[0]
-         return res;
-     }
+     
      `
 
 function applyhtml (mainapp) {

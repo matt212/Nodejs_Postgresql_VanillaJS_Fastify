@@ -114,5 +114,6 @@
      }
  }
  //baseOffLoad
- let basemod_modal = {afterhtmlpopulate: function(){},payloadformat: function (arg) {//insertpayloadData}}
+ let basemod_modal = {afterhtmlpopulate: function(){},
+ payloadformat: function (arg) {//insertpayloadData}}
  //StaticMulitSelectData
