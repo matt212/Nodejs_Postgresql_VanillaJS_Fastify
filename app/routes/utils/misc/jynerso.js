@@ -562,7 +562,7 @@ var checkboxMultiControl = function (redlime) {
   })
   return r1
 }
-let multiInsertCodeforCheckbox = function (redlime,mod) {
+let multiInsertCodeforCheckbox = function (redlime, mod) {
   var r1 = `let updateIds; 
   if(ajaxbase.isedit)
    {
@@ -580,8 +580,7 @@ let multiInsertCodeforCheckbox = function (redlime,mod) {
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'checkbox' || dt.inputtype == 'radio') {
       r1 = r1 + `,...current${dt.inputtypemod}.data `
-    } 
-    else if (dt.inputtype == 'multiselect') {
+    } else if (dt.inputtype == 'multiselect') {
       if (r1.includes('multiselects')) {
       } else {
         r1 = r1 + `,...multiselects`
@@ -593,29 +592,30 @@ let multiInsertCodeforCheckbox = function (redlime,mod) {
   return r1 + r2
 }
 
-let multiClearCode = function (validationmap,mod) {
+let multiClearCode = function (validationmap, mod) {
   let isMultiControl = validationmap.map(a => a.inputtype)
 
-  var conditions = ['multiselect', 'singleselect', 'checkbox']
+  var conditions = ['multiselect', 'singleselect', 'checkbox', 'radio']
   var test2 = conditions.some(el => isMultiControl.includes(el))
-  var r2=''
+  var r2 = ''
   if (test2) {
     validationmap.forEach(function (dt) {
-      if (dt.inputtype == 'radio'||dt.inputtype == 'checkbox') {
-        r2=r2+`\n current${dt.inputtypemod}.data.${dt.inputtypeID}=[]`
+      if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox') {
+        r2 = r2 + `\n current${dt.inputtypemod}.data.${dt.inputtypeID}=[]`
       }
     })
- return r2
+
+    return r2
   }
 }
 
-let multiInsertCode = function (validationmap,mod) {
+let multiInsertCode = function (validationmap, mod) {
   let isMultiControl = validationmap.map(a => a.inputtype)
 
   var conditions = ['multiselect', 'singleselect', 'checkbox']
   var test2 = conditions.some(el => isMultiControl.includes(el))
   if (test2) {
-    return multiInsertCodeforCheckbox(validationmap,mod)
+    return multiInsertCodeforCheckbox(validationmap, mod)
   } else {
     var r1 = ` return { datapayload:{ ...arg.datapayload`
     validationmap.forEach(function (dt) {
@@ -727,11 +727,19 @@ function applyMultiControls (mainapp) {
       )
       appsgenerator = appsgenerator.replace(
         '//insertpayloadData',
-        '\n ' + multiInsertCode(mainapp[0].server_client,mainapp[0].datapayloadModulename)
+        '\n ' +
+          multiInsertCode(
+            mainapp[0].server_client,
+            mainapp[0].datapayloadModulename
+          )
       )
       appsgenerator = appsgenerator.replace(
         '//clearControls',
-        '\n ' + multiClearCode(mainapp[0].server_client,mainapp[0].datapayloadModulename)
+        '\n ' +
+          multiClearCode(
+            mainapp[0].server_client,
+            mainapp[0].datapayloadModulename
+          )
       )
       var based = mainapp[0].server_client
       based = based.filter(function (doctor) {
@@ -976,14 +984,17 @@ function applyMultiControls (mainapp) {
                 'createdata: `/${currentmodulename}/api/create/`',
                 'createdata: `/${currentmodulename}/api/bulkCreate/`\n,singleCreatedata: `/${currentmodulename}/api/create/`'
               )
-              appsgenerator = appsgenerator.replace('//SingleCreate',`singleInsert: function(base) {
+              appsgenerator = appsgenerator.replace(
+                '//SingleCreate',
+                `singleInsert: function(base) {
                 ajaxbase.payload = base.datapayload
                 ajaxbase.url = baseurlobj.singleCreatedata;
                 return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
                   ajaxbase.response = argument;
                   return argument;
                 })
-              },`)
+              },`
+              )
               //updateRecord
               appsgenerator = appsgenerator.replace(
                 '//updateRecord',
@@ -1261,14 +1272,14 @@ let SqlConstructMulti = function (mainapp) {
       let validationmap = mainapp[0].server_client
       let isMultiControl = mainapp[0].server_client.map(a => a.inputtype)
 
-      var conditions = ['multiselect', 'singleselect', 'checkbox','radio']
+      var conditions = ['multiselect', 'singleselect', 'checkbox', 'radio']
       var test2 = conditions.some(el => isMultiControl.includes(el))
       if (test2) {
         let selectparam = validationmap.map(function (dt) {
           var parentintern = dt.childcontent == undefined ? dt.inputParent : 'a'
           if (dt.inputtype == 'textbox') {
             return `a.${dt.inputname} as ${dt.inputname}`
-          } else if (dt.inputtype == 'checkbox'||dt.inputtype == 'radio') {
+          } else if (dt.inputtype == 'checkbox' || dt.inputtype == 'radio') {
             return `${parentintern}.${dt.inputname} as ${dt.inputname}, 
             ${parentintern}.${dt.inputtextval} as ${dt.inputCustomMapping}`
           } else {
@@ -1307,12 +1318,11 @@ let SqlConstructMulti = function (mainapp) {
           }
         }
         let getTextgroupbyval = function (defaultmod) {
-          let interns = validationmap.filter(dt => dt.inputtype == "textbox")[0]
+          let interns = validationmap.filter(dt => dt.inputtype == 'textbox')[0]
 
           if (interns != undefined) {
-            
             var r1 = `group by  ${interns.inputname}`
-            return { r1}
+            return { r1 }
           }
         }
 
@@ -1326,7 +1336,7 @@ let SqlConstructMulti = function (mainapp) {
           if (dt.inputtype == 'textbox') {
             return `\n 
             ${dt.inputname}`
-          } else if (dt.inputtype == 'checkbox'||dt.inputtype == 'radio') {
+          } else if (dt.inputtype == 'checkbox' || dt.inputtype == 'radio') {
             return `\n 
 string_agg(distinct ${dt.inputCustomMapping},',')as ${dt.inputCustomMapping}|
 string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`
@@ -1336,20 +1346,16 @@ string_agg(distinct ${dt.inputtextval},',')as ${dt.inputtextval}|
 string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`
           }
         })
-        baseSelect1=function(defaultmod)
-        {
-          let red=validationmap.filter(dt=>dt.inputtype=="textbox")
+        baseSelect1 = function (defaultmod) {
+          let red = validationmap.filter(dt => dt.inputtype == 'textbox')
           console.log(red)
-          if(red.length>=0)
-          {
-           return  `string_agg(distinct ${defaultmod}id::text,',')as ${defaultmod}id,`
-          }
-          else
-          {
+          if (red.length >= 0) {
+            return `string_agg(distinct ${defaultmod}id::text,',')as ${defaultmod}id,`
+          } else {
             return ' '
           }
         }
-        
+
         var consolidatedSelectPrimary = `select ${baseSelect1(defaultmod)}
 ${getgroupbyval() === undefined ? ' ' : getgroupbyval().r1}
 ${[
@@ -1385,7 +1391,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-          ? getTextgroupbyval(defaultmod).r1+', recordstate'
+          ? getTextgroupbyval(defaultmod).r1 + ', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1407,7 +1413,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-        ? getTextgroupbyval(defaultmod).r1+', recordstate'
+          ? getTextgroupbyval(defaultmod).r1 + ', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1425,7 +1431,7 @@ ${[
       tunnel.arg.consolidatesearch +
       '${
         getgroupbyval() === undefined
-        ? getTextgroupbyval(defaultmod).r1+', recordstate'
+          ? getTextgroupbyval(defaultmod).r1 + ', recordstate'
           : getgroupbyval().r2
       }'
     )
@@ -1602,7 +1608,7 @@ function applyApp (mainapp) {
       var appsgenerator = fs.readFileSync('../ref/routes/employees.js', 'utf8')
       let isMultiControl = mainapp[0].server_client.map(a => a.inputtype)
 
-      var conditions = ['multiselect', 'singleselect', 'checkbox','radio']
+      var conditions = ['multiselect', 'singleselect', 'checkbox', 'radio']
       var test2 = conditions.some(el => isMultiControl.includes(el))
       if (test2) {
         appsgenerator = appsgenerator.replace(
