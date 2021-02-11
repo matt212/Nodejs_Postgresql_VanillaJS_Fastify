@@ -127,4 +127,11 @@ In case of error running sh Files Follow below
 
   >Applied in  boilerplate multi and single select Dynamic SQLConstruct with 360 degree coverage 
 
+- ### `Release notes 11 Feb 2021`
+
+  >boilerplate for multiselect integration with radio and checkboxes completed 
+
+
+  
+
   
