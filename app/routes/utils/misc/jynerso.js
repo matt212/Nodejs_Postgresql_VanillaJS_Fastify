@@ -593,6 +593,22 @@ let multiInsertCodeforCheckbox = function (redlime,mod) {
   return r1 + r2
 }
 
+let multiClearCode = function (validationmap,mod) {
+  let isMultiControl = validationmap.map(a => a.inputtype)
+
+  var conditions = ['multiselect', 'singleselect', 'checkbox']
+  var test2 = conditions.some(el => isMultiControl.includes(el))
+  var r2=''
+  if (test2) {
+    validationmap.forEach(function (dt) {
+      if (dt.inputtype == 'radio'||dt.inputtype == 'checkbox') {
+        r2=r2+`\n current${dt.inputtypemod}.data.${dt.inputtypeID}=[]`
+      }
+    })
+ return r2
+  }
+}
+
 let multiInsertCode = function (validationmap,mod) {
   let isMultiControl = validationmap.map(a => a.inputtype)
 
@@ -712,6 +728,10 @@ function applyMultiControls (mainapp) {
       appsgenerator = appsgenerator.replace(
         '//insertpayloadData',
         '\n ' + multiInsertCode(mainapp[0].server_client,mainapp[0].datapayloadModulename)
+      )
+      appsgenerator = appsgenerator.replace(
+        '//clearControls',
+        '\n ' + multiClearCode(mainapp[0].server_client,mainapp[0].datapayloadModulename)
       )
       var based = mainapp[0].server_client
       based = based.filter(function (doctor) {

@@ -558,6 +558,7 @@ let reqops = {
     ) {
       $(this).prop('checked', false)
     })
+    basemod_modal.customClearControl()
   },
   fileSelected: function (element) {
     var myFileSelected = element.files[0]
@@ -668,6 +669,7 @@ let reqops = {
         .then(function (argument) {
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
+          
           $('#btnmodalclose').click()
         })
     } else {
@@ -679,6 +681,7 @@ let reqops = {
         .then(function (argument) {
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
+          
           $('#btnmodalclose').click()
         })
     }
@@ -1329,7 +1332,7 @@ let htmlpopulate = {
     <label><input type="checkbox" class="custom-control-input" id="cltrl${
       currentset.id
     }${elem[currentset.id]}" 
-    onclick="javascript:basemod_modal.ongenderControl(this)" 
+    onclick="javascript:basemod_modal.on${currentset.name}Control(this)" 
     data-key="${currentset.id}"
     data-val="${elem[currentset.id]}"
     data-attribute="checkboxMulti"
@@ -1403,9 +1406,9 @@ let htmlpopulate = {
     <label><input type="radio" class="custom-control-input" id="cltrl${
       currentset.id
     }${elem[currentset.id]}" 
-    onclick="javascript:basemod_modal.ongenderControl(this)" 
+    onclick="javascript:basemod_modal.on${currentset.name}Control(this)" 
     data-key="${currentset.id}"
-    name="customRadiogender"
+    name="customRadio${currentset.name}"
     data-val="${elem[currentset.id]}"  
     value="${elem[currentset.id]}">${elem[currentset.text]}
     </label></div>`

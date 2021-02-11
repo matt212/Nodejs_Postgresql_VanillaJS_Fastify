@@ -115,5 +115,9 @@
  }
  //baseOffLoad
  let basemod_modal = {afterhtmlpopulate: function(){},
- payloadformat: function (arg) {//insertpayloadData}}
+ customClearControl:function(){//clearControls
+},
+ payloadformat: function (arg) {
+     //insertpayloadData
+}}
  //StaticMulitSelectData
