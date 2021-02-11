@@ -540,6 +540,25 @@ let reqops = {
   flpupload: function () {
     $('#uploadfiles').click()
   },
+  clearControls: function () {
+    $('input[type=text]').each(function () {
+      $(this).val('')
+    })
+    $('#cltrlrecordstate').prop('checked', false)
+    $(`#overlaycontent .selectchips`).remove()
+    $(
+      `#overlaycontent .form-group.overlaytxtalign.col-md-5 .custom-control.custom-radio `
+    ).each(function (index) {
+      $(this)
+        .find('[type="radio"]')
+        .prop('checked', false)
+    })
+    $(`#overlaycontent *[data-attribute="checkboxMulti"]`).each(function (
+      index
+    ) {
+      $(this).prop('checked', false)
+    })
+  },
   fileSelected: function (element) {
     var myFileSelected = element.files[0]
     reqops.uploadFile(myFileSelected).then(function (a) {
@@ -648,6 +667,7 @@ let reqops = {
         .update(base)
         .then(function (argument) {
           baseloadsegments.initialdatatableload()
+          reqops.clearControls()
           $('#btnmodalclose').click()
         })
     } else {
@@ -658,6 +678,7 @@ let reqops = {
         .insert(base)
         .then(function (argument) {
           baseloadsegments.initialdatatableload()
+          reqops.clearControls()
           $('#btnmodalclose').click()
         })
     }
