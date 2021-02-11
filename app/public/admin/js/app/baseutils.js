@@ -618,7 +618,9 @@ let reqops = {
     $('#btnbutton').click()
   },
   btnSubmit: function () {
-    var $fields = $('input:text, input:hidden, select').not("[name^='__']")
+    var $fields = $('input:text, input:hidden')
+      .not("[name^='__']")
+      .not("[id^='_filter']")
     var data = $fields.formToJSON()
 
     /*var doctors = data.map(function(doctor) {
@@ -629,9 +631,13 @@ let reqops = {
     Object.keys(data).forEach(function (element) {
       var internset = element.replace('cltrl', '')
 
-      datatransformutils.rename(data, element, internset)
+      if (element.includes('_filter')) {
+        delete data[element]
+      } else {
+        datatransformutils.rename(data, element, internset)
+      }
     })
-
+    console.log(data)
     if (ajaxbase.isedit) {
       base.datapayload = data
       base.datapayload.recordstate =
@@ -1244,7 +1250,7 @@ let htmlpopulate = {
             .last()
             .append('<td>' + isStaticMappingCheckpoint + '</td>')
         }
-        
+
         $('#basetable tbody tr')
           .last()
           .append(
@@ -2042,7 +2048,9 @@ let datatransformutils = {
                         dt
                       )
                     : dt,
-                vals: data[da.inputtextval].split(',')[i]
+                vals: isNaN(parseInt(data[da.inputname].split(',')[i]))
+                  ? data[da.inputname].split(',')[i]
+                  : parseInt(data[da.inputname].split(',')[i])
               }
             })
         } else {
@@ -2069,7 +2077,9 @@ let datatransformutils = {
                     data[da.inputCustomMapping]
                   )
                 : data[da.inputCustomMapping],
-            vals: data[da.inputtextval]
+            vals: isNaN(parseInt(data[da.inputname]))
+              ? data[da.inputname]
+              : parseInt(data[da.inputname])
             //vals: y
           }
         }
@@ -2082,6 +2092,7 @@ let datatransformutils = {
       Object.values(dat).forEach(function (dt) {
         if (Array.isArray(dt)) {
           dt.forEach(function (dt1) {
+            console.log(dt1)
             obj.multiselectfunc[Object.keys(dat)[0]].onsearchtext(dt1)
           })
         } else {

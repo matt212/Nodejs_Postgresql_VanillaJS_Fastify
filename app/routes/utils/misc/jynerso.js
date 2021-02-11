@@ -344,7 +344,7 @@ var checkboxmultiInitControl = function (redlime) {
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
       })
-      $('#overlaycontent').append(\`<div class="form-group" data-attribute="checkboxMulti"  data-form-type="true">
+      $('#overlaycontent').append(\`<div class="form-group overlaytxtalign col-md-5" data-attribute="checkboxMulti"  data-form-type="true">
              <div class="col-sm-15">
                     <label class="lblhide" id="lblmsg\${current${dt.inputtypemod}.id}">
                     <i class="fa fa-bell-o"></i> Please select ${dt.inputtypemod}
@@ -376,7 +376,7 @@ var radiomultiInitControl = function (redlime) {
         value="\${elem[current${dt.inputtypemod}.id]}">\${elem[current${dt.inputtypemod}.text]}
         </label></div>\`
       })
-      $('#overlaycontent').append(\`<div class='form-group' onclick="javascript:reqops.formvalidation(this)" data-attribute="radio" data-form-type="true">
+      $('#overlaycontent').append(\`<div class='form-group overlaytxtalign col-md-5' onclick="javascript:reqops.formvalidation(this)" data-attribute="radio" data-form-type="true">
       <div class="col-sm-15">
                     <label class="lblhide" id="lblmsg\${current${dt.inputtypemod}.id}">
                     <i class="fa fa-bell-o"></i> Please select ${dt.inputtypemod}
@@ -908,7 +908,7 @@ function applyMultiControls (mainapp) {
                       basemultiselectaccess.multiselectmodular(p)
                     }
                   })
-                },`
+                }`
               )
               multiControlsScripts = multiControlsScripts.replace(
                 '//multiSelectInit9',
@@ -932,6 +932,16 @@ function applyMultiControls (mainapp) {
               console.log('---------------------herer')
               multiControlsScripts = multiControlsScripts.replace(
                 '//rchkelse',
+                '\n ' + 'else'
+              )
+            }
+            if (
+              checkboxmultiInitControl(mainapp[0].server_client) !== '' ||
+              radiomultiInitControl(mainapp[0].server_client) !== ''
+            ) {
+              console.log('---------------------herer')
+              multiControlsScripts = multiControlsScripts.replace(
+                '//multiselectelse',
                 '\n ' + 'else'
               )
             }
@@ -1138,7 +1148,8 @@ var multiControlsScripts = `
 
         htmlcontent += \`<div class=\"row\">\`
         item.forEach2(function(element) {
-          //multiSelectInit8   
+          //multiSelectInit8
+          //multiselectelse   
           //radioCode
              //rchkelse   
              //checkboxCode
@@ -1212,7 +1223,7 @@ baseCheckbox:\`<div class="checkbox tablechk">
                  $("#cltrl" + data.key).removeAttr('data-form-type');
              }
              else if (data.inputtype == "radio") {
-              $(\`#overlaycontent .form-group .custom-control.custom-radio  [data-val="\${data.key}"]\`).prop("checked", true)
+              $(\`#overlaycontent .form-group.overlaytxtalign.col-md-5 .custom-control.custom-radio  [data-val="\${data.val}"]\`).prop("checked", true)
               //editRadio
              }
                else if (data.inputtype == "checkbox") {
@@ -1223,7 +1234,7 @@ baseCheckbox:\`<div class="checkbox tablechk">
               var intern = data.val.includes(',') ? data.val.split(',') : [data.val]
               intern.forEach(function (dr) {
                 
-                $(\`#overlaycontent .form-group .custom-control.custom-checkbox  [data-val='\${dr}']\`).prop("checked", true)
+                $(\`#overlaycontent .form-group.overlaytxtalign.col-md-5 .custom-control.custom-checkbox  [data-val='\${dr}']\`).prop("checked", true)
                 
               })
               //editCheckbox
