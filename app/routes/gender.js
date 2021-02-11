@@ -1,18 +1,17 @@
 let dep = require('./utils/dependentVariables')
-let mod = Object.assign(
-  {},
-  {
-    Name: 'employees',
-    id: 'employeesid',
+let mod = Object.assign({}, {
+    Name: 'gender',
+    id: 'genderid',
     type: 'base'
   },
   dep.baseUtilsRoutes
 )
 var validatorSchema = require('./utils/' + mod.Name + '/payloadSchema')
-async function routes (fastify, options) {
+async function routes(fastify, options) {
   fastify.get(
-    '/',
-    { preValidation: [fastify.isSession, fastify.isModuleAccess] },
+    '/', {
+      preValidation: [fastify.isSession, fastify.isModuleAccess]
+    },
     async (request, reply) => {
       dep.assignVariables(mod)
       let validationConfig = require('./utils/' +
@@ -27,8 +26,7 @@ async function routes (fastify, options) {
   )
 
   fastify.post(
-    dep.routeUrls.searchtype[0],
-    {
+    dep.routeUrls.searchtype[0], {
       config: dep.cGzip,
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
@@ -43,14 +41,13 @@ async function routes (fastify, options) {
           reply.code = 200
           reply.send(arg)
         })
-        .catch(function (error) {
+        .catch(function(error) {
           reply.code(400).send(error.trim())
         })
     }
   )
   fastify.post(
-    dep.routeUrls.searchtype[1],
-    {
+    dep.routeUrls.searchtype[1], {
       config: dep.cGzip,
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
@@ -66,14 +63,15 @@ async function routes (fastify, options) {
         .then(arg => {
           reply.send(arg)
         })
-        .catch(function (error) {
-          reply.code(400).send({ status: error.trim() })
+        .catch(function(error) {
+          reply.code(400).send({
+            status: error.trim()
+          })
         })
     }
   )
   fastify.post(
-    dep.routeUrls.searchtypegroupby,
-    {
+    dep.routeUrls.searchtypegroupby, {
       config: dep.cGzip,
       schema: validatorSchema.searchGroupbyJsonSchema,
       preValidation: [fastify.authenticate]
@@ -84,8 +82,7 @@ async function routes (fastify, options) {
     }
   )
   fastify.post(
-    dep.routeUrls.create,
-    {
+    dep.routeUrls.create, {
       schema: validatorSchema.insertLoadSchema,
       preValidation: [fastify.authenticate]
     },
@@ -95,8 +92,7 @@ async function routes (fastify, options) {
     }
   )
   fastify.post(
-    dep.routeUrls.exportexcel,
-    {
+    dep.routeUrls.exportexcel, {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
@@ -106,8 +102,7 @@ async function routes (fastify, options) {
   )
 
   fastify.post(
-    dep.routeUrls.uploadcontent,
-    {
+    dep.routeUrls.uploadcontent, {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
@@ -116,8 +111,7 @@ async function routes (fastify, options) {
     }
   )
   fastify.post(
-    dep.routeUrls.update,
-    {
+    dep.routeUrls.update, {
       schema: validatorSchema.updateLoadSchema,
       preValidation: [fastify.authenticate]
     },
@@ -126,8 +120,7 @@ async function routes (fastify, options) {
     }
   )
   fastify.post(
-    dep.routeUrls.searchtypegroupbyId,
-    {
+    dep.routeUrls.searchtypegroupbyId, {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
@@ -136,8 +129,7 @@ async function routes (fastify, options) {
     }
   )
   fastify.post(
-    dep.routeUrls.delete,
-    {
+    dep.routeUrls.delete, {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
@@ -146,8 +138,7 @@ async function routes (fastify, options) {
     }
   )
   fastify.post(
-    dep.routeUrls.pivotresult,
-    {
+    dep.routeUrls.pivotresult, {
       config: dep.cGzip,
       schema: validatorSchema.searchPivotJsonSchema,
       preValidation: [fastify.authenticate]
@@ -155,29 +146,6 @@ async function routes (fastify, options) {
     async (request, reply) => {
       dep.assignVariables(mod)
       dep.pivotResult(request, reply, mod)
-    }
-  )
-  fastify.post(
-    dep.routeUrls.bulkCreate,
-    {
-      config: dep.cGzip,
-      schema: validatorSchema.insertBulkLoadSchema,
-      preValidation: [fastify.authenticate]
-    },
-    async (request, reply) => {
-      dep.assignVariables(mod)
-      dep.bulkCreate(request, reply)
-    }
-  )
-  fastify.post(
-    dep.routeUrls.customDestroy,
-    {
-      config: dep.cGzip,
-      preValidation: [fastify.authenticate]
-    },
-    async (request, reply) => {
-      dep.assignVariables(mod)
-      dep.customDestroy(request, reply)
     }
   )
 }

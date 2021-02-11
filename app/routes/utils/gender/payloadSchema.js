@@ -1,36 +1,49 @@
 let baseSchema = require('../../utils/misc/baseSchemaConfig')
 let insertUpdateSchema = {
-  placeholder1
+  name: {
+    type: 'string',
+    allOf: [{
+      transform: ['trim']
+    }, {
+      minLength: 1
+    }, {
+      maxLength: 80
+    }]
+  },
   recordstate: {
     type: 'boolean',
-    allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: 4 }]
+    allOf: [{
+      transform: ['trim']
+    }, {
+      minLength: 1
+    }, {
+      maxLength: 4
+    }]
   }
 }
 let baseupdatefunction = {
   insertUpdateSchema,
-  placeholder4: {
+  genderid: {
     type: 'integer',
     minimum: 1
   }
 }
-let insertUpdateBulkSchema = {
-  payset: {
-    type: 'array',
-    items: insertUpdateSchema
-  }
-}
-const insertBulkSchema = {
-  body: insertUpdateBulkSchema,
-  headers: baseSchema.headersJsonSchema
-}
+
 const insertSchema = {
   type: 'object',
-  required: placeholder2,
+  required: [
+    "name",
+    "recordstate"
+  ],
   properties: insertUpdateSchema
 }
 const updateSchema = {
   type: 'object',
-  required: placeholder3,
+  required: [
+    "name",
+    "recordstate",
+    "genderid"
+  ],
   properties: baseupdatefunction
 }
 
@@ -47,7 +60,6 @@ module.exports = {
   searchLoadSchema: baseSchema.searchLoadSchema,
   insertLoadSchema: insertLoadSchema,
   updateLoadSchema: updateLoadSchema,
-  insertBulkLoadSchema:insertBulkSchema,
   searchGroupbyJsonSchema: baseSchema.searchGroupbyJsonSchema,
   searchPivotJsonSchema: baseSchema.searchPivotJsonSchema
 }

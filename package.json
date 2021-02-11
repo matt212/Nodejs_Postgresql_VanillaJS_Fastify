@@ -81,7 +81,8 @@
     "createDB_updated": "npx run-func ./app/utils/dbDump/databaseUtils.js pgcreateDb",
     "applychangesDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").applychangesDB()'",
     "pgRestore": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgRestore()'",
-    "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'"
+    "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'",
+    "genderEval": "mocha ./app/utils/test/gender-test.spec.js --timeout 10000 --exit"
   },
   "repository": {
     "type": "git",

@@ -103,3 +103,35 @@ In case of error running sh Files Follow below
   > `yarn mroleEval`
 
   > `yarn userroleEval`
+
+- ### `Release notes 20 Jan 2021`
+
+  >For rbac test cases modularized
+
+  > `yarn mroleEval`
+
+  > `yarn userroleEval`
+- ### `Release notes 27 Jan 2021`
+
+  >applied multi control for radio scaffolding 
+ 
+- ### `Release notes 29 Jan 2021`
+
+  >validations applied for bolierplate dynamic radio button and checkboxes with 
+ 
+- ### `Release notes 06 Feb 2021`
+
+  >for boilerplate multi and single select static mapping for edit and default rendering case scenarios completed
+  
+- ### `Release notes 09 Feb 2021`
+
+  >Applied in  boilerplate multi and single select Dynamic SQLConstruct with 360 degree coverage 
+
+- ### `Release notes 11 Feb 2021`
+
+  >boilerplate for multiselect integration with radio and checkboxes completed 
+
+
+  
+
+  

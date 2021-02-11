@@ -2,13 +2,14 @@
  let currentmoduleid = "employeesid"
  //definition
  let baseurlobj = {
-     getpaginatesearchtypeurl: '/' + currentmodulename + '/api/searchtype/',
-     createdata: '/' + currentmodulename + '/api/create/',
-     updatedata: '/' + currentmodulename + '/api/update/',
-     exceldata: '/' + currentmodulename + '/api/exportexcel/',
-     uploaddata: '/' + currentmodulename + '/api/uploadcontent/',
-     getpaginatesearchtypegroupby: '/' + currentmodulename + '/api/searchtypegroupby/',
-     pivotresult: '/' + currentmodulename + '/api/pivotresult/',
+     getpaginatesearchtypeurl: `/${currentmodulename}/api/searchtype/`,
+     createdata: `/${currentmodulename}/api/create/`,
+     updatedata: `/${currentmodulename}/api/update/`,
+     exceldata: `/${currentmodulename}/api/exportexcel/`,
+     uploaddata: `/${currentmodulename}/api/uploadcontent/`,
+     getpaginatesearchtypegroupby: `/${currentmodulename}/api/searchtypegroupby/`,
+     pivotresult: `/${currentmodulename}/api/pivotresult/`,
+     deleteemployees: `/${currentmodulename}/api/customDestroy/`,
      //initialization
  }
  let basefunction = function() {
@@ -58,7 +59,7 @@
          insert: function(base) {
 
 
-             ajaxbase.payload = base.datapayload
+             ajaxbase.payload = basemod_modal.payloadformat(base).datapayload
              ajaxbase.url = baseurlobj.createdata;
 
              return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
@@ -67,18 +68,18 @@
              })
 
          },
+         deleterecord: function (base) {
+            ajaxbase.payload = base.datapayload
+            ajaxbase.url = baseurlobj.deleteemployees
+      
+            return ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
+              return base
+            })
+          },
          update: function(base) {
-
-
-             ajaxbase.payload = base.datapayload
-             ajaxbase.url = baseurlobj.updatedata;
-
-             return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
-                 ajaxbase.response = argument;
-                 return argument;
-             })
-
+             //updateRecord
          },
+         //SingleCreate
          exportexcel: function(base) {
 
 
@@ -113,4 +114,10 @@
      }
  }
  //baseOffLoad
- let basemod_modal = {afterhtmlpopulate: function() {}}
+ let basemod_modal = {afterhtmlpopulate: function(){},
+ customClearControl:function(){//clearControls
+},
+ payloadformat: function (arg) {
+     //insertpayloadData
+}}
+ //StaticMulitSelectData

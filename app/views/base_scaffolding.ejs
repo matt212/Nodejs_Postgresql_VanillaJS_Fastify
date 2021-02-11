@@ -19,6 +19,7 @@
                     <td>field type</td>
                     <td>validation type</td>
                     <td>length type</td>
+                    <td>isPrimary</td>
                     <td>BTN</td>
                     <td>add content BTN</td>
                 </tr>
@@ -113,7 +114,7 @@
 
         var regex = ['string', 'email', 'number', 'mobile', 'passwordvalidation', 'date']
         var ddlclientfieldtype = ['textbox', 'radio', 'checkbox', 'multiselect', 'singleselect', 'multiselect-ajax', 'singleselect-ajax']
-
+        var ddlinputisPrimary =[false,true] 
         function GetDynamicTextBox(value) {
 
             console.log(value)
@@ -138,6 +139,10 @@
                 re += '<option>' + element + '</option>'
             });
             re += '</td><td><input  type="number" min="1" max="100"  value="80" class="form-control">'
+            re += '</td><select name="" id="fieldtype_' + rowCount + '" class="formcom bredalpha"><option>STRING</option><option>INTEGER</option><option>BIGINT</option><option>boolean</option><option>ARRAY(DataTypes.INTEGER)</option><option>DATE</option></select></td><td><select name="" id="isPrimary_' + rowCount + '" class="formcom bredbeta">';
+            ddlinputisPrimary.forEach(function (element) {
+                re += '<option>' + element + '</option>'
+            });
             re += '</td>' + '<td><button type="button" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove-sign"></i></button></td>' + '<td><button type="button"  class="btn btn-primary base btn_Child"><i   class="glyphicon glyphicon-plus-sign"></i></button></td>'
             return re;
             //onclick="javascript:addcontent(this)"
@@ -156,19 +161,57 @@
                     internobj.inputtypemod = $(this.cells[1]).find('option:selected').text().trim()
                     internobj.inputtypeVal = $(this.cells[2]).find('option:selected').text().trim()
                     internobj.inputtypeID = internobj.inputtypemod + "id"
-                }
+                    internobj.inputParent = internobj.inputtypemod
+                    internobj.inputCustomMapping = internobj.inputtypemod
 
-                internobj.inputname = $(this.cells[3]).find('input').val().trim()
+                    if (internobj.inputtype == "multiselect" || internobj.inputtype == "singleselect") {
+
+
+                        internobj.selecttype = internobj.inputtype
+                        internobj.inputtextval = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtypemod = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtypeVal = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtypeID = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputParent = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputname = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtype = "multiselect"
+                        
+                    }
+                    else if (internobj.inputtype == "multiselect-ajax" || internobj.inputtype == "singleselect-ajax") {
+                        internobj.inputname = $(this.cells[3]).find('input').val().trim().split('|')[0]
+                        internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim().split('|')[1]
+                        internobj.selecttype = internobj.inputtype.split('-')[0]
+                        internobj.inputtextval = $(this.cells[2]).find('option:selected').text().trim().split('|')[0]
+                        internobj.inputtype = "multiselect"
+                    }
+                    else if (internobj.inputtype == "checkbox" || internobj.inputtype == "radio") {
+                        internobj.inputname = $(this.cells[3]).find('input').val().trim().split('|')[0]
+                        internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim().split('|')[1]
+                        internobj.inputtextval = $(this.cells[2]).find('option:selected').text().trim()
+                    }
+                }
+                else {
+                    internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim()
+                    internobj.inputname = $(this.cells[3]).find('input').val().trim()
+
+                }
                 internobj.inputplaceholder = $(this.cells[4]).find('input').val().trim()
                 internobj.fieldtypename = $(this.cells[5]).find('option:selected').text().trim()
                 internobj.fieldvalidatename = $(this.cells[6]).find('option:selected').text().trim()
                 internobj.fieldmaxlength = $(this.cells[7]).find('input').val().trim()
-
+                internobj.inputisPrimary=$(this.cells[8]).find('option:selected').text().trim()
+                internobj.inputisPrimary=internobj.inputisPrimary=="true"?true:false 
+                
 
 
                 var arinterns = []
                 var childelem = $(this).next('tr.childelem')
-                childelem.each(function () {
+
+
+
+
+                $(this).nextUntil('.parent').each(function (dt, i) {
 
                     var childinterobj = {}
                     childinterobj.val = $(this.cells[0]).find('input').val().trim()
@@ -178,6 +221,7 @@
                 })
                 if (arinterns.length > 0) {
                     internobj.childcontent = arinterns
+                    
                 }
 
                 arintern.push(internobj)
@@ -221,8 +265,8 @@
                 return o;
             });
 
-            $("#jsonatt1").html(JSON.stringify(arintern, null, "\t"))
-            $("#jsonatt2").html(JSON.stringify(swaggerJson, null, "\t"))
+            $("#jsonatt1").text(JSON.stringify(arintern, null, "\t"))
+            $("#jsonatt2").text(JSON.stringify(swaggerJson, null, "\t"))
         });
     })
 
@@ -241,62 +285,21 @@
         return re;
     }
     function base_server() {
-        var non_multiserver_client = [{ "inputtype": "textbox", "inputname": "firstname", "inputplaceholder": "meh", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "lastname", "inputplaceholder": "last name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "age", "inputplaceholder": "age", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "5" }, { "inputtype": "textbox", "inputname": "phone", "inputplaceholder": "mobile", "fieldtypename": "INTEGER", "fieldvalidatename": "mobile", "fieldmaxlength": "15" }]
-        var server_client = [{
-            "inputtype": "textbox",
-            "inputname": "firstname",
-            "inputplaceholder": "meh",
-            "fieldtypename": "STRING",
-            "fieldvalidatename": "string",
-            "fieldmaxlength": "80"
-        }, {
-            "inputtype": "textbox",
-            "inputname": "lastname",
-            "inputplaceholder": "last name",
-            "fieldtypename": "STRING",
-            "fieldvalidatename": "string",
-            "fieldmaxlength": "80"
-        }, {
-            "inputtype": "textbox",
-            "inputname": "age",
-            "inputplaceholder": "age",
-            "fieldtypename": "INTEGER",
-            "fieldvalidatename": "number",
-            "fieldmaxlength": "5"
-        }, {
-            "inputtype": "textbox",
-            "inputname": "phone",
-            "inputplaceholder": "mobile",
-            "fieldtypename": "BIGINT",
-            "fieldvalidatename": "mobile",
-            "fieldmaxlength": "15"
-        }
-            // , {
-            //     "inputtype": "checkbox",
-            //     "inputtypemod": "modname",
-            //     "inputtypeVal": "mname",
-            //     "inputtypeID": "modnameid",
-            //     "inputname": "modnameid",
-            //     "inputplaceholder": "Gender",
-            //     "fieldtypename": "ARRAY(DataTypes.INTEGER)",
-            //     "fieldvalidatename": "number",
-            //     "fieldmaxlength": "80"
-            // }
-        ]
-        var swagger = [{ "type": "string", "fieldname": "firstname", "example": "sample text" }, { "type": "string", "fieldname": "lastname", "example": "sample text" }, { "type": "integer", "fieldname": "age", "format": "int64", "example": true }, { "type": "integer", "fieldname": "phone", "format": "int64", "example": true }
-            // ,{
-            //     "type": "array",
-            //     "fieldname": "modnameid",
-            //     "format": "array",
-            //     "example": [1, 2]
-            // }
-        ]
-        // var server_client=$("#jsonatt1").val();
-        // var swagger=$("#jsonatt2").val();
-        //swagger=JSON.parse(swagger)
-        //server_client=JSON.parse(server_client)
+
+
+
+
+        var server_client = $("#jsonatt1").html();
+        var swagger = $("#jsonatt2").html();
+
+
         console.log(swagger);
         console.log(server_client);
+        swagger = JSON.parse(swagger)
+        server_client = JSON.parse(server_client)
+        //server_client = [ { "inputtype": "multiselect", "inputtypemod": "role", "inputtypeVal": "rolename", "inputtypeID": "roleid", "inputParent": "role", "inputCustomMapping": "rolename", "inputname": "roleid", "selecttype": "multiselect", "inputtextval": "rolename", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": true }, { "inputtype": "multiselect", "inputtypemod": "modname", "inputtypeVal": "mname", "inputtypeID": "modnameid", "inputParent": "modname", "inputCustomMapping": "modulename", "inputname": "modnameid", "selecttype": "multiselect", "inputtextval": "mname", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false }, { "inputtype": "multiselect", "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "selecttype": "multiselect", "inputtextval": "accesstype", "inputname": "accesstype", "inputplaceholder": "", "fieldtypename": "STRING", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false, "childcontent": [ { "val": "VO", "text": "ViewOnly" }, { "val": "AA", "text": "AllAccess" } ] } ]
+        //swagger = [ { "type": "integer", "fieldname": "roleid", "format": "int64", "example": 20 }, { "type": "integer", "fieldname": "modnameid", "format": "int64", "example": 20 }, { "type": "string", "fieldname": "accesstype", "example": "sample text" } ]
+
         var datapayloadModulename = $("#txtmodulename").val()
         var ajaxbase = {}
         ajaxbase.method = "jedha"
