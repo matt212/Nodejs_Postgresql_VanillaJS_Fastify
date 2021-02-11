@@ -652,7 +652,8 @@ let multiInsertCodeforCheckbox = function (redlime,mod) {
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'checkbox' || dt.inputtype == 'radio') {
       r1 = r1 + `,...current${dt.inputtypemod}.data `
-    } else if (dt.inputtype == 'multiselect') {
+    } 
+    else if (dt.inputtype == 'multiselect') {
       if (r1.includes('multiselects')) {
       } else {
         r1 = r1 + `,...multiselects`
@@ -756,8 +757,9 @@ let baseinitControl = function (redlime) {
         name:"${dt.inputtypemod}",
         id:"${dt.inputtypeID}",
         text:"${dt.inputtypeVal}",
-        ${dt.inputtype == 'checkbox' ? `data:{"${dt.inputtypeID}":[]}` : ' '}
+        data:{"${dt.inputtypeID}":[]}
       };`
+      //${dt.inputtype == 'checkbox' ? `data:{"${dt.inputtypeID}":[]}` : ' '}
     } else if (
       dt.inputtype == 'multiselect' ||
       dt.inputtype == 'singleselect'
