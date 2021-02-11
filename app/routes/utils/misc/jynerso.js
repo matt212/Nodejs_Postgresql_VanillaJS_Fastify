@@ -1336,14 +1336,14 @@ let SqlConstructMulti = function (mainapp) {
       let validationmap = mainapp[0].server_client
       let isMultiControl = mainapp[0].server_client.map(a => a.inputtype)
 
-      var conditions = ['multiselect', 'singleselect', 'checkbox']
+      var conditions = ['multiselect', 'singleselect', 'checkbox','radio']
       var test2 = conditions.some(el => isMultiControl.includes(el))
       if (test2) {
         let selectparam = validationmap.map(function (dt) {
           var parentintern = dt.childcontent == undefined ? dt.inputParent : 'a'
           if (dt.inputtype == 'textbox') {
             return `a.${dt.inputname} as ${dt.inputname}`
-          } else if (dt.inputtype == 'checkbox') {
+          } else if (dt.inputtype == 'checkbox'||dt.inputtype == 'radio') {
             return `${parentintern}.${dt.inputname} as ${dt.inputname}, 
             ${parentintern}.${dt.inputtextval} as ${dt.inputCustomMapping}`
           } else {
@@ -1401,7 +1401,7 @@ let SqlConstructMulti = function (mainapp) {
           if (dt.inputtype == 'textbox') {
             return `\n 
             ${dt.inputname}`
-          } else if (dt.inputtype == 'checkbox') {
+          } else if (dt.inputtype == 'checkbox'||dt.inputtype == 'radio') {
             return `\n 
 string_agg(distinct ${dt.inputCustomMapping},',')as ${dt.inputCustomMapping}|
 string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`
@@ -1677,7 +1677,7 @@ function applyApp (mainapp) {
       var appsgenerator = fs.readFileSync('../ref/routes/employees.js', 'utf8')
       let isMultiControl = mainapp[0].server_client.map(a => a.inputtype)
 
-      var conditions = ['multiselect', 'singleselect', 'checkbox']
+      var conditions = ['multiselect', 'singleselect', 'checkbox','radio']
       var test2 = conditions.some(el => isMultiControl.includes(el))
       if (test2) {
         appsgenerator = appsgenerator.replace(
