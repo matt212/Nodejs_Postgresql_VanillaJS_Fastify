@@ -604,7 +604,12 @@ let multiClearCode = function (validationmap, mod) {
         r2 = r2 + `\n current${dt.inputtypemod}.data.${dt.inputtypeID}=[]`
       }
     })
-
+    var conditions = ['multiselect', 'singleselect']
+    var test21 = conditions.some(el => isMultiControl.includes(el))
+    console.log("why"+test21)
+    if (test21) {
+      r2=r2+"\n multiselects={}"
+    }
     return r2
   }
 }
