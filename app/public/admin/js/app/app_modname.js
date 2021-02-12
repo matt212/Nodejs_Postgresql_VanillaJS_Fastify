@@ -82,5 +82,10 @@ let basefunction = function() {
   };
 };
 let basemod_modal = {
-  afterhtmlpopulate: function() {}
-};
+  afterhtmlpopulate: function() {},
+  customClearControl:function(){//clearControls
+  },
+   payloadformat: function (arg) {
+       //insertpayloadData
+  }}
+

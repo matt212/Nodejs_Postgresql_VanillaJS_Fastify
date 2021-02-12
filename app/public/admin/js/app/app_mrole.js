@@ -451,7 +451,8 @@ let basemod_modal = {
     $("#btnbutton").click();
   },
   tablechkbox: function(arg) {},
-
+  customClearControl:function(){//clearControls
+  },
   populatemodularddl: function() {
     validationmap.forEach2(function(data) {
       if (data.inputtype == 'multiselect') {
