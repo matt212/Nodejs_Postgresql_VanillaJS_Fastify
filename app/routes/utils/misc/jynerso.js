@@ -433,17 +433,7 @@ var multiSelectControl = function (redlime) {
       return base
     },
     htmlpopulatemodular: function (fieldname) {
-      var htmlcontents = \`<div class="form-group col-sm-6"> 
-        <div class="col-sm-15">
-        <label class="lblhide" id="lblmsgddlddlmulti">
-        <i class="fa fa-bell-o"></i> Please Select \${fieldname.inputCustomMapping} 
-        </label>
-        <div onkeyup="javascript:reqops.formvalidation(this)" data-attribute="multiSelect"
-        data-key="\${fieldname.inputname}" data-form-type="false" id="in\${fieldname.inputtextval}"></div>
-        </div></div>\`
-      return htmlcontents
-  
-      //$(htmlcontents).insertBefore($("#overlaycontent.form-group.overlaytxtalign.col-md-12"))
+      return htmlpopulate.genericddlPopulate(fieldname)
     },`
 
   redlime.forEach(function (dt) {

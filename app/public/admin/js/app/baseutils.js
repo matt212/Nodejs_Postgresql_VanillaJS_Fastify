@@ -1386,6 +1386,18 @@ let htmlpopulate = {
    </label>
    </div>`
   },
+  genericddlPopulate:function(fieldname)
+  {
+    return `<div class="form-group col-sm-6"> 
+    <div class="col-sm-15">
+    <label class="lblhide" id="lblmsgddlddlmulti">
+    <i class="fa fa-bell-o"></i> Please Select ${fieldname.inputCustomMapping} 
+    </label>
+    <div onkeyup="javascript:reqops.formvalidation(this)" data-attribute="multiSelect"
+    data-key="${fieldname.inputname}" data-form-type="false" id="in${fieldname.inputtextval}"></div>
+    </div></div>`
+
+  },
   genericRecordState: function (interncontent, base) {
     if (interncontent[0].recordstate) {
       $('#cltrlrecordstate').prop('checked', true)
