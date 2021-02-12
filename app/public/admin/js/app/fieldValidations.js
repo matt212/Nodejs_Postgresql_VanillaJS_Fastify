@@ -1,3 +1,36 @@
+let validations = {
+  string: [/^[a-zA-Z ]+$/, 'Please enter valid  name'],
+  number: [/^[0-9]+$/, 'Please enter valid number'],
+  email: [
+    /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+    'Please enter a valid email address'
+  ],
+  mobile: [/^(\+\d{1,3}[- ]?)?\d{10}$/, 'Please enter a valid mobile number'],
+  password_set1: [
+    /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/,
+    'Please enter Minimum eight characters, at least one letter and one number'
+  ],
+  password_set2: [
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/,
+    'Please enter Minimum eight characters, at least one letter, one number and one special character'
+  ],
+  password_set3: [
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
+    'Please enter Minimum eight characters, at least one uppercase letter, one lowercase letter and one number'
+  ],
+  password_set4: [
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}/,
+    'Please enter Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character'
+  ],
+  password_set4: [
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,10}/,
+    'Please enter Minimum eight and maximum 10 characters, at least one uppercase letter, one lowercase letter, one number and one special character'
+  ],
+  date: [
+    /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]|(?:Jan|Mar|May|Jul|Aug|Oct|Dec)))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2]|(?:Jan|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)(?:0?2|(?:Feb))\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9]|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep))|(?:1[0-2]|(?:Oct|Nov|Dec)))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
+    'Please enter valid date'
+  ]
+}
 /*field validation*/
 let reqopsValidate={
     formvalidation: function (argument) {
