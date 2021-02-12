@@ -509,7 +509,7 @@ let reqops = {
     $('#uploadfiles').click()
   },
   clearControls: function () {
-    $('input[type=text]').each(function () {
+    $('#overlaycontent input[type=text]').each(function () {
       $(this).val('')
     })
     $('#cltrlrecordstate').prop('checked', false)
