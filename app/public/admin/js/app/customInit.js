@@ -1,5 +1,5 @@
 
-applyfields=JSON.parse(applyfields.replace(/\&#34;/g, '"'))
+
 let selectArr = []
 let basesearchobj = {}
 let basesearchar = new Array()

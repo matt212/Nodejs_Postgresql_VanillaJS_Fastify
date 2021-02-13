@@ -3,21 +3,20 @@
 
 <head>
 <script>
-  let customToken="<%= sessiontoken %>";
- 
- let serverdate = "<%= serverdate.name %>";
- let moduleattributes = "<%= modelattribute %>";
- let validationmap = "<%= validationmap %>";
- 
-  validationmap=JSON.parse(validationmap.replace(/\&#34;/g, '\"'))
+  
   
  let applyfields="<%= applyfields %>";
 </script>
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-  <script src="../../admin/js/app/customInit.js"></script>
+  
   <script src="../../admin/js/app/fieldValidations.js"></script>
-  <script src="../../admin/js/app/htmlPopulate.js"></script>
+  <script src="../../admin/js/app/customControls.js"></script>
   <script src="../../admin/js/app/genericCommon.js"></script>
+  
+  <script>
+    let validationmap=[ { "inputtype": "textbox", "inputCustomMapping": "firstname", "inputname": "firstname", "inputplaceholder": "please enter First name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80", "inputisPrimary": false }, { "inputtype": "textbox", "inputCustomMapping": "mobilenumber", "inputname": "mobilenumber", "inputplaceholder": "Please enter mobile", "fieldtypename": "INTEGER", "fieldvalidatename": "mobile", "fieldmaxlength": "80", "inputisPrimary": false }, { "inputtype": "textbox", "inputCustomMapping": "email", "inputname": "email", "inputplaceholder": "please enter email", "fieldtypename": "STRING", "fieldvalidatename": "email", "fieldmaxlength": "80", "inputisPrimary": false }, { "inputtype": "textbox", "inputCustomMapping": "address", "inputname": "address", "inputplaceholder": "Please enter address", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80", "inputisPrimary": false } ]
+    
+  </script>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">

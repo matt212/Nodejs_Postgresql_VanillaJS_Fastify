@@ -323,7 +323,11 @@
  let basemod_modal = {
    modalpopulate: function() {
      var interset = validationmap
-     let redlime = doChunk(interset, 2)
+     
+     var redlime=new Array(Math.ceil(interset.length / 2)).fill().map(_ => interset.splice(0, 2))
+     
+     
+     
      $("#overlaycontent").empty();
      var htmlcontent = "";
      var internhtmlcontent = "";
@@ -345,7 +349,7 @@
          }
          //rchkelse   
          else {
-           htmlcontent += htmlPopulateCustomControl.multiCheckBoxPopulateSecondary(element);
+           htmlcontent += htmlPopulateCustomControl.textBoxPopulateSecondary(element);
          }
 
        })

@@ -1105,7 +1105,7 @@ let groupbyControlsPopulate = function (modname) {
 var multiControlsScripts = `
   modalpopulate: function() {
     var interset = validationmap
-    let redlime = doChunk(interset, 2)
+    var redlime=new Array(Math.ceil(interset.length / 2)).fill().map(_ => interset.splice(0, 2))
     $("#overlaycontent").empty();
     var htmlcontent = "";
     var internhtmlcontent="";
@@ -1119,7 +1119,7 @@ var multiControlsScripts = `
              //rchkelse   
              //checkboxCode
              else {
-                htmlcontent += htmlPopulateCustomControl.multiCheckBoxPopulateSecondary(element);
+                htmlcontent += htmlPopulateCustomControl.textBoxPopulateSecondary(element);
             }
 
         })
@@ -1127,12 +1127,12 @@ var multiControlsScripts = `
         htmlcontent += \`</div>\`
     })
 
-    var chkcontent = htmlpopulate.genericCheckboxHtml(currentmoduleid);
+    var chkcontent = htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);
 
     $("#overlaycontent").html(htmlcontent + chkcontent);
 },
 //onchkcapture
-baseCheckbox:htmlpopulate.genericCheckboxHtmlPrimary()
+baseCheckbox:htmlPopulateCustomControl.genericCheckboxHtmlPrimary()
   ,
   //multiSelectInit9
      afterhtmlpopulate: function() {
@@ -1182,7 +1182,7 @@ baseCheckbox:htmlpopulate.genericCheckboxHtmlPrimary()
          })
          //active comma denominator
          //console.log(interncontent[0].recordstate)
-         htmlpopulate.genericRecordState(interncontent,base)
+         htmlPopulateCustomControl.genericRecordState(interncontent,base)
          
      },
      tablechkbox: function(arg) {},

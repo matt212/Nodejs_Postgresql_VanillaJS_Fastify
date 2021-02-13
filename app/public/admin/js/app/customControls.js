@@ -5,7 +5,7 @@ multiCheckBoxPopulate: function (elem, currentset) {
       currentset.id
     }${elem[currentset.id]}" 
     onclick="javascript:basemod_modal.on${currentset.name}Control(this)" 
-    data-key="${currentset.id}"
+    data-key="${currentset.id}"j
     data-val="${elem[currentset.id]}"
     data-attribute="checkboxMulti"
     data-parentVal="${currentset.name}"       
@@ -20,7 +20,46 @@ multiCheckBoxPopulate: function (elem, currentset) {
            </label>${internhtmlcontent}</div>
            </div></div>`
   },
-  multiCheckBoxPopulateSecondary: function (element) {
+  genericCheckboxHtml: function (currentmoduleid) {
+    return `<input type="hidden" name="${currentmoduleid}" value="0" id="cltrl${currentmoduleid}"> 
+    <div class="form-group overlaytxtalign col-md-5"><div class="col-sm-offset-2 col-sm-15"><div><label><div class="checkbox tablechk">
+   <label>
+   <div class="col-sm-15">
+                    <label class="lblhide" id="lblmsgrecordstate">
+                    <i class="fa fa-bell-o"></i> Please select Active
+                    </label>
+   <input type="checkbox" id="cltrlrecordstate" data-attribute="checkbox" data-form-type="true" onclick="javascript:tableops.onchk(this)" value="true"><span class="checkbox-material"><span class="check"></span></span> Remember me
+   <span class="checkbox-material">
+   </div>
+   </span> 
+   </label>
+   </div></label></div></div></div>`
+  },
+  genericCheckboxHtmlPrimary: function () {
+    return `<div class="checkbox tablechk">
+   <label>
+   <input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value=true> Remember me
+   <span class="checkbox-material">
+   </span> 
+   </label>
+   </div>`
+  },
+  genericRecordState: function (interncontent, base) {
+    if (interncontent[0].recordstate) {
+      $('#cltrlrecordstate').prop('checked', true)
+      $('#cltrlrecordstate').val(true)
+      base.datapayload.recordstate = true
+      base.interimdatapayload.recordstate = true
+      $('#cltrlrecordstate').removeAttr('data-form-type')
+    } else {
+      $('#cltrlrecordstate').prop('checked', false)
+      $('#cltrlrecordstate').val(false)
+      base.datapayload.recordstate = false
+      base.interimdatapayload.recordstate = false
+    }
+    $('#btnbutton').click()
+  },
+  textBoxPopulateSecondary: function (element) {
     return `<div class="form-group overlaytxtalign col-md-5">
     <div class="col-sm-15">
     <label class="lblhide" id="lblmsg${element.inputname}">
