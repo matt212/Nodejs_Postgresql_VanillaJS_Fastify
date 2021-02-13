@@ -19,15 +19,18 @@ let basemod_modal = {
 
       htmlcontent += `</div>`;
     });
-     let btncode=` <button type="button" id="btnmodalsub" class="btn btn-primary" disabled="true"
-     onclick="javascript:reqops.btnSubmit();">Save changes</button>`
-    $("#overlaycontent").html(htmlcontent+btncode);
+    let btncode = ` <button type="button" id="btnmodalsub" class="btn btn-primary" disabled="true"
+     onclick="javascript:reqops.btnSubmit();">Save changes</button>`;
+    $("#overlaycontent").html(htmlcontent + btncode);
   },
 };
 
 $(function () {
   basemod_modal.modalpopulate();
-  $('#overlaycontent input[type="text"], input[type="checkbox"]').on("keydown keyup change", function() {
-  htmlPopulateCustomControl.validationListener()
-  })
+  $('#overlaycontent input[type="text"], input[type="checkbox"]').on(
+    "keydown keyup change",
+    function () {
+      htmlPopulateCustomControl.validationListener();
+    }
+  );
 });
