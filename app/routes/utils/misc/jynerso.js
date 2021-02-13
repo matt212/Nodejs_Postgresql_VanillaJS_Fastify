@@ -335,9 +335,9 @@ var checkboxmultiInitControl = function (redlime) {
     basefunction().${dt.inputtypemod}MultiKeysLoad(current${dt.inputtypemod}.text).then(function (data) {
       data.rows.forEach((elem, index) => {
         
-        internhtmlcontent = internhtmlcontent + htmlpopulate.multiCheckBoxPopulate(elem,current${dt.inputtypemod})
+        internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.multiCheckBoxPopulate(elem,current${dt.inputtypemod})
       })
-      $('#overlaycontent').append(htmlpopulate.multiCheckboxPopulatePrimary(current${dt.inputtypemod},internhtmlcontent))
+      $('#overlaycontent').append(htmlPopulateCustomControl.multiCheckboxPopulatePrimary(current${dt.inputtypemod},internhtmlcontent))
       
     });
   }`
@@ -356,9 +356,9 @@ var radiomultiInitControl = function (redlime) {
           var internhtmlcontent=""
     basefunction().${dt.inputtypemod}MultiKeysLoad(current${dt.inputtypemod}.text).then(function (data) {
       data.rows.forEach((elem, index) => {
-        internhtmlcontent = internhtmlcontent + htmlpopulate.customRadioPopulate(elem,current${dt.inputtypemod})
+        internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.customRadioPopulate(elem,current${dt.inputtypemod})
       })
-      $('#overlaycontent').append(htmlpopulate.customRadioPopulatePrimary(current${dt.inputtypemod},internhtmlcontent))
+      $('#overlaycontent').append(htmlPopulateCustomControl.customRadioPopulatePrimary(current${dt.inputtypemod},internhtmlcontent))
     });
   }`
     }
@@ -560,7 +560,7 @@ let multiInsertCodeforCheckbox = function (redlime, mod) {
     delete arg.datapayload[currentmoduleid]
    }
   let internim={ datapayload:{ ...arg.datapayload`
-  var r2 = `return htmlpopulate.genericMultiControlpayload(
+  var r2 = `return htmlPopulateCustomControl.genericMultiControlpayload(
     base,
     internim,
     updateIds,
@@ -1108,7 +1108,7 @@ var multiControlsScripts = `
              //rchkelse   
              //checkboxCode
              else {
-                htmlcontent += htmlpopulate.multiCheckBoxPopulateSecondary(element);
+                htmlcontent += htmlPopulateCustomControl.multiCheckBoxPopulateSecondary(element);
             }
 
         })
