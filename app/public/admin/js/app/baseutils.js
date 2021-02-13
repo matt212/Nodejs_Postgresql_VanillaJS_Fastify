@@ -50,7 +50,6 @@ $(function () {
     }
   })
 })
-
 /*user submit events*/
 let reqops = {
   uploadFile: function (file) {
@@ -252,7 +251,6 @@ let reqops = {
         }
       })
   },
-
   srchparams: function () {
     base.searchtype = 'Columnwise'
     base.datapayload = payloadprepared()
