@@ -3,7 +3,7 @@
   "password": "admin123",
   "isactive": "1",
   "muserID": "1",
-  "Modulename": "modname,mrole,role,userrole,muser,employees,gender",
+  "Modulename": "modname,mrole,role,userrole,muser,employees,gender,mroleset",
   "Accestype": "AA",
   "Rolename": "testrolename"
 }, {
@@ -11,7 +11,7 @@
   "isactive": "1",
   "password": "admin123",
   "muserID": "1",
-  "Modulename": "modname,mrole,role,userrole,muser,employees,gender",
+  "Modulename": "modname,mrole,role,userrole,muser,employees,gender,mroleset",
   "Accestype": "VO",
   "Rolename": "testrolename"
 }, {

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<script>
+  let customToken="<%= sessiontoken %>";
+ 
+ let serverdate = "<%= serverdate.name %>";
+ let moduleattributes = "<%= modelattribute %>";
+ let validationmap = "<%= validationmap %>";
+ 
+  validationmap=JSON.parse(validationmap.replace(/\&#34;/g, '\"'))
+  
+ let applyfields="<%= applyfields %>";
+</script>
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src="../../admin/js/app/customInit.js"></script>
+  <script src="../../admin/js/app/fieldValidations.js"></script>
+  <script src="../../admin/js/app/htmlPopulate.js"></script>
+  <script src="../../admin/js/app/genericCommon.js"></script>
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+  <div class="box-body" id="overlaycontent">
+    </div>
+  </div>
+  <script src="../../admin/js/app/app_mroleset-client.js"></script>
+</body>
+
+</html>

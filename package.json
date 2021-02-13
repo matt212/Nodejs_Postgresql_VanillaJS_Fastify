@@ -82,7 +82,8 @@
     "applychangesDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").applychangesDB()'",
     "pgRestore": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgRestore()'",
     "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'",
-    "genderEval": "mocha ./app/utils/test/gender-test.spec.js --timeout 10000 --exit"
+    "genderEval": "mocha ./app/utils/test/gender-test.spec.js --timeout 10000 --exit",
+    "mrolesetEval": "mocha ./app/utils/test/mroleset-test.spec.js --timeout 10000 --exit"
   },
   "repository": {
     "type": "git",

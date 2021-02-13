@@ -1,0 +1,217 @@
+paths:
+  /mroleset/api/load/:
+    post:
+      tags:
+        - mroleset
+      summary: Initial load
+      description: ''
+      operationId: mrolesetLoad
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/loadDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/mrolesetSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+  /mroleset/api/searchtype:
+    post:
+      tags:
+        - mroleset
+      summary: Multiselect multicolumn search
+      description: ''
+      operationId: mrolesetSearchtype
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/SearchDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/mrolesetSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+  /mroleset/api/create/:
+    post:
+      tags:
+        - mroleset
+      summary: Create record
+      description: ''
+      operationId: mrolesetCreate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Create record
+          required: true
+          schema:
+            $ref: '#/definitions/mroleset'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /mroleset/api/update/:
+    post:
+      tags:
+        - mroleset
+      summary: Update record
+      description: ''
+      operationId: mrolesetUpdate
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: update record
+          required: true
+          schema:
+            $ref: '#/definitions/mrolesetUpdateDefinitions'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /mroleset/api/searchtypegroupby/:
+    post:
+      tags:
+        - mroleset
+      summary: Multiselect populate api for employee
+      description: ''
+      operationId: mrolesetSearchtypegroupby
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Pet object that needs to be added to the store
+          required: true
+          schema:
+            $ref: '#/definitions/groupByDefinitions'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /mroleset/api/uploadcontent:
+    post:
+      tags:
+        - mroleset
+      summary: Uploads a file.
+      operationId: mrolesetUpload
+      consumes:
+        - multipart/form-data
+      parameters:
+        - in: formData
+          name: upfile
+          type: file
+          description: The file to upload.
+      responses:
+        '200':
+          description: Invalid input
+  /mroleset/api/delete/:
+    post:
+      tags:
+        - mroleset
+      summary: Delete record
+      description: ''
+      operationId: mrolesetDelete
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Delete record
+          required: true
+          schema:
+            $ref: '#/definitions/mrolesetId'
+      responses:
+        '200':
+          description: Invalid input
+      security:
+        - api_accessToken: []
+  /mroleset/api/pivotresult/:
+    post:
+      tags:
+        - mroleset
+      summary: Pivot operations for both axis
+      description: ''
+      operationId: mrolesetPivot
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: >-
+            give pivot results and also we can also club 'mrolesetSearchtype'
+            api for filteration purposes of pivot
+          required: true
+          schema:
+            $ref: '#/definitions/pivotDefinitions'
+      responses:
+        '200':
+          description: valid input
+          schema:
+            $ref: '#/definitions/mrolesetSearchtypeResponseDefinitions'
+      security:
+        - api_accessToken: []
+definitions:
+  mrolesetUpdateDefinitions:
+    allOf:
+      - $ref: '#/definitions/mroleset'
+      - $ref: '#/definitions/mrolesetId'
+  mrolesetSearchtypeResponseDefinitions:
+    type: object
+    properties:
+      rows:
+        type: array
+        items:
+          $ref: '#/definitions/mrolesetSearchtypeResponse'
+      count:
+        $ref: '#/definitions/rowCount'
+  mrolesetSearchtypeResponse:
+    allOf:
+      - $ref: '#/definitions/mroleset'
+      - $ref: '#/definitions/mrolesetId'
+  mroleset:
+    type: object
+    properties:
+      name:
+        type: string
+        example: sample text
+      genderid:
+        type: integer
+        format: int64
+        example: 20
+      roleid:
+        type: integer
+        format: int64
+        example: 20
+      modnameid:
+        type: integer
+        format: int64
+        example: 20
+    xml:
+      name: basePayLoad
+  mrolesetId:
+    type: object
+    properties:
+      mrolesetid:
+        type: integer
+        format: int64
+        example: 1676213

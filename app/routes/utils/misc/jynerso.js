@@ -103,17 +103,17 @@ async function routes (fastify, options) {
     var mainapp = req.body
 
     applymodel(mainapp)
-      .then(applyApp)
+      /*.then(applyApp)
       .then(applyroutes)
       .then(applyserverValidationConfig)
       .then(applyserverschemaValidator)
       .then(applyMochaChaiTestCases)
-      .then(swaggerdocs)
+      .then(swaggerdocs)*/
       .then(applyMultiControls)
-      .then(applyhtml)
+      /*.then(applyhtml)
       .then(packageJsonUpdate)
       .then(superadminUpdate)
-      .then(SqlConstructMulti)
+      .then(SqlConstructMulti)*/
       .then(function (data) {
         reply.send({
           a: 'run  yarn applychangesDB ',
