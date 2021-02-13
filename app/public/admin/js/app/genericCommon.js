@@ -238,11 +238,7 @@ let datatransformutils = {
     this.splice(index, 1)
     this.splice(newPos, 0, value)
   }
-  String.prototype.capitalize = function () {
-    return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
-      return p1 + p2.toUpperCase()
-    })
-  }
+  
   Array.prototype.remByVal = function (val) {
     for (var i = 0; i < this.length; i++) {
       if (this[i] === val) {

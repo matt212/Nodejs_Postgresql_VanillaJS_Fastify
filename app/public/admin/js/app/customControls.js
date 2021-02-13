@@ -12,6 +12,15 @@ multiCheckBoxPopulate: function (elem, currentset) {
     value="${elem[currentset.id]}">${elem[currentset.text]}
     </label></div>`
   },
+  validationListener : function() {
+    var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+ console.log(sel)
+    if (sel <= 0) {
+      $('#btnmodalsub').prop('disabled', false)
+    } else {
+      $('#btnmodalsub').prop('disabled', true)
+    }
+  },
   multiCheckboxPopulatePrimary: function (currentset, internhtmlcontent) {
     return `<div class="form-group overlaytxtalign col-md-5" data-attribute="checkboxMulti"  data-form-type="true">
     <div class="col-sm-15">
@@ -163,4 +172,9 @@ multiCheckBoxPopulate: function (elem, currentset) {
         return base
       }
     }
+}
+String.prototype.capitalize = function () {
+  return this.replace(/(^|\s)([a-z])/g, function (m, p1, p2) {
+    return p1 + p2.toUpperCase()
+  })
 }
