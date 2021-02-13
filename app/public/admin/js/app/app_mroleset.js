@@ -357,7 +357,7 @@
        htmlcontent += `</div>`
      })
 
-     var chkcontent = htmlpopulate.genericCheckboxHtml(currentmoduleid);
+     var chkcontent = htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);
 
      $("#overlaycontent").html(htmlcontent + chkcontent);
    },
@@ -374,7 +374,7 @@
      }
    },
    onMultiControlChk: function(data) {},
-   baseCheckbox: htmlpopulate.genericCheckboxHtmlPrimary(),
+   baseCheckbox: htmlPopulateCustomControl.genericCheckboxHtmlPrimary(),
 
 
    afterhtmlpopulate: function() {
@@ -430,7 +430,7 @@
      })
      //active comma denominator
      //console.log(interncontent[0].recordstate)
-     htmlpopulate.genericRecordState(interncontent, base)
+     htmlPopulateCustomControl.genericRecordState(interncontent, base)
 
    },
    tablechkbox: function(arg) {},
