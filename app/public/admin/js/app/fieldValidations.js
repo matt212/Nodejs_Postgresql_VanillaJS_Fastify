@@ -111,7 +111,7 @@ var baseobjvalidation = {
   },
   alphaNumericValidation: function (argument) {
     validation = new RegExp(validations["alphaNumeric"][0]);
-    // validate the email value against the regular expression
+    // validate the alphanumeric value against the regular expression
 
     if (!validation.test(argument.value)) {
       $(argument).parent().find("label").attr("class", validations.showCSS);
