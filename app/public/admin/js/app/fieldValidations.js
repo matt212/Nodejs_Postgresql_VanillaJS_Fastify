@@ -109,6 +109,18 @@ var baseobjvalidation = {
       $(argument).removeAttr("data-form-type");
     }
   },
+  alphaNumericValidation: function (argument) {
+    validation = new RegExp(validations["alphaNumeric"][0]);
+    // validate the email value against the regular expression
+
+    if (!validation.test(argument.value)) {
+      $(argument).parent().find("label").attr("class", validations.showCSS);
+      $(argument).attr("data-form-type", "true");
+    } else {
+      $(argument).parent().find("label").attr("class", validations.hideCSS);
+      $(argument).removeAttr("data-form-type");
+    }
+  },
   checkboxvalidation: function (argument) {
     if ($(argument).is(":checked")) {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
@@ -193,6 +205,9 @@ var baseobjvalidation = {
       case "string":
         this.textvalidation(internset.content);
         break;
+      case "alphaNumericValidation":
+          this.alphaNumericValidation(internset.content);
+          break;  
       case "checkbox":
         this.checkboxvalidation(internset.content);
         break;
