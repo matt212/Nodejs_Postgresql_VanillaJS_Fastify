@@ -1,16 +1,14 @@
  let currentmodulename = "baset";
  let currentmoduleid = "basetid"
 
- let currentgender = {
-   name: "gender",
-   id: "genderid",
+ let currentaccesstype = {
+   name: "accesstype",
+   id: "accesstypeid",
    text: "name",
    data: {
-     "genderid": []
+     "accesstypeid": []
    }
  };
- let multiselects = {}
- let multiselectfunc = {}
  let baseurlobj = {
    getpaginatesearchtypeurl: `/${currentmodulename}/api/searchtype/`,
    createdata: `/${currentmodulename}/api/bulkCreate/`,
@@ -22,21 +20,12 @@
    pivotresult: `/${currentmodulename}/api/pivotresult/`,
    deletebaset: `/${currentmodulename}/api/customDestroy/`,
    //
-   getcurrentModgendergroupby: `${currentgender.name}/api/searchtypegroupbyId/`,
+   getcurrentModaccesstypegroupby: `${currentaccesstype.name}/api/searchtypegroupbyId/`,
  }
  let basefunction = function() {
    return {
      //
 
-     genderMultiKeysLoad: function(keys) {
-       //keys="gender"
-       base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
-       return this
-         .getcurrentModgendergroupby(base)
-         .then(function(argument) {
-           return argument
-         })
-     },
      basetMultiKeysLoad: function(keys) {
        //keys="gender"
        base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
@@ -151,20 +140,12 @@
      },
      //
 
-     getcurrentModgendergroupby: function(base) {
-       ajaxbase.payload = base.datapayload
-       ajaxbase.url = baseurlobj.getcurrentModgendergroupby;
-       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
-         ajaxbase.response = argument;
-         return argument;
-       })
-     },
 
    }
  }
  //
  let validationListener = function() {
-   var sel = $('.form-horizontal input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+   var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
 
    if (sel <= 0) {
      $('#btnmodalsub').prop('disabled', false)
@@ -172,86 +153,11 @@
      $('#btnmodalsub').prop('disabled', true)
    }
  }
-
- let basemultiselectaccess = {
-   multiselectmodular: function(arg) {
-     var multiselectconfig = {
-       selectevent: '#in' + arg.fieldname,
-       fieldkey: arg.fieldkey,
-       selecttype: arg.selecttype,
-       selecttype: arg.selecttype,
-       placeholder: arg.fieldname,
-       remotefunc: this['remotefunc' + arg.fieldname]
-     }
-
-
-     multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function(
-       data
-     ) {
-       multiselects[arg.secondaryKey] = data
-       reqops.formvalidation(
-         $(`#overlaycontent [data-key='${arg.secondaryKey}']`)
-       )
-       validationListener()
-     })
-     multiselectfunc[arg.fieldname].init()
-   },
-   multiSelectCommon: function(data) {
-     var arin = []
-     var intern = {}
-     intern[data.fieldname] = data.fieldval
-     arin.push(intern)
-     intern = {}
-     var internbase = basemultiselectaccess.htmlpopulatemodnamefilterparam(arin)
-     return internbase
-   },
-   multiSelectCommonResponse: function(data, argument) {
-     var internfield = Object.keys(argument.rows[0])
-     var sets = argument.rows.map(function(doctor) {
-       return {
-         // return what new object will look like
-         key: data.fieldname,
-         text: doctor[internfield[0]],
-         val: doctor[internfield[1]]
-       }
-     })
-     return sets
-   },
-   htmlpopulatemodnamefilterparam: function(internar) {
-     var filtparam = {}
-     filtparam.pageno = 0
-     filtparam.pageSize = 20
-     filtparam.searchtype = 'Columnwise'
-     filtparam.searchparam = internar
-     filtparam.searchparammetafilter = []
-     filtparam.ispaginate = true
-     filtparam.disableDate = true
-     base.datapayload = filtparam
-
-     return base
-   },
-   htmlpopulatemrolefilterparam: function(internar) {
-     var filtparam = {}
-     filtparam.modulename = internar.mname
-     filtparam.rolename = internar.roleid
-     base.datapayload = filtparam
-
-     return base
-   },
-   htmlpopulatemodular: function(fieldname) {
-     return htmlpopulate.genericddlPopulate(fieldname)
-   },
-   remotefuncaccesstype: function(data) {
-     return new Promise(function(resolve, reject) {
-       resolve(accesstypecontent)
-     })
-   },
- }
+ //multiSelectInit6
  $(function() {
    basemod_modal.modalpopulate()
-
-   basemod_modal.populatemodularddl()
-   $('.form-horizontal input[type="text"], input[type="checkbox"]').on("keydown keyup change", function() {
+   //multiSelectInit7
+   $('#overlaycontent input[type="text"], input[type="checkbox"]').on("keydown keyup change", function() {
      validationListener()
    })
  })
@@ -265,23 +171,20 @@
      redlime.forEach(function(item) {
 
        htmlcontent += `<div class="row">`
-       item.forEach2(function(element) {
+       item.forEach(function(element) {
+         //multiSelectInit8
+         //multiselectelse   
 
-         if (element.inputtype == 'multiselect') {
-           htmlcontent += basemultiselectaccess.htmlpopulatemodular(element)
-         } else
 
-         if (element.inputtype == "radio" && element.inputtypemod == currentgender.name) {
-           var internhtmlcontent = ""
-           
-           radioaccesstypecontent.forEach((elem, index) => {
-               internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.customRadioPopulate(elem, currentgender)
-             })
-             $('#overlaycontent').append(htmlPopulateCustomControl.customRadioPopulatePrimary(currentgender, internhtmlcontent))
-           
-         }
          //rchkelse   
-         else {
+
+         if (element.inputtype == "checkbox" && element.inputtypemod == currentaccesstype.name) {
+           accesstypecontent.forEach((elem, index) => {
+
+             internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.multiCheckBoxPopulate(elem, currentaccesstype)
+           })
+           $('#overlaycontent').append(htmlPopulateCustomControl.multiCheckboxPopulatePrimary(currentaccesstype, internhtmlcontent))
+         } else {
            htmlcontent += htmlPopulateCustomControl.textBoxPopulateSecondary(element);
          }
 
@@ -295,21 +198,20 @@
      $("#overlaycontent").html(htmlcontent + chkcontent);
    },
 
-   ongenderControl: function(data) {
+   onaccesstypeControl: function(data) {
      var key = $(data).data().key;
      var val = $(data).data().val;
      if ($(data)[0].checked) {
-       currentgender.data = {
-         [key]: val
-       }
+       currentaccesstype.data[key] = [...currentaccesstype.data[key], ...[val]]
      } else {
-       delete currentgender.data[key]
+       currentaccesstype.data[key] = currentaccesstype.data[key].filter(item => parseInt(item) !== val)
      }
+     reqopsValidate.formvalidation(data);
+     validationListener()
    },
    onMultiControlChk: function(data) {},
    baseCheckbox: htmlPopulateCustomControl.genericCheckboxHtmlPrimary(),
-
-
+   //multiSelectInit9
    afterhtmlpopulate: function() {
      $('#basetable tbody tr td:last-child').attr('onclick', 'javascript:basemod_modal.ontdedit(this)')
      $('#basetable tbody tr td:nth-child(1) input:checkbox').attr('onclick', 'javascript:basemod_modal.tablechkbox(this)')
@@ -330,14 +232,8 @@
        validationmap,
        interncontent[0]
      )
-
-     datatransformutils.editMultiSelect({
-       multiselectfunc,
-       validationmap,
-       content: interncontent
-     })
-     $("[data-attribute='multiSelect']").removeAttr('data-form-type')
-     formatresponse.forEach2(function(data) {
+     //multiSelectInit4
+     formatresponse.forEach(function(data) {
 
        if (data.inputtype == "textbox") {
          $("#cltrl" + data.key).val(data.val)
@@ -345,7 +241,7 @@
        } else if (data.inputtype == "radio") {
          $(`#overlaycontent .form-group.overlaytxtalign.col-md-5 .custom-control.custom-radio  [data-val="${data.val}"]`).prop("checked", true)
 
-         currentgender.data = data.val
+
        } else if (data.inputtype == "checkbox") {
          $('*[data-attribute="checkboxMulti"]').removeAttr('data-form-type');
          $(`#overlaycontent .checkbox.tablechk [type="checkbox"]`).each(function(index) {
@@ -358,7 +254,7 @@
 
          })
 
-
+         currentaccesstype.data[data.key] = intern
        }
      })
      //active comma denominator
@@ -376,23 +272,10 @@
        }
      })
    },
-
-   populatemodularddl: function() {
-     validationmap.forEach2(function(data) {
-       if (data.inputtype == 'multiselect') {
-         var p = {}
-         p.fieldname = data.inputtextval
-         p.fieldkey = data.inputtextval
-         p.secondaryKey = data.inputname
-         p.selecttype = data.selecttype
-         basemultiselectaccess.multiselectmodular(p)
-       }
-     })
-   },
+   //multiSelectInit5,
    customClearControl: function() {
 
-     currentgender.data.genderid = []
-     multiselects = {}
+     currentaccesstype.data.accesstype = []
    },
    payloadformat: function(arg) {
 
@@ -404,8 +287,7 @@
      let internim = {
        datapayload: {
          ...arg.datapayload,
-         ...multiselects,
-         ...currentgender.data
+         ...currentaccesstype.data
        }
      }
      return htmlPopulateCustomControl.genericMultiControlpayload(
@@ -419,24 +301,13 @@
  }
  //
  let accesstypecontent = [{
-     "text": "viewOnly",
-     "val": "vo",
+     "accesstypeid": "vo",
+     "name": "viewonly",
      "key": "accesstype"
    },
    {
-     "text": "AllAccess",
-     "val": "aa",
+     "accesstypeid": "aa",
+     "name": "AllAccess",
      "key": "accesstype"
    }
  ]
- let radioaccesstypecontent = [{
-  [currentgender.id]: "vo",
-  [currentgender.text]: "viewOnly",
-  "key": "accesstype"
-},
-{
-  [currentgender.id]: "aa",
-  [currentgender.text]: "AllAccess",
-  "key": "accesstype"
-}
-]

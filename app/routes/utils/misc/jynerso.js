@@ -327,7 +327,22 @@ var checkboxmultiInitControl = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'checkbox') {
-      r1 =
+      if(dt.childcontent!=undefined)
+      {
+        r1 =
+        r1 +
+        (r1 != '' ? 'else ' : ' ') +
+        `if (element.inputtype == "checkbox" && element.inputtypemod==current${dt.inputtypemod}.name) {
+          ${dt.inputname}content.forEach((elem, index) => {
+        
+        internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.multiCheckBoxPopulate(elem,current${dt.inputtypemod})
+      })
+      $('#overlaycontent').append(htmlPopulateCustomControl.multiCheckboxPopulatePrimary(current${dt.inputtypemod},internhtmlcontent))
+  }`
+      }
+      else
+      {
+        r1 =
         r1 +
         (r1 != '' ? 'else ' : ' ') +
         `if (element.inputtype == "checkbox" && element.inputtypemod==current${dt.inputtypemod}.name) {
@@ -341,6 +356,8 @@ var checkboxmultiInitControl = function (redlime) {
       
     });
   }`
+      }
+      
     }
   })
   return r1
@@ -349,18 +366,37 @@ var radiomultiInitControl = function (redlime) {
   var r1 = ''
   redlime.forEach(function (dt) {
     if (dt.inputtype == 'radio') {
-      r1 =
+      console.log("heree")
+      if(dt.childcontent!=undefined)
+      {
+        r1 =
         r1 +
         (r1 != '' ? 'else ' : ' ') +
         `if (element.inputtype == "radio" && element.inputtypemod==current${dt.inputtypemod}.name) {
-          var internhtmlcontent=""
-    basefunction().${dt.inputtypemod}MultiKeysLoad(current${dt.inputtypemod}.text).then(function (data) {
-      data.rows.forEach((elem, index) => {
+          ${dt.inputname}content.forEach((elem, index) => {
         internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.customRadioPopulate(elem,current${dt.inputtypemod})
       })
       $('#overlaycontent').append(htmlPopulateCustomControl.customRadioPopulatePrimary(current${dt.inputtypemod},internhtmlcontent))
-    });
+    
   }`
+      }
+      else
+      {
+        console.log((r1 != '' ? 'else ' : ' '))
+        r1 =
+          r1 +
+          (r1 != '' ? 'else ' : ' ') +
+          `if (element.inputtype == "radio" && element.inputtypemod==current${dt.inputtypemod}.name) {
+            var internhtmlcontent=""
+      basefunction().${dt.inputtypemod}MultiKeysLoad(current${dt.inputtypemod}.text).then(function (data) {
+        data.rows.forEach((elem, index) => {
+          internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.customRadioPopulate(elem,current${dt.inputtypemod})
+        })
+        $('#overlaycontent').append(htmlPopulateCustomControl.customRadioPopulatePrimary(current${dt.inputtypemod},internhtmlcontent))
+      });
+    }`
+      }
+      
     }
   })
   return r1
@@ -383,7 +419,7 @@ var multiSelectControl = function (redlime) {
         data
       ) {
         multiselects[arg.secondaryKey] = data
-        reqops.formvalidation(
+        reqopsValidate.formvalidation(
           $(\`#overlaycontent [data-key='\${arg.secondaryKey}']\`)
         )
         validationListener()
@@ -543,9 +579,9 @@ var checkboxMultiControl = function (redlime) {
       current${dt.inputtypemod}.data[key] = [...current${dt.inputtypemod}.data[key], ...[val]]
     }
     else {
-      current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => parseInt(item) !== val)
+      current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => (isNaN(parseInt(item))?item:parseInt(item)) !== val)
     }
-    reqops.formvalidation(data);
+    reqopsValidate.formvalidation(data);
      validationListener()
 },`
     }
@@ -671,19 +707,41 @@ let multiInsertCode = function (redlime) {
 
 var StaticMulitSelectDataInitControl = function (redlime) {
   var r1 = ''
+  var r2=''
   redlime.forEach(function (dt) {
-    if (dt.inputtype == 'multiselect' || dt.inputtype == 'singleselect') {
+    if (dt.inputtype == 'multiselect' || dt.inputtype == 'singleselect'|| dt.inputtype == 'radio' || dt.inputtype == 'checkbox') {
       if (dt.childcontent != undefined) {
         var ar1 = []
 
         dt.childcontent.forEach(function (dts) {
-          var o = {}
-          o.text = dts.text
-          o.val = dts.val
-          o.key = dt.inputname
-          ar1.push(o)
+          if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox')
+          {
+            var o = {}
+            o[dt.inputname+"id"] = dts.val
+            o[`name`] = dts.text
+            o.key = dt.inputname
+            ar1.push(o)
+            
+
+          }else
+          {
+            var o = {}
+            o.text = dts.text
+            o.val = dts.val
+            o.key = dt.inputname
+            ar1.push(o)
+          }
+          
         })
-        r1 = r1 + `let ${dt.inputname}content =${JSON.stringify(ar1, null, 4)}`
+        
+        if (dt.inputtype == 'radio' || dt.inputtype == 'checkbox')
+        {
+          r1=r1+`let ${dt.inputname}content =${JSON.stringify(ar1, null, 4)}`
+        }else
+        {
+          r1 = r1 + `let ${dt.inputname}content =${JSON.stringify(ar1, null, 4)}`
+        }  
+        
       }
     }
   })
@@ -698,9 +756,9 @@ let baseinitControl = function (redlime) {
         r1 +
         `let current${dt.inputtypemod}={
         name:"${dt.inputtypemod}",
-        id:"${dt.inputtypeID}",
-        text:"${dt.inputtypeVal}",
-        data:{"${dt.inputtypeID}":[]}
+        id:"${dt.inputtypeID}id",
+        text:"name",
+        data:{"${dt.inputtypeID}id":[]}
       };`
       //${dt.inputtype == 'checkbox' ? `data:{"${dt.inputtypeID}":[]}` : ' '}
     } else if (
@@ -774,7 +832,7 @@ function applyMultiControls (mainapp) {
   },`
         var baseOffLoad = `let validationListener=function()
         {
-         var sel = $('.form-horizontal input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+         var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
          
          if (sel <= 0) {
            $('#btnmodalsub').prop('disabled', false)
@@ -786,7 +844,7 @@ function applyMultiControls (mainapp) {
     $(function () {
     basemod_modal.modalpopulate()
     //multiSelectInit7
-    $('.form-horizontal input[type="text"], input[type="checkbox"]').on("keydown keyup change", function () {
+    $('#overlaycontent input[type="text"], input[type="checkbox"]').on("keydown keyup change", function () {
       validationListener()
     })
   })`
@@ -853,7 +911,7 @@ function applyMultiControls (mainapp) {
                 '//multiSelectInit5',
                 '\n ' +
                   `populatemodularddl: function () {
-                  validationmap.forEach2(function (data) {
+                  validationmap.forEach(function (data) {
                     if (data.inputtype == 'multiselect') {
                       var p = {}
                       p.fieldname = data.inputtextval
@@ -891,10 +949,10 @@ function applyMultiControls (mainapp) {
               )
             }
             if (
-              checkboxmultiInitControl(mainapp[0].server_client) !== '' ||
-              radiomultiInitControl(mainapp[0].server_client) !== ''
+              (checkboxmultiInitControl(mainapp[0].server_client) !== '' ||
+              radiomultiInitControl(mainapp[0].server_client) !== '') && element.inputtype == 'multiselect'
             ) {
-              console.log('---------------------herer')
+              
               multiControlsScripts = multiControlsScripts.replace(
                 '//multiselectelse',
                 '\n ' + 'else'
@@ -1023,12 +1081,7 @@ function applyMultiControls (mainapp) {
             /updateRecord/g,
             '\n' +
               beautify(
-                `ajaxbase.payload = basemod_modal.payloadformat(base).datapayload
-            ajaxbase.url = baseurlobj.updatedata;
-            return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
-                ajaxbase.response = argument;
-                return argument;
-            })`,
+                `ajaxbase.payload = basemod_modal.payloadformat(base).datapayload;ajaxbase.url = baseurlobj.updatedata;return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {ajaxbase.response = argument;return argument;})`,
                 { indent_size: 2 }
               )
           )
@@ -1106,7 +1159,7 @@ var multiControlsScripts = `
     redlime.forEach(function(item) {
 
         htmlcontent += \`<div class=\"row\">\`
-        item.forEach2(function(element) {
+        item.forEach(function(element) {
           //multiSelectInit8
           //multiselectelse   
           //radioCode
@@ -1150,7 +1203,7 @@ baseCheckbox:htmlPopulateCustomControl.genericCheckboxHtmlPrimary()
           interncontent[0]
         )
          //multiSelectInit4
-         formatresponse.forEach2(function(data) {
+         formatresponse.forEach(function(data) {
 
              if (data.inputtype == "textbox") {
                  $("#cltrl" + data.key).val(data.val)

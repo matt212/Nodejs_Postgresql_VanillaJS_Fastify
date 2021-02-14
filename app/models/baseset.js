@@ -1,16 +1,12 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('baset', {
-    firstname: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
+  return sequelize.define('baseset', {
     accesstype: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    basetid: {
+    basesetid: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -35,6 +31,6 @@ module.exports = function(sequelize, DataTypes) {
     },
   }, {
     timestamps: false,
-    tableName: 'baset'
+    tableName: 'baseset'
   });
 };

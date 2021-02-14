@@ -113,7 +113,7 @@
         });
 
         var regex = ['string', 'email', 'number', 'mobile', 'passwordvalidation', 'date','alphaNumericValidation']
-        var ddlclientfieldtype = ['textbox', 'radio', 'checkbox', 'multiselect', 'singleselect', 'multiselect-ajax', 'singleselect-ajax']
+        var ddlclientfieldtype = ['textbox', 'radio', 'checkbox', 'multiselect', 'singleselect', 'multiselect-ajax', 'singleselect-ajax','radio-static','checkbox-static']
         var ddlinputisPrimary =[false,true] 
         function GetDynamicTextBox(value) {
 
@@ -178,6 +178,7 @@
                         internobj.inputtype = "multiselect"
                         
                     }
+                    
                     else if (internobj.inputtype == "multiselect-ajax" || internobj.inputtype == "singleselect-ajax") {
                         internobj.inputname = $(this.cells[3]).find('input').val().trim().split('|')[0]
                         internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim().split('|')[1]
@@ -186,9 +187,21 @@
                         internobj.inputtype = "multiselect"
                     }
                     else if (internobj.inputtype == "checkbox" || internobj.inputtype == "radio") {
+
                         internobj.inputname = $(this.cells[3]).find('input').val().trim().split('|')[0]
                         internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim().split('|')[1]
                         internobj.inputtextval = $(this.cells[2]).find('option:selected').text().trim()
+                    }
+                    else if (internobj.inputtype == "radio-static" || internobj.inputtype == "checkbox-static") {
+                        
+                        internobj.inputname = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtextval = $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtype=internobj.inputtype.split('-')[0]
+                        internobj.inputtypemod= $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtypeVal= $(this.cells[3]).find('input').val().trim()
+                        internobj.inputtypeID= $(this.cells[3]).find('input').val().trim()
+                        internobj.inputParent= $(this.cells[3]).find('input').val().trim()
                     }
                 }
                 else {

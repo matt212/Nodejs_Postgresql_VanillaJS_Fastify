@@ -7,10 +7,17 @@
   <script src="../../admin/js/app/fieldValidations.js"></script>
   <script src="../../admin/js/app/customControls.js"></script>
   
-
+  <!-- let btncode = ` <button type="button" id="btnmodalsub" class="btn btn-primary" disabled="true"
+  onclick="javascript:reqops.btnSubmit();">Save changes</button>`;
+ $("#overlaycontent").append(htmlcontent + btncode); -->
   
   <!-- Bootstrap Material Design style -->
-  <link rel="stylesheet" href="../../material/dist/css/bootstrap-material-design.min.css">
+  <!-- <link rel="stylesheet" href="../../material/dist/css/bootstrap-material-design.min.css"> -->
+  <!-- //for bootstrap 4.3.1 
+            $("#overlaycontent .custom-control-input").removeClass('custom-control-input').addClass('form-check-label')
+            //end here -->
+            <link rel="stylesheet" href="../../vdashboard/dist/css/bootstrap-material-design.min.css">
+            <link rel="stylesheet" href="../../vdashboard/dist/css//material.min.css">
   
   
 
@@ -82,7 +89,7 @@
 // 	"fieldmaxlength": "80",
 // 	"inputisPrimary": false
 // }]
-let validationmap=[ { "inputtype": "multiselect", "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "selecttype": "multiselect", "inputtextval": "accesstype", "inputname": "accesstype", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false, "childcontent": [ { "val": "vo", "text": "viewOnly" }, { "val": "aa", "text": "AllAccess" } ] }, { "inputtype": "radio", "inputtypemod": "gender", "inputtypeVal": "name", "inputtypeID": "genderid", "inputParent": "gender", "inputCustomMapping": "gendername", "inputname": "genderid", "inputtextval": "name", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false } ]
+let validationmap=[ { "inputtype": "textbox", "inputCustomMapping": "firstname", "inputname": "firstname", "inputplaceholder": "", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80", "inputisPrimary": false }, { "inputtype": "checkbox", "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "inputname": "accesstype", "inputtextval": "accesstype", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false, "childcontent": [ { "val": "vo", "text": "viewonly" }, { "val": "aa", "text": "AllAccess" } ] } ]
   </script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
