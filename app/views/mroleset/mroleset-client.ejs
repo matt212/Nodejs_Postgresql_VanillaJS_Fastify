@@ -6,7 +6,19 @@
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
   <script src="../../admin/js/app/fieldValidations.js"></script>
   <script src="../../admin/js/app/customControls.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.2/bootstrap-material-design.min.css" integrity="sha512-1diPgCATeJwHrxYhKZWrv1rINfMVAdmxpYxPK44MCfzqRJk/rhxh4GS9xgaLLuvr9Q9KHJ+EiajOLs7zuBEqzA==" crossorigin="anonymous" />
+  
+
+  
+  <!-- Bootstrap Material Design style -->
+  <link rel="stylesheet" href="../../material/dist/css/bootstrap-material-design.min.css">
+  
+  
+
+  
+
+  
+  
+
 <style>
   .form-group {
   padding-bottom: 7px;
@@ -28,50 +40,56 @@
         position: absolute!important;
         top: -30px!important;
     }
+    
 </style>
+
   <script>
-    let validationmap=[{
-	"inputtype": "textbox",
-	"inputCustomMapping": "firstname",
-	"inputname": "firstname",
-	"inputplaceholder": "please enter First name",
-	"fieldtypename": "STRING",
-	"fieldvalidatename": "string",
-	"fieldmaxlength": "80",
-	"inputisPrimary": false
-}, {
-	"inputtype": "textbox",
-	"inputCustomMapping": "mobilenumber",
-	"inputname": "mobilenumber",
-	"inputplaceholder": "Please enter mobile",
-	"fieldtypename": "INTEGER",
-	"fieldvalidatename": "mobile",
-	"fieldmaxlength": "80",
-	"inputisPrimary": false
-}, {
-	"inputtype": "textbox",
-	"inputCustomMapping": "email",
-	"inputname": "email",
-	"inputplaceholder": "please enter email",
-	"fieldtypename": "STRING",
-	"fieldvalidatename": "email",
-	"fieldmaxlength": "80",
-	"inputisPrimary": false
-}, {
-	"inputtype": "textbox",
-	"inputCustomMapping": "address",
-	"inputname": "address",
-	"inputplaceholder": "Please enter address",
-	"fieldtypename": "STRING",
-	"fieldvalidatename": "alphaNumericValidation",
-	"fieldmaxlength": "80",
-	"inputisPrimary": false
-}]
+    
+//     let validationmap=[{
+// 	"inputtype": "textbox",
+// 	"inputCustomMapping": "firstname",
+// 	"inputname": "firstname",
+// 	"inputplaceholder": "please enter First name",
+// 	"fieldtypename": "STRING",
+// 	"fieldvalidatename": "string",
+// 	"fieldmaxlength": "80",
+// 	"inputisPrimary": false
+// }, {
+// 	"inputtype": "textbox",
+// 	"inputCustomMapping": "mobilenumber",
+// 	"inputname": "mobilenumber",
+// 	"inputplaceholder": "Please enter mobile",
+// 	"fieldtypename": "INTEGER",
+// 	"fieldvalidatename": "mobile",
+// 	"fieldmaxlength": "80",
+// 	"inputisPrimary": false
+// }, {
+// 	"inputtype": "textbox",
+// 	"inputCustomMapping": "email",
+// 	"inputname": "email",
+// 	"inputplaceholder": "please enter email",
+// 	"fieldtypename": "STRING",
+// 	"fieldvalidatename": "email",
+// 	"fieldmaxlength": "80",
+// 	"inputisPrimary": false
+// }, {
+// 	"inputtype": "textbox",
+// 	"inputCustomMapping": "address",
+// 	"inputname": "address",
+// 	"inputplaceholder": "Please enter address",
+// 	"fieldtypename": "STRING",
+// 	"fieldvalidatename": "alphaNumericValidation",
+// 	"fieldmaxlength": "80",
+// 	"inputisPrimary": false
+// }]
+let validationmap=[ { "inputtype": "multiselect", "inputtypemod": "accesstype", "inputtypeVal": "accesstype", "inputtypeID": "accesstype", "inputParent": "accesstype", "inputCustomMapping": "accesstype", "selecttype": "multiselect", "inputtextval": "accesstype", "inputname": "accesstype", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false, "childcontent": [ { "val": "vo", "text": "viewOnly" }, { "val": "aa", "text": "AllAccess" } ] }, { "inputtype": "radio", "inputtypemod": "gender", "inputtypeVal": "name", "inputtypeID": "genderid", "inputParent": "gender", "inputCustomMapping": "gendername", "inputname": "genderid", "inputtextval": "name", "inputplaceholder": "", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "80", "inputisPrimary": false } ]
   </script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
+  
   <div class="box-body" id="overlaycontent">
     </div>
+  </div>
   </div>
   <script src="../../admin/js/app/app_mroleset-client.js"></script>
 </body>

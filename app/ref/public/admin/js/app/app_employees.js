@@ -77,13 +77,7 @@
             })
           },
          update: function(base) {
-            ajaxbase.payload = basemod_modal.payloadformat(base).datapayload
-            ajaxbase.url = baseurlobj.updatedata;
-
-            return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
-                ajaxbase.response = argument;
-                return argument;
-            })
+            ajaxbase.payload = basemod_modal.payloadformat(base).datapayload;ajaxbase.url = baseurlobj.updatedata;return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {ajaxbase.response = argument;return argument;})
              //updateRecord
          },
          //SingleCreate

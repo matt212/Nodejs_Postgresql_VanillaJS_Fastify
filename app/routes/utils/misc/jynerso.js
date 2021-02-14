@@ -995,13 +995,7 @@ function applyMultiControls (mainapp) {
               },`
               )
               //updateRecord
-              appsgenerator=appsgenerator.replace(`ajaxbase.payload = basemod_modal.payloadformat(base).datapayload
-              ajaxbase.url = baseurlobj.updatedata;
-  
-              return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
-                  ajaxbase.response = argument;
-                  return argument;
-              })`,'')
+              appsgenerator=appsgenerator.replace(`ajaxbase.payload = basemod_modal.payloadformat(base).datapayload;ajaxbase.url = baseurlobj.updatedata;return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {ajaxbase.response = argument;return argument;})`,'')
               appsgenerator = appsgenerator.replace(
                 '//updateRecord',
                 '\n' +

@@ -1,5 +1,5 @@
- let currentmodulename = "mroleset";
- let currentmoduleid = "mrolesetid"
+ let currentmodulename = "baset";
+ let currentmoduleid = "basetid"
 
  let currentgender = {
    name: "gender",
@@ -9,8 +9,6 @@
      "genderid": []
    }
  };
- let currentrole = 'role'
- let currentmodname = 'modname'
  let multiselects = {}
  let multiselectfunc = {}
  let baseurlobj = {
@@ -22,15 +20,14 @@
    uploaddata: `/${currentmodulename}/api/uploadcontent/`,
    getpaginatesearchtypegroupby: `/${currentmodulename}/api/searchtypegroupby/`,
    pivotresult: `/${currentmodulename}/api/pivotresult/`,
-   deletemroleset: `/${currentmodulename}/api/customDestroy/`,
+   deletebaset: `/${currentmodulename}/api/customDestroy/`,
    //
    getcurrentModgendergroupby: `${currentgender.name}/api/searchtypegroupbyId/`,
-   getcurrentModrolegroupby: `${currentrole}/api/searchtypegroupbyId/`,
-   getcurrentModmodnamegroupby: `${currentmodname}/api/searchtypegroupbyId/`,
  }
  let basefunction = function() {
    return {
      //
+
      genderMultiKeysLoad: function(keys) {
        //keys="gender"
        base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
@@ -40,25 +37,7 @@
            return argument
          })
      },
-     roleMultiKeysLoad: function(keys) {
-       //keys="gender"
-       base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
-       return this
-         .getcurrentModrolegroupby(base)
-         .then(function(argument) {
-           return argument
-         })
-     },
-     modnameMultiKeysLoad: function(keys) {
-       //keys="gender"
-       base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
-       return this
-         .getcurrentModmodnamegroupby(base)
-         .then(function(argument) {
-           return argument
-         })
-     },
-     mrolesetMultiKeysLoad: function(keys) {
+     basetMultiKeysLoad: function(keys) {
        //keys="gender"
        base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
        return this
@@ -112,13 +91,14 @@
      },
      deleterecord: function(base) {
        ajaxbase.payload = base.datapayload
-       ajaxbase.url = baseurlobj.deletemroleset
+       ajaxbase.url = baseurlobj.deletebaset
 
        return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
          return base
        })
      },
      update: function(base) {
+
 
        return Promise.mapSeries(basemod_modal.payloadformat(base).datapayload, function(dt) {
          ajaxbase.payload = dt
@@ -179,22 +159,6 @@
          return argument;
        })
      },
-     getcurrentModrolegroupby: function(base) {
-       ajaxbase.payload = base.datapayload
-       ajaxbase.url = baseurlobj.getcurrentModrolegroupby;
-       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
-         ajaxbase.response = argument;
-         return argument;
-       })
-     },
-     getcurrentModmodnamegroupby: function(base) {
-       ajaxbase.payload = base.datapayload
-       ajaxbase.url = baseurlobj.getcurrentModmodnamegroupby;
-       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
-         ajaxbase.response = argument;
-         return argument;
-       })
-     },
 
    }
  }
@@ -225,7 +189,7 @@
        data
      ) {
        multiselects[arg.secondaryKey] = data
-       reqopsValidate.formvalidation(
+       reqops.formvalidation(
          $(`#overlaycontent [data-key='${arg.secondaryKey}']`)
        )
        validationListener()
@@ -275,40 +239,11 @@
      return base
    },
    htmlpopulatemodular: function(fieldname) {
-     return htmlPopulateCustomControl.genericddlPopulate(fieldname)
+     return htmlpopulate.genericddlPopulate(fieldname)
    },
-   remotefuncrolename: function(data) {
+   remotefuncaccesstype: function(data) {
      return new Promise(function(resolve, reject) {
-       basefunction()
-         .getcurrentModrolegroupby(
-           basemultiselectaccess.multiSelectCommon(data)
-         )
-         .then(function(argument) {
-           var sets = argument.rows
-
-           if (sets[0] != undefined) {
-             resolve(
-               basemultiselectaccess.multiSelectCommonResponse(data, argument)
-             )
-           }
-         })
-     })
-   },
-   remotefuncmname: function(data) {
-     return new Promise(function(resolve, reject) {
-       basefunction()
-         .getcurrentModmodnamegroupby(
-           basemultiselectaccess.multiSelectCommon(data)
-         )
-         .then(function(argument) {
-           var sets = argument.rows
-
-           if (sets[0] != undefined) {
-             resolve(
-               basemultiselectaccess.multiSelectCommonResponse(data, argument)
-             )
-           }
-         })
+       resolve(accesstypecontent)
      })
    },
  }
@@ -323,11 +258,7 @@
  let basemod_modal = {
    modalpopulate: function() {
      var interset = validationmap
-     
-     var redlime=new Array(Math.ceil(interset.length / 2)).fill().map(_ => interset.splice(0, 2))
-     
-     
-     
+     var redlime = new Array(Math.ceil(interset.length / 2)).fill().map(_ => interset.splice(0, 2))
      $("#overlaycontent").empty();
      var htmlcontent = "";
      var internhtmlcontent = "";
@@ -338,16 +269,16 @@
 
          if (element.inputtype == 'multiselect') {
            htmlcontent += basemultiselectaccess.htmlpopulatemodular(element)
-         } else if (element.inputtype == "radio" && element.inputtypemod == currentgender.name) {
+         } else
+
+         if (element.inputtype == "radio" && element.inputtypemod == currentgender.name) {
            var internhtmlcontent = ""
-           basefunction().genderMultiKeysLoad(currentgender.text).then(function(data) {
-             data.rows.forEach((elem, index) => {
-               console.log(elem)
-               console.log(currentgender);
+           
+           radioaccesstypecontent.forEach((elem, index) => {
                internhtmlcontent = internhtmlcontent + htmlPopulateCustomControl.customRadioPopulate(elem, currentgender)
              })
              $('#overlaycontent').append(htmlPopulateCustomControl.customRadioPopulatePrimary(currentgender, internhtmlcontent))
-           });
+           
          }
          //rchkelse   
          else {
@@ -473,8 +404,8 @@
      let internim = {
        datapayload: {
          ...arg.datapayload,
-         ...currentgender.data,
-         ...multiselects
+         ...multiselects,
+         ...currentgender.data
        }
      }
      return htmlPopulateCustomControl.genericMultiControlpayload(
@@ -487,3 +418,25 @@
    }
  }
  //
+ let accesstypecontent = [{
+     "text": "viewOnly",
+     "val": "vo",
+     "key": "accesstype"
+   },
+   {
+     "text": "AllAccess",
+     "val": "aa",
+     "key": "accesstype"
+   }
+ ]
+ let radioaccesstypecontent = [{
+  [currentgender.id]: "vo",
+  [currentgender.text]: "viewOnly",
+  "key": "accesstype"
+},
+{
+  [currentgender.id]: "aa",
+  [currentgender.text]: "AllAccess",
+  "key": "accesstype"
+}
+]
