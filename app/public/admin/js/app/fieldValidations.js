@@ -1,3 +1,4 @@
+
 let validations = {
   string: [/^[a-zA-Z ]+$/, 'Please enter valid  name'],
   number: [/^[0-9]+$/, 'Please enter valid number'],
@@ -30,6 +31,9 @@ let validations = {
     /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]|(?:Jan|Mar|May|Jul|Aug|Oct|Dec)))\1|(?:(?:29|30)(\/|-|\.)(?:0?[1,3-9]|1[0-2]|(?:Jan|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec))\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)(?:0?2|(?:Feb))\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9]|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep))|(?:1[0-2]|(?:Oct|Nov|Dec)))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/,
     'Please enter valid date'
   ]
+  ,showCSS:'control-label-format'
+  ,hideCSS:'hide'
+  ,hideCSSlbl:'lblhide'
 }
 /*field validation*/
 let reqopsValidate={
@@ -53,13 +57,13 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
         $(argument).attr('data-form-type', 'true')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       }
     },
@@ -71,13 +75,13 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
         $(argument).attr('data-form-type', 'true')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       }
     },
@@ -89,13 +93,13 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
         $(argument).attr('data-form-type', 'true')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       }
     },
@@ -107,14 +111,14 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
   
         $(argument).attr('data-form-type', 'true')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       }
     },
@@ -126,13 +130,13 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
         $(argument).attr('data-form-type', 'true')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       }
     },
@@ -141,13 +145,13 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
         $(argument).attr('data-form-type', 'true')
       }
     },
@@ -155,8 +159,8 @@ var baseobjvalidation = {
       if ($(argument).is(':checked')) {
         $(argument)
           .parents(':eq(2)')
-          .find('.control-label-format')
-          .attr('class', 'lblhide')
+          .find(`.${validations.showCSS}`)
+          .attr('class', validations.hideCSSlbl)
         $(argument)
           .parents(':eq(4)')
           .find(`.form-group`)
@@ -165,8 +169,8 @@ var baseobjvalidation = {
         if (this.checkboxvalidationSecondary(argument)) {
           $(argument)
             .parents(':eq(2)')
-            .find('.lblhide')
-            .attr('class', 'control-label-format')
+            .find(`.${validations.hideCSSlbl}`)
+            .attr('class', validations.showCSS)
           $(argument)
             .parents(':eq(4)')
             .find(`.form-group`)
@@ -194,13 +198,13 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
         $(argument).attr('data-form-type', 'true')
       }
     },
@@ -214,13 +218,13 @@ var baseobjvalidation = {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'hide')
+          .attr('class', validations.hideCSS)
         $(argument).removeAttr('data-form-type')
       } else {
         $(argument)
           .parent()
           .find('label')
-          .attr('class', 'control-label-format')
+          .attr('class', validations.showCSS)
         $(argument).attr('data-form-type', 'true')
       }
     },
