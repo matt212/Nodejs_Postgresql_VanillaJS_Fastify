@@ -1095,7 +1095,7 @@ function applyMultiControls(mainapp) {
           );
 
           internmultiControlsScripts = internmultiControlsScripts.replace(
-            `var chkcontent=htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);$("#overlaycontent").html(htmlcontent + chkcontent);`,
+            `var chkcontent=htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);$("#overlaycontent").append(htmlcontent + chkcontent);`,
             ""
           );
           internmultiControlsScripts = internmultiControlsScripts.replace(
@@ -1313,7 +1313,7 @@ var multiControlsScripts = `
         htmlcontent += \`</div>\`
     })
 //clientbasedJS 
-    var chkcontent=htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);$("#overlaycontent").html(htmlcontent + chkcontent);
+    var chkcontent=htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);$("#overlaycontent").append(htmlcontent + chkcontent);
 },
 //onchkcapture
 baseCheckbox:htmlPopulateCustomControl.genericCheckboxHtmlPrimary()
