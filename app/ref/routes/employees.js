@@ -25,7 +25,22 @@ async function routes (fastify, options) {
       )
     }
   )
-
+  fastify.get(
+    '/client', {
+      preValidation: [fastify.isSession, fastify.isModuleAccess]
+    },
+    async (request, reply) => {
+      dep.assignVariables(mod)
+      let validationConfig = require('./utils/' +
+        mod.Name +
+        '/validationConfig.js')
+      reply.header('x-token', request.session.get('userLoggedInfor'))
+      reply.view(
+        `${mod.Name}/${mod.Name}_client.ejs`,
+        dep.pageRenderObj(request, reply, validationConfig)
+      )
+    }
+  )
   fastify.post(
     dep.routeUrls.searchtype[0],
     {
