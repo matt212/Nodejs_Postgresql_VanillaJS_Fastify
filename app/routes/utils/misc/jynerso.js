@@ -713,7 +713,7 @@ var StaticMulitSelectDataInitControl = function (redlime) {
         dt.childcontent.forEach(function (dts) {
           if (dt.inputtype == "radio" || dt.inputtype == "checkbox") {
             var o = {};
-            o[dt.inputname + "id"] = dts.val;
+            o[dt.inputname] = dts.val;
             o[`name`] = dts.text;
             o.key = dt.inputname;
             ar1.push(o);
@@ -748,9 +748,9 @@ let baseinitControl = function (redlime) {
           r1 +
           `let current${dt.inputtypemod}={
         name:"${dt.inputtypemod}",
-        id:"${dt.inputtypeID}id",
+        id:"${dt.inputtypeID}",
         text:"name",
-        data:{"${dt.inputtypeID}id":[]}
+        data:{"${dt.inputtypeID}":[]}
       };`;
       } else {
         r1 =
