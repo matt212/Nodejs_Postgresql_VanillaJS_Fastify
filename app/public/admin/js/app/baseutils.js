@@ -59,6 +59,8 @@ let reqops = {
       var url = baseurlobj.uploaddata
       var xhr = new XMLHttpRequest()
       var fd = new FormData()
+      
+      
       xhr.open('POST', url, true)
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -69,6 +71,7 @@ let reqops = {
         }
       }
       fd.append('upload_file', file)
+      xhr.setRequestHeader('x-access-token', customToken);
       xhr.send(fd)
       //return deffered.promise
     })

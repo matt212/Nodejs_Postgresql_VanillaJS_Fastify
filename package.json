@@ -7,6 +7,7 @@
     "test": "test"
   },
   "dependencies": {
+    "JSONStream": "^1.3.5",
     "ajv-keywords": "^3.5.2",
     "async": "^3.2.0",
     "autocannon": "^7.0.0",
@@ -19,6 +20,7 @@
     "fastify-compress": "^3.4.0",
     "fastify-cors": "^5.0.0",
     "fastify-jwt": "^2.1.3",
+    "fastify-multipart": "^4.0.0",
     "fastify-plugin": "^3.0.0",
     "fastify-secure-session": "^2.3.0",
     "fastify-socket.io": "^1.0.1",
@@ -27,7 +29,6 @@
     "js-beautify": "^1.13.0",
     "js-yaml": "^3.14.0",
     "json2csv": "^5.0.5",
-    "JSONStream": "^1.3.5",
     "jsonwebtoken": "^8.5.1",
     "memory-cache": "^0.2.0",
     "mv": "^2.1.1",
@@ -83,7 +84,8 @@
     "pgRestore": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgRestore()'",
     "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'",
     "genderEval": "mocha ./app/utils/test/gender-test.spec.js --timeout 10000 --exit",
-    "mrolesetEval": "mocha ./app/utils/test/mroleset-test.spec.js --timeout 10000 --exit"
+    "mrolesetEval": "mocha ./app/utils/test/mroleset-test.spec.js --timeout 10000 --exit",
+    "landinpageEval": "mocha ./app/utils/test/landinpage-test.spec.js --timeout 10000 --exit"
   },
   "repository": {
     "type": "git",

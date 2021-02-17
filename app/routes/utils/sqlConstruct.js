@@ -1001,6 +1001,7 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
     )
   }
 }
+
 //newMultiControlSqlConstruct
 let userrole = {
   basesqlscrp: {

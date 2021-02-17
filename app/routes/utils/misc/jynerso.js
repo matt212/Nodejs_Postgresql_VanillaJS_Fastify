@@ -1656,18 +1656,13 @@ ${[
       'select  count(*) as count  ' +
       'from ' +
       '( ' +
-      this.basesqlscrp.a +
-      ' ' +
-      tunnel.arg.daterange +
+      this.basesearchtype(tunnel)
+          +
       
       ' ) as a where a.recordstate=true  ' +
       tunnel.arg.selector +
-      tunnel.arg.consolidatesearch +
-      '${
-        getgroupbyval() === undefined
-          ? getTextgroupbyval(defaultmod).r1 + ", recordstate"
-          : getgroupbyval().r2
-      }'
+      tunnel.arg.consolidatesearch
+      
     )
   },
   searchTypeCountExplain: function (tunnel) {
