@@ -1422,7 +1422,12 @@ let childStaticVariable = function (validateMap, content) {
   let col = validateMap.filter((x) => x.childcontent != undefined);
   if (col.length > 0) {
     let getMappingData = function (dt) {
-      return col[0].childcontent.filter((x) => x.val == dt)[0].text;
+     // console.log(col[0].childcontent.filter((x) => x.val == dt)[0]);
+      if(col[0].childcontent.filter((x) => x.val == dt)[0]!=undefined)
+      {
+        return col[0].childcontent.filter((x) => x.val == dt)[0].text;
+      }
+      
     };
     content = content.map(function (x) {
       x[col[0].inputtypemod] = getMappingData(x[col[0].inputtypemod]);
