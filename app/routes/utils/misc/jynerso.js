@@ -403,15 +403,19 @@ var multiSelectControl = function (redlime) {
         selectevent: '#in' + arg.fieldname,
         fieldkey: arg.fieldkey,
         selecttype: arg.selecttype,
-        selecttype: arg.selecttype,
+        parentId:arg.parentId,
         placeholder: arg.fieldname,
         remotefunc: this['remotefunc' + arg.fieldname]
       }
   
       
       multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function (
-        data
+        data,isAddDel,DelVal
       ) {
+        if(isAddDel=="del")
+       {
+        baseurlobj["DelObj"].push(DelVal)
+       }
         multiselects[arg.secondaryKey] = data
         reqopsValidate.formvalidation(
           $(\`#overlaycontent [data-key='\${arg.secondaryKey}']\`)
@@ -553,6 +557,7 @@ var radioMultiControl = function (redlime) {
     current${dt.inputtypemod}.data={[key]:val}
    }
    else {
+     baseurlobj["DelObj"].push({[currentmodname.id]:val})
      delete current${dt.inputtypemod}.data[key]
    }
 },`;
@@ -573,6 +578,7 @@ var checkboxMultiControl = function (redlime) {
       current${dt.inputtypemod}.data[key] = [...current${dt.inputtypemod}.data[key], ...[val]]
     }
     else {
+      baseurlobj["DelObj"].push({[currentmodname.id]:val})
       current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => (isNaN(parseInt(item))?item:parseInt(item)) !== val)
     }
     reqopsValidate.formvalidation(data);
@@ -941,6 +947,7 @@ function applyMultiControls(mainapp) {
                       p.fieldkey = data.inputtextval
                       p.secondaryKey = data.inputname
                       p.selecttype = data.selecttype
+                      p.parentId=data.inputtypeID
                       basemultiselectaccess.multiselectmodular(p)
                     }
                   })
@@ -1335,7 +1342,7 @@ baseCheckbox:htmlPopulateCustomControl.genericCheckboxHtmlPrimary()
              return doctor[currentmoduleid] == armodid;
          })
          base.editrecord = interncontent;
-         $('#cltrl' + currentmoduleid).val(armodid);
+         $('#cltrl' + currentmoduleid).val(armodid.includes(',')?armodid:parseInt(armodid));
          var formatresponse = this.baseResponseformat(
           validationmap,
           interncontent[0]
@@ -1592,11 +1599,14 @@ let SqlConstructMulti = function (mainapp) {
             return `\n 
 string_agg(distinct ${dt.inputCustomMapping},',')as ${dt.inputCustomMapping}|
 string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`;
-          } else {
+          } else if (dt.inputtype == "multiselect" || dt.inputtype == "singleselect") {
             return `\n string_agg(distinct ${dt.inputCustomMapping},',')as ${dt.inputCustomMapping}|
-string_agg(distinct ${dt.inputtextval},',')as ${dt.inputtextval}|
-string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`;
-          }
+            string_agg(distinct ${dt.inputtextval},',')as ${dt.inputtextval}|
+            string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}|
+            json_agg(distinct jsonb_build_object('key','${dt.inputtextval}','text',${dt.inputCustomMapping},'vals',${dt.inputtypeID}                                
+))as ${dt.inputParent}`;
+            }
+            
         });
         baseSelect1 = function (defaultmod) {
           let red = validationmap.filter((dt) => dt.inputtype == "textbox");

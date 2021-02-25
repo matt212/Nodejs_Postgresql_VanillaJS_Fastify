@@ -1002,6 +1002,7 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
   }
 }
 
+
 //newMultiControlSqlConstruct
 let userrole = {
   basesqlscrp: {
@@ -1185,9 +1186,9 @@ let userrole = {
 module.exports = {
   base: base,
   mrole: mrole,
-  userrole: userrole
-    //mroleset:mroleset
-    ,
+  userrole: userrole,
+    //mroleset:mroleset,
   mroleset: mroleset
+  
   //exportobj
 }

@@ -2,6 +2,7 @@
  let currentmoduleid = "employeesid"
  //definition
  let baseurlobj = {
+     DelObj:[],
      getpaginatesearchtypeurl: `/${currentmodulename}/api/searchtype/`,
      createdata: `/${currentmodulename}/api/create/`,
      updatedata: `/${currentmodulename}/api/update/`,

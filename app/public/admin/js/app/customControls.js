@@ -136,7 +136,9 @@ multiCheckBoxPopulate: function (elem, currentset) {
       }
       //apply cartesion for multiselects objects
       var interns = datatransformutils.getCartesian(b)
+      console.log(ajaxbase.isedit);
       if (ajaxbase.isedit) {
+        console.log(updateIds)
         updateIds.forEach(function (dt, i) {
           if (interns[i] == undefined) {
             base.datapayload = {

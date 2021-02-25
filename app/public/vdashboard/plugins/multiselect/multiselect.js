@@ -9,6 +9,7 @@ let multisel = function basemultiselect (selconfig, callback) {
   me.placeholder = selconfig.placeholder
   me.fieldval = ''
   me.filterparam = {}
+  me.parentId=selconfig.parentId
   me.internbasesearchar = []
   me.base = {}
   me.basesearchar = []
@@ -105,7 +106,7 @@ let multisel = function basemultiselect (selconfig, callback) {
       //var val = $(removecontent).data('selVals').toString().toLowerCase();
       var val = $(removecontent).data('selVals')
       this.removefilterdiv(removecontent, key, val)
-      this.change(this.callbackfunc)
+      this.change(this.callbackfunc,'del',{[this.parentId]:val})
       this.$input.focus()
       //console.log(removecontent)
     }),
@@ -152,7 +153,7 @@ let multisel = function basemultiselect (selconfig, callback) {
 
       this.onsearchtext({ key: key, text: val, vals: vals })
       this.$input.focus()
-      this.change(this.callbackfunc)
+      this.change(this.callbackfunc,'add',{})
     }),
     (me.onsearchtext = function (obj) {
       // $("#dv_" + key).remove();
@@ -278,8 +279,8 @@ let multisel = function basemultiselect (selconfig, callback) {
             : this.internbasearh
       }
     }),
-    (me.change = function (callback) {
-      callback(this.basesearchar)
+    (me.change = function (callback,flag,obj) {
+      callback(this.basesearchar,flag,obj)
     }),
     (me.responsetransform = function (data) {
       var internset = me.removefromlistresp(data)
