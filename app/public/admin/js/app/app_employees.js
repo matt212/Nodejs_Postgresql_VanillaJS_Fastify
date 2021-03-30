@@ -161,4 +161,6 @@ killzone.forEach((element, index) => {
      afterhtmlpopulate: function() {
 
      }
+     ,customClearControl:function(){
+     }
  }

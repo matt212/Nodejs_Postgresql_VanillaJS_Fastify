@@ -16,10 +16,4 @@
 }, {
   "val": "userrole",
   "key": "userrolemapping"
-}, {
-  "val": "gender",
-  "key": "gender"
-}, {
-  "val": "mroleset",
-  "key": "mroleset"
 }]
