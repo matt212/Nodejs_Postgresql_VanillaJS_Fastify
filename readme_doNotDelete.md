@@ -224,3 +224,10 @@ and then you can select from sex as dbtable while creating recruits form as fres
 amisize
 ebsvolume
 georegion
+
+###############upgrading nodejs#####################
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | sh
+source ~/.nvm/nvm.sh
+nvm install --lts
+nvm use --lts
+npm --version
