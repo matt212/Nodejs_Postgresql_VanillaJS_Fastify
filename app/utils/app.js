@@ -3,9 +3,9 @@ const path = require("path");
 
 const fastify = require("fastify")({
   logger: { prettyPrint: true, level: "debug", prettifier: pinoInspector },
-  // ajv: {
-  //   plugins: [[require("ajv-keywords"), ["transform"]]],
-  // },
+  ajv: {
+    plugins: [[require("ajv-keywords"), ["transform"]]],
+  },
 });
 fastify.register(require("fastify-multipart"));
 
