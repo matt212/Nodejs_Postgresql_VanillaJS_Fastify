@@ -12,6 +12,7 @@ describe('Begin Tests', function () {
     })
   })
   after(function (done) {
+    
     genSpecs.dataCleanUp(testbase).then(function () {
       done()
     })
@@ -435,7 +436,7 @@ describe('Begin Tests', function () {
         .consolidatedPayload()
         .payload20(testbase, evalModulename, validationConfig)
 //file :dependentvariable line no :1116 parameter : console.log(sqlstatementsprimary) 
-console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
+//console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
       return genSpecs.genericApiPost(testbase).then(function (data) {
         
         genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)

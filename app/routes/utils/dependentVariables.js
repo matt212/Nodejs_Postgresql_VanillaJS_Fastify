@@ -190,11 +190,16 @@ let searchparampayload = (req) => {
         /*end region*/
       } else if (searchtype == "consolidatesearch") {
         //*traditional search*//
+       
+        //searchmatrixkey=consolidatesearchparam[0].consolidatecol
+        searchmatrixkey=removeDateFilterforConsolidationSearch();
+        searchmatrixval=consolidatesearchparam[0].consolidatecolval
+    
         consolidatesearch =
           "and " +
-          consolidatesearchparam[0].consolidatecol.join("||' '||") +
+          searchmatrixkey.join("||' '||") +
           " LIKE '%" +
-          consolidatesearchparam[0].consolidatecolval +
+          searchmatrixval +
           "%'";
         /*without vector column*/
         //consolidatesearch='and to_tsvector("'+consolidatesearchparam[0].consolidatecol.join("\"||' '||\"")+'") @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
@@ -223,6 +228,19 @@ let searchparampayload = (req) => {
     return Promise.reject(error);
   }
 };
+let removeDateFilterforConsolidationSearch=function()
+{
+  let validationConfig = require("./" +
+          mod.Name +
+          "/validationConfig.js");
+        var jsonintern = validationConfig.validationmap;
+        var baseField= jsonintern.filter(function(a) {
+          return a.fieldtypename != "DATE"; // if truthy then keep item
+      }).map(function(k) {
+        return  k.inputname
+      });
+   return baseField;
+}
 let pivottransformation = (dataset) => {
   let internbase = {};
   ("use strict");
@@ -587,11 +605,15 @@ let paramsSearchTypeGroupBy = (req) => {
     }
   } else if (searchtype == "consolidatesearch") {
     //*traditional search*//
+    //searchmatrixkey=consolidatesearchparam[0].consolidatecol
+    searchmatrixkey=removeDateFilterforConsolidationSearch();
+    searchmatrixval=consolidatesearchparam[0].consolidatecolval
+    
     consolidatesearch =
       "and " +
-      consolidatesearchparam[0].consolidatecol.join("||' '||") +
+      searchmatrixkey.join("||' '||") +
       " LIKE '%" +
-      consolidatesearchparam[0].consolidatecolval +
+      searchmatrixval +
       "%'";
     /*without vector column*/
     //consolidatesearch='and to_tsvector("'+consolidatesearchparam[0].consolidatecol.join("\"||' '||\"")+'") @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'

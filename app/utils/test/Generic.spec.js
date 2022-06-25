@@ -1148,6 +1148,8 @@ let consolidatedPayload = function () {
       } else {
         searchVal = searchVal.substring(0, 3)
       }
+//console.log(Object.keys(testbase.schemaBaseValidatorPayload)[0])
+//console.log(testbase.schemaBaseValidatorPayload)
 
       o1.basesearcharconsolidated = [
         {
