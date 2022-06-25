@@ -428,13 +428,16 @@ describe('Begin Tests', function () {
       })
     })
   })
+  
   describe('****************Consolidated Search Across all column except auto generated dates and boolean Test Cases****************', function () {
     it(`Consolidated ResultSet Search working as expected`, function () {
       testbase = genSpecs
         .consolidatedPayload()
         .payload20(testbase, evalModulename, validationConfig)
-
+//file :dependentvariable line no :1116 parameter : console.log(sqlstatementsprimary) 
+console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
       return genSpecs.genericApiPost(testbase).then(function (data) {
+        
         genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
       })
     })
@@ -547,4 +550,5 @@ describe('Begin Tests', function () {
       })
     })
   })
+  
 })
