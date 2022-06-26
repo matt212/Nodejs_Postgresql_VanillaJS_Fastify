@@ -1,3 +1,7 @@
+** after workstation restart **
+ > *`sudo service redis-server restart` *
+ > *`sudo service postgresql restart` *
+
 **sh file Setup**
 > *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
 
