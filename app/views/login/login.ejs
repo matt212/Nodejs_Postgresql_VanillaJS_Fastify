@@ -336,7 +336,12 @@
   <script type="text/javascript">
 
     $(window, document, undefined).ready(function () {
-
+      if (event.key === "Enter") {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    // Trigger the button element with a click
+    document.getElementById("myBtn").click();
+  }
       $('input').blur(function () {
         var $this = $(this);
         if ($this.val())
@@ -398,7 +403,7 @@ if(error!=null)
       </md-input-container>
       <div class="group">
         <div>
-          <button class="button buttonBlue" onclick="validatelogin();" type="submit">Submit </button>
+          <button class="button buttonBlue" onkeypress="validatelogin();"  type="submit">Submit </button>
 
 
         </div>
