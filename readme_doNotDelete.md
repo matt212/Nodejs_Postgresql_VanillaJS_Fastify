@@ -2,6 +2,10 @@
  > *`sudo service redis-server restart` *
  > *`sudo service postgresql restart` *
 
+** Superadmin **
+ > *http://127.0.0.1:3011/black-squadron*
+ 
+
 **sh file Setup**
 > *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
 
