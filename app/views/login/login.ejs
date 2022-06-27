@@ -389,6 +389,8 @@ if(error!=null)
   <div class="content">
 
     <div class="form" ng-form="userForm">
+      <span id="msg"></span>
+
       <md-input-container flex="50">
         <div class="group">
           <input type="text" name="username" id="txtname" />
@@ -425,8 +427,13 @@ if(error!=null)
               ajaxbase.payload = base.datapayload
               ajaxbase.url = '/login';
               ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
-                if (argument.status = "success") {
+                console.log(argument)
+                if (argument.status == "success") {
                   window.location.replace(argument.redirect);
+                }
+                else if (argument.status == "fail") 
+                {
+                  $("#msg").html(argument.msgstatus)
                 }
               })
             });

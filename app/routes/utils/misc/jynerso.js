@@ -81,7 +81,9 @@ let baseSchemaBuilder = function (fieldname) {
   return interims;
 };
 async function routes(fastify, options) {
-  fastify.get("/", async (request, reply) => {
+  fastify.get("/",
+  { preValidation: [fastify.isSession] },
+  async (request, reply) => {
     var models = require("../../../models/");
 
     var baseOBj = [];
