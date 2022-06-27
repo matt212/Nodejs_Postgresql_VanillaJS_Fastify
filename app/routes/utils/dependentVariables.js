@@ -131,8 +131,8 @@ let searchparampayload = (req) => {
                 selector =
                   "and " +
                   coltype +
-                  "(a." +
-                  SqlString.format(searchkey) +
+                  "(a." +"\""+
+                  SqlString.format(searchkey) +"\""+
                   ") IN " +
                   "(" +
                   stringtype +
@@ -166,8 +166,8 @@ let searchparampayload = (req) => {
                   selector +
                   " and  " +
                   coltype +
-                  "(a." +
-                  SqlString.format(searchkey) +
+                  "(a." +"\""+
+                  SqlString.format(searchkey) +"\""+
                   ") IN " +
                   "(" +
                   stringtype +
@@ -192,7 +192,7 @@ let searchparampayload = (req) => {
         //*traditional search*//
        
         //searchmatrixkey=consolidatesearchparam[0].consolidatecol
-        searchmatrixkey=removeDateFilterforConsolidationSearch();
+        searchmatrixkey=removeDateFilterforConsolidationSearch().map(function(item) { return '"' + item + '"' });
         searchmatrixval=consolidatesearchparam[0].consolidatecolval
     
         consolidatesearch =
@@ -570,8 +570,8 @@ let paramsSearchTypeGroupBy = (req) => {
             colmetafilter =
               "and " +
               coltype +
-              "(a." +
-              SqlString.format(searchkey) +
+              "(a." +"\""+
+              SqlString.format(searchkey) +"\""+
               ") IN " +
               "(" +
               stringtype +
@@ -606,7 +606,7 @@ let paramsSearchTypeGroupBy = (req) => {
   } else if (searchtype == "consolidatesearch") {
     //*traditional search*//
     //searchmatrixkey=consolidatesearchparam[0].consolidatecol
-    searchmatrixkey=removeDateFilterforConsolidationSearch();
+    searchmatrixkey=removeDateFilterforConsolidationSearch().map(function(item) { return '"' + item + '"' });
     searchmatrixval=consolidatesearchparam[0].consolidatecolval
     
     consolidatesearch =
@@ -794,8 +794,8 @@ let pivotTransform = (req) => {
           selector =
             "and " +
             coltype +
-            "(a." +
-            SqlString.format(searchkey) +
+            "(a." +"\""+
+            SqlString.format(searchkey) +"\""+
             ") IN " +
             "(" +
             stringtype +
@@ -978,7 +978,7 @@ let searchtype = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).toString();
+        ).map(function(item) { return '"' + item + '"' }).join(',');;
 
         let sqlConstructParams = {
           fieldnames,
@@ -1005,7 +1005,7 @@ let searchtypePerf = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).toString();
+        ).map(function(item) { return '"' + item + '"' }).join(',');
         let sqlConstructParams = {
           fieldnames,
           arg,
@@ -1299,7 +1299,8 @@ let exportExcel = (req, res, a, fastify) => {
     arg.ref = baseobj.ref;
 
     //if (arg.ispaginate) {
-    var fieldnames = Object.keys(models[mod.Name].tableAttributes).toString();
+    var fieldnames = Object.keys(models[mod.Name].tableAttributes)
+    .map(function(item) { return '"' + item + '"' }).join(',');
     let sqlConstructParams = {
       fieldnames,
       arg,

@@ -4,7 +4,7 @@ let base = {
   },
   sortorder: function(tunnel) {
     return (
-      ' ORDER BY ' + tunnel.arg.sortcolumn + ' ' + tunnel.arg.sortcolumnorder
+      ' ORDER BY "' + tunnel.arg.sortcolumn + '" ' + tunnel.arg.sortcolumnorder
     )
   },
   basesearchtype: function(tunnel) {

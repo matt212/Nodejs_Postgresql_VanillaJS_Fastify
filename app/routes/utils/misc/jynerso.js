@@ -2000,7 +2000,7 @@ function swaggerdocs(mainapp) {
       // Get document, or throw exception on error
       try {
         fs.readFile("../utils/docs/emp.yaml", "utf8", function (err, contents) {
-          var doc = yaml.safeLoad(contents);
+          var doc = yaml.load(contents);
 
           //let peopleArray = Object.keys(doc).map(i => doc[i])
           let peopleArrayString = JSON.parse(
@@ -2028,7 +2028,7 @@ function swaggerdocs(mainapp) {
             peopleArrayString.definitions[modname + "Id"];
           fs.writeFile(
             "../utils/docs/" + modname + ".yaml",
-            yaml.safeDump(doc),
+            yaml.dump(doc),
             function (err, data) {
               if (err) {
                 console.log(err);
