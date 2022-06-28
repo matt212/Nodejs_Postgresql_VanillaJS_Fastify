@@ -11,9 +11,9 @@ let base = {
     return (
       'select  ' +
       tunnel.fieldnames +
-      ' from ' +
+      ' from "' +
       tunnel.mod.Name +
-      ' as a where a.recordstate=true ' +
+      '" as a where a.recordstate=true ' +
       tunnel.arg.daterange +
       '  ' +
       tunnel.arg.selector +
@@ -30,9 +30,9 @@ let base = {
   },
   searchTypeCount: function(tunnel) {
     return (
-      ' select COUNT(*) as count   from ' +
+      ' select COUNT(*) as count   from "' +
       tunnel.mod.Name +
-      ' as a where a.recordstate=true ' +
+      '" as a where a.recordstate=true ' +
       tunnel.arg.daterange +
       '  ' +
       tunnel.arg.selector +
@@ -42,9 +42,9 @@ let base = {
   },
   searchTypeCountExplain: function(tunnel) {
     return (
-      ' EXPLAIN  select * from ' +
+      ' EXPLAIN  select * from "' +
       tunnel.mod.Name +
-      ' as a where a.recordstate=true and  ' +
+      '" as a where a.recordstate=true and  ' +
       tunnel.arg.daterange +
       '  ' +
       tunnel.arg.selector +
@@ -62,9 +62,9 @@ let base = {
     return (
       'select  a.' +
       tunnel.tempDep.searchkey +
-      ' from ' +
+      ' from "' +
       tunnel.mod.Name +
-      ' as a where  ' +
+      '" as a where  ' +
       tunnel.tempDep.selector +
       ' ' +
       tunnel.tempDep.colmetafilter +
@@ -83,9 +83,9 @@ let base = {
       tunnel.tempDep.searchkey +
       ',a.' +
       tunnel.mod.id +
-      ' from ' +
+      ' from "' +
       tunnel.mod.Name +
-      ' as a where  ' +
+      '" as a where  ' +
       tunnel.tempDep.selector +
       ' ' +
       tunnel.tempDep.colmetafilter +
@@ -114,9 +114,9 @@ let base = {
       tunnel.tempDep.baseYaxisparam +
       ',' +
       tunnel.tempDep.baseXaxisparam +
-      ',count(*)::int as cnt   from  ' +
+      ',count(*)::int as cnt   from  "' +
       tunnel.mod.Name +
-      ' as a where recordstate=true and  ' +
+      '" as a where recordstate=true and  ' +
       tunnel.tempDep.dynamicquerydaterange +
       '  ' +
       tunnel.tempDep.selectordynamic +
@@ -125,9 +125,9 @@ let base = {
       "  group by Xaxis, Yaxis  order by  1,2 asc '," +
       " 'select " +
       tunnel.tempDep.baseXaxisparam +
-      ' from ' +
+      ' from "' +
       tunnel.mod.Name +
-      ' as a where recordstate=true and  ' +
+      '" as a where recordstate=true and  ' +
       tunnel.tempDep.dynamicquerydaterange +
       '  ' +
       tunnel.tempDep.selectordynamic +
@@ -152,9 +152,9 @@ let base = {
     return (
       'select count(*) as totalyaxiscnt from (select  ' +
       tunnel.tempDep.baseYaxisparamprimary +
-      ' from ' +
+      ' from "' +
       tunnel.mod.Name +
-      ' as a where recordstate=true and  ' +
+      '" as a where recordstate=true and  ' +
       tunnel.tempDep.daterange +
       '  ' +
       tunnel.tempDep.selector +
@@ -167,9 +167,9 @@ let base = {
     return (
       'select count(*) as totalxaxiscnt from (select  ' +
       tunnel.tempDep.baseXaxisparamprimary +
-      ' from ' +
+      ' from "' +
       tunnel.mod.Name +
-      ' as a where recordstate=true and  ' +
+      '" as a where recordstate=true and  ' +
       tunnel.tempDep.daterange +
       '  ' +
       tunnel.tempDep.selector +
@@ -182,9 +182,9 @@ let base = {
     return (
       'select ' +
       tunnel.tempDep.baseXaxisparamprimary +
-      ' from ' +
+      ' from "' +
       tunnel.mod.Name +
-      ' as a where recordstate=true and  ' +
+      '" as a where recordstate=true and  ' +
       tunnel.tempDep.daterange +
       '  ' +
       tunnel.tempDep.selector +

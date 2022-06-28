@@ -66,13 +66,17 @@ describe('Begin Tests', function () {
             data.body.message.should.equal(
               `body.${entry.key} should match format "date-time"`
             )
-          } else if (fieldtype == 'number') {
+          } else if (fieldtype == 'number'  ||fieldtype == 'mobile') {
             data.body.message.should.equal(
               `body.${entry.key} should be integer`
             )
+            
           } else if (fieldtype == 'email') {
+            // data.body.message.should.equal(
+            //   `body.${entry.key} should match format "email"`
+            // )
             data.body.message.should.equal(
-              `body.${entry.key} should match format "email"`
+              `body.${entry.key} should NOT be shorter than 1 characters`
             )
           } else {
             data.body.message.should.equal(

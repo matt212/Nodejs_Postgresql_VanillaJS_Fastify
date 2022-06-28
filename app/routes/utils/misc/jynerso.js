@@ -58,8 +58,7 @@ let baseSchemaBuilder = function (fieldname) {
         interims +
         `${a.inputname}: {
       type: 'integer',
-      minimum: 1,
-      maximum:2147483648
+      allOf: [{ transform: ['trim'] }, { minLength: 1 }, { maxLength: ${a.fieldmaxlength} }],
     },`;
     } else if (a.fieldtypename == "BIGINT") {
       interims =
