@@ -175,7 +175,9 @@ let baseloadsegments = {
         ],
         searchparamkey: key,
         searchtype: 'Columnwise',
-        searchparammetafilter: []
+        searchparammetafilter: [],
+        pageno:0,
+        pageSize:20
       }
     }
   }
