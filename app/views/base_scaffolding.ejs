@@ -42,6 +42,7 @@
                 </tr>
                 <tr>
                     <th colspan="5" id="jsonatt3">
+                        
                 </tr>
 
             </tfoot>
@@ -93,6 +94,8 @@
         $("#childname_" + ids).html(re)
     }
     $(document).ready(function () {
+
+
 
         $("#btnAdd").bind("click", function () {
             var div = $("<tr class='parent' />");
@@ -324,9 +327,13 @@
         ajaxutils.basepostmethod(ajaxbase).then(function (data) {
             console.log(data.a)
             console.log(data.b)
-
-            $("#jsonatt3").html(`${data.a} in command line (bash, wsl etc)<br/> then for test run below <br/>${data.b}`)
+            $("#jsonatt3").html(`Run ${data.a} in command line (bash, wsl etc) <button onclick="copytoclipboard(this.getAttribute('data-target'))" id = '${data.a}' data-target="${data.a}" class="copy_btn">copy to clipboard </button><br/> then for test run below <br/> Run ${data.b}<br/><button onclick="copytoclipboard(this.getAttribute('data-target'))" id = '${data.b}' data-target="${data.b}" class="copy_btn">copy to clipboard </button>`)
+           // $("#jsonatt3").html(`Run ${data.a} in command line (bash, wsl etc) <button onclick="copytoclipboard(this.getAttribute('data-target'))" id = '${data.a}' data-target="${data.a}" class="copy_btn">copy </button><br/> then for test run below <br/> Run ${data.b}<br/><button onclick="copytoclipboard(${data.b})">copy to clipboard</button>`)
         })
+    }
+    function copytoclipboard(value)
+    {
+        navigator.clipboard.writeText(value);
     }
     function base_db() {
 

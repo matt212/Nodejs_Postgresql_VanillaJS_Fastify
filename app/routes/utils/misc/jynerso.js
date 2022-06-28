@@ -117,8 +117,8 @@ async function routes(fastify, options) {
       .then(SqlConstructMulti)
       .then(function (data) {
         reply.send({
-          a: "run  yarn applychangesDB ",
-          b: `run yarn ${mainapp[0].datapayloadModulename}Eval`,
+          a: "  yarn applychangesDB ",
+          b: ` yarn ${mainapp[0].datapayloadModulename}Eval`,
         });
       })
       .catch((e) => {
