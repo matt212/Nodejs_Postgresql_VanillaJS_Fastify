@@ -215,7 +215,7 @@ resizableGrid(table);
                     }
                 }
                 else {
-                    internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim()
+                    internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim().split(' ').join('_')
                     internobj.inputname = $(this.cells[3]).find('input').val().trim()
 
                 }
