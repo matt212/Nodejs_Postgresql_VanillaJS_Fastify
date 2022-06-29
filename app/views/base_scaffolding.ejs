@@ -140,7 +140,7 @@ resizableGrid(table);
             });
 
             re += '</td><td><select id="childname_' + rowCount + '" name="" class="formcom bredter">';
-            re += '<option>--Please Select FieldType --</option>'
+           // re += '<option>--Please Select FieldType --</option>'
             ddlclientfieldtype.forEach(function (element) {
                 re += '<option>' + element + '</option>'
             });
@@ -216,7 +216,7 @@ resizableGrid(table);
                 }
                 else {
                     internobj.inputCustomMapping = $(this.cells[3]).find('input').val().trim().split(' ').join('_')
-                    internobj.inputname = $(this.cells[3]).find('input').val().trim()
+                    internobj.inputname = $(this.cells[3]).find('input').val().trim().trim().split(' ').join('_')
 
                 }
                 internobj.inputplaceholder = $(this.cells[4]).find('input').val().trim()
