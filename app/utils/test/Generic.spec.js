@@ -96,7 +96,10 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
         testbase.payload = entry
         genericApiPost(testbase)
           .then(function (data) {
-            resolve(data.body.createdId)
+
+            entry.createdID = data.body.createdId
+
+            resolve(entry)
           })
           .catch(err => console.log(err))
       } catch (error) {
@@ -120,17 +123,21 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
     })
   }
 
-  o.multiInsertforSearch = function (createdID) {
-    if (createdID != undefined) {
-      o.singleInsertID = createdID
+  o.multiInsertforSearch = function (val) {
+    if (val.createdID != undefined) {
+      o.singleInsertID = val.createdID
+      o.val = val;
     }
 
     return new Promise((resolve, reject) => {
       Promises.mapSeries(testbase.schemaBaseValidatorPayloadAr, o.multiInsert)
         .then(a => {
           var o1 = {
+
             singleInsertID: o.singleInsertID,
-            a: a
+            a: a.map(task => task.createdID),
+            allDataset: o.val,
+            allDatasetAr: a
           }
           resolve(o1)
         })
@@ -175,6 +182,7 @@ let metaTestcaseGen = function (a) {
   /*for getting and passing to rest of tests fields and validationConfig*/
   testbase = customTestsInit(testbase, validationConfig)
   setevalModulename(testbase.evalModulename)
+
   return { a: testbase, b: validationConfig }
 }
 let referentialCustomStack = function (s1, l1) {
@@ -301,6 +309,66 @@ let getContentFieldsfromValidationMap = function (validationConfig, val) {
     })
   return a1
 }
+let MultiControlTestCaseGeneric = function (testbase, validationConfig) {
+  return (promise = new Promise((resolve, reject) => {
+    try {
+      let a1 = validationConfig.validationmap
+        .map(a => (a.inputParent != undefined ? a.inputParent : undefined))
+        .filter(Boolean)
+
+      ModularizeDataGen(a1)
+        .then(function (data) {
+          let a = initMultiPayloadforSearch(
+            testbase.evalModulename,
+            data,
+            validationConfig.validationmap,
+            a1
+          )
+          //console.log(data[0].multiControlDataSet)
+          //console.log(data[0].multiControlDataSetAr)
+          
+          //this contains db insert multi control field name and id two recordset
+          let g = data[0].multiControlDataSetAr
+          
+          let a12 = removeJsonAttrs(g, ['createdID'])
+          
+          //removes multi control field only to have dataset for just textbox columns
+          let o = validationConfig.validationmap
+            .filter(a => (a.inputParent == undefined))
+            .map(task => task.inputname)
+          //end
+         // take existing payload and select only textbox field through below function       
+          let k = dynamicSelectforJsonArray(testbase.schemaBaseValidatorPayloadAr, o)
+          //combine selected textbox field data with multicontrol data through below code
+          var fr=k.map((user,i) => {
+            return  Object.assign(user,a12[i]);
+            })
+            //now we have searchtype param for automation testcase
+          console.log(fr)
+
+          testbase.searchtype1 = fr
+          testbase.insertUpdateDelete1 = a.insertUpdateDelete
+          testbase.baseData = a.baseData
+          testbase.singleDataSet = a.singleDataSet
+          //uncomment when mapping is complete
+          //testbase = customTestsInitMultiControl(testbase, validationConfig)
+          // setevalModulename(testbase.evalModulename)
+          // PrimarytestInit(testbase).then(function (data) {
+          //   console.log('*****Multi Records are inserted sucessfully*****')
+          //   //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
+
+          //   testbase.baseData.push(data)
+
+          //   resolve(testbase)
+          // })
+        })
+        .catch(err => console.log(err))
+    } catch (error) {
+      console.log(error)
+      reject(error)
+    }
+  }))
+}
 let MultiControlTestCaseGen = function (testbase, validationConfig) {
   return (promise = new Promise((resolve, reject) => {
     try {
@@ -316,9 +384,10 @@ let MultiControlTestCaseGen = function (testbase, validationConfig) {
             validationConfig.validationmap,
             a1
           )
-          // console.log(a.searchtype)
-          // console.log(a.insertUpdateDelete)
-          //console.log(a.insertUpdateDelete[0])
+
+          //console.log(testbase)
+          // console.log(a.insertUpdateDelete[0])
+          //console.log(a.searchtype)
           testbase.searchtype1 = a.searchtype
           testbase.insertUpdateDelete1 = a.insertUpdateDelete
           testbase.baseData = a.baseData
@@ -667,7 +736,6 @@ let initMultiPayloadforSearch = function (dt, data, validationmap, ap) {
     ar3.push(interimObj1)
     //console.log(b1[0].a2);
   })
-
   let o = {
     searchtype: idmapping(validationmap, ar1[0], ar1[1]),
     insertUpdateDelete: ar2[0].map((item, i) =>
@@ -675,6 +743,7 @@ let initMultiPayloadforSearch = function (dt, data, validationmap, ap) {
     ),
     singleDataSet: [Object.assign({}, ...ar3)]
   }
+
 
   let internAccesstypes = [
     { accesstype: 'AA', recordstate: true },
@@ -721,9 +790,11 @@ let PrimarytestInit = function (testbase) {
           .then(function (data) {
             console.log('*****Multi Records are inserted sucessfully*****')
 
+
             testbase.DelAr = data.a
             testbase.singleInsertID = data.singleInsertID
-
+            testbase.multiControlDataSet = data.allDataset
+            testbase.multiControlDataSetAr = data.allDatasetAr
             resolve(testbase)
           })
           .catch(err => console(err))
@@ -897,271 +968,271 @@ let consolidatedPayload = function () {
     testbase.responseCode = 400
     return testbase
   }
-  ;(o.payload10 = function (testbase, evalModulename) {
-    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-    var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-    o.daterange = {
-      startdate: undefined,
-      enddate: '1982-01-29'
-    }
-    o.disableDate = false
-    testbase.payload = o
-    testbase.responseCode = 400
-    return testbase
-  }),
-    (o.payload11 = function (testbase, evalModulename) {
+    ; (o.payload10 = function (testbase, evalModulename) {
       testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
       var o = JSON.parse(JSON.stringify(loadModulePayLoad))
       o.daterange = {
-        startdate: '1982-01-29',
-        enddate: undefined
-      }
-      o.disableDate = false
-      testbase.payload = o
-      testbase.responseCode = 400
-      return testbase
-    }),
-    (o.payload12 = function (testbase, evalModulename) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-      o.pageSize = NaN
-      testbase.payload = o
-      testbase.responseCode = 400
-      return testbase
-    }),
-    (o.payload13 = function (testbase, evalModulename) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-      o.pageSize = undefined
-      testbase.payload = o
-      testbase.responseCode = 400
-      return testbase
-    }),
-    (o.payload14 = function (testbase, evalModulename) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-      o.pageno = undefined
-      testbase.payload = o
-      testbase.responseCode = 400
-      return testbase
-    }),
-    (o.payload15 = function (testbase, evalModulename) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-      o.daterange = {
-        startdate: '1982-01-29',
+        startdate: undefined,
         enddate: '1982-01-29'
       }
-      o.datecolsearch = NaN
       o.disableDate = false
       testbase.payload = o
       testbase.responseCode = 400
       return testbase
     }),
-    (o.payload16 = function (testbase, evalModulename) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-      o.daterange = {
-        startdate: '1982-01-29',
-        enddate: '1982-01-29'
-      }
-      o.datecolsearch = undefined
-      o.disableDate = false
-      testbase.payload = o
-      testbase.responseCode = 400
-      return testbase
-    }),
-    (o.payload17 = function (
-      testbase,
-      entry,
-      evalModulename,
-      validationConfig
-    ) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      testbase.responseCode = 200
-      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-      let fieldtype = controlPayset(validationConfig, entry)
-
-      if (fieldtype.fieldtypename == 'DATE') {
-        o1.daterange = {
-          startdate: new Date(
-            testbase.schemaBaseValidatorPayload[entry]
-          ).toLocaleDateString(),
-          enddate: new Date(
-            testbase.schemaBaseValidatorPayload[entry]
-          ).toLocaleDateString()
+      (o.payload11 = function (testbase, evalModulename) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+        o.daterange = {
+          startdate: '1982-01-29',
+          enddate: undefined
         }
-        o1.datecolsearch = entry
-        o1.disableDate = false
-      } else if (
-        fieldtype.fieldtypename == 'boolean' ||
-        fieldtype.fieldtypename == 'BIGINT' ||
-        fieldtype.fieldtypename == 'INTEGER'
+        o.disableDate = false
+        testbase.payload = o
+        testbase.responseCode = 400
+        return testbase
+      }),
+      (o.payload12 = function (testbase, evalModulename) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+        o.pageSize = NaN
+        testbase.payload = o
+        testbase.responseCode = 400
+        return testbase
+      }),
+      (o.payload13 = function (testbase, evalModulename) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+        o.pageSize = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
+        return testbase
+      }),
+      (o.payload14 = function (testbase, evalModulename) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+        o.pageno = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
+        return testbase
+      }),
+      (o.payload15 = function (testbase, evalModulename) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+        o.daterange = {
+          startdate: '1982-01-29',
+          enddate: '1982-01-29'
+        }
+        o.datecolsearch = NaN
+        o.disableDate = false
+        testbase.payload = o
+        testbase.responseCode = 400
+        return testbase
+      }),
+      (o.payload16 = function (testbase, evalModulename) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        var o = JSON.parse(JSON.stringify(loadModulePayLoad))
+        o.daterange = {
+          startdate: '1982-01-29',
+          enddate: '1982-01-29'
+        }
+        o.datecolsearch = undefined
+        o.disableDate = false
+        testbase.payload = o
+        testbase.responseCode = 400
+        return testbase
+      }),
+      (o.payload17 = function (
+        testbase,
+        entry,
+        evalModulename,
+        validationConfig
       ) {
-        o1.searchparam = [
-          {
-            [entry]: [testbase.schemaBaseValidatorPayload[entry]]
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        testbase.responseCode = 200
+        var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+        let fieldtype = controlPayset(validationConfig, entry)
+
+        if (fieldtype.fieldtypename == 'DATE') {
+          o1.daterange = {
+            startdate: new Date(
+              testbase.schemaBaseValidatorPayload[entry]
+            ).toLocaleDateString(),
+            enddate: new Date(
+              testbase.schemaBaseValidatorPayload[entry]
+            ).toLocaleDateString()
           }
-        ]
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
-      } else if (fieldtype.fieldtypename == 'STRING') {
-        let interimval = testbase.schemaBaseValidatorPayload[entry]
-        if (
-          fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+          o1.datecolsearch = entry
+          o1.disableDate = false
+        } else if (
+          fieldtype.fieldtypename == 'boolean' ||
+          fieldtype.fieldtypename == 'BIGINT' ||
+          fieldtype.fieldtypename == 'INTEGER'
         ) {
-          if (fieldtype.fieldvalidatename == 'number') {
-            interimval = interimval
+          o1.searchparam = [
+            {
+              [entry]: [testbase.schemaBaseValidatorPayload[entry]]
+            }
+          ]
+          o1.disableDate = true
+          o1.searchtype = 'Columnwise'
+        } else if (fieldtype.fieldtypename == 'STRING') {
+          let interimval = testbase.schemaBaseValidatorPayload[entry]
+          if (
+            fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+          ) {
+            if (fieldtype.fieldvalidatename == 'number') {
+              interimval = interimval
+            } else {
+              interimval = interimval.toLowerCase()
+            }
           } else {
             interimval = interimval.toLowerCase()
           }
-        } else {
-          interimval = interimval.toLowerCase()
+          o1.searchparam = [
+            {
+              [entry]: [interimval]
+            }
+          ]
+          o1.disableDate = true
+          o1.searchtype = 'Columnwise'
         }
-        o1.searchparam = [
-          {
-            [entry]: [interimval]
-          }
-        ]
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
-      }
 
-      testbase.payload = o1
-      return testbase
-    }),
-    (o.payload18 = function (
-      testbase,
-      entry,
-      evalModulename,
-      validationConfig
-    ) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      testbase.responseCode = 200
-      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-
-      let fieldtype = controlPayset(validationConfig, entry)
-
-      if (fieldtype.fieldtypename == 'DATE') {
-        o1.daterange = {
-          startdate: new Date(
-            testbase.schemaBaseValidatorPayloadAr[0][entry]
-          ).toLocaleDateString(),
-          enddate: new Date(
-            testbase.schemaBaseValidatorPayloadAr[0][entry]
-          ).toLocaleDateString()
-        }
-        o1.datecolsearch = entry
-        o1.disableDate = false
-      } else if (
-        fieldtype.fieldtypename == 'boolean' ||
-        fieldtype.fieldtypename == 'BIGINT' ||
-        fieldtype.fieldtypename == 'INTEGER'
+        testbase.payload = o1
+        return testbase
+      }),
+      (o.payload18 = function (
+        testbase,
+        entry,
+        evalModulename,
+        validationConfig
       ) {
-        o1.searchparam = [
-          {
-            [entry]: [
-              testbase.schemaBaseValidatorPayloadAr[0][entry],
-              testbase.schemaBaseValidatorPayloadAr[1][entry]
-            ]
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        testbase.responseCode = 200
+        var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+        let fieldtype = controlPayset(validationConfig, entry)
+
+        if (fieldtype.fieldtypename == 'DATE') {
+          o1.daterange = {
+            startdate: new Date(
+              testbase.schemaBaseValidatorPayloadAr[0][entry]
+            ).toLocaleDateString(),
+            enddate: new Date(
+              testbase.schemaBaseValidatorPayloadAr[0][entry]
+            ).toLocaleDateString()
           }
-        ]
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
-      } else if (fieldtype.fieldtypename == 'STRING') {
-        let interimval1 = testbase.schemaBaseValidatorPayloadAr[0][entry]
-        let interimval2 = testbase.schemaBaseValidatorPayloadAr[1][entry]
-        if (
-          fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+          o1.datecolsearch = entry
+          o1.disableDate = false
+        } else if (
+          fieldtype.fieldtypename == 'boolean' ||
+          fieldtype.fieldtypename == 'BIGINT' ||
+          fieldtype.fieldtypename == 'INTEGER'
         ) {
-          if (fieldtype.fieldvalidatename == 'number') {
-            interimval1 = interimval1
-            interimval2 = interimval2
+          o1.searchparam = [
+            {
+              [entry]: [
+                testbase.schemaBaseValidatorPayloadAr[0][entry],
+                testbase.schemaBaseValidatorPayloadAr[1][entry]
+              ]
+            }
+          ]
+          o1.disableDate = true
+          o1.searchtype = 'Columnwise'
+        } else if (fieldtype.fieldtypename == 'STRING') {
+          let interimval1 = testbase.schemaBaseValidatorPayloadAr[0][entry]
+          let interimval2 = testbase.schemaBaseValidatorPayloadAr[1][entry]
+          if (
+            fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
+          ) {
+            if (fieldtype.fieldvalidatename == 'number') {
+              interimval1 = interimval1
+              interimval2 = interimval2
+            } else {
+              interimval1 = interimval1.toLowerCase()
+              interimval2 = interimval2.toLowerCase()
+            }
           } else {
             interimval1 = interimval1.toLowerCase()
             interimval2 = interimval2.toLowerCase()
           }
-        } else {
-          interimval1 = interimval1.toLowerCase()
-          interimval2 = interimval2.toLowerCase()
+          o1.searchparam = [
+            {
+              [entry]: [interimval1, interimval2]
+            }
+          ]
+          o1.disableDate = true
+          o1.searchtype = 'Columnwise'
         }
-        o1.searchparam = [
+        testbase.payload = o1
+        return testbase
+      }),
+      (o.payload19 = function (
+        testbase,
+        entry,
+        evalModulename,
+        validationConfig
+      ) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        testbase.responseCode = 200
+        var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+
+        let fieldtype = controlPayset(validationConfig, entry).fieldtypename
+
+        if (fieldtype == 'DATE') {
+          o1.daterange = {
+            startdate: new Date(
+              testbase.schemaBaseValidatorPayloadAr[0][entry]
+            ).toLocaleDateString(),
+            enddate: new Date(
+              testbase.schemaBaseValidatorPayloadAr[0][entry]
+            ).toLocaleDateString()
+          }
+          o1.datecolsearch = entry
+          o1.disableDate = false
+        } else if (fieldtype == 'boolean') {
+          /*there cannot be multi boolean Filter */
+        } else {
+          o1.searchparam = multicolumngenAr(
+            testbase.schemaBaseValidatorPayloadAr[0],
+            entry
+          )
+
+          o1.disableDate = true
+          o1.searchtype = 'Columnwise'
+        }
+        testbase.payload = o1
+        return testbase
+      }),
+      (o.payload20 = function (testbase, evalModulename, validationConfig) {
+        testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+        testbase.responseCode = 200
+        var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+        Object.keys(testbase.schemaBaseValidatorPayload)[0]
+        var searchVal =
+          testbase.schemaBaseValidatorPayload[
+          Object.keys(testbase.schemaBaseValidatorPayload)[0]
+          ]
+
+        if (Number.isInteger(searchVal)) {
+          searchVal = searchVal
+        } else {
+          searchVal = searchVal.substring(0, 3)
+        }
+        //console.log(Object.keys(testbase.schemaBaseValidatorPayload)[0])
+        //console.log(testbase.schemaBaseValidatorPayload)
+
+        o1.basesearcharconsolidated = [
           {
-            [entry]: [interimval1, interimval2]
+            consolidatecol: validationConfig.applyfields,
+            consolidatecolval: searchVal
           }
         ]
         o1.disableDate = true
-        o1.searchtype = 'Columnwise'
-      }
-      testbase.payload = o1
-      return testbase
-    }),
-    (o.payload19 = function (
-      testbase,
-      entry,
-      evalModulename,
-      validationConfig
-    ) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      testbase.responseCode = 200
-      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-
-      let fieldtype = controlPayset(validationConfig, entry).fieldtypename
-
-      if (fieldtype == 'DATE') {
-        o1.daterange = {
-          startdate: new Date(
-            testbase.schemaBaseValidatorPayloadAr[0][entry]
-          ).toLocaleDateString(),
-          enddate: new Date(
-            testbase.schemaBaseValidatorPayloadAr[0][entry]
-          ).toLocaleDateString()
-        }
-        o1.datecolsearch = entry
-        o1.disableDate = false
-      } else if (fieldtype == 'boolean') {
-        /*there cannot be multi boolean Filter */
-      } else {
-        o1.searchparam = multicolumngenAr(
-          testbase.schemaBaseValidatorPayloadAr[0],
-          entry
-        )
-
-        o1.disableDate = true
-        o1.searchtype = 'Columnwise'
-      }
-      testbase.payload = o1
-      return testbase
-    }),
-    (o.payload20 = function (testbase, evalModulename, validationConfig) {
-      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-      testbase.responseCode = 200
-      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-      Object.keys(testbase.schemaBaseValidatorPayload)[0]
-      var searchVal =
-        testbase.schemaBaseValidatorPayload[
-          Object.keys(testbase.schemaBaseValidatorPayload)[0]
-        ]
-
-      if (Number.isInteger(searchVal)) {
-        searchVal = searchVal
-      } else {
-        searchVal = searchVal.substring(0, 3)
-      }
-//console.log(Object.keys(testbase.schemaBaseValidatorPayload)[0])
-//console.log(testbase.schemaBaseValidatorPayload)
-
-      o1.basesearcharconsolidated = [
-        {
-          consolidatecol: validationConfig.applyfields,
-          consolidatecolval: searchVal
-        }
-      ]
-      o1.disableDate = true
-      o1.searchtype = 'consolidatesearch'
-      testbase.payload = o1
-      return testbase
-    })
+        o1.searchtype = 'consolidatesearch'
+        testbase.payload = o1
+        return testbase
+      })
   o.payload21 = function (testbase, evalModulename) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     testbase.responseCode = 400
@@ -1248,24 +1319,24 @@ let consolidatedPayload = function () {
     testbase.payload = o1
     return testbase
   }
-  ;(o.payload27 = function (testbase, entry, evalModulename) {
-    testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
-    testbase.responseCode = 200
-    var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-    o1.sortcolumnorder = 'DESC'
-    o1.sortcolumn = entry
-    o1.disableDate = true
-    testbase.payload = o1
-    return testbase
-  }),
-    (o.payload28 = function (testbase, evalModulename) {
-      testbase.apiUrl = '/' + evalModulename + dep.pivotresult
-      var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
-      o.XpageSize = undefined
-      testbase.payload = o
-      testbase.responseCode = 400
+    ; (o.payload27 = function (testbase, entry, evalModulename) {
+      testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
+      testbase.responseCode = 200
+      var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
+      o1.sortcolumnorder = 'DESC'
+      o1.sortcolumn = entry
+      o1.disableDate = true
+      testbase.payload = o1
       return testbase
-    })
+    }),
+      (o.payload28 = function (testbase, evalModulename) {
+        testbase.apiUrl = '/' + evalModulename + dep.pivotresult
+        var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
+        o.XpageSize = undefined
+        testbase.payload = o
+        testbase.responseCode = 400
+        return testbase
+      })
   o.payload29 = function (testbase, evalModulename) {
     testbase.apiUrl = '/' + evalModulename + dep.pivotresult
     var o = JSON.parse(JSON.stringify(PivotloadModulePayLoad))
@@ -1538,6 +1609,22 @@ let consolidatedPayload = function () {
   }
   return o
 }
+
+let dynamicSelectforJsonArray = function (SchemaArray, KeysArray) {
+  let a = SchemaArray.map((user) => {
+
+    let o1 = {}
+    KeysArray.forEach(function (a1) {
+
+      o1[a1] = user[a1]
+
+    })
+    
+
+    return o1
+  })
+  return a;
+}
 module.exports = {
   expect,
   dep,
@@ -1554,6 +1641,7 @@ module.exports = {
   metaTestcaseGen,
   customRefentialModnameInsert,
   MultiControlTestCaseGen,
+  MultiControlTestCaseGeneric,
   customTestsInitMultiControl,
   idmapping,
   initMultiPayloadforSearch,
