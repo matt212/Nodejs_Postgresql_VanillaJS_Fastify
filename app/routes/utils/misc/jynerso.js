@@ -28,8 +28,7 @@ let pgcreateDb = function () {
           reject(error);
         }
         resolve({ stdout: stdout });
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
+        
       });
     } catch (err) {
       reject(err);
@@ -144,8 +143,8 @@ function packageJsonUpdate(mainapp) {
       "../../package.json",
       beautify(JSON.stringify(interappsgenerator), { indent_size: 2 }),
       function (err, data) {
-        console.log(err);
-        console.log(data);
+        
+        
         if (err) {
           reject(err);
         }
@@ -172,8 +171,7 @@ function superadminUpdate(mainapp) {
       "../config/superadmin.json",
       beautify(JSON.stringify(interappsgenerator), { indent_size: 2 }),
       function (err, data) {
-        console.log(err);
-        console.log(data);
+        
         if (err) {
           reject(err);
         }
@@ -189,8 +187,7 @@ function applyMochaChaiTestCases(mainapp) {
         (r1) => r1.inputtype != "textbox"
       );
       var appsgenerator = " ";
-      console.log("((((((((((mocha))))))))))");
-      console.log(r2.length);
+     
       if (r2.length >= 1) {
         appsgenerator = fs.readFileSync(
           "../ref/tests/Employees-test-referential.spec.js",
@@ -275,7 +272,7 @@ function applyserverschemaValidator(mainapp) {
           beautify(appsgenerator, { indent_size: 2 }),
           "utf8",
           function (err, data) {
-            console.log(err);
+            
             resolve(mainapp);
           }
         );
@@ -365,7 +362,7 @@ var radiomultiInitControl = function (redlime) {
   var r1 = "";
   redlime.forEach(function (dt) {
     if (dt.inputtype == "radio") {
-      console.log("heree");
+      
       if (dt.childcontent != undefined) {
         r1 =
           r1 +
@@ -378,7 +375,7 @@ var radiomultiInitControl = function (redlime) {
     
   }`;
       } else {
-        console.log(r1 != "" ? "else " : " ");
+        
         r1 =
           r1 +
           (r1 != "" ? "else " : " ") +
@@ -633,7 +630,7 @@ let multiClearCode = function (validationmap, mod) {
     });
     var conditions = ["multiselect", "singleselect"];
     var test21 = conditions.some((el) => isMultiControl.includes(el));
-    console.log("why" + test21);
+    
     if (test21) {
       r2 = r2 + "\n multiselects={}";
     }
@@ -975,7 +972,7 @@ function applyMultiControls(mainapp) {
           //.includes('multiselect', 'singleselect')
           var conditions = ["multiselect", "singleselect", "radio", "checkbox"];
           var test2 = conditions.some((el) => isMultiControl1.includes(el));
-          console.log(test2);
+          
           if (test2) {
             multiControlsScripts = multiControlsScripts.replace(
               "//txtelse",
@@ -986,7 +983,7 @@ function applyMultiControls(mainapp) {
             checkboxmultiInitControl(mainapp[0].server_client) !== "" &&
             radiomultiInitControl(mainapp[0].server_client) !== ""
           ) {
-            console.log("---------------------herer");
+            
             multiControlsScripts = multiControlsScripts.replace(
               "//rchkelse",
               "\n " + "else"
@@ -1604,7 +1601,7 @@ let SqlConstructMulti = function (mainapp) {
 
         consolidatedSelectPrimary1 =
           consolidatedSelect + "\n" + consolidatedSecondary;
-        console.log(consolidatedSelectPrimary1);
+        
         let selectSecondaryjoinparam = validationmap.map(function (dt) {
           if (dt.inputtype == "textbox") {
             return `\n 
@@ -1624,7 +1621,7 @@ string_agg(distinct ${dt.inputname}::text,',')as ${dt.inputname}`;
         });
         baseSelect1 = function (defaultmod) {
           let red = validationmap.filter((dt) => dt.inputtype == "textbox");
-          console.log(red);
+          
           if (red.length >= 0) {
             return `string_agg(distinct ${defaultmod}id::text,',')as ${defaultmod}id,`;
           } else {
@@ -1642,7 +1639,7 @@ ${[
       .map((string) => string.trim())
   ),
 ].join(",\n")} , recordstate from `;
-        console.log(consolidatedSelectPrimary);
+        
 
         //var collate=consolidatedSelectPrimary+consolidatedSelectPrimary1
         var o = {};
@@ -1981,7 +1978,7 @@ function applyserverValidationConfig(mainapp) {
             beautify(appsgenerator, { indent_size: 2 }),
             "utf8",
             function (err, data) {
-              console.log(err);
+              
               resolve(mainapp);
             }
           );
@@ -1994,7 +1991,7 @@ function applyserverValidationConfig(mainapp) {
           beautify(appsgenerator, { indent_size: 2 }),
           "utf8",
           function (err, data) {
-            console.log(err);
+            
             resolve(mainapp);
           }
         );
