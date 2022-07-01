@@ -2,8 +2,10 @@
  > *`sudo service redis-server restart` *
  > *`sudo service postgresql restart` *
 
-** Superadmin **
+** Superadmin scafolding/ boilerplate**
  > *http://127.0.0.1:3011/black-squadron*
+ > *`for any other controls other than textbox it is mandatory to enter` *
+ > *` | separator in textbox column for e.g genderid|gendername` *
  
 
 **sh file Setup**
