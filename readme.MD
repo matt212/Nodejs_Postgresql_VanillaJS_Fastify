@@ -75,9 +75,9 @@ In case of error running sh Files Follow below
 > **Superadmin scaffolding/ boilerplate Access URL**
  > *http://localhost:3011/black-squadron*
 
- > * `for any other controls other than textbox it is mandatory `*
+ >`for any other controls other than textbox it is mandatory `
 
- > * to enter `PIPE "|" separator in textbox column for e.g genderid|gendername`*
+ >` to enter PIPE "|" separator in textbox column for e.g genderid|gendername` 
 
 
 * ### `Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)`
