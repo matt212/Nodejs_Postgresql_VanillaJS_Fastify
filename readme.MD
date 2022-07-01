@@ -70,7 +70,7 @@ In case of error running sh Files Follow below
 
 > oOh, I forgot stream based realtime **_2000k_** yup you read that right **_2000k_** with bare minimum hardware pick any lowest minimum droplet (digitalocean), aws instance for more or less \$5 a months and this ground up platform works seamlessly due to fine tune architecture 
 
-- ### `Release notes 1 July 2022
+- ### `Release notes 1 July 2022`
 * ### `Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)`
 ![redlime](app/video/gif/f.gif)
 
