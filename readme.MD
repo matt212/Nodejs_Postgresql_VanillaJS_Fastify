@@ -74,6 +74,7 @@ In case of error running sh Files Follow below
 
 > **Superadmin scaffolding/ boilerplate Access URL**
  > *http://localhost:3011/black-squadron*
+ 
  > _`username : krennic and password:orson`_
 
  >`for any other controls other than textbox it is mandatory `
