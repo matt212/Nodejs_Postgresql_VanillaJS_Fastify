@@ -70,32 +70,40 @@ In case of error running sh Files Follow below
 
 > oOh, I forgot stream based realtime **_2000k_** yup you read that right **_2000k_** with bare minimum hardware pick any lowest minimum droplet (digitalocean), aws instance for more or less \$5 a months and this ground up platform works seamlessly due to fine tune architecture 
 
+* ### `Boilerplate walkthrough with multi control(radio)`
+### `Release notes 1 July 2022`
 
-- ### `Release notes 7 Dec 2020`
-  > made date filter optional with code refractoring by introducing `disableDate=true` arguement in API payload.
-- ### `Release notes 10 Dec 2020`
-  > run `yarn perfgraph`
-  > in new shell run autocannon `yarn customAutocannon`
-  > when autocannon bench is completed go back to perfgraph shell and stop the shell (ctlrl+C)
-  > it will generate graph html link in same perfgraph shell
-- ### `Release notes 11 Dec 2020`
-  > basic login tests are written and can view and evaluated by running below command
-  > `yarn LoginEval`
-- ### `Release notes 20 Dec 2020`
-  > 73 **Modular** Mocha test cases against 20,00,000 recordset with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
-  > `yarn ModuleEval`
-- ### `Release notes 21 Dec 2020`
-  > 73 **Modular** Mocha test cases against 20,00,000 recordset with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
+![redlime](app/video/gif/e.gif)
+
+
+- ### `Release notes 11 Feb 2021`
+
+  >boilerplate for multiselect integration with radio and checkboxes completed 
+
+- ### `Release notes 09 Feb 2021`
+
+  >Applied in  boilerplate multi and single select Dynamic SQLConstruct with 360 degree coverage 
+
+- ### `Release notes 06 Feb 2021`
+
+  >for boilerplate multi and single select static mapping for edit and default rendering case scenarios completed
   
-  > `yarn ModuleEval`
-- ### `Release notes 22 Dec 2020`
-  >Dynamic Bolierplate generation completed for dataType Strings , Integers and BigInt data types config based
-  
-  >For rbac modname,muser modules migrated to fastify with their respective 43 and 63 mocha chai test cases
-  
-  >For rbac role module migrated to fastify with its 43 mocha chai test cases
-  > `yarn ModEval`
-  > `yarn roleEval`
+- ### `Release notes 29 Jan 2021`
+
+  >validations applied for bolierplate dynamic radio button and checkboxes with 
+
+- ### `Release notes 27 Jan 2021`
+
+  >applied multi control for radio scaffolding 
+ 
+- ### `Release notes 20 Jan 2021`
+
+  >For rbac test cases modularized
+
+  > `yarn mroleEval`
+
+  > `yarn userroleEval`
+
 - ### `Release notes 9 Jan 2021`
 
   >For rbac user-Role Mapping  module migrated to fastify with its 35 mocha chai test cases respectively 
@@ -104,32 +112,36 @@ In case of error running sh Files Follow below
 
   > `yarn userroleEval`
 
-- ### `Release notes 20 Jan 2021`
-
-  >For rbac test cases modularized
-
-  > `yarn mroleEval`
-
-  > `yarn userroleEval`
-- ### `Release notes 27 Jan 2021`
-
-  >applied multi control for radio scaffolding 
- 
-- ### `Release notes 29 Jan 2021`
-
-  >validations applied for bolierplate dynamic radio button and checkboxes with 
- 
-- ### `Release notes 06 Feb 2021`
-
-  >for boilerplate multi and single select static mapping for edit and default rendering case scenarios completed
+- ### `Release notes 22 Dec 2020`
+  >Dynamic Bolierplate generation completed for dataType Strings , Integers and BigInt data types config based
   
-- ### `Release notes 09 Feb 2021`
+  >For rbac modname,muser modules migrated to fastify with their respective 43 and 63 mocha chai test cases
+  
+  >For rbac role module migrated to fastify with its 43 mocha chai test cases
+  > `yarn ModEval`
+  > `yarn roleEval`
+ 
+- ### `Release notes 21 Dec 2020`
+  > 73 **Modular** Mocha test cases against 20,00,000 recordset with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
+  
+  > `yarn ModuleEval`
 
-  >Applied in  boilerplate multi and single select Dynamic SQLConstruct with 360 degree coverage 
+- ### `Release notes 20 Dec 2020`
+  > 73 **Modular** Mocha test cases against 20,00,000 recordset with 360 coverage including schema,NaN,Undefined,Multi Column Search,Multi Select,Pivot X and Y for pageSize and pageNo  payload Validations
+  > `yarn ModuleEval`
 
-- ### `Release notes 11 Feb 2021`
+- ### `Release notes 11 Dec 2020`
+  > basic login tests are written and can view and evaluated by running below command
+  > `yarn LoginEval`
 
-  >boilerplate for multiselect integration with radio and checkboxes completed 
+- ### `Release notes 10 Dec 2020`
+  > run `yarn perfgraph`
+  > in new shell run autocannon `yarn customAutocannon`
+  > when autocannon bench is completed go back to perfgraph shell and stop the shell (ctlrl+C)
+  > it will generate graph html link in same perfgraph shell
+
+- ### `Release notes 7 Dec 2020`
+  > made date filter optional with code refractoring by introducing `disableDate=true` arguement in API payload.
 
 
   
