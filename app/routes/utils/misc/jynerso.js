@@ -1578,13 +1578,26 @@ let SqlConstructMulti = function (mainapp) {
         let getTextgroupbyval = function (defaultmod) {
           let interns = validationmap.filter(
             (dt) => dt.inputtype == "textbox"
-          )[0];
-
+          );
+             
           if (interns != undefined) {
-            var r1 = `group by  ${interns.inputname}`;
-            return { r1 };
-          }
-        };
+            interns.forEach(function(u,i)
+            {
+            
+            if(i==0)
+            {
+            r1="group by "+u.inputname
+            }
+            else
+            {
+            r1=r1+','+u.inputname
+            }
+            })
+            return {r1}
+        }
+        
+      };
+      
 
         var consolidatedSecondary =
           basetable + joinparam.join("") + "\n where a.recordstate=true";

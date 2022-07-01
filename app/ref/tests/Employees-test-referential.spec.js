@@ -5,7 +5,7 @@ testbase = l1.a
 describe('Begin Tests', function () {
   before(function (done) {
     genSpecs
-      .MultiControlTestCaseGen(testbase, l1.b)
+      .MultiControlTestCaseGeneric(testbase, l1.b)
       .then(function (data) {
         testbase = data
         done()

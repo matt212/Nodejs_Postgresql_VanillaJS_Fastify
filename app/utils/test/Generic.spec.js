@@ -98,7 +98,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
           .then(function (data) {
 
             entry.createdID = data.body.createdId
-
+            entry.evalModulename = evalModulename
             resolve(entry)
           })
           .catch(err => console.log(err))
@@ -132,6 +132,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
     return new Promise((resolve, reject) => {
       Promises.mapSeries(testbase.schemaBaseValidatorPayloadAr, o.multiInsert)
         .then(a => {
+
           var o1 = {
 
             singleInsertID: o.singleInsertID,
@@ -325,42 +326,57 @@ let MultiControlTestCaseGeneric = function (testbase, validationConfig) {
             a1
           )
           //console.log(data[0].multiControlDataSet)
-          //console.log(data[0].multiControlDataSetAr)
-          
           //this contains db insert multi control field name and id two recordset
           let g = data[0].multiControlDataSetAr
-          
+
           let a12 = removeJsonAttrs(g, ['createdID'])
-          
+
           //removes multi control field only to have dataset for just textbox columns
           let o = validationConfig.validationmap
             .filter(a => (a.inputParent == undefined))
             .map(task => task.inputname)
           //end
-         // take existing payload and select only textbox field through below function       
+          // take existing payload and select only textbox field through below function       
           let k = dynamicSelectforJsonArray(testbase.schemaBaseValidatorPayloadAr, o)
           //combine selected textbox field data with multicontrol data through below code
-          var fr=k.map((user,i) => {
-            return  Object.assign(user,a12[i]);
-            })
-            //now we have searchtype param for automation testcase
-          console.log(fr)
+          var fr = k.map((user, i) => {
+            return Object.assign(user, a12[i]);
+          })
+          //now we have searchtype param for automation testcase in fr
 
+          let fr1 = removeJsonAttrs(fr, ['evalModulename'])
+          //console.log(fr1)
+          //for insert update payload transformation For AR
+
+          var fr2 = testbase.schemaBaseValidatorPayloadAr.map((user, i) => {
+            return datatransformutils.updateJSONByKEY(user, data[0].multiControlDataSetAr[i].evalModulename + 'id', data[0].multiControlDataSetAr[i].createdID)
+
+          })
+          //end Here
+          // for single data set for insert update payload
+          //console.log(a.singleDataSet)
+          //console.log(testbase.schemaBaseValidatorPayload);
+          var fr3 = a.singleDataSet.map((user) => {
+            return datatransformutils.updateJSONByKEY(testbase.schemaBaseValidatorPayload, Object.keys(user), user[Object.keys(user)])
+
+          })
+
+          //end here 
           testbase.searchtype1 = fr
-          testbase.insertUpdateDelete1 = a.insertUpdateDelete
+          testbase.insertUpdateDelete1 = fr2
           testbase.baseData = a.baseData
-          testbase.singleDataSet = a.singleDataSet
+          testbase.singleDataSet = fr3
           //uncomment when mapping is complete
-          //testbase = customTestsInitMultiControl(testbase, validationConfig)
-          // setevalModulename(testbase.evalModulename)
-          // PrimarytestInit(testbase).then(function (data) {
-          //   console.log('*****Multi Records are inserted sucessfully*****')
-          //   //testbase.schemaBaseValidatorPayloadAr1=a.searchtype
+          testbase = customTestsInitMultiControl(testbase, validationConfig)
+          setevalModulename(testbase.evalModulename)
+          PrimarytestInit(testbase).then(function (data) {
+            //   console.log('*****Multi Records are inserted sucessfully*****')
+            testbase.schemaBaseValidatorPayloadAr1 = a.searchtype
 
-          //   testbase.baseData.push(data)
+            testbase.baseData.push(data)
 
-          //   resolve(testbase)
-          // })
+            resolve(testbase)
+          })
         })
         .catch(err => console.log(err))
     } catch (error) {
@@ -1619,7 +1635,7 @@ let dynamicSelectforJsonArray = function (SchemaArray, KeysArray) {
       o1[a1] = user[a1]
 
     })
-    
+
 
     return o1
   })
