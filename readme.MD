@@ -28,7 +28,7 @@
 
     2.3 [Features/Functionalities :  Advanced Levels](#Advanced-Levels)
 
-3.Problem Statement
+- 🚄 **[Problem Statement](#problem-statement)**
 
 <h3 id="Platform-Setup">
 Platform Setup
@@ -202,6 +202,48 @@ Platform Setup
 </tbody>
 </table>
 </details>
+
+#### <h3 id="problem-statement">
+ 🚀 Problem Statement </h3>
+ <details open>
+ <summary >Click to Collapse/Expand for Problem Statement</summary>
+ <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0pky">Who<br></th>
+    <th class="tg-0pky">Who has the problem<br></th>
+    <th class="tg-0pky"> <br></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0pky">What</td>
+    <td class="tg-0pky">What is the problem ?</td>
+    <td class="tg-0pky">Conventional scaffolding / boilerplate does not cater to all above Key outcomes pointers.</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">Where</td>
+    <td class="tg-0pky">When/Where the problem is occurring ?</td>
+    <td class="tg-0pky">During any project execution stage and even in planning phase  Team Has to spend a lot time and energy to plan, discuss and execute the project key outcomes mentioned above and thus planning and execution are pain points.</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">Why</td>
+    <td class="tg-0pky">why is it important to address<br>Impact to whom ?</td>
+    <td class="tg-0pky">It is important to address because it would save time , energy of team members which in turn cascades  to finances, deadlines and other Factors.  </td>
+  </tr>
+</tbody>
+</table>
+ </details>
+
+
 
  ### `Dynamic pivot operation with highchart implementation`
 
