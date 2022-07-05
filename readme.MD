@@ -218,7 +218,17 @@ In scope : 20,00,000 records in dataset with atleast 5 -6 columns of diverse col
 <thead>
   <tr>
     <th class="tg-aqew">Must have:<br></th>
-    <th class="tg-viy4"><span style="font-weight:normal">Just Nodejs with bare minimum npm dependencies</span><br><span style="font-weight:normal">Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.</span><br><span style="font-weight:normal">Modularize Code Pattern with advanced config based programming approach.</span><br><span style="font-weight:normal">Should work today and ten years down the line (it’s absurd I Know ,&nbsp;&nbsp;but that should keep us in line with no unnecessary libs , npm inclusion and working with </span>bare minimum mindset<span style="font-weight:normal">)</span><br>All pointers from <a href="https://apricorp.atlassian.net/wiki/spaces/~55705875e219f10d7347be90801c3fd44b5f24/pages/1572866/Nodejs+Postgresql+Scaffolding+Project+-Project+Plan#Key-outcomes">Key outcomes Section</a> from <a href="https://apricorp.atlassian.net/wiki/spaces/~55705875e219f10d7347be90801c3fd44b5f24/pages/1572866/Nodejs+Postgresql+Scaffolding+Project+-Project+Plan#%F0%9F%8D%87--Project-Statement">Project Statement</a> Section above<br></th>
+    <th>•	Just Nodejs with bare minimum npm dependencies.
+
+•	Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.
+
+•	Modularize Code Pattern with advanced config based programming approach.
+
+•	Should work today and ten years down the line (it’s absurd I Know , but that should keep us in line with no unnecessary libs , npm inclusion and working with bare minimum mindset).
+
+•	All pointers from Key outcomes Section from Project Statement Detailed  Section 
+
+ </th>
   </tr>
 </thead>
 <tbody>
