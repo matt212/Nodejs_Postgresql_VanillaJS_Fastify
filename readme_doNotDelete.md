@@ -1,3 +1,7 @@
+for readmes table generaor
+
+https://www.tablesgenerator.com/html_tables
+
 ** after workstation restart **
  > *`sudo service redis-server restart` *
  > *`sudo service postgresql restart` *

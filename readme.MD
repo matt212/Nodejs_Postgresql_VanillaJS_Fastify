@@ -1,12 +1,21 @@
-- **[Platform Setup](#Platform-Setup)**
+- 📡 **[Platform Setup](#Platform-Setup)**
 
-   - [sh file Setup](#sh-file-Setup)
-   - [Setup](#app-Setup)
-   - [Basic Automation Test Case](#mocha-test-cases) 
-   - [Run](#app-Run)
-   - [Usage](#app-Usage)
-   - [SuperAdmin Usage](#app-SuperAdmin-Usage)
-   - [API Documentation Usage-Swagger](#app-API-Documentation-Usage(Swagger))
+   🍕 [sh file Setup](#sh-file-Setup)
+  
+   🍤 [Setup](#app-Setup)
+   
+   🍔 [Basic Automation Test Case](#mocha-test-cases) 
+   
+   🍟 [Run](#app-Run)
+   
+   🍩 [Usage](#app-Usage)
+   
+   🍜 [SuperAdmin Usage](#app-SuperAdmin-Usage)
+   
+   🍘 [API Documentation Usage-Swagger](#app-API-Documentation-Usage(Swagger))
+
+
+- 🚀 **[Project Statement](#project-statement)**
 
 
 <h3 id="Platform-Setup">
@@ -14,7 +23,7 @@ Platform Setup
 </h4>
 
 #### <h3 id="sh-file-Setup">
-sh file Setup</h3>
+🍕sh file Setup</h3>
 
 > *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
 
@@ -31,7 +40,7 @@ sh file Setup</h3>
 > _`Please note if you have node/postgres/redis server installed in your instance/machine. Please comment the install information in primarySetup.sh file and then run this file`_
 
 #### <h3 id="app-Setup">
- app Setup </h3>
+ 🍤app Setup </h3>
 > **node,postgres, redis and app dependencies  installation**
 
 >*`bash ./app/utils/serverSetup/primarySetup.sh`*
@@ -39,7 +48,7 @@ sh file Setup</h3>
 >*`bash ./app/utils/serverSetup/secondarySetup.sh`*
 
 #### <h3 id="mocha-test-cases">
- Mocha chai tests against 20,00,000 recordsets</h3>
+ 🍔 mocha chai tests against 20,00,000 recordsets</h3>
 
 > _`npm run LoginEval or yarn LoginEval`_
 
@@ -47,11 +56,11 @@ sh file Setup</h3>
 
 
 #### <h3 id="app-run">
- app Run </h3>
+ 🍟 app Run </h3>
 >*`npm run app or yarn app `*
 
 #### <h3 id="app-Usage">
- app Usage </h3>
+ 🍩 app Usage </h3>
 
 >*`goto localhost:3011/employees`*
 
@@ -60,7 +69,7 @@ sh file Setup</h3>
 >*`select birthdate from dropdown and select date range any from 1982 to till date`*
 
 #### <h3 id="app-SuperAdmin-Usage">
- app SuperAdmin Usage </h3>
+ 🍜 app SuperAdmin Usage </h3>
 
 >*`goto localhost:3011/black-squadron`*
 
@@ -72,7 +81,7 @@ sh file Setup</h3>
 
 
 #### <h3 id="app-API-Documentation-Usage(Swagger)">
- API Documentation Usage(Swagger) </h3>
+ 🍘 API Documentation Usage(Swagger) </h3>
 
 >*`goto localhost:3011/getAccessToken`*
 
@@ -82,6 +91,61 @@ sh file Setup</h3>
 
 >*`Click on authorize and paste the access Token`*
   
+  #### <h3 id="project-statement">
+ 🚀 Project Statement </h3>
+
+
+  <style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-cly1{text-align:left;vertical-align:middle}
+.tg .tg-lboi{border-color:inherit;text-align:left;vertical-align:middle}
+.tg .tg-9dzu{background-color:#F4F5F7;text-align:left;vertical-align:middle}
+.tg .tg-crcv{background-color:#F4F5F7;border-color:inherit;text-align:left;vertical-align:middle}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-crcv"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Driver<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></th>
+    <th class="tg-lboi">&nbsp;&nbsp;&nbsp;<br>Rizwan Patel&nbsp;&nbsp;&nbsp;</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-crcv"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Approver<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></td>
+    <td class="tg-lboi">&nbsp;&nbsp;&nbsp;<br>Rizwan Patel&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-9dzu"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Contributors<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></td>
+    <td class="tg-cly1">&nbsp;&nbsp;&nbsp;<br>Rizwan Patel&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-9dzu"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Informed<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></td>
+    <td class="tg-cly1">&nbsp;&nbsp;&nbsp;<br>Rizwan Patel&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-9dzu"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Objective<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></td>
+    <td class="tg-cly1">&nbsp;&nbsp;&nbsp;<br>Build Modularize and Config Based&nbsp;&nbsp;&nbsp;Boilerplate platform with RBAC implementation for any project with basic&nbsp;&nbsp;&nbsp;automation test cases coverage.<br>&nbsp;&nbsp;&nbsp;<br>Tech Specs <br>&nbsp;&nbsp;&nbsp;<br>Server stack : Node.js <br>&nbsp;&nbsp;&nbsp;<br>Database Stack : PostgreSQL and&nbsp;&nbsp;&nbsp;Redis.<br>&nbsp;&nbsp;&nbsp;<br>Client Stack : Vanilla JavaScript&nbsp;&nbsp;&nbsp;(ES+)&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-9dzu"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Due date<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></td>
+    <td class="tg-cly1">&nbsp;&nbsp;&nbsp;<br>Since it is Vanity Project No Due&nbsp;&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-9dzu"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Key&nbsp;&nbsp;&nbsp;outcomes<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></td>
+    <td class="tg-cly1">&nbsp;&nbsp;&nbsp;<br>The outcomes would be boilerplate&nbsp;&nbsp;&nbsp;platform which delivers below<br>&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;<br>Server and Client: Transactional and Analytical&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reporting solution. <br>&nbsp;&nbsp;&nbsp;&nbsp;<br>Client : Client Side Scaffolding&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Solution for any Client Side implementation for any B2B and B2C&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;verticals which are compatible with any server stacks (Java, C#,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Python,Node.js, Ruby and more) <br>&nbsp;&nbsp;&nbsp;&nbsp;<br>Server: Server Side Scaffolding for&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;any cross platform integration Solution (e.g Mobile Apps, complex SOA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;architecture systems and many more).&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;<br>So In order to Deliver above. <br>&nbsp;&nbsp;&nbsp;<br>The entities / modules should&nbsp;&nbsp;&nbsp;abide Below <br>&nbsp;&nbsp;&nbsp;<br>Two&nbsp;&nbsp;&nbsp;Mandates <br>&nbsp;&nbsp;&nbsp;<br>a. Config based Modularize&nbsp;&nbsp;&nbsp;programming approach.<br>&nbsp;&nbsp;&nbsp;<br>b. All the below features and&nbsp;&nbsp;&nbsp;functionalities should be Autogenerated with minimum User Input&nbsp;&nbsp;&nbsp;through Single Web Form.<br>&nbsp;&nbsp;&nbsp;<br>(e.g model names ,fields,&nbsp;&nbsp;&nbsp;datatypes and just few more) <br>&nbsp;&nbsp;&nbsp;<br>Features/Functionalities<br>&nbsp;&nbsp;&nbsp;<br>Conventional&nbsp;&nbsp;&nbsp;Levels :-<br>&nbsp;&nbsp;&nbsp;<br>1.CRUD operation .<br>&nbsp;&nbsp;&nbsp;<br>2.Pagination in API.<br>&nbsp;&nbsp;&nbsp;<br>3. Search : <br>&nbsp;&nbsp;&nbsp;<br>a.Multicolumns and Multiselect&nbsp;&nbsp;&nbsp;filter for search Operations.<br>&nbsp;&nbsp;&nbsp;<br>b.Consolidated Search Operations&nbsp;&nbsp;&nbsp;for across all columns of respective Module.<br>&nbsp;&nbsp;&nbsp;<br>4.Sort : <br>&nbsp;&nbsp;&nbsp;<br>a. All columns Dynamic Sort&nbsp;&nbsp;&nbsp;functionality for the respective module.<br>&nbsp;&nbsp;&nbsp;<br>b. Dynamic PageSize functionality.<br>&nbsp;&nbsp;&nbsp;<br>c. Newest and Oldest sort order&nbsp;&nbsp;&nbsp;functionality.<br>&nbsp;&nbsp;&nbsp;<br>Advanced&nbsp;&nbsp;&nbsp;Levels :-<br>&nbsp;&nbsp;&nbsp;<br>5.Basic ETL operation .<br>&nbsp;&nbsp;&nbsp;<br>(Upload and Download large File&nbsp;&nbsp;&nbsp;with socket IO implementation)<br>&nbsp;&nbsp;&nbsp;<br>In scope : 20,00,000 records in&nbsp;&nbsp;&nbsp;dataset with atleast 5 -6 columns of diverse columns (date range, age, number&nbsp;&nbsp;&nbsp;, address and more).<br>&nbsp;&nbsp;&nbsp;<br>6.Dynamic Pivot operation for the&nbsp;&nbsp;&nbsp;module .<br>&nbsp;&nbsp;&nbsp;<br>7.Applying Dynamic Pivot resultset&nbsp;&nbsp;&nbsp;for graphs and Charts.<br>&nbsp;&nbsp;&nbsp;<br>8. Basic Automation test cases&nbsp;&nbsp;&nbsp;Generation for the respective Module.<br>&nbsp;&nbsp;&nbsp;<br>9.Swagger API Implementation with&nbsp;&nbsp;&nbsp;Access token mechanism for respective Module.<br>&nbsp;&nbsp;&nbsp;<br>10.Custom RBAC Implementation for&nbsp;&nbsp;&nbsp;the platform.&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="tg-9dzu"><span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span><br>Status<span style="background-color:#F4F5F7">&nbsp;&nbsp;&nbsp;</span></td>
+    <td class="tg-cly1">&nbsp;&nbsp;&nbsp;<br>complete&nbsp;&nbsp;&nbsp;</td>
+  </tr>
+</tbody>
+</table>
+
+
  ### `Dynamic pivot operation with highchart implementation`
 
 ![redlime](app/video/gif/b2.gif)
