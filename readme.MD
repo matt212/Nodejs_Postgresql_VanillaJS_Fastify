@@ -1,32 +1,88 @@
+- **[Platform Setup](#Platform-Setup)**
+
+   - [sh file Setup](#sh-file-Setup)
+   - [Setup](#app-Setup)
+   - [Basic Automation Test Case](#mocha-test-cases) 
+   - [Run](#app-Run)
+   - [Usage](#app-Usage)
+   - [SuperAdmin Usage](#app-SuperAdmin-Usage)
+   - [API Documentation Usage-Swagger](#app-API-Documentation-Usage(Swagger))
+
+
+<h3 id="Platform-Setup">
+Platform Setup
+</h4>
+
+#### <h3 id="sh-file-Setup">
+sh file Setup</h3>
+
+> *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
+
+> *`sed -i -e 's/\r$//' ./app/utils/serverSetup/> primarySetup.sh`*
+
+>*`chmod +x ./app/utils/serverSetup/secondarySetup.sh`*
+
+>*`sed -i -e 's/\r$//' ./app/utils/serverSetup/secondarySetup.sh`*
+
+>*`bash ./app/utils/serverSetup/primarySetup.sh`*
+
+   
+
 > _`Please note if you have node/postgres/redis server installed in your instance/machine. Please comment the install information in primarySetup.sh file and then run this file`_
 
-**app setup**
+#### <h3 id="app-Setup">
+ app Setup </h3>
+> **node,postgres, redis and app dependencies  installation**
 
-> **node,postgres, redis and app dependencies installation**
+>*`bash ./app/utils/serverSetup/primarySetup.sh`*
 
-> _`bash ./app/utils/serverSetup/primarySetup.sh`_
+>*`bash ./app/utils/serverSetup/secondarySetup.sh`*
 
-> _`bash ./app/utils/serverSetup/secondarySetup.sh`_
-
-**Mocha chai tests against 20,00,000 recordsets**
+#### <h3 id="mocha-test-cases">
+ Mocha chai tests against 20,00,000 recordsets</h3>
 
 > _`npm run LoginEval or yarn LoginEval`_
 
 > _`npm run ModuleEval or yarn ModuleEval`_
 
-**app run**
 
-> _`npm run app or yarn app`_
+#### <h3 id="app-run">
+ app Run </h3>
+>*`npm run app or yarn app `*
 
-**app usage**
+#### <h3 id="app-Usage">
+ app Usage </h3>
 
-> _`goto localhost:3011/employees`_
+>*`goto localhost:3011/employees`*
 
-> _`username : krennic and password:orson`_
+>*`username : krennic and  password:orson`*
 
-> _`select birthdate from dropdown and select date range any from 1982 to till date`_
+>*`select birthdate from dropdown and select date range any from 1982 to till date`*
 
-- ### `Dynamic pivot operation with highchart implementation`
+#### <h3 id="app-SuperAdmin-Usage">
+ app SuperAdmin Usage </h3>
+
+>*`goto localhost:3011/black-squadron`*
+
+>*`username : krennic and password:orson`*
+
+>*`for any other controls other than textbox it is mandatory`*
+
+>*`to enter PIPE "|" separator in textbox column for e.g genderid|gendername`*
+
+
+#### <h3 id="app-API-Documentation-Usage(Swagger)">
+ API Documentation Usage(Swagger) </h3>
+
+>*`goto localhost:3011/getAccessToken`*
+
+>*`Click on Get AccessToken button and copy the newly generated Access Token`*
+
+>*`goto localhost:3012/api-docs`*
+
+>*`Click on authorize and paste the access Token`*
+  
+ ### `Dynamic pivot operation with highchart implementation`
 
 ![redlime](app/video/gif/b2.gif)
 
