@@ -32,6 +32,9 @@
 
 - 🎫 **[Scope Statement](#scope-statement)**
 
+- 💈 **[Features/Functionalities :Walkthroughs](#walkthrough-section)**
+
+
 <h3 id="Platform-Setup">
 Platform Setup
 </h4>
@@ -239,7 +242,7 @@ Platform Setup
  </details>
 
 #### <h3 id="scope-statement">
- 🚄 Scope Statement </h3>
+ 🎫 Scope Statement </h3>
  <details>
  <summary >Click to Collapse/Expand for Scope Statement</summary>
  
@@ -263,49 +266,55 @@ Platform Setup
 </table>
 </details>
 
- ### `Dynamic pivot operation with highchart implementation`
+#### <h3 id="walkthrough-section">
+ 💈 Features/Functionalities :Walkthroughs </h3>
+ <details>
+ <summary >Click to Collapse/Expand for Features/Functionalities :Walkthroughs</summary>
 
+ ### `Dynamic pivot operation with highchart implementation`
+<details>
+ <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
 ![redlime](app/video/gif/b2.gif)
+</details>
 
 - ### `Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature`
+<details>
+ <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+
   ![redlime](app/video/gif/c1.gif)
+</details>
 
 * ### `Automated Swagger for each Module created By build in scaffoding accessed at http://localhost:3012/api-docs/`
+<details>
+ <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
 
   ![redlime](app/video/gif/d.gif)
+</details>
 
 * ### `Basic dashboard operation`
+<details>
+ <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
 
 ![redlime](app/video/gif/a1.gif)
+</details>
 
-**Custom fractural pattern based app** :
+* ### `Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)`
+<details>
+ <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
 
-> things which are plug and play
+![redlime](app/video/gif/f.gif)
+</details>
 
-In case of error running sh Files Follow below
-**sh file Setup**
+* ### `Boilerplate walkthrough with multi control(Radio-Data from respective db table)`
+<details>
+ <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
 
-> _`chmod +x ./app/utils/serverSetup/primarySetup.sh`_
+![redlime](app/video/gif/e.gif)
+</details>
 
-> _`sed -i -e 's/\r$//' ./app/utils/serverSetup/primarySetup.sh`_
+</details>
 
-> _`chmod +x ./app/utils/serverSetup/secondarySetup.sh`_
 
-> _`sed -i -e 's/\r$//' ./app/utils/serverSetup/secondarySetup.sh`_
-
-> _`bash ./app/utils/serverSetup/primarySetup.sh`_
-
-- new fields (datatypes string and ints ) ,
-  config based modular apporach on server side `duh`.
-- validation is implemented  by config based modular apporach on client side.
-- <u> `modulerized everything baby` </u> concept for excel export ,import table rendering and dynamic pivot based filters !
-- create, update , delete and search features is implemented for single table with complex queries multi join 
-- every features be as may search, group by multiselect search is paginated to the core for effeciency and scalabliltiy and is modulerized to the barebone .
-- single set depenendences routes wherein all dependencies are imported from dependencies core.
-  > **_The essence is request and response structure which in turn is based on fractural pattern which is fuel for this custom ad -hoc
-  > fractural beast of an app_**.
-
-> oOh, I forgot stream based realtime **_2000k_** yup you read that right **_2000k_** with bare minimum hardware pick any lowest minimum droplet (digitalocean), aws instance for more or less \$5 a months and this ground up platform works seamlessly due to fine tune architecture 
 
 - ### `Release notes 1 July 2022`
 
@@ -319,12 +328,6 @@ In case of error running sh Files Follow below
  >` to enter PIPE "|" separator in textbox column for e.g genderid|gendername` 
 
 
-* ### `Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)`
-![redlime](app/video/gif/f.gif)
-
-* ### `Boilerplate walkthrough with multi control(Radio-Data from respective db table)`
-
-![redlime](app/video/gif/e.gif)
 
 
 - ### `Release notes 11 Feb 2021`
