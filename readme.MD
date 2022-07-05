@@ -24,7 +24,7 @@
   <tr>
     <td class="tg-0pky">What</td>
     <td class="tg-0pky">What is the problem?</td>
-    <td class="tg-0pky">Conventional scaffolding / boilerplate does not cater to all above Key outcomes pointers.</td>
+    <td class="tg-0pky">Conventional scaffolding / boilerplate does not cater to all  Key outcomes pointers</td>
   </tr>
   <tr>
     <td class="tg-0pky">Where</td>
