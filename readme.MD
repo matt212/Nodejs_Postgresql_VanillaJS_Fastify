@@ -274,12 +274,15 @@ Platform Setup
  ### `Dynamic pivot operation with highchart implementation`
 <details>
  <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+ <br/>
+
 ![redlime](app/video/gif/b2.gif)
 </details>
 
 - ### `Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature`
 <details>
  <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+<br/>
 
   ![redlime](app/video/gif/c1.gif)
 </details>
@@ -287,6 +290,7 @@ Platform Setup
 * ### `Automated Swagger for each Module created By build in scaffoding accessed at http://localhost:3012/api-docs/`
 <details>
  <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+<br/>
 
   ![redlime](app/video/gif/d.gif)
 </details>
@@ -294,6 +298,7 @@ Platform Setup
 * ### `Basic dashboard operation`
 <details>
  <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+<br/>
 
 ![redlime](app/video/gif/a1.gif)
 </details>
@@ -301,6 +306,7 @@ Platform Setup
 * ### `Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)`
 <details>
  <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+<br/>
 
 ![redlime](app/video/gif/f.gif)
 </details>
@@ -308,8 +314,10 @@ Platform Setup
 * ### `Boilerplate walkthrough with multi control(Radio-Data from respective db table)`
 <details>
  <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+<br/>
 
 ![redlime](app/video/gif/e.gif)
+
 </details>
 
 </details>
