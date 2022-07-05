@@ -9,6 +9,71 @@
 ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
 
 
+<details>
+ <summary id="problem-statement">🚄 Problem Statement </summary><blockquote>
+ 
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-0pky">Who<br></th>
+    <th class="tg-0pky">Who has the problem<br></th>
+    <th class="tg-0pky"> <br></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0pky">What</td>
+    <td class="tg-0pky">What is the problem ?</td>
+    <td class="tg-0pky">Conventional scaffolding / boilerplate does not cater to all above Key outcomes pointers.</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">Where</td>
+    <td class="tg-0pky">When/Where the problem is occurring ?</td>
+    <td class="tg-0pky">During any project execution stage and even in planning phase  Team Has to spend a lot time and energy to plan, discuss and execute the project key outcomes mentioned above and thus planning and execution are pain points.</td>
+  </tr>
+  <tr>
+    <td class="tg-0pky">Why</td>
+    <td class="tg-0pky">why is it important to address<br>Impact to whom ?</td>
+    <td class="tg-0pky">It is important to address because it would save time , energy of team members which in turn cascades  to finances, deadlines and other Factors.  </td>
+  </tr>
+</tbody>
+</table>
+ </details>
+<details>
+ <summary id="scope-statement">🎫 
+ Scope Statement
+ </summary><blockquote>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-aqew">Must have:<br></th>
+    <td>
+
+•	Just Nodejs with bare minimum npm dependencies.
+
+•	Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.
+
+•	Modularize Code Pattern with advanced config based programming approach.
+
+•	Should work today and ten years down the line (it’s absurd I Know , but that should keep us in line with no unnecessary libs , npm inclusion and working with bare minimum mindset).
+
+•	All pointers from Key outcomes Section from Project Statement Detailed  Section 
+
+ </td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-c3nx">Nice to have:</td>
+    <td class="tg-viy4"><span style="font-weight:normal">Good&nbsp;&nbsp;styling since I am not UI/UX person.</span><br><span style="font-weight:normal">Adherence to industry practice for UI/UX (HTML , CSS ) Only</span></td>
+  </tr>
+  <tr>
+    <td class="tg-wyy3">Not in scope:</td>
+    <td class="tg-viy4"><span style="font-weight:normal"> </span><br><span style="font-weight:normal">No Client Side Transpiler Tech implementation whatsoever in any capacity.</span></td>
+  </tr>
+</tbody>
+</table>
+</details>
 
 <details>
 <summary id="Platform-Setup" href="#Platform-Setup">
@@ -192,72 +257,8 @@ In scope : 20,00,000 records in dataset with atleast 5 -6 columns of diverse col
 </details>
 </details>
 
-<details>
- <summary id="problem-statement">🚄 Problem Statement </summary><blockquote>
- 
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-0pky">Who<br></th>
-    <th class="tg-0pky">Who has the problem<br></th>
-    <th class="tg-0pky"> <br></th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-0pky">What</td>
-    <td class="tg-0pky">What is the problem ?</td>
-    <td class="tg-0pky">Conventional scaffolding / boilerplate does not cater to all above Key outcomes pointers.</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">Where</td>
-    <td class="tg-0pky">When/Where the problem is occurring ?</td>
-    <td class="tg-0pky">During any project execution stage and even in planning phase  Team Has to spend a lot time and energy to plan, discuss and execute the project key outcomes mentioned above and thus planning and execution are pain points.</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">Why</td>
-    <td class="tg-0pky">why is it important to address<br>Impact to whom ?</td>
-    <td class="tg-0pky">It is important to address because it would save time , energy of team members which in turn cascades  to finances, deadlines and other Factors.  </td>
-  </tr>
-</tbody>
-</table>
- </details>
 
-<details>
- <summary id="scope-statement">🎫 
- Scope Statement
- </summary><blockquote>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-aqew">Must have:<br></th>
-    <td>
 
-•	Just Nodejs with bare minimum npm dependencies.
-
-•	Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.
-
-•	Modularize Code Pattern with advanced config based programming approach.
-
-•	Should work today and ten years down the line (it’s absurd I Know , but that should keep us in line with no unnecessary libs , npm inclusion and working with bare minimum mindset).
-
-•	All pointers from Key outcomes Section from Project Statement Detailed  Section 
-
- </td>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-c3nx">Nice to have:</td>
-    <td class="tg-viy4"><span style="font-weight:normal">Good&nbsp;&nbsp;styling since I am not UI/UX person.</span><br><span style="font-weight:normal">Adherence to industry practice for UI/UX (HTML , CSS ) Only</span></td>
-  </tr>
-  <tr>
-    <td class="tg-wyy3">Not in scope:</td>
-    <td class="tg-viy4"><span style="font-weight:normal"> </span><br><span style="font-weight:normal">No Client Side Transpiler Tech implementation whatsoever in any capacity.</span></td>
-  </tr>
-</tbody>
-</table>
-</details>
 
 
 <details>
