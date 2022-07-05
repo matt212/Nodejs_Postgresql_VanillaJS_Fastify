@@ -122,7 +122,7 @@
 </details>
 
 <details>
- <summary id="problem-statement">🚄 Problem Statement </summary>
+ <summary id="problem-statement">🚄 Problem Statement </summary><blockquote>
  
 <table class="tg">
 <thead>
@@ -155,7 +155,7 @@
 <details>
  <summary id="scope-statement">🎫 
  Scope Statement
- </summary>
+ </summary><blockquote>
 <table class="tg">
 <thead>
   <tr>
@@ -235,7 +235,7 @@
 
 #### 
  <details>
- <summary id="release-section">🍫 Releases</summary>
+ <summary id="release-section">🍫 Releases</summary><blockquote>
 
 - ### `Release notes 1 July 2022`
 
@@ -324,7 +324,7 @@
 
  <details open>
  <summary id="project-statement">
- 🚀 Project Statement </summary>
+ 🚀 Project Statement </summary><blockquote>
 <table class="tg">
 <thead>
   <tr>
