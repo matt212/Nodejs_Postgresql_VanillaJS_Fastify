@@ -33,8 +33,8 @@
 <h3 id="Platform-Setup">
 Platform Setup
 </h4>
-<details>
- <summary>Click to expand for Platform Setup</summary>
+<details id="pltsetup" open>
+ <summary>Click to Collapse/Expand  for Platform Setup</summary>
 
 
 #### <h3 id="sh-file-Setup">
@@ -109,8 +109,8 @@ Platform Setup
 
 #### <h3 id="project-statement">
  🚀 Project Statement </h3>
- <details>
- <summary>Click to expand for Project Statement</summary>
+ <details open>
+ <summary >Click to Collapse/Expand for Project Statement</summary>
 <table class="tg">
 <thead>
   <tr>
