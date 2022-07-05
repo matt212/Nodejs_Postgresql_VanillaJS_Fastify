@@ -218,7 +218,8 @@ In scope : 20,00,000 records in dataset with atleast 5 -6 columns of diverse col
 <thead>
   <tr>
     <th class="tg-aqew">Must have:<br></th>
-    <th>•	Just Nodejs with bare minimum npm dependencies.
+    <td>
+    •	Just Nodejs with bare minimum npm dependencies.
 
 •	Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.
 
@@ -228,7 +229,7 @@ In scope : 20,00,000 records in dataset with atleast 5 -6 columns of diverse col
 
 •	All pointers from Key outcomes Section from Project Statement Detailed  Section 
 
- </th>
+ </td>
   </tr>
 </thead>
 <tbody>
