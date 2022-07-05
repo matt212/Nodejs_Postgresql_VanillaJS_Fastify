@@ -93,24 +93,10 @@ Platform Setup
   
   #### <h3 id="project-statement">
  🚀 Project Statement </h3>
-
-<svg fill="none" viewBox="0 0 400 400" width="10" height="10" xmlns="http://www.w3.org/2000/svg">
-    <foreignObject width="100%" height="100%">
-    <div xmlns="http://www.w3.org/1999/xhtml">
-  <style type="text/css">
-.tg  {border-collapse:collapse;border-spacing:0;}
-.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
-  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
-.tg .tg-cly1{text-align:left;vertical-align:middle}
-.tg .tg-lboi{border-color:inherit;text-align:left;vertical-align:middle}
-.tg .tg-9dzu{background-color:#F4F5F7;text-align:left;vertical-align:middle}
-.tg .tg-crcv{background-color:#F4F5F7;border-color:inherit;text-align:left;vertical-align:middle}
-</style>
+<div align="center">
+    <img src="app/video/readmecss/problemstatement.svg" width="400" height="400" alt="css-in-readme">
 </div>
-    </foreignObject>
-</svg>
+
 <table class="tg">
 <thead>
   <tr>
