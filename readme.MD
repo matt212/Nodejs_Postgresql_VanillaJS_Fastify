@@ -29,7 +29,7 @@
   <tr>
     <td class="tg-0pky">Where</td>
     <td class="tg-0pky">When/Where the problem is occurring?</td>
-    <td class="tg-0pky">During any project execution stage and even in planning phase  Team Has to spend a lot time and energy to plan, discuss and execute the project key outcomes mentioned above and thus planning and execution are pain points.</td>
+    <td class="tg-0pky">During any project execution stage and even in planning phase  Team Has to spend a lot time and energy to plan, discuss and execute the project key outcomes mentioned in project statement Detailed section and thus planning and execution are pain points.</td>
   </tr>
   <tr>
     <td class="tg-0pky">Why</td>
