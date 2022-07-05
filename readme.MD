@@ -93,7 +93,8 @@ Platform Setup
   
   #### <h3 id="project-statement">
  🚀 Project Statement </h3>
- 
+ <details>
+ <summary>Click to expand!</summary>
 <table class="tg">
 <thead>
   <tr>
@@ -184,7 +185,7 @@ Platform Setup
   </tr>
 </tbody>
 </table>
-
+</details>
 
  ### `Dynamic pivot operation with highchart implementation`
 
