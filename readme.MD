@@ -219,7 +219,8 @@ In scope : 20,00,000 records in dataset with atleast 5 -6 columns of diverse col
   <tr>
     <th class="tg-aqew">Must have:<br></th>
     <td>
-    •	Just Nodejs with bare minimum npm dependencies.
+
+•	Just Nodejs with bare minimum npm dependencies.
 
 •	Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.
 
