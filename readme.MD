@@ -178,7 +178,7 @@
 
 
 <details>
- <summary id="walkthrough-section">💈 Features/Functionalities :Walkthroughs</summary>
+ <summary id="walkthrough-section">💈 Walkthroughs : Features/Functionalities </summary>
  <blockquote>
  <br/>
 <details>
