@@ -94,7 +94,9 @@ Platform Setup
   #### <h3 id="project-statement">
  🚀 Project Statement </h3>
 
-
+<svg fill="none" viewBox="0 0 400 400" width="10" height="10" xmlns="http://www.w3.org/2000/svg">
+    <foreignObject width="100%" height="100%">
+    <div xmlns="http://www.w3.org/1999/xhtml">
   <style type="text/css">
 .tg  {border-collapse:collapse;border-spacing:0;}
 .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
@@ -106,6 +108,9 @@ Platform Setup
 .tg .tg-9dzu{background-color:#F4F5F7;text-align:left;vertical-align:middle}
 .tg .tg-crcv{background-color:#F4F5F7;border-color:inherit;text-align:left;vertical-align:middle}
 </style>
+</div>
+    </foreignObject>
+</svg>
 <table class="tg">
 <thead>
   <tr>
