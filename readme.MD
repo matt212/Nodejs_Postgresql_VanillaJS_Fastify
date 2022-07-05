@@ -35,11 +35,14 @@
 - 💈 **[Features/Functionalities :Walkthroughs](#walkthrough-section)**
 
 
-<h3 id="Platform-Setup">
+- 🍫 **[Releases](#release-section)**
+
+
+
+<details open>
+<summary id="Platform-Setup">
 Platform Setup
-</h4>
-<details id="pltsetup" open>
- <summary>Click to Collapse/Expand  for Platform Setup</summary>
+</summary>
 
 
 #### <h3 id="sh-file-Setup">
@@ -112,10 +115,10 @@ Platform Setup
 >*`Click on authorize and paste the access Token`*
   </details>
 
-#### <h3 id="project-statement">
- 🚀 Project Statement </h3>
+<br/>
  <details open>
- <summary >Click to Collapse/Expand for Project Statement</summary>
+ <summary id="project-statement">
+ 🚀 Project Statement </summary>
 <table class="tg">
 <thead>
   <tr>
@@ -208,10 +211,9 @@ Platform Setup
 </table>
 </details>
 
-#### <h3 id="problem-statement">
- 🚄 Problem Statement </h3>
- <details >
- <summary >Click to Collapse/Expand for Problem Statement</summary>
+
+ <details>
+ <summary id="problem-statement">🚄 Problem Statement </summary>
  
 <table class="tg">
 <thead>
@@ -241,11 +243,11 @@ Platform Setup
 </table>
  </details>
 
-#### <h3 id="scope-statement">
- 🎫 Scope Statement </h3>
+
  <details>
- <summary >Click to Collapse/Expand for Scope Statement</summary>
- 
+ <summary id="scope-statement">🎫 
+ Scope Statement
+ </summary>
 <table class="tg">
 <thead>
   <tr>
@@ -266,63 +268,63 @@ Platform Setup
 </table>
 </details>
 
-#### <h3 id="walkthrough-section">
- 💈 Features/Functionalities :Walkthroughs </h3>
+#### 
  <details>
- <summary >Click to Collapse/Expand for Features/Functionalities :Walkthroughs</summary>
-
- ### `Dynamic pivot operation with highchart implementation`
+ <summary id="walkthrough-section">💈 Features/Functionalities :Walkthroughs</summary>
+ <br/>
 <details>
- <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+    <summary >🍇 Dynamic pivot operation with highchart implementation
+</summary>
  <br/>
 
 ![redlime](app/video/gif/b2.gif)
 </details>
 
-- ### `Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature`
+<br/>
 <details>
- <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+ <summary >🍊 Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature</summary>
 <br/>
 
   ![redlime](app/video/gif/c1.gif)
 </details>
+<br/>
 
-* ### `Automated Swagger for each Module created By build in scaffoding accessed at http://localhost:3012/api-docs/`
 <details>
- <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+ <summary >🍑 Automated Swagger for each Module created By build in scaffoding accessed at http://localhost:3012/api-docs/ </summary>
 <br/>
 
   ![redlime](app/video/gif/d.gif)
 </details>
+<br/>
 
-* ### `Basic dashboard operation`
 <details>
- <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+ <summary>🍐 Basic dashboard operation</summary>
 <br/>
 
 ![redlime](app/video/gif/a1.gif)
 </details>
-
-* ### `Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)`
+<br/>
 <details>
- <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+ <summary>🍓 Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)</summary>
 <br/>
 
 ![redlime](app/video/gif/f.gif)
 </details>
+<br/>
 
-* ### `Boilerplate walkthrough with multi control(Radio-Data from respective db table)`
 <details>
- <summary >Click to Collapse/Expand for GIF Walkthroughs</summary>
+ <summary>🍏 Boilerplate walkthrough with multi control(Radio-Data from respective db table)</summary>
 <br/>
 
 ![redlime](app/video/gif/e.gif)
 
 </details>
-
+<br/>
 </details>
 
-
+#### 
+ <details>
+ <summary id="release-section">🍫 Releases</summary>
 
 - ### `Release notes 1 July 2022`
 
@@ -404,7 +406,7 @@ Platform Setup
 
 - ### `Release notes 7 Dec 2020`
   > made date filter optional with code refractoring by introducing `disableDate=true` arguement in API payload.
-
+</details>
 
   
 
