@@ -15,9 +15,9 @@
 <table class="tg">
 <thead>
   <tr>
-    <th class="tg-0pky">Who<br></th>
-    <th class="tg-0pky">Who has the problem?<br></th>
-    <th class="tg-0pky"> Any Dev or Dev Team building project from Scratch or Migrating Existing Piece <br></th>
+    <td class="tg-0pky">Who<br></td>
+    <td class="tg-0pky">Who has the problem?<br></td>
+    <td class="tg-0pky"> Any Dev or Dev Team building project from Scratch or Migrating Existing Piece <br></td>
   </tr>
 </thead>
 <tbody>
