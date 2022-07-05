@@ -30,8 +30,7 @@
 
 - 🚄 **[Problem Statement](#problem-statement)**
 
-- 🎫 **[Scope Statement]
-(#scope-statement)**
+- 🎫 **[Scope Statement](#scope-statement)**
 
 <h3 id="Platform-Setup">
 Platform Setup
