@@ -93,10 +93,7 @@ Platform Setup
   
   #### <h3 id="project-statement">
  🚀 Project Statement </h3>
-<div align="center">
-    <img src="app/video/readmecss/problemstatement.svg" width="400" height="400" alt="css-in-readme">
-</div>
-
+ 
 <table class="tg">
 <thead>
   <tr>
