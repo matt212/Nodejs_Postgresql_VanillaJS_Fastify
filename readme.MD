@@ -21,6 +21,9 @@
 <h3 id="Platform-Setup">
 Platform Setup
 </h4>
+<details>
+ <summary>Click to expand Platform Setup</summary>
+
 
 #### <h3 id="sh-file-Setup">
 🍕sh file Setup</h3>
@@ -90,11 +93,12 @@ Platform Setup
 >*`goto localhost:3012/api-docs`*
 
 >*`Click on authorize and paste the access Token`*
-  
-  #### <h3 id="project-statement">
+  </details>
+
+#### <h3 id="project-statement">
  🚀 Project Statement </h3>
  <details>
- <summary>Click to expand!</summary>
+ <summary>Click to expand for Project Statement</summary>
 <table class="tg">
 <thead>
   <tr>
