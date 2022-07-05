@@ -30,6 +30,9 @@
 
 - 🚄 **[Problem Statement](#problem-statement)**
 
+- 🎫 **[Scope Statement]
+(#scope-statement)**
+
 <h3 id="Platform-Setup">
 Platform Setup
 </h4>
@@ -204,8 +207,8 @@ Platform Setup
 </details>
 
 #### <h3 id="problem-statement">
- 🚀 Problem Statement </h3>
- <details open>
+ 🚄 Problem Statement </h3>
+ <details >
  <summary >Click to Collapse/Expand for Problem Statement</summary>
  
 <table class="tg">
@@ -236,7 +239,30 @@ Platform Setup
 </table>
  </details>
 
-
+#### <h3 id="scope-statement">
+ 🚄 Scope Statement </h3>
+ <details>
+ <summary >Click to Collapse/Expand for Scope Statement</summary>
+ 
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-aqew">Must have:<br></th>
+    <th class="tg-viy4"><span style="font-weight:normal">Just Nodejs with bare minimum npm dependencies</span><br><span style="font-weight:normal">Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.</span><br><span style="font-weight:normal">Modularize Code Pattern with advanced config based programming approach.</span><br><span style="font-weight:normal">Should work today and ten years down the line (it’s absurd I Know ,&nbsp;&nbsp;but that should keep us in line with no unnecessary libs , npm inclusion and working with </span>bare minimum mindset<span style="font-weight:normal">)</span><br>All pointers from <a href="https://apricorp.atlassian.net/wiki/spaces/~55705875e219f10d7347be90801c3fd44b5f24/pages/1572866/Nodejs+Postgresql+Scaffolding+Project+-Project+Plan#Key-outcomes">Key outcomes Section</a> from <a href="https://apricorp.atlassian.net/wiki/spaces/~55705875e219f10d7347be90801c3fd44b5f24/pages/1572866/Nodejs+Postgresql+Scaffolding+Project+-Project+Plan#%F0%9F%8D%87--Project-Statement">Project Statement</a> Section above<br></th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-c3nx">Nice to have:</td>
+    <td class="tg-viy4"><span style="font-weight:normal">Good&nbsp;&nbsp;styling since I am not UI/UX person.</span><br><span style="font-weight:normal">Adherence to industry practice for UI/UX (HTML , CSS ) Only</span></td>
+  </tr>
+  <tr>
+    <td class="tg-wyy3">Not in scope:</td>
+    <td class="tg-viy4"><span style="font-weight:normal"> </span><br><span style="font-weight:normal">No Client Side Transpiler Tech implementation whatsoever in any capacity.</span></td>
+  </tr>
+</tbody>
+</table>
+</details>
 
  ### `Dynamic pivot operation with highchart implementation`
 
