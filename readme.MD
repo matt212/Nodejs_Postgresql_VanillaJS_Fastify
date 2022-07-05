@@ -6,7 +6,7 @@
 
    
 <details>
-<summary id="sh-file-Setup">
+<summary id="sh-file-Setup" style="margin: 0 0 0 48px;">
 🍕sh file Setup
 </summary>
 
@@ -26,7 +26,7 @@
 </details>
   
   <details>
-<summary id="app-Setup">
+<summary id="app-Setup" style="margin: 0 0 0 48px;">
 🍤app Setup
 </summary>
   
@@ -38,7 +38,7 @@
 </details>
 
 <details>
-<summary id="mocha-test-cases">
+<summary id="mocha-test-cases" style="margin: 0 0 0 48px;">
 🍔 mocha chai tests against 20,00,000 recordsets
 </summary>
 
@@ -48,7 +48,7 @@
 </details>
 
 <details>
-<summary id="app-Run">
+<summary id="app-Run" style="margin: 0 0 0 48px;">
 🍟 app Run
 </summary>
 
@@ -58,7 +58,7 @@
 
 
 <details>
-<summary id="app-Usage">
+<summary id="app-Usage" style="margin: 0 0 0 48px;">
 🍩 app Usage
 </summary>
 
@@ -72,7 +72,7 @@
 
 
 <details>
-<summary id="app-SuperAdmin-Usage">
+<summary id="app-SuperAdmin-Usage" style="margin: 0 0 0 48px;">
  🍜 app SuperAdmin Usage
 </summary>
 
@@ -88,7 +88,7 @@
 
 
 <details>
-<summary id="app-API-Documentation-Usage(Swagger)">
+<summary id="app-API-Documentation-Usage(Swagger)" style="margin: 0 0 0 48px;">
  🍘 API Documentation Usage(Swagger)
 </summary>
 
@@ -102,10 +102,6 @@
 
 </details>
 
-<br/>
-<br/>
-<br/>
-<br/>
 </details>
 
 <details>
@@ -185,7 +181,7 @@
  <summary id="walkthrough-section">💈 Features/Functionalities :Walkthroughs</summary>
  <br/>
 <details>
-    <summary >🍇 Dynamic pivot operation with highchart implementation
+    <summary style="margin: 0 0 0 48px;">🍇 Dynamic pivot operation with highchart implementation
 </summary>
  <br/>
 
@@ -194,7 +190,7 @@
 
 <br/>
 <details>
- <summary >🍊 Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature</summary>
+ <summary style="margin: 0 0 0 48px;">🍊 Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature</summary>
 <br/>
 
   ![redlime](app/video/gif/c1.gif)
@@ -202,7 +198,7 @@
 <br/>
 
 <details>
- <summary >🍑 Automated Swagger for each Module created By build in scaffoding accessed at http://localhost:3012/api-docs/ </summary>
+ <summary style="margin: 0 0 0 48px;">🍑 Automated Swagger for each Module created By build in scaffoding accessed at http://localhost:3012/api-docs/ </summary>
 <br/>
 
   ![redlime](app/video/gif/d.gif)
@@ -210,14 +206,14 @@
 <br/>
 
 <details>
- <summary>🍐 Basic dashboard operation</summary>
+ <summary style="margin: 0 0 0 48px;">🍐 Basic dashboard operation</summary>
 <br/>
 
 ![redlime](app/video/gif/a1.gif)
 </details>
 <br/>
 <details>
- <summary>🍓 Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)</summary>
+ <summary style="margin: 0 0 0 48px;">🍓 Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)</summary>
 <br/>
 
 ![redlime](app/video/gif/f.gif)
@@ -225,7 +221,7 @@
 <br/>
 
 <details>
- <summary>🍏 Boilerplate walkthrough with multi control(Radio-Data from respective db table)</summary>
+ <summary style="margin: 0 0 0 48px;">🍏 Boilerplate walkthrough with multi control(Radio-Data from respective db table)</summary>
 <br/>
 
 ![redlime](app/video/gif/e.gif)
