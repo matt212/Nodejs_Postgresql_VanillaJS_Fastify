@@ -12,7 +12,8 @@
 <details>
  <summary id="problem-statement">🚄 Problem Statement </summary><blockquote>
  
-<table class="tg">
+ ![redlime](app/video/img/problem-statement.png)
+<!--<table class="tg">
 <thead>
   <tr>
     <td class="tg-0pky">Who<br></td>
@@ -38,6 +39,7 @@
   </tr>
 </tbody>
 </table>
+ -->
  </details>
 <details>
 
