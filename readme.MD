@@ -379,15 +379,14 @@
  <summary id="project-statement">
  🚀 Project Statement </summary><blockquote>
 
-![redlime](app/video/img/h1.png)
+![redlime](app/video/img/merge_from_ofoct.jpg)
+
+<!-- ![redlime](app/video/img/h1.png)
 ![redlime](app/video/img/h2.png)
 ![redlime](app/video/img/h3.png)
-
-<h4>Key Outcomes</h4>
-
-![redlime](app/video/img/mandates.png)
-![redlime](app/video/img/conventional.png)
-![redlime](app/video/img/advanced.png)
+![redlime](app/video/img/mandates1.png)
+![redlime](app/video/img/conventional1.png)
+![redlime](app/video/img/advanced1.png) -->
 
 </details>
 
