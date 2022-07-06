@@ -80,36 +80,9 @@
  <summary id="scope-statement">🎫 
  Scope Statement
  </summary><blockquote>
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-aqew">Must have:<br></th>
-    <td>
 
-•	Just Nodejs with bare minimum npm dependencies.
+![redlime](app/video/img/Scope.png)
 
-•	Just plain vanillaJS with helper hand from jquery alike libs but with minimum capacity.
-
-•	Modularize Code Pattern with advanced config based programming approach.
-
-•	Should work today and ten years down the line (it’s absurd I Know , but that should keep us in line with no unnecessary libs , npm inclusion and working with bare minimum mindset).
-
-•	All pointers from Key outcomes Section as part of Solution Statement  mentioned above 
-
- </td>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-c3nx">Nice to have:</td>
-    <td class="tg-viy4"><span style="font-weight:normal">Good&nbsp;&nbsp;styling since I am not UI/UX person.</span><br><span style="font-weight:normal">Adherence to industry practice for UI/UX (HTML , CSS ) Only</span></td>
-  </tr>
-  <tr>
-    <td class="tg-wyy3">Not in scope:</td>
-    <td class="tg-viy4"><span style="font-weight:normal"> </span><br><span style="font-weight:normal">No Client Side Transpiler Tech implementation whatsoever in any capacity.</span></td>
-  </tr>
-</tbody>
-</table>
 </details>
 
 
