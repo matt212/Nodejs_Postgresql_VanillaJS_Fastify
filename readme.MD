@@ -41,7 +41,7 @@
 </table>
  -->
  </details>
-<details>
+<details open>
 
 <summary id="project-statement" href="#project-statement">
 🚀 Solution Statement- Key Outcomes
@@ -61,7 +61,7 @@
 
 </details>
     
-<details>
+<details open>
  <summary id="Conventional-Levels">🍦 Features/Functionalities : Conventional Levels</summary><blockquote>
 
 ![redlime](app/video/img/conventional.png)
