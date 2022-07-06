@@ -11,7 +11,7 @@
 
 <details>
  <summary id="problem-statement">🚄 Problem Statement </summary><blockquote>
- 
+
  ![redlime](app/video/img/problem-statement.png)
 <!--<table class="tg">
 <thead>
@@ -50,15 +50,7 @@
   <details>
  <summary id="Objective">🍨 Objective </summary><blockquote>
 
-Build Modularize and Config Based Boilerplate platform  with RBAC implementation for any project with  basic automation test cases coverage.
-
-Tech Specs 
-
-Server stack : Node.js 
-
-Database Stack : PostgreSQL and Redis.
-
-Client Stack : Vanilla JavaScript (ES+)
+![redlime](app/video/img/objective.png)
 
 </details>
    
