@@ -61,7 +61,7 @@
 
 </details>
     
-<details open>
+<details>
  <summary id="Conventional-Levels">🍦 Features/Functionalities : Conventional Levels</summary><blockquote>
 
 ![redlime](app/video/img/conventional.png)
@@ -198,7 +198,7 @@
 
 
 
-<details>
+<details open>
  <summary id="walkthrough-section">💈 Walkthroughs : Features/Functionalities </summary>
  <blockquote>
  <br/>
