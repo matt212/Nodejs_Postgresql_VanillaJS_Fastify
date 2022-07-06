@@ -41,6 +41,43 @@
 </table>
  -->
  </details>
+
+
+<details open>
+
+<summary id="project-statement" href="#project-statement">
+🚀 Solution Statement- Key Outcomes
+</summary><blockquote>
+   
+  <details>
+ <summary id="Objective">🍨 Objective </summary><blockquote>
+
+![redlime](app/video/img/objective.png)
+
+</details>
+   
+<details>
+ <summary id="mandates">🍰 Mandates </summary><blockquote>
+
+![redlime](app/video/img/mandates.png)
+
+</details>
+    
+<details>
+ <summary id="Conventional-Levels">🍦 Features/Functionalities : Conventional Levels</summary><blockquote>
+
+![redlime](app/video/img/conventional.png)
+
+</details>
+
+<details>
+ <summary id="Advanced-Levels">🍧 Features/Functionalities : Advanced Levels</summary><blockquote>
+
+![redlime](app/video/img/advanced.png)
+
+
+</details>
+</details>
 <details>
  <summary id="scope-statement">🎫 
  Scope Statement
@@ -218,10 +255,11 @@
 </details>
 
 
-<details>
+</details>
+<details open>
 
 <summary id="project-timelines" href="#project-timelines">
-🤖 TimeLines
+🤖 Deliverables Timeline
 </summary><blockquote>
    
   <details>
@@ -247,8 +285,6 @@
 </details>
 
 </details>
-
-
 
 #### 
  <details>
