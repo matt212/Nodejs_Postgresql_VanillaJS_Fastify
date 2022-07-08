@@ -377,7 +377,7 @@
 
  <details>
  <summary id="project-statement">
- 🚀 Project Statement </summary><blockquote>
+ 🚁 Project Statement </summary><blockquote>
 
 ![redlime](app/video/img/merge_from_ofoct.jpg)
 
