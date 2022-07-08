@@ -390,32 +390,32 @@
 
 </details>
 <details open> 
-<summary id="Code-Flow" href="#code-flow"> 🌄 Architecture 
+<summary id="Code-Flow" href="#code-flow"> 🛰️ Architecture 
 </summary><blockquote>
-<details > 
-<summary id="Client-Side-Code-Flow" href="#Client-Side-Code-Flow"> 🚋 Client Side 
+<details open> 
+<summary id="Client-Side-Code-Flow" href="#Client-Side-Code-Flow"> 🛸 Client Side 
 </summary><blockquote>
 
 
 
-<details> <summary id="view_structure_and_page_operations">🚐 View Structure and Page Operations </summary>
+<details open> <summary id="view_structure_and_page_operations">✈️ View Structure and Page Operations </summary>
 
 ![redlime](app/video/img/view_structure_and_page_operations.png) 
 </details>
-<details> <summary id="page_load_and_date_range_operations">🚒 Page Load and Date Range Operations </summary>
+<details> <summary id="page_load_and_date_range_operations">🛩️ Page Load and Date Range Operations </summary>
 
 ![redlime](app/video/img/page_load_and_date_range_operations.png) 
 </details>
 <details> <summary id="sort_and_pagination_operations">
-🛵 Sort and Pagination Operations </summary>
+🛶 Sort and Pagination Operations </summary>
 
 ![redlime](app/video/img/sort_and_pagination_operations.png) 
 </details>
-<details> <summary id="Filter_operations">🏍️ Filter Operations </summary>
+<details> <summary id="Filter_operations">🪂 Filter Operations </summary>
 
 ![redlime](app/video/img/Filter_operations.png) 
 </details>
-<details> <summary id="create_and_update_Operations">🛴 Create and Update Operations </summary>
+<details> <summary id="create_and_update_Operations">⛵ Create and Update Operations </summary>
 
 ![redlime](app/video/img/create_and_update_Operations.png) 
 </details>
