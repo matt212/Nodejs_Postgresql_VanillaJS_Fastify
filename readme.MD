@@ -419,6 +419,14 @@
 
 ![redlime](app/video/img/create_and_update_Operations.png) 
 </details>
+<details> <summary id="Field_validations">⛴️ Field Validations </summary>
+
+![redlime](app/video/img/Field_validations.png) 
+</details>
+<details> <summary id="event_listners">🚤 Field Validations-Event listeners </summary>
+
+![redlime](app/video/img/event_listners.png) 
+</details>
 
 </details>
 </details>
