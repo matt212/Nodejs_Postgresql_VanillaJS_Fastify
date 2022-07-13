@@ -427,6 +427,34 @@
 
 ![redlime](app/video/img/event_listners.png) 
 </details>
+<details> <summary id="app_module-actionFunctions">🚤 App Module-ActionFunctions </summary>
+
+![redlime](app/video/img/app_module-actionFunctions.png) 
+</details>
+
+<details> <summary id="pivotoperations">🚤 Pivot Operations </summary>
+
+![redlime](app/video/img/pivotoperations.png) 
+</details>
+
+
+<details> <summary id="etl-upload-operations">🚤 ETL upload Operations </summary>
+
+![redlime](app/video/img/etl-upload-operations.png) 
+</details>
+
+
+<details> <summary id="etl-download-user-actions">🚤 ETL download user Actions</summary>
+
+![redlime](app/video/img/etl-download-user-actions.png) 
+</details>
+
+
+<details> <summary id="etl-download-operations">🚤 ETL download Actions</summary>
+
+![redlime](app/video/img/etl-download-operations.png) 
+</details>
+
 
 </details>
 </details>
