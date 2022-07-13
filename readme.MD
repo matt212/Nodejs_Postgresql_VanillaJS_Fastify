@@ -432,7 +432,7 @@
 ![redlime](app/video/img/app_module-actionFunctions.png) 
 </details>
 
-<details> <summary id="pivotoperations">🛷 Pivot Operations </summary>
+<details open> <summary id="pivotoperations">🛷 Pivot Operations </summary>
 
 ![redlime](app/video/img/pivotoperations.png) 
 </details>
