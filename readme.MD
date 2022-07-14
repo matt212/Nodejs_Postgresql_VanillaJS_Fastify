@@ -454,8 +454,9 @@
 
 ![redlime](app/video/img/etl-download-operations.png) 
 </details>
-<details open> 
-<summary id="Client-Side-Code-Flow" href="#Client-Side-Code-Flow"> 🌯 Server Side 
+<details > 
+
+<summary id="Server-Side-Code-Flow" href="#Server-Side-Code-Flow"> 🌯 Server Side 
 </summary><blockquote>
 
 
