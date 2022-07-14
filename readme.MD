@@ -397,6 +397,13 @@
 <summary id="Server-Side-Code-Flow" href="#Server-Side-Code-Flow"> 🌯 Server Side 
 </summary><blockquote>
 
+<details> <summary id="route-structure-module-operations">🥐 Route Structure Module Operations </summary>
+
+![redlime](app/video/img/route-structure-module-operations.png) 
+</details>
+
+
+
 <details> <summary id="module-view-ejs">🥗 Module View (EJS) Render </summary>
 
 ![redlime](app/video/img/module-view-ejs.png) 
