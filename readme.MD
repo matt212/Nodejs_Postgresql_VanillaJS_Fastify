@@ -389,10 +389,67 @@
 ![redlime](app/video/img/advanced1.png) -->
 
 </details>
+
 <details open> 
 <summary id="Code-Flow" href="#code-flow"> 🛰️ Architecture 
 </summary><blockquote>
-<details > 
+<details>
+<summary id="Server-Side-Code-Flow" href="#Server-Side-Code-Flow"> 🌯 Server Side 
+</summary><blockquote>
+
+<details> <summary id="module-view-ejs">🥗 Module View (EJS) Render </summary>
+
+![redlime](app/video/img/module-view-ejs.png) 
+</details>
+
+
+<details> <summary id="module-load-operations">🍲 Module Load Operations </summary>
+
+![redlime](app/video/img/module-load-operations.png) 
+</details>
+
+
+<details> <summary id="multipurpose-features-operations">🍟 Multipurpose Features Operations </summary>
+
+![redlime](app/video/img/multipurpose-features-operations.png) 
+</details>
+
+
+<details> <summary id="groupby-operations">🧆 Groupby Operations </summary>
+
+![redlime](app/video/img/groupby-operations.png) 
+</details>
+
+
+<details> <summary id="create-operations">🥞 Create Operation </summary>
+
+![redlime](app/video/img/create-operations.png) 
+</details>
+
+
+<details> <summary id="update-operations">🥨 Update Operations </summary>
+
+![redlime](app/video/img/update-operations.png) 
+</details>
+
+
+<details> <summary id="upload-operations">🥖 Upload Operations </summary>
+
+![redlime](app/video/img/upload-operations.png) 
+</details>
+
+
+<details> <summary id="download-operations">🥐 Download Operations </summary>
+
+![redlime](app/video/img/download-operations.png) 
+</details>
+
+
+
+</details>
+<!--client side -->
+<details> 
+
 <summary id="Client-Side-Code-Flow" href="#Client-Side-Code-Flow"> 🛸 Client Side 
 </summary><blockquote>
 
@@ -454,66 +511,10 @@
 
 ![redlime](app/video/img/etl-download-operations.png) 
 </details>
-<details > 
-
-<summary id="Server-Side-Code-Flow" href="#Server-Side-Code-Flow"> 🌯 Server Side 
-</summary><blockquote>
 
 
-
-<details> <summary id="route-structure-module-operations">🥙 Route Structure Module Operations </summary>
-
-![redlime](app/video/img/route-structure-module-operations.png) 
 </details>
 
-<details> <summary id="module-view-ejs">🥗 Module View (EJS) Render </summary>
-
-![redlime](app/video/img/module-view-ejs.png) 
-</details>
-
-
-<details> <summary id="module-load-operations">🍲 Module Load Operations </summary>
-
-![redlime](app/video/img/module-load-operations.png) 
-</details>
-
-
-<details> <summary id="multipurpose-features-operations">🍟 Multipurpose Features Operations </summary>
-
-![redlime](app/video/img/multipurpose-features-operations.png) 
-</details>
-
-
-<details> <summary id="groupby-operations">🧆 Groupby Operations </summary>
-
-![redlime](app/video/img/groupby-operations.png) 
-</details>
-
-
-<details> <summary id="create-operations">🥞 Create Operation </summary>
-
-![redlime](app/video/img/create-operations.png) 
-</details>
-
-
-<details> <summary id="update-operations">🥨 Update Operations </summary>
-
-![redlime](app/video/img/update-operations.png) 
-</details>
-
-
-<details> <summary id="upload-operations">🥖 Upload Operations </summary>
-
-![redlime](app/video/img/upload-operations.png) 
-</details>
-
-
-<details> <summary id="download-operations">🥐 Download Operations </summary>
-
-![redlime](app/video/img/download-operations.png) 
-</details>
-
-</details>
 </details>
 
   
