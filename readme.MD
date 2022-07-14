@@ -440,13 +440,13 @@
 </details>
 
 
-<details> <summary id="upload-operations">🥖 Upload Operations </summary>
+<details> <summary id="upload-operations">🥖 ETL Upload Operations </summary>
 
 ![redlime](app/video/img/upload-operations.png) 
 </details>
 
 
-<details> <summary id="download-operations">🥐 Download Operations </summary>
+<details> <summary id="download-operations">🥐 ETL Download Operations </summary>
 
 ![redlime](app/video/img/download-operations.png) 
 </details>
@@ -514,7 +514,7 @@
 </details>
 
 
-<details> <summary id="etl-download-operations">🏜️ ETL download Actions</summary>
+<details> <summary id="etl-download-operations">🏜️ ETL download Operations</summary>
 
 ![redlime](app/video/img/etl-download-operations.png) 
 </details>
