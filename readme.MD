@@ -237,7 +237,7 @@
 </details>
 <br/>
 <details>
- <summary >🍓 Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables)</summary>
+ <summary >🍓 Boilerplate walkthrough with multi control(Radio and Checkbox-Data from respective db tables) with Automated mocha test Cases</summary>
 <br/>
 
 ![redlime](app/video/gif/f.gif)
@@ -245,7 +245,7 @@
 <br/>
 
 <details>
- <summary >🍏 Boilerplate walkthrough with multi control(Radio-Data from respective db table)</summary>
+ <summary >🍏 Boilerplate walkthrough with multi control(Radio-Data from respective db table) with Automated mocha test Cases</summary>
 <br/>
 
 ![redlime](app/video/gif/e.gif)
