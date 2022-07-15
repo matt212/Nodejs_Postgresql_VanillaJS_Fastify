@@ -39,7 +39,7 @@ $(function () {
         console.log(red.split(' ')[5].split('=')[1])*/
   //$(".sidebar-toggle").click();
   $('.form-horizontal input:text').on('keydown keyup change', function () {
-    var sel =$('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+    var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
     //var sel=document.querySelectorAll("[data-form-type]").length
 
     if (sel <= 0) {
@@ -58,8 +58,8 @@ let reqops = {
       var url = baseurlobj.uploaddata
       var xhr = new XMLHttpRequest()
       var fd = new FormData()
-      
-      
+
+
       xhr.open('POST', url, true)
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -79,9 +79,16 @@ let reqops = {
     $('#uploadfiles').click()
   },
   clearControls: function () {
-    $('#overlaycontent input[type=text]').each(function () {
-      $(this).val('')
-    })
+    
+    var inputElements = document.getElementsByTagName('input');
+
+    for (var i=0; i < inputElements.length; i++) {
+        if (inputElements[i].type == 'text' || inputElements[i].type == 'date') {
+            inputElements[i].value = '';
+        }
+    }
+
+
     $('#cltrlrecordstate').prop('checked', false)
     $(`#overlaycontent .selectchips`).remove()
     $(
@@ -109,7 +116,7 @@ let reqops = {
 
       setintervalparams.id = setInterval(frame, 750)
 
-      function frame () {
+      function frame() {
         if (setintervalparams.width >= 24263) {
           clearInterval(setintervalparams.id)
         } else {
@@ -162,49 +169,49 @@ let reqops = {
     // console.log(interncontent[0]);
     Object.keys(interncontent[0]).map(function (objectKey, index) {
       var value = interncontent[0][objectKey]
-      
+
       var icers = validationmap
-      .filter(p => p.inputname === objectKey)
-      .map(y => y.fieldvalidatename)
-      
-      
-      if(icers.toString()=="date")
-      {
-value=moment(value).format('YYYY-MM-DD');
+        .filter(p => p.inputname === objectKey)
+        .map(y => y.fieldvalidatename)
+
+
+      if (icers.toString() == "date") {
+        value = moment(value).format('YYYY-MM-DD');
       }
-      
+
       $('#cltrl' + objectKey).val(value)
       $('#cltrl' + objectKey).removeAttr('data-form-type')
     })
 
     if (interncontent[0].recordstate == true) {
       $('#cltrlrecordstate').prop('checked', true)
+      base.interimdatapayload.recordstate = true
     } else {
       $('#cltrlrecordstate').prop('checked', false)
+      base.interimdatapayload.recordstate = false
     }
 
     $('#btnbutton').click()
   },
-   
-  extractDatafromfields:function()
-  {
-    let p={}
-    validationmap.forEach(function(a)
-    {
-      
-      p[a.inputname]=$(`[data-key-type="${a.inputname}"]`).val();
+
+  extractDatafromfields: function () {
+    let p = {}
+    validationmap.forEach(function (a) {
+
+      p[a.inputname] = $(`[data-key-type="${a.inputname}"]`).val();
 
     })
-    console.log(p)
+
     return p
   },
 
   btnSubmit: function () {
-   
-    data=this.extractDatafromfields()
+
+    data = this.extractDatafromfields()
     if (ajaxbase.isedit) {
-      data[currentmoduleid]=$('#cltrl'+currentmoduleid).val()
+      data[currentmoduleid] = $('#cltrl' + currentmoduleid).val()
       base.datapayload = data
+
       base.datapayload.recordstate =
         base.interimdatapayload.recordstate == undefined
           ? base.datapayload.recordstate
@@ -212,14 +219,15 @@ value=moment(value).format('YYYY-MM-DD');
       basefunction()
         .update(base)
         .then(function (argument) {
+          
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
-          
+
           $('#btnmodalclose').click()
         })
     } else {
       delete data[currentmoduleid]
-      
+
       base.datapayload = data
       base.datapayload.recordstate = base.interimdatapayload.recordstate
       basefunction()
@@ -227,7 +235,7 @@ value=moment(value).format('YYYY-MM-DD');
         .then(function (argument) {
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
-          
+
           $('#btnmodalclose').click()
         })
     }
@@ -248,7 +256,7 @@ value=moment(value).format('YYYY-MM-DD');
         $('#uploadsavemsg').html('Preparing for download !')
         setintervalparams.id = setInterval(frame, 750)
 
-        function frame () {
+        function frame() {
           if (setintervalparams.width >= 24263) {
             clearInterval(id)
           } else {
@@ -275,7 +283,7 @@ value=moment(value).format('YYYY-MM-DD');
         }
       })
   },
-  
+
 }
 /* all reports pagination*/
 let basepagination = {
@@ -449,14 +457,14 @@ let tableops = {
       })
   },
   onchk: function (argument) {
-    
+
     if ($(argument).prop('checked')) {
       $(argument).val(true)
-      
+
       base.interimdatapayload.recordstate = true
     } else {
       $(argument).val(false)
-      
+
       base.interimdatapayload.recordstate = false
     }
     reqopsValidate.formvalidation(argument)
@@ -469,7 +477,7 @@ let tableops = {
 //   console.log(arg);
 // });
 
-function payloadprepared () {
+function payloadprepared() {
   filterparam.colsearch = 'intercolumn'
   filterparam.searchparam = basesearchar
 
