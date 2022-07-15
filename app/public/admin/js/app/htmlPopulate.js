@@ -28,7 +28,7 @@ let htmlpopulate = {
           '">' +
           '<i class="fa fa-bell-o"></i> Input with warning' +
           '</label>' +
-          '<input type="'+inputypes+'" data-attribute="' +
+          '<input type="'+inputypes+'" data-key-type="'+element.inputname+'"  data-attribute="' +
           element.fieldvalidatename +
           '" class="form-control" maxLength="' +
           element.fieldmaxlength +

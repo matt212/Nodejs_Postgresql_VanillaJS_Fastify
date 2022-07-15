@@ -162,7 +162,17 @@ let reqops = {
     // console.log(interncontent[0]);
     Object.keys(interncontent[0]).map(function (objectKey, index) {
       var value = interncontent[0][objectKey]
-
+      
+      var icers = validationmap
+      .filter(p => p.inputname === objectKey)
+      .map(y => y.fieldvalidatename)
+      
+      
+      if(icers.toString()=="date")
+      {
+value=moment(value).format('YYYY-MM-DD');
+      }
+      
       $('#cltrl' + objectKey).val(value)
       $('#cltrl' + objectKey).removeAttr('data-form-type')
     })
@@ -175,29 +185,25 @@ let reqops = {
 
     $('#btnbutton').click()
   },
-  btnSubmit: function () {
-    var $fields = $('input:text, input:hidden')
-      .not("[name^='__']")
-      .not("[id^='_filter']")
-    var data = $fields.formToJSON()
+   
+  extractDatafromfields:function()
+  {
+    let p={}
+    validationmap.forEach(function(a)
+    {
+      
+      p[a.inputname]=$(`[data-key-type="${a.inputname}"]`).val();
 
-    /*var doctors = data.map(function(doctor) {
-               var o = {};
-               o[doctor.position] = doctor.positionval;
-               return o;
-           });*/
-    Object.keys(data).forEach(function (element) {
-      var internset = element.replace('cltrl', '')
-
-      if (element.includes('_filter')) {
-        delete data[element]
-      } else {
-        
-        datatransformutils.rename(data, element, internset)
-      }
     })
+    console.log(p)
+    return p
+  },
 
+  btnSubmit: function () {
+   
+    data=this.extractDatafromfields()
     if (ajaxbase.isedit) {
+      data[currentmoduleid]=$('#cltrl'+currentmoduleid).val()
       base.datapayload = data
       base.datapayload.recordstate =
         base.interimdatapayload.recordstate == undefined
@@ -213,6 +219,7 @@ let reqops = {
         })
     } else {
       delete data[currentmoduleid]
+      
       base.datapayload = data
       base.datapayload.recordstate = base.interimdatapayload.recordstate
       basefunction()

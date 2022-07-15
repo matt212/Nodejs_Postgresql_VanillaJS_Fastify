@@ -32,6 +32,7 @@ let datatransformutils = {
     }
   },
   rename: function (obj, oldName, newName) {
+    
     if (!obj.hasOwnProperty(oldName)) {
       return false;
     }
