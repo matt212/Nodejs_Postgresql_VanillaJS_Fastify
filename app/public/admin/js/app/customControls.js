@@ -14,7 +14,9 @@ multiCheckBoxPopulate: function (elem, currentset) {
   },
   validationListener : function() {
     var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
- console.log(sel)
+    //var sel=document.querySelectorAll("[data-form-type]").length
+    console.log(sel)
+    
     if (sel <= 0) {
       $('#btnmodalsub').prop('disabled', false)
     } else {
@@ -47,7 +49,7 @@ multiCheckBoxPopulate: function (elem, currentset) {
   genericCheckboxHtmlPrimary: function () {
     return `<div class="checkbox tablechk">
    <label>
-   <input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value=true> Remember me
+   <input type="checkbox" id="cltrlrecordstate" data-form-type="true" data-attribute="radio"  onclick="javascript:tableops.onchk(this)" value=true> Remember me
    <span class="checkbox-material">
    </span> 
    </label>

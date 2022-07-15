@@ -39,11 +39,9 @@ $(function () {
         console.log(red.split(' ')[5].split('=')[1])*/
   //$(".sidebar-toggle").click();
   $('.form-horizontal input:text').on('keydown keyup change', function () {
-    // var sel = $(
-    //   '.form-horizontal input:text[data-form-type] input:checkbox[data-form-type]'
-    // ).length
-    var sel=document.querySelectorAll("[data-form-type]").length
-console.log(sel)
+    var sel =$('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+    //var sel=document.querySelectorAll("[data-form-type]").length
+
     if (sel <= 0) {
       $('#btnmodalsub').prop('disabled', false)
     } else {
@@ -444,11 +442,14 @@ let tableops = {
       })
   },
   onchk: function (argument) {
+    
     if ($(argument).prop('checked')) {
       $(argument).val(true)
+      
       base.interimdatapayload.recordstate = true
     } else {
       $(argument).val(false)
+      
       base.interimdatapayload.recordstate = false
     }
     reqopsValidate.formvalidation(argument)

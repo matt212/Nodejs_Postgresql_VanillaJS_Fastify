@@ -18,6 +18,8 @@ let htmlpopulate = {
       internsearchbar = validationmap
   
       internsearchbar.forEach(function (element) {
+        var inputypes=(element.fieldvalidatename != "string" ? element.fieldvalidatename  : "string")
+
         htmlcontent +=
           '<div class="form-group overlaytxtalign col-md-5">' +
           '<div class="col-sm-15">' +
@@ -26,7 +28,7 @@ let htmlpopulate = {
           '">' +
           '<i class="fa fa-bell-o"></i> Input with warning' +
           '</label>' +
-          '<input type="text" data-attribute="' +
+          '<input type="'+inputypes+'" data-attribute="' +
           element.fieldvalidatename +
           '" class="form-control" maxLength="' +
           element.fieldmaxlength +
@@ -41,7 +43,7 @@ let htmlpopulate = {
       var chkcontent =
         ' <input type="hidden" name="' +
         currentmoduleid +
-        '" value="0" id="cltrl' +
+        '" value="0" data-attribute="checkbox" data-form-type="true" id="cltrl' +
         currentmoduleid +
         '"> <div class="form-group overlaytxtalign col-md-5">' +
         '<div class="col-sm-offset-2 col-sm-15">' +
@@ -55,7 +57,7 @@ let htmlpopulate = {
     },
     baseCheckbox: `<div class="checkbox tablechk">
      <label>
-     <input type="checkbox" id="cltrlrecordstate" onclick="javascript:tableops.onchk(this)" value=true> Remember me
+     <input type="checkbox" id="cltrlrecordstate" data-form-type="true"  data-attribute="checkbox" onclick="javascript:tableops.onchk(this)" value=true> Remember me
      <span class="checkbox-material">
      </span> 
      </label>
