@@ -59,6 +59,7 @@ var baseobjvalidation = {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
     }
+    this.validationListener();
   },
   numbervalidation: function (argument) {
     validation = new RegExp(validations["number"][0]);
@@ -71,6 +72,7 @@ var baseobjvalidation = {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
     }
+    this.validationListener();
   },
   mobilevalidation: function (argument) {
     validation = new RegExp(validations["mobile"][0]);
@@ -83,6 +85,7 @@ var baseobjvalidation = {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
     }
+    this.validationListener();
   },
   passwordvalidation: function (argument) {
     validation = new RegExp(validations["password_set1"][0]);
@@ -96,6 +99,7 @@ var baseobjvalidation = {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
     }
+    this.validationListener();
   },
   textvalidation: function (argument) {
     validation = new RegExp(validations["string"][0]);
@@ -107,7 +111,9 @@ var baseobjvalidation = {
     } else {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
+      
     }
+    this.validationListener();
   },
   alphaNumericValidation: function (argument) {
     validation = new RegExp(validations["alphaNumeric"][0]);
@@ -119,7 +125,9 @@ var baseobjvalidation = {
     } else {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
+      
     }
+    this.validationListener();
   },
   checkboxvalidation: function (argument) {
     console.log($(argument).is(":checked"))
