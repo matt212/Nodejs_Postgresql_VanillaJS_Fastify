@@ -111,7 +111,7 @@ var baseobjvalidation = {
     } else {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
-      
+
     }
     this.validationListener();
   },
@@ -125,7 +125,7 @@ var baseobjvalidation = {
     } else {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
-      
+
     }
     this.validationListener();
   },
@@ -140,11 +140,10 @@ var baseobjvalidation = {
     }
     this.validationListener();
   },
-  validationListener : function() {
-    var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
-    //var sel=document.querySelectorAll("[data-form-type]").length
-    console.log(sel)
-    
+  validationListener: function () {
+    var sel = $('#overlaycontent *[data-form-type]').length;
+
+
     if (sel <= 0) {
       $('#btnmodalsub').prop('disabled', false)
     } else {
@@ -163,7 +162,7 @@ var baseobjvalidation = {
         .removeAttr("data-form-type");
     } else {
       if (this.checkboxvalidationSecondary(argument)) {
-        
+
         $(argument)
           .parents(":eq(2)")
           .find(`.${validations.hideCSSlbl}`)
@@ -180,7 +179,7 @@ var baseobjvalidation = {
     var namesake = `current${$(argument).attr("data-parentVal")}`;
     var condt = eval(namesake).data[$(argument).attr("data-key")].length;
 
-console.log(eval(namesake).data[$(argument).attr("data-key")])
+    console.log(eval(namesake).data[$(argument).attr("data-key")])
     if (condt <= 0) {
       return true;
     } else {
@@ -188,7 +187,7 @@ console.log(eval(namesake).data[$(argument).attr("data-key")])
     }
   },
   radiovalidation: function (argument) {
-    
+
     $(argument).removeAttr("data-form-type");
     this.validationListener();
   },
@@ -196,12 +195,12 @@ console.log(eval(namesake).data[$(argument).attr("data-key")])
     validation = new RegExp(validations["date"][0]);
     // validate the alphanumeric value against the regular expression
 
-    if (!validation.test(argument.value) && argument.value!="") {
-      
+    if (!validation.test(argument.value) && argument.value != "") {
+
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
     } else {
-      
+
       $(argument).parent().find("label").attr("class", validations.showCSS);
       $(argument).attr("data-form-type", "true");
     }
@@ -244,8 +243,8 @@ console.log(eval(namesake).data[$(argument).attr("data-key")])
         this.textvalidation(internset.content);
         break;
       case "alphaNumericValidation":
-          this.alphaNumericValidation(internset.content);
-          break;  
+        this.alphaNumericValidation(internset.content);
+        break;
       case "checkbox":
         this.checkboxvalidation(internset.content);
         break;
@@ -262,8 +261,8 @@ console.log(eval(namesake).data[$(argument).attr("data-key")])
         this.multiSelectValidation(internset.content);
         break;
       case "date":
-          this.datevalidation(internset.content);
-          break;  
+        this.datevalidation(internset.content);
+        break;
       default:
         this.genvalidation(internset.content);
     }

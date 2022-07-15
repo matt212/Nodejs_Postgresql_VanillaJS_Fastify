@@ -38,8 +38,8 @@ $(function () {
   /* var red = '(cost=0.00..50779.28 rows=7501 width=54) (actual time=0.028..592.775 rows=600290 loops=1)'
         console.log(red.split(' ')[5].split('=')[1])*/
   //$(".sidebar-toggle").click();
-  $('.form-horizontal input:text').on('keydown keyup change', function () {
-    var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+  $('.form-horizontal input:text ,[data-attribute="date"]').on('keydown keyup change', function () {
+    var sel = $('#overlaycontent *[data-form-type]').length;
     //var sel=document.querySelectorAll("[data-form-type]").length
 
     if (sel <= 0) {
@@ -79,13 +79,13 @@ let reqops = {
     $('#uploadfiles').click()
   },
   clearControls: function () {
-    
+
     var inputElements = document.getElementsByTagName('input');
 
-    for (var i=0; i < inputElements.length; i++) {
-        if (inputElements[i].type == 'text' || inputElements[i].type == 'date') {
-            inputElements[i].value = '';
-        }
+    for (var i = 0; i < inputElements.length; i++) {
+      if (inputElements[i].type == 'text' || inputElements[i].type == 'date') {
+        inputElements[i].value = '';
+      }
     }
 
 
@@ -219,7 +219,7 @@ let reqops = {
       basefunction()
         .update(base)
         .then(function (argument) {
-          
+
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
 
