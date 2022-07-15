@@ -130,7 +130,18 @@ var baseobjvalidation = {
       $(argument).parent().find("label").attr("class", validations.showCSS);
       $(argument).attr("data-form-type", "true");
     }
-    htmlPopulateCustomControl.validationListener();
+    this.validationListener();
+  },
+  validationListener : function() {
+    var sel = $('#overlaycontent input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
+    //var sel=document.querySelectorAll("[data-form-type]").length
+    console.log(sel)
+    
+    if (sel <= 0) {
+      $('#btnmodalsub').prop('disabled', false)
+    } else {
+      $('#btnmodalsub').prop('disabled', true)
+    }
   },
   checkboxvalidationMulti: function (argument) {
     if ($(argument).is(":checked")) {
@@ -171,7 +182,7 @@ console.log(eval(namesake).data[$(argument).attr("data-key")])
   radiovalidation: function (argument) {
     console.log("herere")
     $(argument).removeAttr("data-form-type");
-    htmlPopulateCustomControl.validationListener();
+    this.validationListener();
   },
   genvalidation: function (argument) {
     if (argument.value == "") {
