@@ -32,7 +32,7 @@ let validations = {
   ],
   alphaNumeric: [/^[a-z0-9]+$/i, "Please enter Valid Alpha numeric String"],
   showCSS: "control-label-format",
-  hideCSS: "hide",
+  hideCSS: "lblhide",
   hideCSSlbl: "lblhide",
 };
 /*field validation*/
