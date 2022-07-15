@@ -130,7 +130,7 @@ var baseobjvalidation = {
     this.validationListener();
   },
   checkboxvalidation: function (argument) {
-    console.log($(argument).is(":checked"))
+    
     if ($(argument).is(":checked")) {
       $(argument).parent().find("label").attr("class", validations.hideCSS);
       $(argument).removeAttr("data-form-type");
@@ -179,7 +179,7 @@ var baseobjvalidation = {
     var namesake = `current${$(argument).attr("data-parentVal")}`;
     var condt = eval(namesake).data[$(argument).attr("data-key")].length;
 
-    console.log(eval(namesake).data[$(argument).attr("data-key")])
+    
     if (condt <= 0) {
       return true;
     } else {
