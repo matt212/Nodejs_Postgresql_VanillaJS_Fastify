@@ -73,6 +73,7 @@ $('body').on('focus',".datepicker", function(){
             datefilter.enddate = end.format('YYYY-MM-DD');
             filterparam.searchtype="NoFilter" 
             //filterparam.colsearch = "createdAt";
+            base.searchdatefilter=datefilter
             filterparam.datecolsearch=base.datecolsearch;
             filterparam.searchparam = ["NA"];
             filterparam.daterange = datefilter;

@@ -3,9 +3,12 @@ let baseloadsegments = {
     initialdatatableload: function () {
       //filterparam.colsearch = "createdAt";
   
+  
       filterparam.searchparam = ['NA']
       filterparam.searchtype = 'NoFilter'
-      filterparam.daterange = datefilter
+       // this is comment to and from from one month ago      
+      // filterparam.daterange = datefilter
+      filterparam.daterange = base.searchdatefilter
       base.pageno = base.pageno === undefined ? 0 : base.pageno
       base.pageSize = base.pageSize === undefined ? 20 : base.pageSize
       filterparam.pageno = base.pageno
