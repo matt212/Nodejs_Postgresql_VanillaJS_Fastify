@@ -180,9 +180,23 @@ console.log(eval(namesake).data[$(argument).attr("data-key")])
     }
   },
   radiovalidation: function (argument) {
-    console.log("herere")
+    
     $(argument).removeAttr("data-form-type");
     this.validationListener();
+  },
+  datevalidation: function (argument) {
+    validation = new RegExp(validations["date"][0]);
+    // validate the alphanumeric value against the regular expression
+
+    if (!validation.test(argument.value) && argument.value!="") {
+      
+      $(argument).parent().find("label").attr("class", validations.hideCSS);
+      $(argument).removeAttr("data-form-type");
+    } else {
+      
+      $(argument).parent().find("label").attr("class", validations.showCSS);
+      $(argument).attr("data-form-type", "true");
+    }
   },
   genvalidation: function (argument) {
     if (argument.value == "") {
@@ -239,6 +253,9 @@ console.log(eval(namesake).data[$(argument).attr("data-key")])
       case "multiSelect":
         this.multiSelectValidation(internset.content);
         break;
+      case "date":
+          this.datevalidation(internset.content);
+          break;  
       default:
         this.genvalidation(internset.content);
     }

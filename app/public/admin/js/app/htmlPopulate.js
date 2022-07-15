@@ -19,7 +19,7 @@ let htmlpopulate = {
   
       internsearchbar.forEach(function (element) {
         var inputypes=(element.fieldvalidatename != "string" ? element.fieldvalidatename  : "string")
-
+        var custominputskeyevent=(element.fieldvalidatename != "string" ? "onchange"  : "onkeyup")
         htmlcontent +=
           '<div class="form-group overlaytxtalign col-md-5">' +
           '<div class="col-sm-15">' +
@@ -33,7 +33,7 @@ let htmlpopulate = {
           '" class="form-control" maxLength="' +
           element.fieldmaxlength +
           '"' +
-          ' data-form-type="false" onkeyup="javascript:reqopsValidate.formvalidation(this)" id="cltrl' +
+          ' data-form-type="false" '+custominputskeyevent+'="javascript:reqopsValidate.formvalidation(this)" id="cltrl' +
           element.inputname +
           '" placeholder="' +
           element.inputname.replace('_', ' ').capitalize() +
