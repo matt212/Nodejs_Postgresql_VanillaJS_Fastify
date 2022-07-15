@@ -80,7 +80,11 @@ let reqops = {
   },
   clearControls: function () {
 
-    var inputElements = document.getElementsByTagName('input');
+
+    var inputElem = document.getElementsByClassName('modal-content')
+    var inputElements = inputElem[0].getElementsByTagName('input')
+
+
 
     for (var i = 0; i < inputElements.length; i++) {
       if (inputElements[i].type == 'text' || inputElements[i].type == 'date') {
