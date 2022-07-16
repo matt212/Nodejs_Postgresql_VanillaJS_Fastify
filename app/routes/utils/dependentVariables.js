@@ -1778,7 +1778,11 @@ let pivotResult = (req, res, a) => {
   sqlstatepivotcol = sqlConstruct[a.type][a.sqlstatepivotcol](
     sqlConstructParams
   );
-
+  console.log("--------ycount--------------")
+  console.log(sqlstatementsprimary)
+  
+  console.log("--------xcount--------------")
+  console.log(sqlstatementsecondary)
   async.parallel(
     {
       Ycount: (callback) => {
@@ -1823,7 +1827,8 @@ let pivotResult = (req, res, a) => {
 
       var interasyncset = {};
       var rollupinternobj = {};
-
+      console.log("--------col--------------")
+      console.log(sqlstatepivotcol)
       try {
         async.waterfall(
           [
@@ -1877,7 +1882,8 @@ let pivotResult = (req, res, a) => {
               sqlstatepivot = sqlConstruct[a.type][a.SqlPivot](
                 sqlConstructParams
               );
-
+              console.log("--------base--------------")
+              console.log(sqlstatepivot)
               connections
                 .query(sqlstatepivot)
                 .then((result) => {
