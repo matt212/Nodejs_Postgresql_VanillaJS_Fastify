@@ -70,10 +70,7 @@ let base = {
       tunnel.tempDep.colmetafilter +
       ' group by ' +
       tunnel.tempDep.searchkey +
-      '  ORDER BY ' +
-      tunnel.tempDep.searchkey +
-      ' ' +
-      tunnel.tempDep.sortcolumnorder +
+      
       '  limit 20'
     )
   },

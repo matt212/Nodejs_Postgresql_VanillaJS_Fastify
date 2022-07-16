@@ -12,6 +12,9 @@ https://www.tablesgenerator.com/html_tables
  > *` | separator in textbox column for e.g genderid|gendername` *
  
 
+** multicolumn multiselect Indexing **
+ > *`create index ix_employees_col_lower on employees (lower(first_name) varchar_pattern_ops);`*
+
 **sh file Setup**
 > *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
 

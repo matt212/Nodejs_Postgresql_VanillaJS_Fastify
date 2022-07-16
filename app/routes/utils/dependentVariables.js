@@ -1241,7 +1241,7 @@ let SearchTypeGroupBy = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
     sqlConstructParams
   );
-
+console.log(sqlstatementsprimary)
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
