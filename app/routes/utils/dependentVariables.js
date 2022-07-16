@@ -1842,9 +1842,9 @@ let pivotResult = (req, res, a) => {
                   var foundItemsrollup = logiblockrollup.map((doctor) => {
                     return (
                       'COALESCE(sum("' +
-                      doctor.xaxis.replace(/\ /g, "") +
+                      doctor.xaxis.toString().replace(/\ /g, "") +
                       '"),0) AS "' +
-                      doctor.xaxis.replace(/\ /g, "") +
+                      doctor.xaxis.toString().replace(/\ /g, "") +
                       '"'
                     );
                   });
@@ -1852,13 +1852,13 @@ let pivotResult = (req, res, a) => {
                   rollupinternobj.resultsetinternrollup = foundItemsrollup.toString();
 
                   var foundItems = logiblock.map((doctor) => {
-                    return '  "' + doctor.xaxis.replace(/\ /g, "") + '" int';
+                    return '  "' + doctor.xaxis.toString().replace(/\ /g, "") + '" int';
                   });
 
                   rollupinternobj.resultsetintern = foundItems.toString();
                   /* subtotal horizontal*/
                   colset = logiblock.map((doctor) => {
-                    return '"' + doctor.xaxis.replace(/\ /g, "") + '"';
+                    return '"' + doctor.xaxis.toString().replace(/\ /g, "") + '"';
                   });
                   var subtotal = "(" + colset.join("+") + ") as subtotal";
                   var selectclause = "yaxis," + colset.join(",");
