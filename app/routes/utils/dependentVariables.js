@@ -1211,6 +1211,37 @@ let isCacheCount = (key, sqlstatementsecondary) => {
     });
   });
 };
+let isPivotCache = (req, reply, mod) => {
+  let tempDep = pivotTransform(req);
+  let key = mod.Name + "-" + JSON.stringify(tempDep);
+  return new Promise((resolve, reject) => {
+    redisMiddleware.redisCount(key, true).then(function (data) {
+      if (data.iscache === true) {
+        console.log()
+        if(data.val=="[object Object]")
+        {
+          redisMiddleware.redisDel(key).then(function (data) {
+            
+            pivotResultCache(req, reply, mod).then(function (count) {
+              redisMiddleware.redisCount(key, JSON.stringify(count)).then(function (data) {
+                resolve(count);
+              });
+            });
+
+
+          }); 
+        }
+        resolve(data.val);
+      } else {
+        pivotResultCache(req, reply, mod).then(function (count) {
+          redisMiddleware.redisCount(key, JSON.stringify(count)).then(function (data) {
+            resolve(count);
+          });
+        });
+      }
+    });
+  });
+};
 let searchtypegroupbyId = (req, res, a) => {
   let tempDep = paramsSearchTypeGroupBy(req);
   let sqlConstructParams = {
@@ -1908,6 +1939,170 @@ let pivotResult = (req, res, a) => {
     }
   );
 };
+
+/////////////////////pivot cache///////////////////
+
+let pivotResultCache = (req, res, a) => {
+
+  return new Promise((resolve, reject) => {
+  
+    let async = require("async");
+    let tempDep = pivotTransform(req);
+    // Use c as a connection
+    var internset = {};
+    let sqlConstructParams = {
+      tempDep,
+      mod,
+    };
+    sqlstatementsprimary = sqlConstruct[a.type][a.sqlstatementsprimaryPivot](
+      sqlConstructParams
+    );
+  
+    sqlstatementsecondary = sqlConstruct[a.type][a.sqlstatementsecondaryPivot](
+      sqlConstructParams
+    );
+  
+    var sqlstatepivotcol = "";
+  
+    sqlstatepivot = "";
+  
+    sqlstatepivotcol = sqlConstruct[a.type][a.sqlstatepivotcol](
+      sqlConstructParams
+    );
+    console.log("--------ycount--------------")
+    console.log(sqlstatementsprimary)
+    
+    console.log("--------xcount--------------")
+    console.log(sqlstatementsecondary)
+    async.parallel(
+      {
+        Ycount: (callback) => {
+          try {
+            connections
+              .query(sqlstatementsprimary)
+              .then((result) => {
+                //console.log('number:', result.rows);
+  
+                internset.Ycount = result.rows[0].totalyaxiscnt;
+                var ycount = result.rows[0].totalyaxiscnt;
+  
+                callback(null, ycount);
+              })
+              .catch((err) => {
+                res.send(err);
+              });
+          } finally {
+          }
+        },
+        Xcount: (callback) => {
+          connections
+            .query(sqlstatementsecondary)
+            .then((result) => {
+              //console.log('number:', res.rows[0].number);
+              // console.log('number:', result.rows);
+  
+              internset.Xcount = result.rows[0].totalxaxiscnt;
+              var Xcount = result.rows[0].totalxaxiscnt;
+              callback(null, Xcount);
+            })
+            .catch((err) => {
+              res.send(err);
+            });
+        },
+      },
+      (err, results) => {
+        //console.log(results);
+  
+        internset.Xcount = results.Xcount;
+        internset.Ycount = results.Ycount;
+  
+        var interasyncset = {};
+        var rollupinternobj = {};
+        console.log("--------col--------------")
+        console.log(sqlstatepivotcol)
+        try {
+          async.waterfall(
+            [
+              (callback) => {
+                connections
+                  .query(sqlstatepivotcol)
+                  .then((result) => {
+                    var logiblock = result.rows;
+                    var logiblockrollup = result.rows;
+  
+                    var foundItemsrollup = logiblockrollup.map((doctor) => {
+                      return (
+                        'COALESCE(sum("' +
+                        doctor.xaxis.toString().replace(/\ /g, "") +
+                        '"),0) AS "' +
+                        doctor.xaxis.toString().replace(/\ /g, "") +
+                        '"'
+                      );
+                    });
+  
+                    rollupinternobj.resultsetinternrollup = foundItemsrollup.toString();
+  
+                    var foundItems = logiblock.map((doctor) => {
+                      return '  "' + doctor.xaxis.toString().replace(/\ /g, "") + '" int';
+                    });
+  
+                    rollupinternobj.resultsetintern = foundItems.toString();
+                    /* subtotal horizontal*/
+                    colset = logiblock.map((doctor) => {
+                      return '"' + doctor.xaxis.toString().replace(/\ /g, "") + '"';
+                    });
+                    var subtotal = "(" + colset.join("+") + ") as subtotal";
+                    var selectclause = "yaxis," + colset.join(",");
+  
+                    rollupinternobj.resultsetselect =
+                      subtotal + "," + selectclause;
+  
+                    callback(null, rollupinternobj);
+                  })
+                  .catch((err) => {
+                    res.send(err);
+                  });
+              },
+              (arg1, callback) => {
+                // console.log(arg1);
+                let sqlConstructParams = {
+                  tempDep,
+                  arg1,
+                  mod,
+                };
+                sqlstatepivot = sqlConstruct[a.type][a.SqlPivot](
+                  sqlConstructParams
+                );
+                console.log("--------base--------------")
+                console.log(sqlstatepivot)
+                connections
+                  .query(sqlstatepivot)
+                  .then((result) => {
+                    var logiblock = result.rows;
+  
+                    callback(null, logiblock);
+                  })
+                  .catch((err) => {
+                    res.send(err);
+                  });
+              },
+            ],
+            (err, result) => {
+              internset.rows = result;
+  
+              resolve(internset);
+              // result now equals 'done'
+            }
+          );
+        } finally {
+        }
+      }
+    );
+  
+  
+  })
+  
+};
 Array.prototype.arrayRemove = function (value) {
   return this.filter(function (ele) {
     return ele != value;
@@ -2092,4 +2287,5 @@ module.exports = {
   searchtypePerf,
   pageRender,
   pageRenderObj,
+  isPivotCache
 };
