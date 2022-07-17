@@ -290,6 +290,11 @@
  <details>
  <summary id="release-section">🍫 Releases</summary><blockquote>
 
+- ### `Release notes 17 July 2022`
+
+  >Implemented Redis based Server-Side Caching for Pivot Operations  
+
+
 - ### `Release notes 1 July 2022`
 
 > **Superadmin scaffolding/ boilerplate Access URL**
