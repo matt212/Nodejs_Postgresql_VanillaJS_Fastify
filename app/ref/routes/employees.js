@@ -169,7 +169,17 @@ async function routes (fastify, options) {
     },
     async (request, reply) => {
       dep.assignVariables(mod)
-      dep.pivotResult(request, reply, mod)
+      //dep.pivotResult(request, reply, mod)
+      dep
+        .isPivotCache(request, reply, mod)
+        .then(arg => {
+          reply.code = 200
+          
+          reply.send(arg)
+        })
+        .catch(function (error) {
+          reply.code(400).send(error.trim())
+        })
     }
   )
   fastify.post(
