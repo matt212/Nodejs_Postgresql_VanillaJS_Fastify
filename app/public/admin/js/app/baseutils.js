@@ -21,6 +21,22 @@ $(function () {
         .text('consolidated result')
     }
   })
+  //dark theme 
+  $('#tooglecheck6 input').change(function () {
+    if ($(this).is(':checked')) {
+      $(this)
+        .next()
+        .text('dark theme ON')
+        darkMode()
+    } else {
+      $(this)
+        .next()
+        .text('dark theme OFF')
+        lightMode()
+    }
+  })
+  iconsload()
+  //darkt theme end
   $('#tooglecheck2 input').change(function () {
     if ($(this).is(':checked')) {
       $(this)

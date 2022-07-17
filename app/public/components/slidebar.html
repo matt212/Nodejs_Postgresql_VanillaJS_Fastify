@@ -20,6 +20,7 @@
               <i class="fa fa-flag-o"></i>
               <span class="label label-warning" id="uploadsave" style="display: none;">1</span>
             </a>
+          </li>
         <ul class="dropdown-menu">
             <li class="header" style="display: none;">You have 10 notifications</li>
             <!-- Task item -->
@@ -67,7 +68,58 @@
                 </li>
               -->
                     </ul>
-        </div>
+        
+                    <li class="dropdown tasks-menu notification-alignment" >
+                      <a  class="dropdown-toggle"  >
+                        
+                        <label id="tooglecheck6" class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-4">
+                          <input type="checkbox" id="switch-4" class="mdl-switch__input" />
+                          <span class="mdl-switch__label"></span>
+                        </a>
+                      </label>
+</li>
+    <script>
+      
+      function iconsload()
+      {
+        $('a[href$="sales-chart"] img').addClass("fa fa-server")
+        $('a[href$="sales-chart"] img').removeAttr("src")
+
+        $('a[href$="revenue-chart"] img').addClass("fa fa-table")
+        $('a[href$="revenue-chart"] img').removeAttr("src")
+
+        $('a[href$="module-chart"] img').addClass("fa fa-chart-area")
+        $('a[href$="module-chart"] img').removeAttr("src")
+
+        $('a[href$="module-3dchart"] img').addClass("fa fa-chart-bar")
+        $('a[href$="module-3dchart"] img').removeAttr("src")
+
+        $('a[href$="module-pie-chart"] img').addClass("fa fa fa-chart-pie")
+        $('a[href$="module-pie-chart"] img').removeAttr("src")
+
+        
+      }
+      function darkMode() {
+        var element = document.body;
+        var content = document.getElementById("DarkModetext");
+        element.className = "dark-mode";
+        $(".sidebar-toggle").click()
+        $('body').addClass("sidebar-mini")
+        
+        
+      }
+      function lightMode() {
+        var element = document.body;
+        var content = document.getElementById("DarkModetext");
+        element.className = "light-mode";
+        $(".sidebar-toggle").click()
+        $('body').addClass("sidebar-mini")
+       
+      }
+    </script>    
+                        
+        
+                  </div>
     </nav>
 </header>
 <!-- Left side column. contains the logo and sidebar -->
