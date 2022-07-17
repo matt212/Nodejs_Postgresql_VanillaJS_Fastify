@@ -50,9 +50,10 @@
 
              ajaxbase.payload = base.datapayload
              ajaxbase.url = baseurlobj.getpaginatesearchtypegroupby;
-
+             $('.fieldsfilterbar').addClass('loading')
              return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
                  ajaxbase.response = argument;
+                 $('.fieldsfilterbar').removeClass('loading')
                  return argument;
              })
 
