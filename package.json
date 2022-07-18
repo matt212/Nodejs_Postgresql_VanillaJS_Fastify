@@ -71,6 +71,7 @@
     "mroleEval": "mocha ./app/utils/test/mrole-test.spec.js --timeout 10000 --exit",
     "userroleEval": "mocha ./app/utils/test/userrole-test.spec.js --timeout 10000 --exit",
     "app": "cd ./app/utils && node app.js",
+    "node-eval": "cd ./app/utils && node node-eval.js",
     "perfapp": "cd ./app/utils && node --prof app.js",
     "cluster": "node ./app/utils/cluster.js",
     "docker-run": "docker-compose up --build",
