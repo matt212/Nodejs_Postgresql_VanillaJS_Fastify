@@ -68,7 +68,7 @@ jobs:
       uses: tj-actions/pg-restore@v4.5
       with:
           database_url: "postgres://postgres:abc123@localhost:5432/demodb"
-          backup_file: "./app/utils/dbDump/createDB.sql"
+          backup_file: "./app/utils/dbDump/dump-demodb-202207190131.sql"
           options: "-O"  
           
     #- run: npm run node-eval
