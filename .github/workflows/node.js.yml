@@ -30,3 +30,7 @@ jobs:
           
     - run: npm run node-eval
       working-directory: ./
+     # Workaround to avoid "Post Run actions/setup-node" failures.
+      # See: https://github.com/actions/setup-node/issues/317  
+    - run: mkdir -p /home/runner/.npm
+      continue-on-error: true
