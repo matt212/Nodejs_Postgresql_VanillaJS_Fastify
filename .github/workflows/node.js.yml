@@ -54,6 +54,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     
     
     steps:
@@ -63,15 +64,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    
+    - name: Run database backup restore test    
+      uses: tj-actions/pg-restore@v4.5
+      with:
+          database_url: "postgres://postgres:abc123@localhost:5432/demodb"
+          backup_file: "./app/utils/dbDump/backup.dump" 
           
     #- run: npm run node-eval
     #  working-directory: ./
     
     - run: npm install  
-    
-    - run: npm run createDB
-    - run: npm run pgRestore
     
     - run : npm run LoginEval
 
