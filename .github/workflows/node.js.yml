@@ -67,8 +67,14 @@ jobs:
           
     #- run: npm run node-eval
     #  working-directory: ./
+    - name : install dependencies
     - run: npm install  
-    - run: npm run LoginEval
+    - name : create db and restore db
+    - run: npm run createDB
+    - run: npm run pgRestore
+    - name : run login module Mocha test cases
+    - run : npm run LoginEval
+
         
      # Workaround to avoid "Post Run actions/setup-node" failures.
       # See: https://github.com/actions/setup-node/issues/317  
