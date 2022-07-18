@@ -67,12 +67,12 @@ jobs:
           
     #- run: npm run node-eval
     #  working-directory: ./
-    - name : install dependencies
+    
     - run: npm install  
-    - name : create db and restore db
+    
     - run: npm run createDB
     - run: npm run pgRestore
-    - name : run login module Mocha test cases
+    
     - run : npm run LoginEval
 
         
