@@ -8,8 +8,7 @@
 <link rel="stylesheet" href="../../vdashboard/bower_components/bootstrap/dist/css/bootstrap.min.css">
 <!-- Font Awesome -->
 <link rel="stylesheet" href="../../vdashboard/bower_components/font-awesome/css/font-awesome.min.css">
-<link rel="stylesheet" href=
-"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.css">
 </link>
 <!-- Ionicons -->
 <!-- <link rel="stylesheet" href="../../vdashboard/bower_components/Ionicons/css/ionicons.min.css"> -->
@@ -45,9 +44,9 @@
     let applyfields = "<%= applyfields %>";
     applyfields = JSON.parse(applyfields.replace(/\&#34;/g, '"'))
 /*console.log(JSON.stringify(applyfields))
-    console.log(JSON.stringify(validationmap))
-    console.log(JSON.stringify(moduleattributes))
-    */
+        console.log(JSON.stringify(validationmap))
+        console.log(JSON.stringify(moduleattributes))
+        */
     /*
     applyfields=["first_name","last_name","gender","birth_date"]
     validationmap=[{"inputname":"first_name","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"80"},{"inputname":"last_name","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"80"},{"inputname":"gender","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"1"},{"inputname":"birth_date","fieldtypename":"DATE","fieldvalidatename":"date","fieldmaxlength":"10"}]
@@ -80,128 +79,126 @@
 <body class="hold-transition skin-blue sidebar-mini sidebar-collapse">
     <!--     <script src="../../admin/js/alasql.min.js"></script> -->
     <style type="text/css">
-        .dark-mode .content-wrapper
-        {
+        .dark-mode .content-wrapper {
             background-color: black;
-        color: #ff4081 !important;
+            color: #ff4081 !important;
         }
-        .dark-mode .content .box.box-default 
-        {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode .box .box-header .box-title
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode .btn.btn-box-tool
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode .navbar.navbar-static-top
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode .select2-selection.select2-selection--single
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode .select2-selection__rendered
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode #reservation
-      {
-        background-color: black;
-        color: #ff4081 !important;
-        text-align: center;
-      }
-      .dark-mode .nav.nav-tabs.pull-right
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode .pull-left.header
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      }
-      .dark-mode .nav-tabs-custom>.nav-tabs>li>a
-      {
-      
-        background-color: black;
-        color: #ff4081 !important;
-      
-      }
-      .dark-mode .box-header
-      {
-        background-color: black;
-      }
-      .dark-mode .nav-tabs
-      {
-        border-bottom: 0px !important;
-      }
-      .dark-mode .select2-selection__rendered
-      {
-        margin: -5px 0px 0px 0px
 
-      }
-      .dark-mode .select2-selection.select2-selection--single
-      {
-        margin: 2px 0 0 0;
-        height: 36px;
+        .dark-mode .content .box.box-default {
+            background-color: black;
+            color: #ff4081 !important;
+        }
 
-      }
-      .dark-mode .table-bordered.table-striped.dataTable tr
-      {
-        background-color: black;
-        color: #ff4081 !important;
-      
-      }
-      .dark-mode #dvcontainerpivot
-      {
-        background-color:darkslategrey;
-        color: #ff4081 !important;
-      
-      }
-      .dark-mode .box-body
-      {
-        background-color:darkslategrey;
-        color: #ff4081 !important;
-      
-      }
-      .dark-mode #inppagesize
-      {
-        background-color:darkslategrey;
-        color: #ff4081 !important;
-      
-      }
-      .dark-mode .sectionpaging.pagingsectionparent
-      {
-        background-color:darkslategrey;
-        color: #ff4081 !important;
-      
-      }
-      
-      .dark-mode .table-bordered.table-striped.dataTable th
-      {
-        background-color:gold;
-        color: #ff4081 !important;
-      }
+        .dark-mode .box .box-header .box-title {
+            background-color: black;
+            color: #ff4081 !important;
+        }
 
-      
-      
-      
+        .dark-mode .btn.btn-box-tool {
+            background-color: black;
+            color: #ff4081 !important;
+        }
 
-      .light-mode > *  {
-        background-color: white;
-        color: black;
-      }
+        .dark-mode .navbar.navbar-static-top {
+            background-color: black;
+            color: #ff4081 !important;
+        }
+
+        .dark-mode .select2-selection.select2-selection--single {
+            background-color: black;
+            color: #ff4081 !important;
+        }
+
+        .dark-mode .select2-selection__rendered {
+            background-color: black;
+            color: #ff4081 !important;
+        }
+
+        .dark-mode #reservation {
+            background-color: black;
+            color: #ff4081 !important;
+            text-align: center;
+        }
+
+        .dark-mode .nav.nav-tabs.pull-right {
+            background-color: black;
+            color: #ff4081 !important;
+        }
+
+        .dark-mode .pull-left.header {
+            background-color: black;
+            color: #ff4081 !important;
+        }
+
+        .dark-mode .nav-tabs-custom>.nav-tabs>li>a {
+
+            background-color: black;
+            color: #ff4081 !important;
+
+        }
+
+        .dark-mode .box-header {
+            background-color: black;
+        }
+
+        .dark-mode .nav-tabs {
+            border-bottom: 0px !important;
+        }
+
+        .dark-mode .select2-selection__rendered {
+            margin: -5px 0px 0px 0px
+        }
+
+        .dark-mode .select2-selection.select2-selection--single {
+            margin: 2px 0 0 0;
+            height: 36px;
+
+        }
+
+        .dark-mode .table-bordered.table-striped.dataTable tr {
+            background-color: black;
+            color: #ff4081 !important;
+
+        }
+
+        .dark-mode #dvcontainerpivot {
+            background-color: darkslategrey;
+            color: #ff4081 !important;
+
+        }
+
+        .dark-mode .box-body {
+            background-color: darkslategrey;
+            color: #ff4081 !important;
+
+        }
+
+        .dark-mode #inppagesize {
+            background-color: darkslategrey;
+            color: #ff4081 !important;
+
+        }
+
+        .dark-mode .sectionpaging.pagingsectionparent {
+            background-color: darkslategrey;
+            color: #ff4081 !important;
+
+        }
+
+        .dark-mode .table-bordered.table-striped.dataTable th {
+            background-color: gold;
+            color: #ff4081 !important;
+        }
+
+
+
+
+
+        .light-mode>* {
+            background-color: white;
+            color: black;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -361,7 +358,7 @@
             background-size: 50px 50px;
             content: "";
             background-color: rgb(15 209 191 / 10%);
-border-radius: 25px;
+            border-radius: 25px;
             border: 2px solid #0bc8e7;
             padding: 20px;
         }
@@ -398,7 +395,7 @@ border-radius: 25px;
             filter: alpha(opacity=45);
             background-image: url(../vdashboard/plugins/progress/loader.svg);
             background-repeat: no-repeat;
-            background-color: rgba(0, 0, 0, 0.1);
+            /*background-color: rgba(0, 0, 0, 0.1);*/
             background-position: top center;
             position: absolute;
             min-height: 100vh;
@@ -406,15 +403,23 @@ border-radius: 25px;
             z-index: 10;
             /*top: 52%;*/
             /*left: 39%;*/
+            background-color: rgb(15 209 191 / 10%);
+            border-radius: 25px;
+            border: 2px solid #0bc8e7;
+            padding: 20px;
         }
 
         .loading-report-container {
             background-image: url(../vdashboard/plugins/progress/loader.svg);
             background-repeat: no-repeat;
-            background-color: rgba(0, 0, 0, 0.1);
+            /*background-color: rgba(0, 0, 0, 0.1);*/
             background-position: top center;
             position: relative;
             z-index: 1;
+            background-color: rgb(15 209 191 / 10%);
+            border-radius: 25px;
+            border: 2px solid #0bc8e7;
+            padding: 20px;
         }
 
         th,
@@ -675,6 +680,6 @@ border-radius: 25px;
             $('#page-selection-yaxis').bootpag();
         })
     /*
-        [ { "inputtype": "textbox", "inputname": "name", "inputplaceholder": "please enter name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "last name", "inputplaceholder": "please enter last name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "age", "inputplaceholder": "please enter age", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "100" }, { "inputtype": "textbox", "inputname": "mobile", "inputplaceholder": "please mobile no", "fieldtypename": "INTEGER", "fieldvalidatename": "mobile", "fieldmaxlength": "80" } ]
-        */
+            [ { "inputtype": "textbox", "inputname": "name", "inputplaceholder": "please enter name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "last name", "inputplaceholder": "please enter last name", "fieldtypename": "STRING", "fieldvalidatename": "string", "fieldmaxlength": "80" }, { "inputtype": "textbox", "inputname": "age", "inputplaceholder": "please enter age", "fieldtypename": "INTEGER", "fieldvalidatename": "number", "fieldmaxlength": "100" }, { "inputtype": "textbox", "inputname": "mobile", "inputplaceholder": "please mobile no", "fieldtypename": "INTEGER", "fieldvalidatename": "mobile", "fieldmaxlength": "80" } ]
+            */
     </script>
