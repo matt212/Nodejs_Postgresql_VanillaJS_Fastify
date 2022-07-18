@@ -69,7 +69,7 @@ jobs:
       working-directory: ./
     - run: npm install
       working-directory: ./  
-    - run: npm run ModuleEval
+    - run: npm run LoginEval
         
      # Workaround to avoid "Post Run actions/setup-node" failures.
       # See: https://github.com/actions/setup-node/issues/317  
