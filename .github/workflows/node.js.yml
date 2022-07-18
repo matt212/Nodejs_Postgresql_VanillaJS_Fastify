@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci 
-      working-directory: ../    
+    
+          
     - run: npm run node-eval
       working-directory: ../    
