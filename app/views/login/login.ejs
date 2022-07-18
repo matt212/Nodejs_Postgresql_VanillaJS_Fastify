@@ -402,9 +402,8 @@ if(error!=null)
           <input type="password" name="password" id="txtpass" />
       </md-input-container>
       <div class="group">
-        <div>
+        <div class="btnsubmit">
           <button class="button buttonBlue" onkeypress="validatelogin();"  type="submit">Submit </button>
-
 
         </div>
         <div class="alert alert-info alert-dismissible fade show" id="dvmessages" style="display: none;">
@@ -415,6 +414,17 @@ if(error!=null)
 
       </div>
       <script>
+        var div = document.querySelector('div.btnsubmit');
+["click", "keypress"].forEach(ev=>{
+  div.addEventListener(ev, function(e){
+     if(ev=="click"){
+      validatelogin()//clicked
+     }
+     if(e.keyCode==13){
+      validatelogin()//enter key pressed
+     }
+  });
+});
         function validatelogin() {
 
           var txtname = $("#txtname").val()
