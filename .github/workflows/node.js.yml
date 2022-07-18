@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14]
+        node-version: [14.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        
+    - run: npm ci 
+      working-directory: ../    
     - run: npm run node-eval
-    
+      working-directory: ../    
