@@ -1,7 +1,7 @@
 let genSpecs = require('./Generic.spec.js')
-let l1=genSpecs.metaTestcaseGen("employees");
-testbase=l1.a
-validationConfig=l1.b
+let l1 = genSpecs.metaTestcaseGen("employees");
+testbase = l1.a
+validationConfig = l1.b
 
 describe('Begin Tests', function () {
   before(function (done) {
@@ -12,7 +12,7 @@ describe('Begin Tests', function () {
     })
   })
   after(function (done) {
-    
+
     genSpecs.dataCleanUp(testbase).then(function () {
       done()
     })
@@ -65,7 +65,7 @@ describe('Begin Tests', function () {
             )
           } else if (fieldtype == 'date') {
             data.body.message.should.equal(
-              `body.${entry.key} should match format "date-time"`
+              `body.${entry.key} should match format "date"`
             )
           } else if (fieldtype == 'number') {
             data.body.message.should.equal(
@@ -110,7 +110,7 @@ describe('Begin Tests', function () {
             )
           } else if (fieldtype.fieldtypename == 'DATE') {
             data.body.message.should.equal(
-              `body.${entry.key} should match format "date-time"`
+              `body.${entry.key} should match format "date"`
             )
           } else if (fieldtype.fieldtypename == 'INTEGER') {
             data.body.message.should.equal(
@@ -378,7 +378,21 @@ describe('Begin Tests', function () {
                   .expect(parseInt(data.body.rows[0][entry]))
                   .to.equal(interimval)
               } else {
-                genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+                let j = validationConfig.validationmap.filter(
+                  o => o.fieldvalidatename == "date"
+                ).filter(
+                  o => o.inputname == entry
+                )
+
+                if (j.length > 0) {
+                  var interimdate = new Date(data.body.rows[0][entry]);
+                  console.log(interimdate.toLocaleDateString('en-ca'))
+                  console.log(interimval)
+                  genSpecs.expect(interimdate.toLocaleDateString('en-ca')).to.equal(interimval)
+                } else {
+                  genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+                }
+
               }
             })
           })
@@ -429,16 +443,16 @@ describe('Begin Tests', function () {
       })
     })
   })
-  
+
   describe('****************Consolidated Search Across all column except auto generated dates and boolean Test Cases****************', function () {
     it(`Consolidated ResultSet Search working as expected`, function () {
       testbase = genSpecs
         .consolidatedPayload()
         .payload20(testbase, evalModulename, validationConfig)
-//file :dependentvariable line no :1116 parameter : console.log(sqlstatementsprimary) 
-//console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
+      //file :dependentvariable line no :1116 parameter : console.log(sqlstatementsprimary) 
+      //console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
       return genSpecs.genericApiPost(testbase).then(function (data) {
-        
+
         genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
       })
     })
@@ -551,5 +565,5 @@ describe('Begin Tests', function () {
       })
     })
   })
-  
+
 })

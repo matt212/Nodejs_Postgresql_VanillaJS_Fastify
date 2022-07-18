@@ -63,7 +63,7 @@ function makeidnumber (length) {
 function getCurrentDate () {
   var now = new Date()
 
-  var redlime = now.toISOString()
+  var redlime = now.toLocaleDateString('en-ca')
   return redlime
 }
 
