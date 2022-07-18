@@ -1,3 +1,7 @@
+### Badges
+[![Node.js Postgres Vanilla Fastify CI](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/node.js.yml/badge.svg)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/node.js.yml)
+
+### Tech stacks
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
