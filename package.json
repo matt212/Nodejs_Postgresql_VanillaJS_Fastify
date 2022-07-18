@@ -25,6 +25,7 @@
     "fastify-secure-session": "^2.3.1",
     "fastify-socket.io": "^1.0.2",
     "fastify-static": "^4.0.1",
+    "glob-parent": "^6.0.2",
     "ioredis": "^4.24.5",
     "js-beautify": "^1.13.5",
     "js-yaml": "^4.0.0",
