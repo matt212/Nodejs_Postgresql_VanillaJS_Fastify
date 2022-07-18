@@ -25,6 +25,9 @@ let loginsuccess=function(cred)
       .expect(200)
       .end(function (err, res) {
         if (err) {
+          console.log("************************************************************")
+          console.log(err)
+          console.log("************************************************************")
           resolve({status:'fail',content:err})
           //return done(err)
         }

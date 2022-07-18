@@ -65,8 +65,8 @@ jobs:
         cache: 'npm'
     
           
-    - run: npm run node-eval
-      working-directory: ./
+    #- run: npm run node-eval
+    #  working-directory: ./
     - run: npm install  
     - run: npm run LoginEval
         
