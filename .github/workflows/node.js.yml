@@ -70,7 +70,7 @@ jobs:
     - run: npm install
       working-directory: ./  
     - run: npm run ModuleEval
-      working-directory: ./  
+        
      # Workaround to avoid "Post Run actions/setup-node" failures.
       # See: https://github.com/actions/setup-node/issues/317  
     - run: mkdir -p /home/runner/.npm
