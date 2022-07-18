@@ -50,6 +50,8 @@ describe('login', function () {
       {
         done("fail")
       }
+    }).catch(function(e) {
+      console.log(e)
     })
     
   })
