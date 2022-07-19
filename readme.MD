@@ -209,7 +209,7 @@
  <blockquote>
  <br/>
 <details>
-    <summary >🍇 Dynamic pivot operation with highchart implementation(Redis Cached)
+    <summary>🍇 Dynamic pivot operation from Postgres with highchart implementation (Redis Cached)
 </summary>
  <br/>
 
