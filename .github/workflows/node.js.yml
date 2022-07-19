@@ -64,7 +64,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Run database backup restore test    
+    - name: run Postgresql database restore     
       uses: tj-actions/pg-restore@v4.5
       with:
           database_url: "postgres://postgres:abc123@localhost:5432/demodb"
@@ -73,10 +73,10 @@ jobs:
           
     #- run: npm run node-eval
     #  working-directory: ./
-    
-    - run: npm install  
-    
-    - run : npm run LoginEval
+    - name: run Postgresql database restore
+      run: npm install  
+    - name: run login module mocha test cases
+      run : npm run LoginEval
 
         
      # Workaround to avoid "Post Run actions/setup-node" failures.
