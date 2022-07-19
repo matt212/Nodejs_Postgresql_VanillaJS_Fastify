@@ -69,8 +69,7 @@ jobs:
           backup_file: "./app/utils/dbDump/dump-demodb-202207190259.sql"
           options: "-O"
 
-      #- run: npm run node-eval
-      #  working-directory: ./
+      
       - name: install dependencies
         run: npm install
       - name: update ORM to DB
