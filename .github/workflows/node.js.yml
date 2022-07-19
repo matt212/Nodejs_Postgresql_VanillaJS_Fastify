@@ -77,7 +77,8 @@ jobs:
       run: npm install  
     - name: Eval login module mocha test cases
       run : npm run LoginEval
-
+    - name: Eval Employees mocha test cases
+      run : npm run ModuleEval
         
      # Workaround to avoid "Post Run actions/setup-node" failures.
       # See: https://github.com/actions/setup-node/issues/317  
