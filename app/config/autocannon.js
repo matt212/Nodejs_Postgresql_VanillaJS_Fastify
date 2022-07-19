@@ -1,25 +1,19 @@
 const autocannon = require('autocannon')
-var redlime={
-	"searchparam": ["NA"],
-	"daterange": {
-		"startdate": "1982-12-30",
-		"enddate": "2019-01-29"
-	},
-	"colsearch": "createdAt",
-	"datecolsearch": "birth_date",
-	"pageno": 0,
-  "pageSize": 20,
-  "searchtype": 'NoFilter'
-}
+var count=0
+var redlime={"daterange":{"startdate":"1982-06-19","enddate":"2022-07-19"},"searchtype":"NoFilter","datecolsearch":"created_date","searchparam":["NA"],"pageno":0,"pageSize":20};
+
 const instance = autocannon({
-    url: 'http://localhost:3011/employees/api/load/',
-    connections: 100, 
-     pipelining: 10, 
-    duration: 50, 
+    url: 'http://localhost:3011/employees/api/searchtype/',
+    connections: 10, 
+    pipelining: 1, 
+    duration: 60,
+    
+    
     method:"POST",
     debug:true,
-    headers: {"Content-Type": "application/json", 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJiYXNlIjoibG9jYWxob3N0OjMwMTEiLCJpYXQiOjE2MDg0MDU0ODB9.n8CU3Gz5DmwSrm2wWTjQmTU3Xals6vWbMVG3bk9hyLs'},
+    headers: {"Content-Type": "application/json", 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTgyNjYwNDd9.-rURewao6iwOXP7AnE0BFdQVpafb3WSzNxlX8C-kS6k'},
     body: JSON.stringify(redlime),
+    verifyBody: verifyBody,
   }, (err, result) => {
     console.log("----------Error-----------");
       console.log(err);
@@ -29,13 +23,19 @@ const instance = autocannon({
 instance.on('done', handleResults)
 
 
-
 instance.on('response', handleResponse)
+instance.on('verifyBody', verifyBody)
+function verifyBody(data)
+{
+  //console.log(data)
+  console.log("on track--------------------"+JSON.parse(data).count)
+  return (JSON.parse(data).count==="2088290")
+}
 function handleResults(data)
 {
     
     // console.log("--------------------------")
-    // //console.log(data)
+    //console.log(data)
     // //console.log(data.url)
     console.log("errors :"+data.errors)
     console.log("timeouts : "+data.timeouts)
@@ -50,8 +50,9 @@ function handleResults(data)
     
 }
 function handleResponse (client, statusCode, resBytes, responseTime) {
-   //console.log(JSON.parse(client.resData[0].body));
-  // console.log(`Got response with code ${statusCode} in ${responseTime} milliseconds`)
+   
+  
+   //console.log(`Got response with code ${statusCode} in ${responseTime} milliseconds`)
    //console.log(`response: ${resBytes.toString()}`)
   
     //update the body or headers
