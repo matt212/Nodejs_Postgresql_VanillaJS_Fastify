@@ -34,7 +34,7 @@ jobs:
         env:
           POSTGRES_DB: ${{ matrix.database-name }}
           POSTGRES_USER: ${{ matrix.database-user }}
-          POSTGRES_PASSWORD: ${{ matrix.database-password }}
+          POSTGRES_PASSWORD: ::add-mask::${{ matrix.database-password }}
         ports:
           - 5432:5432
         # Set health checks to wait until postgres has started
