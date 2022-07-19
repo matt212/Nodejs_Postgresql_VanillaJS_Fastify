@@ -75,6 +75,8 @@ jobs:
     #  working-directory: ./
     - name: install dependencies
       run: npm install  
+    - name: update ORM to DB
+      run : npm run applychangesDB
     - name: Eval login module mocha test cases
       run : npm run LoginEval
     - name: Eval Employees mocha test cases
