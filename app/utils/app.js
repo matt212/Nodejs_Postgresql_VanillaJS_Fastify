@@ -7,7 +7,7 @@ const fastify = require("fastify")({
     plugins: [[require("ajv-keywords"), ["transform"]]],
   },
 });
-fastify.register(require("fastify-multipart"));
+fastify.register(require("@fastify/multipart"));
 
 fastify.register(
   require("fastify-compress"),
