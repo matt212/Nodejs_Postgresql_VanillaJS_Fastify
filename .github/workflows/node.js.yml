@@ -73,9 +73,9 @@ jobs:
           
     #- run: npm run node-eval
     #  working-directory: ./
-    - name: run Postgresql database restore
+    - name: install dependencies
       run: npm install  
-    - name: run login module mocha test cases
+    - name: Eval login module mocha test cases
       run : npm run LoginEval
 
         
