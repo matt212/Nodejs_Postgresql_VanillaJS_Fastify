@@ -44,7 +44,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           let fieldtype = ''
-          console.log(entry.key)
+          
 
           if (
             validationConfig.validationmap[0].hasOwnProperty('inputtextval')
@@ -95,7 +95,7 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload1(testbase, entry, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          console.log(entry.key)
+          
           if (
             validationConfig.validationmap[0].hasOwnProperty('inputtextval')
           ) {
