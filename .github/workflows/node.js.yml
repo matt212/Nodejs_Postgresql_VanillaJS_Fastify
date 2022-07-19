@@ -5,28 +5,27 @@ name: Node.js Postgres Vanilla Fastify CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [14.x]
         database-name:
-        - demodb
+          - demodb
         database-password:
-        - abc123
+          - abc123
         database-user:
-        - postgres
+          - postgres
         database-host:
-        - 127.0.0.1
+          - 127.0.0.1
         database-port:
-        - 5432
+          - 5432
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     services:
       postgres:
@@ -34,12 +33,11 @@ jobs:
         env:
           POSTGRES_DB: ${{ matrix.database-name }}
           POSTGRES_USER: ${{ matrix.database-user }}
-          POSTGRES_PASSWORD: ::add-mask::${{ matrix.database-password }}
+          POSTGRES_PASSWORD: ${{ matrix.database-password }}
         ports:
           - 5432:5432
         # Set health checks to wait until postgres has started
-        options:
-          --health-cmd pg_isready
+        options: --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -48,7 +46,7 @@ jobs:
         image: redis
         # Set health checks to wait until redis has started
         ports:
-          - 6379:6379  
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -56,33 +54,33 @@ jobs:
           --health-retries 5
 
     name: Login and Employees mocha automation test cases
-    
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: run Postgresql database restore     
-      uses: tj-actions/pg-restore@v4.5
-      with:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: run Postgresql database restore
+        uses: tj-actions/pg-restore@v4.5
+        with:
           database_url: "postgres://postgres:abc123@localhost:5432/demodb"
           backup_file: "./app/utils/dbDump/dump-demodb-202207190259.sql"
-          options: "-O"  
-          
-    #- run: npm run node-eval
-    #  working-directory: ./
-    - name: install dependencies
-      run: npm install  
-    - name: update ORM to DB
-      run : npm run applychangesDB
-    - name: Eval login module mocha test cases
-      run : npm run LoginEval
-    - name: Eval Employees mocha test cases
-      run : npm run ModuleEval
-        
-     # Workaround to avoid "Post Run actions/setup-node" failures.
-      # See: https://github.com/actions/setup-node/issues/317  
-    - run: mkdir -p /home/runner/.npm
-      continue-on-error: true
+          options: "-O"
+
+      #- run: npm run node-eval
+      #  working-directory: ./
+      - name: install dependencies
+        run: npm install
+      - name: update ORM to DB
+        run: npm run applychangesDB
+      - name: Eval login module mocha test cases
+        run: npm run LoginEval
+      - name: Eval Employees mocha test cases
+        run: npm run ModuleEval
+
+        # Workaround to avoid "Post Run actions/setup-node" failures.
+        # See: https://github.com/actions/setup-node/issues/317
+      - run: mkdir -p /home/runner/.npm
+        continue-on-error: true
