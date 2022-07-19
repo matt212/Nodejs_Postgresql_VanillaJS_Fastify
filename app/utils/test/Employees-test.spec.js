@@ -45,7 +45,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           let fieldtype = ''
-          console.log(entry.key)
+          
 
           if (
             validationConfig.validationmap[0].hasOwnProperty('inputtextval')
@@ -92,7 +92,7 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload1(testbase, entry, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          console.log(entry.key)
+          
           if (
             validationConfig.validationmap[0].hasOwnProperty('inputtextval')
           ) {
@@ -386,8 +386,7 @@ describe('Begin Tests', function () {
 
                 if (j.length > 0) {
                   var interimdate = new Date(data.body.rows[0][entry]);
-                  console.log(interimdate.toLocaleDateString('en-ca'))
-                  console.log(interimval)
+                  
                   genSpecs.expect(interimdate.toLocaleDateString('en-ca')).to.equal(interimval)
                 } else {
                   genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)

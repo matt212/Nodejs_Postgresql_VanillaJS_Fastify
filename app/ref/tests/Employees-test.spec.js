@@ -381,7 +381,21 @@ describe('Begin Tests', function () {
                   .expect(parseInt(data.body.rows[0][entry]))
                   .to.equal(interimval)
               } else {
-                genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+                let j = validationConfig.validationmap.filter(
+                  o => o.fieldvalidatename == "date"
+                ).filter(
+                  o => o.inputname == entry
+                )
+
+                if (j.length > 0) {
+                  var interimdate = new Date(data.body.rows[0][entry]);
+                  
+                  genSpecs.expect(interimdate.toLocaleDateString('en-ca')).to.equal(interimval)
+                } else {
+                  genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+                }
+
+
               }
             })
           })
