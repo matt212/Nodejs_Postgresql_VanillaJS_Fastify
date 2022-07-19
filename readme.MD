@@ -237,7 +237,7 @@
  <summary >🍐 Basic dashboard operation</summary>
 <br/>
 
-![redlime](app/video/gif/final-dashboard-walkthrough.gif)
+![redlime](app/video/gif/basic-dashboard.gif)
 </details>
 <br/>
 <details>
