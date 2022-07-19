@@ -82,5 +82,6 @@ jobs:
 
         # Workaround to avoid "Post Run actions/setup-node" failures.
         # See: https://github.com/actions/setup-node/issues/317
-      - run: mkdir -p /home/runner/.npm
+      - name: github action bug- Workaround to avoid "Post Run actions/setup-node" failures
+        run: mkdir -p /home/runner/.npm
         continue-on-error: true
