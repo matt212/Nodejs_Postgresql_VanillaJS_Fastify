@@ -213,7 +213,7 @@
 </summary>
  <br/>
 
-![redlime](app/video/gif/b2.gif)
+![redlime](app/video/gif/pivot-final.gif)
 </details>
 
 <br/>
