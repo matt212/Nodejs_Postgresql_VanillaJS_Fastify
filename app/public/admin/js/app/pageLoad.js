@@ -25,12 +25,18 @@ let baseloadsegments = {
           //console.log(argument);
   
           htmlpopulate.htmlpopulatetable(argument)
-          basepagination.bootpagination(argument)
+          
   
           if ($('#dvreportcontainer').hasClass('collapsed-box')) {
             $('#rptwidget').click()
           }
           $('#dvreportcontainer').removeClass('loading-report-container')
+          basefunction().getpaginatesearchtypeCount(base).then(function(argument) {
+ 
+            htmlpopulate.htmltablecount(argument);
+            //basepagination.bootpagination(argument)
+            //;               
+                            })
         })
       /* var data = angular
            .element(document.querySelector('[ng-controller="baseController"]'))
