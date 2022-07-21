@@ -1,3 +1,4 @@
+redis-cli flushall
 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
 for readmes table generaor
 
