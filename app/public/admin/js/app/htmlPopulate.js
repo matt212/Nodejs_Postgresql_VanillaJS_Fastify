@@ -1,5 +1,9 @@
 /*Modular html populate content for all modules*/
 let htmlpopulate = {
+  htmltablecount:function(arg)
+  {
+$("#sptotalUsers").html(arg.count)
+  },
   highlightconsolidatesearch: function () {
     var $tableRows = $('#basetable tr')
     var $tableElements = $tableRows.children()
@@ -170,7 +174,8 @@ let htmlpopulate = {
       .remove()
     var baset = arg.rows
     var rcount = arg.count
-    if (rcount > 0) {
+    if (baset.length > 0) {
+      console.log(base.pageno)
       $('#spcurrentPage').html(base.pageno)
       $('#sppageSize').html(base.pageSize)
       $('#sptotalUsers').html(arg.count)

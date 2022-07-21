@@ -27,12 +27,12 @@ $(function () {
       $(this)
         .next()
         .text('dark theme ON')
-        darkMode()
+      darkMode()
     } else {
       $(this)
         .next()
         .text('dark theme OFF')
-        lightMode()
+      lightMode()
     }
   })
   iconsload()
@@ -176,6 +176,10 @@ let reqops = {
         if ($('#dvreportcontainer').hasClass('collapsed-box')) {
           $('#rptwidget').click()
         }
+        basefunction().getpaginatesearchtypeCount(base).then(function (argument) {
+          htmlpopulate.htmltablecount(argument);
+        })
+
       })
   },
   ontdedit: function (arg) {
@@ -301,6 +305,10 @@ let reqops = {
         if ($('#dvreportcontainer').hasClass('collapsed-box')) {
           $('#rptwidget').click()
         }
+        basefunction().getpaginatesearchtypeCount(base).then(function (argument) {
+          htmlpopulate.htmltablecount(argument);
+        })
+
       })
   },
 
@@ -474,6 +482,9 @@ let tableops = {
       .then(function (argument) {
         // console.log(argument);
         htmlpopulate.htmlpopulatetable(argument)
+        basefunction().getpaginatesearchtypeCount(base).then(function (argument) {
+          htmlpopulate.htmltablecount(argument);
+        })
       })
   },
   onchk: function (argument) {

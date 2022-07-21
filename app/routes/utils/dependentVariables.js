@@ -991,6 +991,8 @@ let searchtype = (req, res, a) => {
         searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
           resolve(arg);
         });
+        
+        
         //caching only count since delete of records in any b2b apps is meh !
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
@@ -999,6 +1001,85 @@ let searchtype = (req, res, a) => {
       });
   }));
 };
+
+
+
+
+let searchtypeOptimizedBaseCount = (req, res, a) => {
+  return (promise = new Promise((resolve, reject) => {
+    searchparampayload(req)
+      .then((arg) => {
+        var fieldnames = Object.keys(
+          models[mod.Name].tableAttributes
+        ).map(function(item) { return '"' + item + '"' }).join(',');;
+
+        let sqlConstructParams = {
+          fieldnames,
+          arg,
+          mod,
+        };
+
+        //searchtypeExplain(res, sqlConstructParams, a)
+        /* do not delete function since it fallback to Conventional count*/
+        /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
+          resolve(arg);
+        });*/
+        searchtypeOptimizedCount(res, sqlConstructParams, a).then((arg) => {
+          resolve(arg);
+        });
+        
+        //caching only count since delete of records in any b2b apps is meh !
+        //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+      })
+      .catch(function (error) {
+        reject(error);
+      });
+  }));
+};
+
+
+
+
+
+
+
+
+let searchtypeOptimizedBase = (req, res, a) => {
+  return (promise = new Promise((resolve, reject) => {
+    searchparampayload(req)
+      .then((arg) => {
+        var fieldnames = Object.keys(
+          models[mod.Name].tableAttributes
+        ).map(function(item) { return '"' + item + '"' }).join(',');;
+
+        let sqlConstructParams = {
+          fieldnames,
+          arg,
+          mod,
+        };
+
+        //searchtypeExplain(res, sqlConstructParams, a)
+        /* do not delete function since it fallback to Conventional count*/
+        /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
+          resolve(arg);
+        });*/
+        searchtypeOptimized(res, sqlConstructParams, a).then((arg) => {
+          resolve(arg);
+        });
+        
+        //caching only count since delete of records in any b2b apps is meh !
+        //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+      })
+      .catch(function (error) {
+        reject(error);
+      });
+  }));
+};
+
+
+
+
+
 let searchtypePerf = (req, res, a) => {
   return (promise = new Promise((resolve, reject) => {
     searchparampayload(req)
@@ -1126,6 +1207,88 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
     );
   }));
 };
+
+
+let searchtypeOptimized = (res, sqlConstructParams, a) => {
+  return (promise = new Promise((resolve, reject) => {
+    let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
+      sqlConstructParams
+    );
+
+    let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
+      sqlConstructParams
+    );
+
+    var internset = {};
+    async(
+      {
+        rows: (callback) => {
+          connections
+            .query(sqlstatementsprimary)
+            .then((result) => {
+              //console.log('number:', res.rows[0].number);
+
+              internset.rows = result.rows;
+
+              callback(null, internset.rows);
+            })
+            .catch((err) => {
+              console.log(err);
+              connections.release();
+            });
+        },
+        
+      },
+      (err, results) => {
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+
+        resolve(results);
+      }
+    );
+  }));
+};
+
+
+let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
+  return (promise = new Promise((resolve, reject) => {
+    let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
+      sqlConstructParams
+    );
+
+    let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
+      sqlConstructParams
+    );
+
+    var internset = {};
+    async(
+      {
+        
+        count: (callback) => {
+          let key = mod.Name + "-" + JSON.stringify(arg);
+          //isCacheCount
+          getCount(sqlstatementsecondary).then(function (data) {
+            internset.count = data;
+            callback(null, internset.count);
+          });
+        },
+      },
+      (err, results) => {
+        if (err) {
+          //res.send(err);
+          reject(err);
+        }
+        resolve(results);
+      }
+    );
+  }));
+};
+
+
+
+
 let searchtypeConventional = (res, sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
@@ -2127,7 +2290,7 @@ let routeUrls = {
   exportexcel: "/api/exportexcel/",
   uploadcontent: "/api/uploadcontent/",
   update: "/api/update/",
-  searchtype: ["/api/load/", "/api/searchtype/"],
+  searchtype: ["/api/load/", "/api/searchtype/", "/api/searchtypeCount/"],
   searchtypegroupby: "/api/searchtypegroupby/",
   searchtypegroupbyId: "/api/searchtypegroupbyId/",
   delete: "/api/delete/",
@@ -2259,6 +2422,8 @@ let baseUtilsRoutes = {
   SqlPivot: "SqlPivot",
 };
 module.exports = {
+  searchtypeOptimizedBaseCount,
+  searchtypeOptimizedBase,
   datatransformutils,
   customDestroy,
   deleteHardRecord,

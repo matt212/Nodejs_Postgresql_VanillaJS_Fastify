@@ -76,8 +76,9 @@ async function routes (fastify, options) {
       var req = {}
 
       req.body = request.body
+      //dep.searchtype
       dep
-        .searchtype(req, reply, mod)
+        .searchtypeOptimizedBase(req, reply, mod)
         .then(arg => {
           reply.send(arg)
         })
@@ -86,6 +87,37 @@ async function routes (fastify, options) {
         })
     }
   )
+
+  fastify.post(
+    dep.routeUrls.searchtype[2],
+    {
+      config: dep.cGzip,
+      schema: validatorSchema.searchLoadSchema,
+      preValidation: [fastify.authenticate]
+    },
+    async (request, reply) => {
+      // fastify.log.debug(request.body);
+      dep.assignVariables(mod)
+      var req = {}
+
+      req.body = request.body
+      //dep.searchtype
+      dep
+        .searchtypeOptimizedBaseCount(req, reply, mod)
+        .then(arg => {
+          reply.send(arg)
+        })
+        .catch(function (error) {
+          reply.code(400).send({ status: error.trim() })
+        })
+    }
+  )
+
+
+
+
+
+
   fastify.post(
     dep.routeUrls.searchtypegroupby,
     {
