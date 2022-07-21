@@ -207,7 +207,7 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload7(testbase, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
+         // genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
 
           genSpecs
             .expect(data.body.rows.length)
@@ -411,7 +411,7 @@ describe('Begin Tests', function () {
           var payloadCount = parseInt(
             testbase.schemaBaseValidatorPayloadAr.length
           )
-          genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
+          //genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
           var searchAssert = data.body.rows
           var firstSet = searchAssert.filter(
             word =>
@@ -437,7 +437,8 @@ describe('Begin Tests', function () {
           .payload19(testbase, entry, evalModulename, validationConfig)
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+          
+          genSpecs.expect(parseInt(data.body.rows.length)).to.be.gte(1)
         })
       })
     })
@@ -452,7 +453,7 @@ describe('Begin Tests', function () {
       //console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
       return genSpecs.genericApiPost(testbase).then(function (data) {
 
-        genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+        genSpecs.expect(parseInt(data.body.rows.length)).to.be.gte(1)
       })
     })
   })
