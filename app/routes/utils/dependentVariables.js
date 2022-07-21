@@ -1405,6 +1405,41 @@ let isPivotCache = (req, reply, mod) => {
     });
   });
 };
+
+let isPivotCacheOptimized = (req, reply, mod) => {
+  let tempDep = pivotTransform(req);
+  let key = mod.Name + "-" + JSON.stringify(tempDep);
+  return new Promise((resolve, reject) => {
+    redisMiddleware.redisCount(key, true).then(function (data) {
+      if (data.iscache === true) {
+        console.log()
+        if(data.val=="[object Object]")
+        {
+          redisMiddleware.redisDel(key).then(function (data) {
+            
+            pivotResultCacheOptimized(req, reply, mod).then(function (count) {
+              redisMiddleware.redisCount(key, JSON.stringify(count)).then(function (data) {
+                resolve(count);
+              });
+            });
+
+
+          }); 
+        }
+        resolve(data.val);
+      } else {
+        pivotResultCacheOptimized(req, reply, mod).then(function (count) {
+          redisMiddleware.redisCount(key, JSON.stringify(count)).then(function (data) {
+            resolve(count);
+          });
+        });
+      }
+    });
+  });
+};
+
+
+
 let searchtypegroupbyId = (req, res, a) => {
   let tempDep = paramsSearchTypeGroupBy(req);
   let sqlConstructParams = {
@@ -2266,6 +2301,116 @@ let pivotResultCache = (req, res, a) => {
   })
   
 };
+/////////////////////End pivot cache///////////////////
+
+
+/////////////////////pivot Optimized///////////////////
+let pivotResultCacheOptimized = (req, res, a) => {
+
+  return new Promise((resolve, reject) => {
+  
+    let async = require("async");
+    let tempDep = pivotTransform(req);
+    // Use c as a connection
+    var internset = {};
+    let sqlConstructParams = {
+      tempDep,
+      mod,
+    };
+    var sqlstatepivotcol = "";
+
+    sqlstatepivot = "";
+  
+    sqlstatepivotcol = sqlConstruct[a.type][a.sqlstatepivotcol](
+      sqlConstructParams
+    );
+  
+        var interasyncset = {};
+        var rollupinternobj = {};
+        console.log("--------col--------------")
+        console.log(sqlstatepivotcol)
+        try {
+          async.waterfall(
+            [
+              (callback) => {
+                connections
+                  .query(sqlstatepivotcol)
+                  .then((result) => {
+                    var logiblock = result.rows;
+                    var logiblockrollup = result.rows;
+  
+                    var foundItemsrollup = logiblockrollup.map((doctor) => {
+                      return (
+                        'COALESCE(sum("' +
+                        doctor.xaxis.toString().replace(/\ /g, "") +
+                        '"),0) AS "' +
+                        doctor.xaxis.toString().replace(/\ /g, "") +
+                        '"'
+                      );
+                    });
+  
+                    rollupinternobj.resultsetinternrollup = foundItemsrollup.toString();
+  
+                    var foundItems = logiblock.map((doctor) => {
+                      return '  "' + doctor.xaxis.toString().replace(/\ /g, "") + '" int';
+                    });
+  
+                    rollupinternobj.resultsetintern = foundItems.toString();
+                    /* subtotal horizontal*/
+                    colset = logiblock.map((doctor) => {
+                      return '"' + doctor.xaxis.toString().replace(/\ /g, "") + '"';
+                    });
+                    var subtotal = "(" + colset.join("+") + ") as subtotal";
+                    var selectclause = "yaxis," + colset.join(",");
+  
+                    rollupinternobj.resultsetselect =
+                      subtotal + "," + selectclause;
+  
+                    callback(null, rollupinternobj);
+                  })
+                  .catch((err) => {
+                    res.send(err);
+                  });
+              },
+              (arg1, callback) => {
+                
+                let sqlConstructParams = {
+                  tempDep,
+                  arg1,
+                  mod,
+                };
+                sqlstatepivot = sqlConstruct[a.type][a.SqlPivot](
+                  sqlConstructParams
+                );
+                console.log("--------base--------------")
+                console.log(sqlstatepivot)
+                connections
+                  .query(sqlstatepivot)
+                  .then((result) => {
+                    var logiblock = result.rows;
+  
+                    callback(null, logiblock);
+                  })
+                  .catch((err) => {
+                    res.send(err);
+                  });
+              },
+            ],
+            (err, result) => {
+              internset.rows = result;
+  
+              resolve(internset);
+              // result now equals 'done'
+            }
+          );
+        } finally {
+        }
+      }
+    );  
+};
+
+/////////////////////End pivot Optimized///////////////////
+
 Array.prototype.arrayRemove = function (value) {
   return this.filter(function (ele) {
     return ele != value;
@@ -2437,6 +2582,7 @@ module.exports = {
   redisMiddleware,
   searchparampayload,
   paramsSearchTypeGroupBy,
+  isPivotCacheOptimized,
   pivotTransform,
   assignVariables,
   bulkCreate,

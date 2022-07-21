@@ -1,4 +1,5 @@
 redis-cli flushall
+https://explain.dalibo.com/plan#
 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
 for readmes table generaor
 

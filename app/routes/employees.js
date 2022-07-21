@@ -185,8 +185,10 @@ async function routes(fastify, options) {
     async (request, reply) => {
       dep.assignVariables(mod)
       //dep.pivotResult(request, reply, mod)
+      //dep.isPivotCache(request, reply, mod)
+      //isPivotCacheOptimized
       dep
-        .isPivotCache(request, reply, mod)
+        .isPivotCacheOptimized(request, reply, mod)
         .then(arg => {
           reply.code = 200
 
