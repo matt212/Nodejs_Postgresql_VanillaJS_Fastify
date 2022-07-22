@@ -306,8 +306,10 @@
 - ### `Release notes 21 July 2022`
 
   >base and pivot Operation optimized
-  >incremental load (pagination) for base report
-  >incremental load (pagination) for pivot report   
+  
+  >incremental load (pagination section loaded after report rendered) for base report
+  
+  >incremental load (pagination section loaded after report rendered) for pivot report   
 
 
 - ### `Release notes 19 July 2022`
