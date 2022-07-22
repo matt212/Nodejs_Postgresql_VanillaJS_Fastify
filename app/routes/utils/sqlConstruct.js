@@ -1,13 +1,13 @@
 let base = {
-  paginationset: function(tunnel) {
+  paginationset: function (tunnel) {
     return ' limit ' + tunnel.arg.pageSize + ' offset ' + tunnel.arg.next_offset
   },
-  sortorder: function(tunnel) {
+  sortorder: function (tunnel) {
     return (
       ' ORDER BY "' + tunnel.arg.sortcolumn + '" ' + tunnel.arg.sortcolumnorder
     )
   },
-  basesearchtype: function(tunnel) {
+  basesearchtype: function (tunnel) {
     return (
       'select  ' +
       tunnel.fieldnames +
@@ -21,14 +21,14 @@ let base = {
       tunnel.arg.consolidatesearch
     )
   },
-  searchType: function(tunnel) {
+  searchType: function (tunnel) {
     return (
       this.basesearchtype(tunnel) +
       this.sortorder(tunnel) +
       this.paginationset(tunnel)
     )
   },
-  searchTypeCount: function(tunnel) {
+  searchTypeCount: function (tunnel) {
     return (
       ' select COUNT(*) as count   from "' +
       tunnel.mod.Name +
@@ -40,7 +40,7 @@ let base = {
       tunnel.arg.consolidatesearch
     )
   },
-  searchTypeCountExplain: function(tunnel) {
+  searchTypeCountExplain: function (tunnel) {
     return (
       ' EXPLAIN  select * from "' +
       tunnel.mod.Name +
@@ -52,29 +52,45 @@ let base = {
       tunnel.arg.consolidatesearch
     )
   },
-  searchTypeFilter: function(tunnel) {
+  searchTypeFilter: function (tunnel) {
     return this.basesearchtype(tunnel)
   },
-  searchTypeFilterProgressBar: function(tunnel) {
+  searchTypeFilterProgressBar: function (tunnel) {
     return 'EXPLAIN (ANALYSE,FORMAT JSON) ' + this.basesearchtype(tunnel)
   },
-  searchtypegroupby: function(tunnel) {
+  // searchtypegroupby: function(tunnel) {
+  //   return (
+  //     'select  a.' +
+  //     tunnel.tempDep.searchkey +
+  //     ' from "' +
+  //     tunnel.mod.Name +
+  //     '" as a where  ' +
+  //     tunnel.tempDep.selector +
+  //     ' ' +
+  //     tunnel.tempDep.colmetafilter +
+  //     ' group by ' +
+  //     tunnel.tempDep.searchkey +
+
+  //     '  limit 20'
+  //   )
+  // },
+  searchtypegroupby: function (tunnel) {
     return (
-      'select  a.' +
-      tunnel.tempDep.searchkey +
-      ' from "' +
+      'select  b.' +
+      tunnel.tempDep.searchkey + ' from  (' +
+      'select a.' +
+      tunnel.tempDep.searchkey + ' from "' +
       tunnel.mod.Name +
       '" as a where  ' +
       tunnel.tempDep.selector +
       ' ' +
       tunnel.tempDep.colmetafilter +
+      'limit 20) b' +
       ' group by ' +
-      tunnel.tempDep.searchkey +
-      
-      '  limit 20'
+      tunnel.tempDep.searchkey
     )
   },
-  searchtypegroupbyId: function(tunnel) {
+  searchtypegroupbyId: function (tunnel) {
     return (
       'select  a.' +
       tunnel.tempDep.searchkey +
@@ -97,7 +113,7 @@ let base = {
       '  limit 20'
     )
   },
-  SqlPivot: function(tunnel) {
+  SqlPivot: function (tunnel) {
     return (
       'select ' +
       tunnel.arg1.resultsetselect +
@@ -145,7 +161,7 @@ let base = {
       ') as a group by  rollup(yaxis) ) as a'
     )
   },
-  sqlstatementsprimaryPivot: function(tunnel) {
+  sqlstatementsprimaryPivot: function (tunnel) {
     return (
       'select count(*) as totalyaxiscnt from (select  ' +
       tunnel.tempDep.baseYaxisparamprimary +
@@ -160,7 +176,7 @@ let base = {
       ' group by Yaxis ) as Yaxisderived'
     )
   },
-  sqlstatementsecondaryPivot: function(tunnel) {
+  sqlstatementsecondaryPivot: function (tunnel) {
     return (
       'select count(*) as totalxaxiscnt from (select  ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -175,7 +191,7 @@ let base = {
       '  group by Xaxis ) as Xaxisderived'
     )
   },
-  sqlstatepivotcol: function(tunnel) {
+  sqlstatepivotcol: function (tunnel) {
     return (
       'select ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -204,7 +220,7 @@ let mrole = {
       'on rl.roleid=a.roleid::int ' +
       'where a.recordstate=true '
   },
-  basesearchtype: function(tunnel) {
+  basesearchtype: function (tunnel) {
     return (
       'select   Rolename, ' +
       "string_agg(distinct Modulename,',')as Modulename," +
@@ -222,10 +238,10 @@ let mrole = {
       '  GROUP BY ROLEID,Rolename,recordstate '
     )
   },
-  searchType: function(tunnel) {
+  searchType: function (tunnel) {
     return this.basesearchtype(tunnel) + base.paginationset(tunnel)
   },
-  searchTypeCount: function(tunnel) {
+  searchTypeCount: function (tunnel) {
     return (
       'select  count(*) as count  ' +
       'from ' +
@@ -239,7 +255,7 @@ let mrole = {
       '  GROUP BY ROLEID,Rolename,recordstate '
     )
   },
-  searchTypeCountExplain: function(tunnel) {
+  searchTypeCountExplain: function (tunnel) {
     return (
       'Explain select  * ' +
       'from ' +
@@ -253,7 +269,7 @@ let mrole = {
       '  GROUP BY ROLEID,Rolename,recordstate '
     )
   },
-  searchtypegroupby: function(tunnel) {
+  searchtypegroupby: function (tunnel) {
     return (
       'select  a.' +
       tunnel.tempDep.searchkey +
@@ -276,13 +292,13 @@ let mrole = {
       '  limit 20'
     )
   },
-  searchTypeFilter: function(tunnel) {
+  searchTypeFilter: function (tunnel) {
     return this.basesearchtype(tunnel)
   },
-  searchTypeFilterProgressBar: function(tunnel) {
+  searchTypeFilterProgressBar: function (tunnel) {
     return 'EXPLAIN (ANALYSE,FORMAT JSON)   ' + this.basesearchtype(tunnel)
   },
-  SqlPivot: function(tunnel) {
+  SqlPivot: function (tunnel) {
     return (
       'select ' +
       tunnel.arg1.resultsetselect +
@@ -334,7 +350,7 @@ let mrole = {
       ') as a group by  rollup(yaxis) ) as a'
     )
   },
-  sqlstatementsprimaryPivot: function(tunnel) {
+  sqlstatementsprimaryPivot: function (tunnel) {
     return (
       'select count(*) as totalyaxiscnt from (select  ' +
       tunnel.tempDep.baseYaxisparamprimary +
@@ -350,7 +366,7 @@ let mrole = {
       ' group by Yaxis ) as Yaxisderived'
     )
   },
-  sqlstatementsecondaryPivot: function(tunnel) {
+  sqlstatementsecondaryPivot: function (tunnel) {
     return (
       'select count(*) as totalxaxiscnt from (select  ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -366,7 +382,7 @@ let mrole = {
       '  group by Xaxis ) as Xaxisderived'
     )
   },
-  sqlstatepivotcol: function(tunnel) {
+  sqlstatepivotcol: function (tunnel) {
     return (
       'select ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -809,7 +825,7 @@ from mroleset  as a
       on a.modnameid::int=modname.modnameid
  where a.recordstate=true`
   },
-  basesearchtype: function(tunnel) {
+  basesearchtype: function (tunnel) {
     return (
       `select string_agg(distinct mrolesetid::text,',')as mrolesetid,
  
@@ -831,10 +847,10 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
       'group by  name, recordstate'
     )
   },
-  searchType: function(tunnel) {
+  searchType: function (tunnel) {
     return this.basesearchtype(tunnel) + base.paginationset(tunnel)
   },
-  searchTypeCount: function(tunnel) {
+  searchTypeCount: function (tunnel) {
     return (
       'select  count(*) as count  ' +
       'from ' +
@@ -849,7 +865,7 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
       'group by  name, recordstate'
     )
   },
-  searchTypeCountExplain: function(tunnel) {
+  searchTypeCountExplain: function (tunnel) {
     return (
       'Explain select  * ' +
       'from ' +
@@ -863,7 +879,7 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
       'group by  name, recordstate'
     )
   },
-  searchtypegroupby: function(tunnel) {
+  searchtypegroupby: function (tunnel) {
     return (
       'select  a.' +
       tunnel.tempDep.searchkey +
@@ -886,13 +902,13 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
       '  limit 20'
     )
   },
-  searchTypeFilter: function(tunnel) {
+  searchTypeFilter: function (tunnel) {
     return this.basesearchtype(tunnel)
   },
-  searchTypeFilterProgressBar: function(tunnel) {
+  searchTypeFilterProgressBar: function (tunnel) {
     return 'EXPLAIN (ANALYSE,FORMAT JSON)   ' + this.basesearchtype(tunnel)
   },
-  SqlPivot: function(tunnel) {
+  SqlPivot: function (tunnel) {
     return (
       'select ' +
       tunnel.arg1.resultsetselect +
@@ -944,7 +960,7 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
       ') as a group by  rollup(yaxis) ) as a'
     )
   },
-  sqlstatementsprimaryPivot: function(tunnel) {
+  sqlstatementsprimaryPivot: function (tunnel) {
     return (
       'select count(*) as totalyaxiscnt from (select  ' +
       tunnel.tempDep.baseYaxisparamprimary +
@@ -960,7 +976,7 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
       ' group by Yaxis ) as Yaxisderived'
     )
   },
-  sqlstatementsecondaryPivot: function(tunnel) {
+  sqlstatementsecondaryPivot: function (tunnel) {
     return (
       'select count(*) as totalxaxiscnt from (select  ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -976,7 +992,7 @@ string_agg(distinct modnameid::text,',')as modnameid , recordstate from ` +
       '  group by Xaxis ) as Xaxisderived'
     )
   },
-  sqlstatepivotcol: function(tunnel) {
+  sqlstatepivotcol: function (tunnel) {
     return (
       'select ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -1008,7 +1024,7 @@ let userrole = {
       ' left join muser u on u.muserID=a.muserID ' +
       ' where a.recordstate=true '
   },
-  basesearchtype: function(tunnel) {
+  basesearchtype: function (tunnel) {
     return (
       'select' +
       " string_agg(distinct userrolemappingID::text,',') as userrolemappingID," +
@@ -1028,10 +1044,10 @@ let userrole = {
       '  GROUP BY Username,recordstate,muserID '
     )
   },
-  searchType: function(tunnel) {
+  searchType: function (tunnel) {
     return this.basesearchtype(tunnel) + base.paginationset(tunnel)
   },
-  searchTypeCount: function(tunnel) {
+  searchTypeCount: function (tunnel) {
     return (
       'select  count(*) as count  ' +
       'from ' +
@@ -1045,7 +1061,7 @@ let userrole = {
       '  GROUP BY Username,recordstate,muserID '
     )
   },
-  searchtypegroupby: function(tunnel) {
+  searchtypegroupby: function (tunnel) {
     return (
       'select  a.' +
       tunnel.tempDep.searchkey +
@@ -1068,13 +1084,13 @@ let userrole = {
       '  limit 20'
     )
   },
-  searchTypeFilter: function(tunnel) {
+  searchTypeFilter: function (tunnel) {
     return this.basesearchtype(tunnel)
   },
-  searchTypeFilterProgressBar: function(tunnel) {
+  searchTypeFilterProgressBar: function (tunnel) {
     return 'EXPLAIN (ANALYSE,FORMAT JSON)   ' + this.basesearchtype(tunnel)
   },
-  SqlPivot: function(tunnel) {
+  SqlPivot: function (tunnel) {
     return (
       'select ' +
       tunnel.arg1.resultsetselect +
@@ -1126,7 +1142,7 @@ let userrole = {
       ') as a group by  rollup(yaxis) ) as a'
     )
   },
-  sqlstatementsprimaryPivot: function(tunnel) {
+  sqlstatementsprimaryPivot: function (tunnel) {
     return (
       'select count(*) as totalyaxiscnt from (select  ' +
       tunnel.tempDep.baseYaxisparamprimary +
@@ -1142,7 +1158,7 @@ let userrole = {
       ' group by Yaxis ) as Yaxisderived'
     )
   },
-  sqlstatementsecondaryPivot: function(tunnel) {
+  sqlstatementsecondaryPivot: function (tunnel) {
     return (
       'select count(*) as totalxaxiscnt from (select  ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -1158,7 +1174,7 @@ let userrole = {
       '  group by Xaxis ) as Xaxisderived'
     )
   },
-  sqlstatepivotcol: function(tunnel) {
+  sqlstatepivotcol: function (tunnel) {
     return (
       'select ' +
       tunnel.tempDep.baseXaxisparamprimary +
@@ -1184,8 +1200,8 @@ module.exports = {
   base: base,
   mrole: mrole,
   userrole: userrole,
-    //mroleset:mroleset,
+  //mroleset:mroleset,
   mroleset: mroleset
-  
+
   //exportobj
 }
