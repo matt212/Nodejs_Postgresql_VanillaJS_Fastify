@@ -294,6 +294,29 @@
  <details>
  <summary id="release-section">🍫 Releases</summary><blockquote>
 
+
+
+- ### `Release notes 23 July 2022`
+
+  >Optimized Multi Column , Multi Select  group by from 5 secs to 16 ms. 
+  >[My stack overflow solution](https://stackoverflow.com/a/73085784/1333794)
+   
+
+
+- ### `Release notes 21 July 2022`
+
+  >base and pivot Operation optimized
+  >incremental load (pagination) for base report
+  >incremental load (pagination) for pivot report   
+
+
+- ### `Release notes 19 July 2022`
+
+  >github actions
+  >Integrated CI-workflows with redis, postgres for automation mocha test cases
+  >
+  >[Github Action - Automation mocha test cases](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/runs/7475512509?check_suite_focus=true )
+   
 - ### `Release notes 18 July 2022`
 
   >Implemented basic dark theme   
