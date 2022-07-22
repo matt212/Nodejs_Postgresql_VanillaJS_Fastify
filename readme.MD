@@ -298,7 +298,7 @@
 
 - ### `Release notes 23 July 2022`
 
-  >Optimized Multi Column , Multi Select  group by from 5 secs to 16 ms. 
+  >Optimized Dynamic Multi Column , Multi Select  filter from 5 secs to 16 ms for 2   million rows . 
   >[My stack overflow solution](https://stackoverflow.com/a/73085784/1333794)
    
 
