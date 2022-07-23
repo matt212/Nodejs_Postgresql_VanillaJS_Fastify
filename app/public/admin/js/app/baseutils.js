@@ -542,4 +542,18 @@ function payloadprepared() {
 
   return filterparam
 }
+
+$(document).on('keyup', function (e) {
+
+  if (e.key == "Escape") {
+    validationmap.forEach(function (a) {
+
+      $('#dv_' + a.inputname + ' ').html(' ')
+      $('#dv_' + a.inputname + ' ').hide()
+      $('#cltrl_filter_' + a.inputname).val('')
+
+    })
+
+  }
+});
 /*data transform utils*/

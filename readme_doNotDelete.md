@@ -1,3 +1,7 @@
+** for million rows count optimize **
+CREATE INDEX ix_employees_gender_lower2 ON public.employees USING btree (lower((gender)::text) varchar_pattern_ops, gender)
+
+
 redis-cli flushall
 https://explain.dalibo.com/plan#
 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
