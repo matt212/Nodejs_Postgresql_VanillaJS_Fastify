@@ -1,6 +1,8 @@
 ** for million rows count optimize **
 CREATE INDEX ix_employees_gender_lower2 ON public.employees USING btree (lower((gender)::text) varchar_pattern_ops, gender)
 
+=VLOOKUP($E2,$K$2:$L$2387,2,FALSE)
+Sheet1
 
 redis-cli flushall
 https://explain.dalibo.com/plan#
