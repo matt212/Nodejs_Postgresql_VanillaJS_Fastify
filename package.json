@@ -9,6 +9,8 @@
   "dependencies": {
     "@fastify/multipart": "^6.0.0",
     "@fastify/static": "^6.4.0",
+    "@node-minify/clean-css": "^6.2.0",
+    "@node-minify/core": "^6.2.0",
     "ajv-keywords": "^3.5.2",
     "async": "^3.2.0",
     "autocannon": "^7.0.5",
@@ -65,6 +67,7 @@
     "old-mig": "cd ./app/ &&  sequelize  db:create && node ./utils/sequelize-schema-file-generator.js && sequelize db:seed:all",
     "autostart": "cd ./app/utils &&  nodemon app.js",
     "build": "cd ./app/utils && node runBackground.js",
+    "minify": "cd ./app/utils/release/ && node minifier.js",
     "yaml-json": "yaml2json ./app/swagger/swagger.yaml --pretty --save",
     "swagger-make": "cd ./app/utils && node scaffolding-swagger.js",
     "ModuleEval": "mocha ./app/utils/test/Employees-test.spec.js --timeout 10000 --exit",

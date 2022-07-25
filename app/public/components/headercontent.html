@@ -1,0 +1,82 @@
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>MaterialAdminLTE 2 | Dashboard</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<!-- Bootstrap 3.3.7 -->
+
+<link rel="stylesheet" href="../../vdashboard/bower_components/bootstrap/dist/css/bootstrap.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="../../vdashboard/bower_components/font-awesome/css/font-awesome.min.css">
+</link>
+<!-- one.css is minified version of utils css -->
+<link rel="stylesheet" href="../../release/one.css">
+<!-- misc.css is minified version of functional operations css -->
+<link rel="stylesheet" href="../../vdashboard/dist/css/misc.css">
+<!-- Daterange picker -->
+<link rel="stylesheet" href="../../vdashboard/bower_components/bootstrap-daterangepicker/daterangepicker.css">
+
+<!-- Google Font -->
+<link rel="stylesheet"
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+<script type="text/javascript" src="../../vdashboard/dist/js/socket.io.js"></script>
+<script src="../../vdashboard/dist/js/alasql.min.js"></script>
+</head>
+<script>
+
+    let customToken = "<%= sessiontoken %>";
+
+    let serverdate = "<%= serverdate.name %>";
+    let moduleattributes = "<%= modelattribute %>";
+    let validationmap = "<%= validationmap %>";
+
+    validationmap = JSON.parse(validationmap.replace(/\&#34;/g, '\"'))
+
+    let applyfields = "<%= applyfields %>";
+    applyfields = JSON.parse(applyfields.replace(/\&#34;/g, '"'))
+/*console.log(JSON.stringify(applyfields))
+            console.log(JSON.stringify(validationmap))
+            console.log(JSON.stringify(moduleattributes))
+    
+        applyfields=["first_name","last_name","gender","birth_date"]
+        validationmap=[{"inputname":"first_name","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"80"},{"inputname":"last_name","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"80"},{"inputname":"gender","fieldtypename":"STRING","fieldvalidatename":"string","fieldmaxlength":"1"},{"inputname":"birth_date","fieldtypename":"DATE","fieldvalidatename":"date","fieldmaxlength":"10"}]
+        moduleattributes="employeesid,first_name,last_name,gender,birth_date,recordstate,created_date,updated_date"
+        */
+</script>
+<link rel="stylesheet" href="../../vdashboard/plugins/select2/select2.min.css" />
+
+<!--<script src="../../vdashboard/bower_components/jquery/dist/jquery.min.js"></script>-->
+<script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+
+<script src="../../admin/js/app/customInit.js"></script>
+<script src="../../admin/js/app/baseutils.js"></script>
+<script src="../../admin/js/app/customSocketio.js"></script>
+<script src="../../admin/js/app/fieldValidations.js"></script>
+<script src="../../admin/js/app/htmlPopulate.js"></script>
+<script src="../../admin/js/app/customControls.js"></script>
+<script src="../../admin/js/app/ajaxUtils.js"></script>
+<script src="../../admin/js/app/pivotFeature.js"></script>
+<script src="../../admin/js/app/customFilters.js"></script>
+<script src="../../admin/js/app/genericCommon.js"></script>
+<script src="../../admin/js/app/pageLoad.js"></script>
+<script src="../js/bluebird.min.js"></script>
+
+</head>
+<input type="hidden" id="idhdnvalue" name="user" value="texens">
+
+<body class="hold-transition skin-blue sidebar-mini sidebar-collapse">
+
+    <style type="text/css">
+
+
+
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#page-selection').bootpag();
+            $('#page-selection-xaxis').bootpag();
+            $('#page-selection-yaxis').bootpag();
+        })
+
+    </script>
