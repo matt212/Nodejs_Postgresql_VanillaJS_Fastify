@@ -58,38 +58,38 @@ let base = {
   searchTypeFilterProgressBar: function (tunnel) {
     return 'EXPLAIN (ANALYSE,FORMAT JSON) ' + this.basesearchtype(tunnel)
   },
-  // searchtypegroupby: function(tunnel) {
-  //   return (
-  //     'select  a.' +
-  //     tunnel.tempDep.searchkey +
-  //     ' from "' +
-  //     tunnel.mod.Name +
-  //     '" as a where  ' +
-  //     tunnel.tempDep.selector +
-  //     ' ' +
-  //     tunnel.tempDep.colmetafilter +
-  //     ' group by ' +
-  //     tunnel.tempDep.searchkey +
-
-  //     '  limit 20'
-  //   )
-  // },
-  searchtypegroupby: function (tunnel) {
+  searchtypegroupby: function(tunnel) {
     return (
-      'select  b.' +
-      tunnel.tempDep.searchkey + ' from  (' +
-      'select a.' +
-      tunnel.tempDep.searchkey + ' from "' +
+      'select  a.' +
+      tunnel.tempDep.searchkey +
+      ' from "' +
       tunnel.mod.Name +
       '" as a where  ' +
       tunnel.tempDep.selector +
       ' ' +
       tunnel.tempDep.colmetafilter +
-      'limit 20) b' +
       ' group by ' +
-      tunnel.tempDep.searchkey
+      tunnel.tempDep.searchkey +
+      '  limit 20'
     )
   },
+  // searchtypegroupby: function (tunnel) {
+  //   let dywhere= (tunnel.tempDep.colmetafilter != "" ? `where ${tunnel.tempDep.colmetafilter.replace(' and ',' ')}` : "")
+    
+  //   return (
+  //     `WITH RECURSIVE t AS (
+  //       SELECT min(${tunnel.tempDep.searchkey}) AS 
+  //       ${tunnel.tempDep.searchkey} FROM employees
+  //        ${dywhere}
+  //       UNION ALL
+  //       SELECT (SELECT min(
+  //       ${tunnel.tempDep.searchkey}) FROM ${tunnel.mod.Name} WHERE ${tunnel.tempDep.searchkey} > t.${tunnel.tempDep.searchkey} 
+  //       ${tunnel.tempDep.colmetafilter} )
+  //       FROM t WHERE t.${tunnel.tempDep.searchkey} IS NOT NULL
+  //       )
+  //    SELECT ${tunnel.tempDep.searchkey} FROM t WHERE ${tunnel.tempDep.searchkey} IS NOT NULL and ${tunnel.tempDep.selector}  `
+  //   )
+  // },
   searchtypegroupbyId: function (tunnel) {
     return (
       'select  a.' +
