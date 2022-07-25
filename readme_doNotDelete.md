@@ -1,5 +1,13 @@
-** for million rows count optimize **
+
+** reporting fetching from million rows  **
+this indexes is catch 22 if we apply below its works great for report but distarous for group by clause (multiselect and 
+multicol filter)
+
 CREATE INDEX ix_employees_gender_lower2 ON public.employees USING btree (lower((gender)::text) varchar_pattern_ops, gender)
+--alternative col index approach
+CREATE INDEX ix_employees_last_name_lower ON public.employees USING btree (lower((last_name)::text) varchar_pattern_ops)
+
+
 
 =VLOOKUP($E2,$K$2:$L$2387,2,FALSE)
 Sheet1
