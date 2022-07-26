@@ -1,0 +1,31 @@
+<div class="box box-default collapsed-box" style="margin-top:2%;">
+    <div class="box-header ">
+        <h3 class="box-title">Control Bar</h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row">
+            <%- include('../../public/components/daterangepicker.html'); %>
+            
+        </div>
+        <div class="box box-default collapsed-box" style="display: none" id="dvparentfilterbar">
+            <div class="box-header ">
+                <h3 class="box-title">Filter Bar</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" onclick="javascript:htmlpopulate.htmlpopulatefilterbar();" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="box-body" id="dvfilterbar">
+                <!-- /.field filter parameters -->
+                <div class="fieldsfilterbar" style="display: none;float: left">
+                </div>
+                  <div class="fieldsfilterbarconsolidated">
+                </div>
+                
+            </div>
+           
+        </div>
+    </div>
+</div>

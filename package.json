@@ -11,6 +11,7 @@
     "@fastify/static": "^6.4.0",
     "@node-minify/clean-css": "^6.2.0",
     "@node-minify/core": "^6.2.0",
+    "@node-minify/uglify-es": "^6.2.0",
     "ajv-keywords": "^3.5.2",
     "async": "^3.2.0",
     "autocannon": "^7.0.5",

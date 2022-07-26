@@ -959,6 +959,7 @@ let pageRenderObj = (req, res, validationConfig) => {
   };
 
   return {
+    releaseEnv: req.session["releaseEnv"],
     sessiontoken: req.session.get("userLoggedInfor"),
     title: req.user,
     serverdate: serverdat,

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<head>
+        {% include '../../public/components/loader.html' %} 
+        {% include '../../public/components/legacyinnerheadercontent.html' %}
+
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+                integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+        <script src="../../admin/js/app/baseutils.js"></script>
+
+        <script>
+                const copyToClipboard = str => {
+                        const el = document.createElement('textarea');  // Create a <textarea> element
+                        el.value = str;                                 // Set its value to the string that you want copied
+                        el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+                        el.style.position = 'absolute';
+                        el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+                        document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+                        const selected =
+                                document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+                                        ? document.getSelection().getRangeAt(0)     // Store selection if found
+                                        : false;                                    // Mark as false to know no selection existed before
+                        el.select();                                    // Select the <textarea> content
+                        document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+                        document.body.removeChild(el);                  // Remove the <textarea> element
+                        if (selected) {                                 // If a selection existed before copying
+                                document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+                                document.getSelection().addRange(selected);   // Restore the original selection
+                        }
+                };
+                let copyclipboard = function () {
+                        copyToClipboard(base.config.headers["x-access-token"]);
+                }
+                
+                /*get access token*/
+                baseloadsegments.getapptoken(ajaxbase).then(function () {
+                        $("h2").html(' ')
+                        $("h2").html(base.config.headers["x-access-token"]);
+                        let content = {
+                                "searchparam": "NA",
+                                "daterange": {
+                                        "startdate": "1982-12-30",
+                                        "enddate": "2019-01-29"
+                                },
+                                "colsearch": "createdAt",
+                                "datecolsearch": "birth_date",
+                                "pageno": 0,
+                                "pageSize": 20
+                        };
+                        base.datapayload = content
+                        ajaxbase.payload = base.datapayload
+                        ajaxbase.url = 'employees/api/load/';
+                        // ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
+                        // })
+                });
+        </script>
+</head>
+
+<body>
+        <script>
+
+                $(function () {
+                        $("h2").html(base.config.headers["x-access-token"])
+                })
+        </script>
+        <h2></h2>
+        <button id="btn" onclick="javascript:copyclipboard()">copy to copyToClipboard</button>
+</body>
+
+</html>

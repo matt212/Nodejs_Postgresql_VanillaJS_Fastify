@@ -1,0 +1,170 @@
+<style type="text/css">
+    .sectionpaging {
+        text-align: right;
+        border: 1px solid transparent;
+        padding: 0 3px 1px 3px;
+        margin-top: -1px;
+        margin-bottom: -2px;
+    }
+
+    .overlaypaging {
+        display: block;
+        position: absolute;
+        right: -17px;
+        top: 32px;
+        width: 100px;
+        border: 1px solid rgb(221, 221, 221);
+        text-align: center;
+        background: #fff;
+        z-index: 99;
+    }
+
+    .disablepaging {
+        color: #ccc !important;
+    }
+
+
+    .pagingsectionparent {
+        pointer-events: all;
+    }
+
+    .pagingsectionchild {
+        pointer-events: none;
+    }
+</style>
+<script>
+    var t = true;
+
+    function toggleadd(i) {
+
+
+        if (i === true && t === true) {
+            document.getElementById("overlaypaging").style.display = 'block';
+            t = false;
+        } else {
+            document.getElementById("overlaypaging").style.display = 'none';
+            t = true;
+        }
+
+
+    }
+
+
+    /*$(document).ready(function() {
+        $('#inppagesize').on('change', function() {
+    console.log("fucking here")
+            base.pageSize = $('#inppagesize').val()
+            filterparam.pageSize = base.pageSize
+            base.datapayload = filterparam;
+    
+            basefunction().getpaginatesearchtype(base).then(function(argument) {
+                console.log(argument);
+                htmlpopulatetable(argument);
+    
+            })
+        })
+    });*/
+    /*function txtnumpage()
+    {
+        base.pageSize = $('#inppagesize').val()
+            filterparam.pageSize = base.pageSize
+            base.datapayload = filterparam;
+    
+            basefunction().getpaginatesearchtype(base).then(function(argument) {
+                console.log(argument);
+                htmlpopulatetable(argument);
+    
+            })
+    }*/
+    function getoldestrecords() {
+
+        document.getElementById("Oldestdiv").className = "disablepaging pagingsectionchild";
+        document.getElementById("newestdiv").className = '';
+
+
+        base.pageno = 0;
+        filterparam.pageno = base.pageno
+        filterparam.pageSize = base.pageSize
+
+
+        filterparam.sortcolumn = 1;
+        filterparam.sortcolumnorder = "asc";
+        base.datapayload = filterparam;
+
+
+
+
+        basefunction().getpaginatesearchtype(base).then(function (argument) {
+            console.log(argument);
+            htmlpopulate.htmlpopulatetable(argument);
+            basepagination.bootpagination(argument);
+        })
+
+
+    }
+
+    function getnewestvalue() {
+
+        document.getElementById("newestdiv").className = "disablepaging pagingsectionchild";
+        document.getElementById("Oldestdiv").className = '';
+        filterparam.sortcolumn = 1;
+        filterparam.sortcolumnorder = "desc";
+        base.datapayload = filterparam;
+        basefunction().getpaginatesearchtype(base).then(function (argument) {
+
+            htmlpopulate.htmlpopulatetable(argument);
+            basepagination.bootpagination(argument);
+        })
+    }
+
+    function functionppagesize() {
+
+        base.pageSize = parseInt($('#inppagesize').val())
+        filterparam.pageSize = base.pageSize
+        filterparam.pageno = 0;
+        base.datapayload = filterparam;
+
+        basefunction().getpaginatesearchtype(base).then(function (argument) {
+
+            htmlpopulate.htmlpopulatetable(argument);
+            basepagination.bootpagination(argument);
+
+        })
+    }
+</script>
+<div id="dvpaginationsections">
+    <div onclick="toggleadd(true)" id=":gm" class="sectionpaging pagingsectionparent" role="button" aria-expanded="true"
+        aria-haspopup="true" aria-disabled="false" tabindex="0"
+        style="user-select: none;float: right;margin-right: 3%;position: relative;margin-top: 20px;">
+
+        <span class="Dj"><span class="ts ng-binding" id="spcurrentPage"></span>–<span class="ts ng-binding"
+                id="sppageSize"></span> of <span class="ts ng-binding" id="sptotalUsers"></span></span>
+        <div id="overlaypaging" style="display: none; " class="sectionpaging overlaypaging" role="menu"
+            aria-haspopup="true">
+            <div>
+                <div>
+                    <div class="disablepaging " onclick="getnewestvalue(true)" id="newestdiv">Newest</div>
+                </div>
+                <div>
+                    <div id="Oldestdiv" onclick="getoldestrecords(true)">Oldest</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box-body">
+    <input style="display: block;" type="number" min="1" max="100" oninput="functionppagesize();" id="inppagesize"
+        value="20" class="form-control red-pp">
+</div>
+<div id="tblchkmsg" class="col-xs-6" style="margin-left: 20%;margin-top: -6%;display: none;line-height: 13%;">
+    <div class="alert alert-info alert-dismissible" style="border-radius: 25px;">
+        <button type="button" onclick="javascript:tableops.unchecktblall()" class="close" style="margin-top: -2%;
+    margin-right: -2%;" aria-hidden="true">×</button>
+        <h4><i class="icon fa fa-info"></i> Please Note!</h4> All
+        <label id="msgsppageSize"></label> records on this page are selected. Select all
+        <a onclick="javascript:tableops.tblchkall()">
+            <label style="text-decoration: underline;cursor: pointer;" id="msgchksptotalUsers"> </label>
+        </a> records !
+    </div>
+</div>

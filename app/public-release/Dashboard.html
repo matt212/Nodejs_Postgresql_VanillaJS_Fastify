@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+text {
+    font-size: 12px;
+}
+
+.mainBars rect {
+    shape-rendering: auto;
+    fill-opacity: 0;
+    stroke-width: 1.5px;
+    stroke: rgb(0, 0, 0);
+    stroke-opacity: 0;
+}
+
+.subBars {
+    shape-rendering: crispEdges;
+}
+
+.edges {
+    stroke: none;
+    fill-opacity: 0.5;
+}
+
+.header {
+    text-anchor: middle;
+    font-size: 16px;
+}
+
+line {
+    stroke: grey;
+}
+</style>
+
+<body>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="http://vizjs.org/viz.v1.1.0.min.js"></script>
+    <script>
+    var data = [
+        [30, 'Account Services / Billing', 1, 5],
+        [30, 'Account Services / Billing', 1, 5],
+        [30, 'Account Services / Billing', 1, 5],
+        [30, 'Account Services / Billing', 1, 5],
+        [32, 'Account Services / Billing', 1, 3],
+        [23, 'ACE', 1, 5],
+        [32, 'ACE', 1, 5],
+        [32, 'ACE', 1, 5],
+        [32, 'ACE', 1, 3],
+        [31, 'ACE', 1, 8],
+        [32, 'ACE', 1, 3],
+        [32, 'ACE', 1, 5],
+        [32, 'ACE', 1, 3],
+        [32, 'ACE', 1, 5],
+        [32, 'ACE', 1, 8],
+        [31, 'ACE', 1, 3],
+        [31, 'ACE', 1, 3],
+        [31, 'ACE', 1, 5],
+        [31, 'ACE', 1, 3],
+        [13, 'ACE', 1, 3],
+        [9, 'ACE', 1, 3],
+        [9, 'ACE', 1, 1],
+        [19, 'ACE', 1, 3],
+        [9, 'ACE', 1, 5],
+        [12, 'ACE', 1, 1],
+        [8, 'ACE', 1, 3],
+        [19, 'ACE', 1, 3],
+        [7, 'ACE', 1, 5],
+        [25, 'ACE', 1, 5],
+        [23, 'ACE', 1, 5],
+        [23, 'ACE', 1, 5],
+        [23, 'ACE', 1, 5],
+        [23, 'ACE', 1, 3],
+        [27, 'ACE', 1, 5],
+        [24, 'ACE', 1, 5],
+        [27, 'ACE', 1, 5],
+        [30, 'Batch', 1, 5],
+        [27, 'Batch', 1, 5],
+        [32, 'Batch', 1, 5],
+        [27, 'Batch', 1, 5],
+        [32, 'Batch', 1, 3],
+        [1, 'Batch', 1, 2],
+        [5, 'Batch', 1, 4],
+        [21, 'Batch', 1, 5],
+        [4, 'Batch', 1, 2],
+        [21, 'Batch', 1, 1],
+        [16, 'Batch', 1, 1],
+        [18, 'Batch', 1, 1],
+        [8, 'Batch', 1, 1],
+        [25, 'Batch', 1, 5],
+        [27, 'Batch', 1, 5],
+        [27, 'Batch', 1, 5],
+        [29, 'Batch', 1, 1],
+        [29, 'Batch', 1, 5],
+        [2, 'CTI Gateway', 1, 5],
+        [16, 'CTI Gateway', 1, 3],
+        [16, 'CTI Gateway', 1, 2],
+        [18, 'CTI Gateway', 1, 12],
+        [30, 'Drive Billing (aka Storage)', 1, 5],
+        [19, 'Drive Billing (aka Storage)', 1, 5],
+        [15, 'Drive Billing (aka Storage)', 1, 5],
+        [28, 'Drive Billing (aka Storage)', 1, 5],
+        [28, 'Nextiva Fax', 1, 3],
+        [25, 'NextOS 3.0', 1, 5],
+        [22, 'NextOS 3.0', 1, 5],
+        [22, 'NextOS 3.0', 1, 4],
+        [22, 'NextOS 3.0', 1, 4],
+        [22, 'NextOS 3.0', 1, 5],
+        [23, 'NextOS 3.0', 1, 4],
+        [25, 'NextOS 3.0', 1, 5],
+        [23, 'NextOS 3.0', 1, 4],
+        [23, 'NextOS 3.0', 1, 3],
+        [25, 'NextOS 3.0', 1, 5],
+        [23, 'NextOS 3.0', 1, 5],
+        [22, 'NextOS 3.0', 1, 5],
+        [23, 'NextOS 3.0', 1, 3],
+        [22, 'NextOS 3.0', 1, 5],
+        [22, 'NextOS 3.0', 1, 4],
+        [4, 'NextOS 3.0', 1, 5],
+        [14, 'NextOS 3.0', 1, 1],
+        [15, 'NextOS 3.0', 1, 3],
+        [14, 'NextOS 3.0', 1, 3],
+        [14, 'NextOS 3.0', 1, 3],
+        [8, 'NextOS 3.0', 1, 3],
+        [15, 'NextOS 3.0', 1, 5],
+        [7, 'NextOS 3.0', 1, 3],
+        [7, 'NextOS 3.0', 1, 3],
+        [14, 'NextOS 3.0', 1, 3],
+        [7, 'NextOS 3.0', 1, 1],
+        [8, 'NextOS 3.0', 1, 3],
+        [8, 'NextOS 3.0', 1, 3],
+        [10, 'NextOS 3.0', 1, 1],
+        [10, 'NextOS 3.0', 1, 1],
+        [16, 'NextOS 3.0', 1, 5],
+        [19, 'NextOS 3.0', 1, 5],
+        [10, 'NextOS 3.0', 1, 1],
+        [10, 'NextOS 3.0', 1, 1],
+        [19, 'NextOS 3.0', 1, 5],
+        [12, 'NextOS 3.0', 1, 1],
+        [16, 'NextOS 3.0', 1, 3],
+        [16, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 3],
+        [14, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 3],
+        [14, 'NextOS 3.0', 1, 1],
+        [15, 'NextOS 3.0', 1, 3],
+        [16, 'NextOS 3.0', 1, 1],
+        [16, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 3],
+        [21, 'NextOS 3.0', 1, 2],
+        [20, 'NextOS 3.0', 1, 5],
+        [21, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 5],
+        [9, 'NextOS 3.0', 1, 1],
+        [11, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 5],
+        [12, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 1],
+        [10, 'NextOS 3.0', 1, 5],
+        [10, 'NextOS 3.0', 1, 1],
+        [13, 'NextOS 3.0', 1, 1],
+        [10, 'NextOS 3.0', 1, 1],
+        [12, 'NextOS 3.0', 1, 1],
+        [12, 'NextOS 3.0', 1, 1],
+        [15, 'NextOS 3.0', 1, 1],
+        [12, 'NextOS 3.0', 1, 1],
+        [12, 'NextOS 3.0', 1, 1],
+        [11, 'NextOS 3.0', 1, 1],
+        [18, 'NextOS 3.0', 1, 5],
+        [19, 'NextOS 3.0', 1, 5],
+        [13, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 1],
+        [16, 'NextOS 3.0', 1, 1],
+        [16, 'NextOS 3.0', 1, 1],
+        [16, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 3],
+        [19, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 5],
+        [21, 'NextOS 3.0', 1, 5],
+        [1, 'NextOS 3.0', 1, 1],
+        [1, 'NextOS 3.0', 1, 1],
+        [4, 'NextOS 3.0', 1, 1],
+        [1, 'NextOS 3.0', 1, 1],
+        [3, 'NextOS 3.0', 1, 1],
+        [4, 'NextOS 3.0', 1, 1],
+        [4, 'NextOS 3.0', 1, 1],
+        [3, 'NextOS 3.0', 1, 1],
+        [3, 'NextOS 3.0', 1, 3],
+        [3, 'NextOS 3.0', 1, 1],
+        [3, 'NextOS 3.0', 1, 5],
+        [4, 'NextOS 3.0', 1, 1],
+        [4, 'NextOS 3.0', 1, 3],
+        [3, 'NextOS 3.0', 1, 1],
+        [3, 'NextOS 3.0', 1, 1],
+        [4, 'NextOS 3.0', 1, 3],
+        [4, 'NextOS 3.0', 1, 5],
+        [4, 'NextOS 3.0', 1, 3],
+        [4, 'NextOS 3.0', 1, 3],
+        [4, 'NextOS 3.0', 1, 3],
+        [4, 'NextOS 3.0', 1, 5],
+        [5, 'NextOS 3.0', 1, 3],
+        [5, 'NextOS 3.0', 1, 5],
+        [9, 'NextOS 3.0', 1, 3],
+        [16, 'NextOS 3.0', 1, 3],
+        [14, 'NextOS 3.0', 1, 5],
+        [8, 'NextOS 3.0', 1, 5],
+        [8, 'NextOS 3.0', 1, 8],
+        [8, 'NextOS 3.0', 1, 8],
+        [8, 'NextOS 3.0', 1, 8],
+        [12, 'NextOS 3.0', 1, 1],
+        [3, 'NextOS 3.0', 1, 3],
+        [4, 'NextOS 3.0', 1, 3],
+        [4, 'NextOS 3.0', 1, 3],
+        [4, 'NextOS 3.0', 1, 5],
+        [4, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 3],
+        [9, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 1],
+        [3, 'NextOS 3.0', 1, 3],
+        [16, 'NextOS 3.0', 1, 1],
+        [13, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 5],
+        [1, 'NextOS 3.0', 1, 1],
+        [1, 'NextOS 3.0', 1, 1],
+        [1, 'NextOS 3.0', 1, 3],
+        [1, 'NextOS 3.0', 1, 1],
+        [1, 'NextOS 3.0', 1, 1],
+        [1, 'NextOS 3.0', 1, 1],
+        [2, 'NextOS 3.0', 1, 1],
+        [1, 'NextOS 3.0', 1, 1],
+        [2, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 5],
+        [21, 'NextOS 3.0', 1, 5],
+        [10, 'NextOS 3.0', 1, 1],
+        [7, 'NextOS 3.0', 1, 5],
+        [9, 'NextOS 3.0', 1, 1],
+        [9, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 1],
+        [4, 'NextOS 3.0', 1, 5],
+        [4, 'NextOS 3.0', 1, 3],
+        [21, 'NextOS 3.0', 1, 1],
+        [21, 'NextOS 3.0', 1, 1],
+        [10, 'NextOS 3.0', 1, 1],
+        [4, 'NextOS 3.0', 1, 3],
+        [21, 'NextOS 3.0', 1, 3],
+        [19, 'NextOS 3.0', 1, 1],
+        [15, 'NextOS 3.0', 1, 1],
+        [14, 'NextOS 3.0', 1, 3],
+        [1, 'NextOS 3.0', 1, 3],
+        [8, 'NextOS 3.0', 1, 3],
+        [6, 'NextOS 3.0', 1, 5],
+        [6, 'NextOS 3.0', 1, 3],
+        [6, 'NextOS 3.0', 1, 5],
+        [7, 'NextOS 3.0', 1, 1],
+        [6, 'NextOS 3.0', 1, 1],
+        [7, 'NextOS 3.0', 1, 3],
+        [7, 'NextOS 3.0', 1, 8],
+        [7, 'NextOS 3.0', 1, 8],
+        [8, 'NextOS 3.0', 1, 5],
+        [9, 'NextOS 3.0', 1, 5],
+        [28, 'NextOS 3.0', 1, 5],
+        [19, 'NextOS 3.0', 1, 12],
+        [30, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [30, 'Partner Portal', 1, 1],
+        [31, 'Partner Portal', 1, 8],
+        [31, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 8],
+        [31, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 5],
+        [26, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 3],
+        [26, 'Partner Portal', 1, 8],
+        [31, 'Partner Portal', 1, 3],
+        [29, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 3],
+        [28, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 3],
+        [30, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 3],
+        [31, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [29, 'Partner Portal', 1, 5],
+        [31, 'Partner Portal', 1, 3],
+        [30, 'Partner Portal', 1, 5],
+        [27, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 5],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [32, 'Partner Portal', 1, 3],
+        [28, 'Partner Portal', 1, 3],
+        [29, 'Partner Portal', 1, 3],
+        [29, 'Partner Portal', 1, 3],
+        [29, 'Partner Portal', 1, 3],
+        [29, 'Partner Portal', 1, 3],
+        [30, 'Partner Portal', 1, 3],
+        [16, 'Partner Portal', 1, 3],
+        [16, 'Partner Portal', 1, 3],
+        [30, 'PCS Service', 1, 5],
+        [1, 'Regression Testing', 1, 0],
+        [32, 'Reseller V1', 1, 3],
+        [32, 'Reseller V1', 1, 5],
+        [31, 'Reseller V1', 1, 3],
+        [32, 'Reseller V1', 1, 5],
+        [31, 'Reseller V1', 1, 3],
+        [31, 'Reseller V1', 1, 5],
+        [26, 'Reseller V1', 1, 5],
+        [25, 'Reseller V1', 1, 5],
+        [31, 'Reseller V1', 1, 3],
+        [32, 'Reseller V1', 1, 5],
+        [9, 'Reseller V1', 1, 1],
+        [15, 'Reseller V1', 1, 1],
+        [2, 'Reseller V1', 1, 2],
+        [21, 'Reseller V1', 1, 1],
+        [16, 'Reseller V1', 1, 3],
+        [16, 'Reseller V1', 1, 5],
+        [8, 'Reseller V1', 1, 3],
+        [9, 'Reseller V1', 1, 3],
+        [18, 'Reseller V1', 1, 1],
+        [16, 'Reseller V1', 1, 1],
+        [5, 'Reseller V1', 1, 5],
+        [5, 'Reseller V1', 1, 5],
+        [16, 'Reseller V1', 1, 1],
+        [18, 'Reseller V1', 1, 5],
+        [21, 'Reseller V1', 1, 5],
+        [19, 'Reseller V1', 1, 5],
+        [19, 'Reseller V1', 1, 5],
+        [19, 'Reseller V1', 1, 5],
+        [16, 'Reseller V1', 1, 3],
+        [16, 'Reseller V1', 1, 5],
+        [21, 'Reseller V1', 1, 5],
+        [21, 'Reseller V1', 1, 5],
+        [11, 'Reseller V1', 1, 1],
+        [21, 'Reseller V1', 1, 3],
+        [20, 'Reseller V1', 1, 1],
+        [9, 'Reseller V1', 1, 1],
+        [8, 'Reseller V1', 1, 1],
+        [7, 'Reseller V1', 1, 1],
+        [11, 'Reseller V1', 1, 1],
+        [12, 'Reseller V1', 1, 1],
+        [8, 'Reseller V1', 1, 1],
+        [19, 'Reseller V1', 1, 1],
+        [20, 'Reseller V1', 1, 3],
+        [11, 'Reseller V1', 1, 1],
+        [8, 'Reseller V1', 1, 1],
+        [9, 'Reseller V1', 1, 1],
+        [11, 'Reseller V1', 1, 1],
+        [11, 'Reseller V1', 1, 1],
+        [19, 'Reseller V1', 1, 1],
+        [19, 'Reseller V1', 1, 1],
+        [6, 'Reseller V1', 1, 8],
+        [6, 'Reseller V1', 1, 1],
+        [6, 'Reseller V1', 1, 1],
+        [7, 'Reseller V1', 1, 8],
+        [7, 'Reseller V1', 1, 1],
+        [7, 'Reseller V1', 1, 1],
+        [7, 'Reseller V1', 1, 1],
+        [7, 'Reseller V1', 1, 1],
+        [7, 'Reseller V1', 1, 1],
+        [25, 'Reseller V1', 1, 5],
+        [29, 'Reseller V1', 1, 5],
+        [27, 'Reseller V1', 1, 8],
+        [27, 'Reseller V1', 1, 5],
+        [25, 'Reseller V1', 1, 5],
+        [25, 'Reseller V1', 1, 1],
+        [27, 'Reseller V1', 1, 5],
+        [25, 'Salesforce Dialers', 1, 5],
+        [26, 'Salesforce Dialers', 1, 3],
+        [32, 'Salesforce Dialers', 1, 8],
+        [25, 'Salesforce Dialers', 1, 5],
+        [30, 'Salesforce Dialers', 1, 8],
+        [26, 'Salesforce Dialers', 1, 3],
+        [28, 'Salesforce Dialers', 1, 3],
+        [32, 'Salesforce Dialers', 1, 5],
+        [30, 'Salesforce Dialers', 1, 5],
+        [32, 'Salesforce Dialers', 1, 8],
+        [32, 'Salesforce Dialers', 1, 5],
+        [32, 'Salesforce Dialers', 1, 5],
+        [28, 'Salesforce Dialers', 1, 5],
+        [32, 'Salesforce Dialers', 1, 5],
+        [26, 'Salesforce Dialers', 1, 3],
+        [13, 'Salesforce Dialers', 1, 5],
+        [3, 'Salesforce Dialers', 1, 3],
+        [3, 'Salesforce Dialers', 1, 1],
+        [2, 'Salesforce Dialers', 1, 3],
+        [3, 'Salesforce Dialers', 1, 2],
+        [1, 'Salesforce Dialers', 1, 2],
+        [9, 'Salesforce Dialers', 1, 1],
+        [12, 'Salesforce Dialers', 1, 1],
+        [12, 'Salesforce Dialers', 1, 1],
+        [8, 'Salesforce Dialers', 1, 3],
+        [13, 'Salesforce Dialers', 1, 1],
+        [13, 'Salesforce Dialers', 1, 1],
+        [10, 'Salesforce Dialers', 1, 1],
+        [9, 'Salesforce Dialers', 1, 2],
+        [9, 'Salesforce Dialers', 1, 1],
+        [1, 'Salesforce Dialers', 1, 16],
+        [8, 'Salesforce Dialers', 1, 8],
+        [3, 'Salesforce Dialers', 1, 3],
+        [8, 'Salesforce Dialers', 1, 8],
+        [8, 'Salesforce Dialers', 1, 1],
+        [9, 'Salesforce Dialers', 1, 1],
+        [3, 'Salesforce Dialers', 1, 2],
+        [16, 'Salesforce Dialers', 1, 1],
+        [16, 'Salesforce Dialers', 1, 5],
+        [20, 'Salesforce Dialers', 1, 30],
+        [16, 'Salesforce Dialers', 1, 1],
+        [10, 'Salesforce Dialers', 1, 1],
+        [20, 'Salesforce Dialers', 1, 3],
+        [13, 'Salesforce Dialers', 1, 2],
+        [23, 'SalesQuote V1', 1, 5],
+        [30, 'SalesQuote V1', 1, 5],
+        [32, 'SalesQuote V1', 1, 5],
+        [31, 'SalesQuote V1', 1, 3],
+        [31, 'SalesQuote V1', 1, 3],
+        [30, 'SalesQuote V1', 1, 3],
+        [30, 'SalesQuote V1', 1, 3],
+        [30, 'SalesQuote V1', 1, 3],
+        [30, 'SalesQuote V1', 1, 3],
+        [30, 'SalesQuote V1', 1, 3],
+        [30, 'SalesQuote V1', 1, 5],
+        [28, 'SalesQuote V1', 1, 5],
+        [25, 'SalesQuote V1', 1, 5],
+        [24, 'SalesQuote V1', 1, 3],
+        [27, 'SalesQuote V1', 1, 5],
+        [31, 'SalesQuote V1', 1, 3],
+        [32, 'SalesQuote V1', 1, 3],
+        [32, 'SalesQuote V1', 1, 3],
+        [32, 'SalesQuote V1', 1, 8],
+        [18, 'SalesQuote V1', 1, 1],
+        [17, 'SalesQuote V1', 1, 1],
+        [18, 'SalesQuote V1', 1, 1],
+        [2, 'SalesQuote V1', 1, 3],
+        [2, 'SalesQuote V1', 1, 3],
+        [2, 'SalesQuote V1', 1, 3],
+        [17, 'SalesQuote V1', 1, 1],
+        [17, 'SalesQuote V1', 1, 1],
+        [17, 'SalesQuote V1', 1, 1],
+        [18, 'SalesQuote V1', 1, 1],
+        [12, 'SalesQuote V1', 1, 1],
+        [19, 'SalesQuote V1', 1, 1],
+        [20, 'SalesQuote V1', 1, 3],
+        [11, 'SalesQuote V1', 1, 1],
+        [9, 'SalesQuote V1', 1, 1],
+        [2, 'SalesQuote V1', 1, 5],
+        [15, 'SalesQuote V1', 1, 1],
+        [15, 'SalesQuote V1', 1, 1],
+        [16, 'SalesQuote V1', 1, 5],
+        [15, 'SalesQuote V1', 1, 3],
+        [15, 'SalesQuote V1', 1, 3],
+        [15, 'SalesQuote V1', 1, 3],
+        [15, 'SalesQuote V1', 1, 3],
+        [2, 'SalesQuote V1', 1, 1],
+        [10, 'SalesQuote V1', 1, 1],
+        [11, 'SalesQuote V1', 1, 1],
+        [5, 'SalesQuote V1', 1, 5],
+        [6, 'SalesQuote V1', 1, 1],
+        [7, 'SalesQuote V1', 1, 1],
+        [9, 'SalesQuote V1', 1, 1],
+        [7, 'SalesQuote V1', 1, 5],
+        [12, 'SalesQuote V1', 1, 1],
+        [12, 'SalesQuote V1', 1, 1],
+        [12, 'SalesQuote V1', 1, 1],
+        [8, 'SalesQuote V1', 1, 5],
+        [19, 'SalesQuote V1', 1, 3],
+        [6, 'SalesQuote V1', 1, 1],
+        [21, 'SalesQuote V1', 1, 3],
+        [7, 'SalesQuote V1', 1, 1],
+        [10, 'SalesQuote V1', 1, 5],
+        [17, 'SalesQuote V1', 1, 1],
+        [7, 'SalesQuote V1', 1, 1],
+        [21, 'SalesQuote V1', 1, 3],
+        [5, 'SalesQuote V1', 1, 1],
+        [5, 'SalesQuote V1', 1, 1],
+        [5, 'SalesQuote V1', 1, 1],
+        [15, 'SalesQuote V1', 1, 1],
+        [9, 'SalesQuote V1', 1, 1],
+        [5, 'SalesQuote V1', 1, 1],
+        [15, 'SalesQuote V1', 1, 1],
+        [17, 'SalesQuote V1', 1, 1],
+        [16, 'SalesQuote V1', 1, 1],
+        [6, 'SalesQuote V1', 1, 1],
+        [8, 'SalesQuote V1', 1, 1],
+        [1, 'SalesQuote V1', 1, 3],
+        [22, 'SalesQuote V1', 1, 1],
+        [27, 'SalesQuote V1', 1, 3],
+        [27, 'SalesQuote V1', 1, 3],
+        [29, 'SalesQuote V1', 1, 3],
+        [29, 'SalesQuote V1', 1, 5],
+        [26, 'SalesQuote V1', 1, 3],
+        [28, 'SalesQuote V1', 1, 3],
+        [28, 'SalesQuote V1', 1, 3],
+        [28, 'SalesQuote V1', 1, 3],
+        [28, 'SalesQuote V1', 1, 3],
+        [28, 'SalesQuote V1', 1, 3],
+        [28, 'SalesQuote V1', 1, 3],
+        [27, 'SalesQuote V1', 1, 3],
+        [27, 'SalesQuote V1', 1, 3],
+        [26, 'SalesQuote V1', 1, 3],
+        [27, 'SalesQuote V1', 1, 5],
+        [27, 'SalesQuote V1', 1, 3],
+        [28, 'SalesQuote V1', 1, 3],
+        [29, 'SalesQuote V1', 1, 3],
+        [4, 'Trunking Portal', 1, 5],
+        [15, 'Trunking Portal', 1, 1],
+        [6, 'Website', 1, 1],
+        [6, 'Website', 1, 1],
+        [6, 'Website', 1, 1]
+    ];
+
+    var color = { 1: "#3366CC", 2: "#DC3912", 3: "#109618", 4: "#990099", 5: "#0099C6", 6: "#FF9900" };
+    var svg = d3.select("body").append("svg").attr("width", 1200).attr("height", 800);
+
+    svg.append("text").attr("x", 250).attr("y", 70)
+        .attr("class", "header").text("Sprint Stories to Product Mapping");
+
+    svg.append("text").attr("x", 750).attr("y", 70)
+        .attr("class", "header").text("Sprint Story Points to Product Mapping");
+
+    var g = [svg.append("g").attr("transform", "translate(150,100)"), svg.append("g").attr("transform", "translate(650,100)")];
+
+    /*additonal code snippets inserted  */
+    data = data.map(function(doct) {
+        return {
+            a: doct[0].toString(),
+            b: doct[1],
+            c: doct[2],
+            d: doct[3]
+        }
+    })
+
+    var i = 0;
+    data = data.map(function(key) { return Object.values(key) });
+
+    data = data.sort(function(a, b) { return a[0] - b[0] })
+    /*retrieving initial elements from each object in json array with ES6 unique filters*/
+    var sortorders = [...new Set(data.map(function(da) { return da[0] }))];
+    /* additonal d3 sort inheritance */
+    function sort() {
+        var sortOrder = sortorders
+        return function(a, b) {
+            return d3.ascending(sortOrder.indexOf(a), sortOrder.indexOf(b))
+        }
+    }
+    /*additonal code snippets ends*/
+    var bp = [viz.bP()
+        /*apply sort to d3 object  */
+        .sortPrimary(sort())
+        .data(data)
+        .min(12)
+        .pad(1)
+        .height(600)
+        .width(200)
+        .barSize(35)
+        .fill(d => color[d.primary]), viz.bP()
+        /*apply sort to d3 object  */
+        .sortPrimary(sort())
+        .data(data)
+        .value(d => d[3])
+        .min(12)
+        .pad(1)
+        .height(600)
+        .width(200)
+        .barSize(35)
+        .fill(d => color[d.primary])
+
+
+    ];
+    //bp[0]=bp[0].sort(function(a,b) {return d3.descending(a.values,b.values)});
+
+    [0, 1].forEach(function(i) {
+
+
+
+        g[i].call(bp[i])
+
+        g[i].append("text").attr("x", -50).attr("y", -8).style("text-anchor", "middle").text("Sprint #");
+        g[i].append("text").attr("x", 250).attr("y", -8).style("text-anchor", "middle").text("Product");
+
+        g[i].append("line").attr("x1", -68).attr("x2", 0);
+        g[i].append("line").attr("x1", 200).attr("x2", 300);
+
+        g[i].append("line").attr("y1", 610).attr("y2", 610).attr("x1", -68).attr("x2", 0);
+        g[i].append("line").attr("y1", 610).attr("y2", 610).attr("x1", 200).attr("x2", 300);
+
+        g[i].selectAll(".mainBars")
+            .on("mouseover", mouseover)
+            .on("mouseout", mouseout);
+
+        g[i].selectAll(".mainBars").append("text").attr("class", "label")
+            .attr("x", d => (d.part == "primary" ? -30 : 30))
+            .attr("y", d => +6)
+            .text(d => d.key)
+            .attr("text-anchor", d => (d.part == "primary" ? "end" : "start"));
+
+        g[i].selectAll(".mainBars").append("text").attr("class", "perc")
+            .attr("x", d => (d.part == "primary" ? -110 : 238))
+            .attr("y", d => +6)
+            .text(function(d) {
+              
+                var recpercent = d3.format("0.0%")(d.percent)
+                var recval = d.value
+                return recval + " (" + recpercent + ")"
+            })
+            .attr("text-anchor", d => (d.part == "primary" ? "end" : "start"));
+    });
+
+    function mouseover(d) {
+        [0, 1].forEach(function(i) {
+            bp[i].mouseover(d);
+
+            g[i].selectAll(".mainBars").select(".perc")
+                .text(function(d) {
+                    var recpercent = d3.format("0.0%")(d.percent)
+                    var recval = d.value
+                    return recval + " (" + recpercent + ")"
+                });
+        });
+    }
+
+    function mouseout(d) {
+        [0, 1].forEach(function(i) {
+            bp[i].mouseout(d);
+
+            g[i].selectAll(".mainBars").select(".perc")
+                .text(function(d) {
+                    var recpercent = d3.format("0.0%")(d.percent)
+                    var recval = d.value
+                    return recval + " (" + recpercent + ")"
+                });
+        });
+    }
+    d3.select(self.frameElement).style("height", "800px");
+    </script>
+</body>
+
+</html>
