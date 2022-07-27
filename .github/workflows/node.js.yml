@@ -84,6 +84,4 @@ jobs:
       - name: github action bug- Workaround to avoid "Post Run actions/setup-node" failures
         run: mkdir -p /home/runner/.npm
         continue-on-error: true
-      - name: Git Checkout Extension
-        uses: andry81-devops/gh-action--git-checkout@v1.0.0
-   
+         
