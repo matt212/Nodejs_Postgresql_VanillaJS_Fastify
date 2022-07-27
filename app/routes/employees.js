@@ -19,8 +19,10 @@ async function routes(fastify, options) {
         mod.Name +
         '/validationConfig.js')
       reply.header('x-token', request.session.get('userLoggedInfor'))
+      let ejsRelease=(request.session["releaseEnv"] == "public-release" ? '-release' : '')
+       
       reply.view(
-        `${mod.Name}/${mod.Name}.ejs`,
+        `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
         dep.pageRenderObj(request, reply, validationConfig)
       )
     }

@@ -1,4 +1,4 @@
-const pinoInspector = require("pino-inspector");
+//const pinoInspector = require("pino-inspector");
 const path = require("path");
 
 const fastify = require("fastify")({
@@ -15,6 +15,24 @@ fastify.register(
   { encodings: ["gzip"] }
 );
 
+if(process.argv[2]=="dev")
+{
+  fastify.register(require("fastify-static"), {
+  
+    root: path.join(__dirname, "../") + "/public",
+   // prefix:'/public',
+  });
+}else
+{
+  fastify.register(require("fastify-static"), {
+  
+    root: path.join(__dirname, "../") + "/public-release",
+   // prefix:'/public',
+  });
+}
+
+
+
 fastify.register(require("point-of-view"), {
   engine: {
     ejs: require("ejs"),
@@ -27,10 +45,7 @@ fastify.register(require("fastify-jwt"), {
   expiresIn: "1h",
 });
 
-fastify.register(require("fastify-static"), {
-  root: path.join(__dirname, "../") + "/public",
-  // optional: default '/'
-});
+
 
 fastify.register(require("fastify-secure-session"), {
   secret: "averylogphrasebiggerthanfortytwochars",
@@ -40,6 +55,17 @@ fastify.register(require("fastify-secure-session"), {
     // options for setCookie, see https://github.com/fastify/fastify-cookie
   },
 });
+fastify.addHook('preHandler', (request, reply, next) => {
+  if(process.argv[2]=="dev")
+  {
+    request.session.releaseEnv = "public";
+  }else
+  {
+    request.session.releaseEnv = "public-release";
+  }
+  
+  next();
+})
 fastify.register(require("../../app/config/baseAuth"));
 fastify.register(require("../routes/customauth"), { prefix: "/" });
 fastify.register(require("../routes/utils/misc/jynerso"), {
@@ -56,6 +82,7 @@ fastify.listen(3011, function (err, address) {
     fastify.log.error(err);
     process.exit(1);
   }
+  
   console.log(`App Server listening on port ${address}`);
 });
 fastify.register(require("fastify-socket.io"), {

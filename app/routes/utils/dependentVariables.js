@@ -939,7 +939,7 @@ let pageRender = (req, res, validationConfig) => {
   const serverdat = {
     name: d.toString(),
   };
-
+  
   res.render("" + mod.Name + "/" + mod.Name + "", {
     title: req.user,
     serverdate: serverdat,
@@ -959,6 +959,7 @@ let pageRenderObj = (req, res, validationConfig) => {
   };
 
   return {
+    releaseEnv: req.session["releaseEnv"],
     sessiontoken: req.session.get("userLoggedInfor"),
     title: req.user,
     serverdate: serverdat,
