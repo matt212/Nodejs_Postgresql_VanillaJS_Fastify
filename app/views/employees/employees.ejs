@@ -3,28 +3,29 @@
 
 <head>
     
-    <%- include("../../"+releaseEnv+"/components/loader.html"); %>
+    <%- include("../../public/components/loader.html"); %>
    <!-- Dev version -->
    
-     <%- include("../../"+releaseEnv+"/components/headercontent.html") -%>
+     <%- include("../../public/components/headercontent.html") -%>
      
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
         
-        <%- include("../../"+releaseEnv+"/components/slidebar.html"); %>
-        
+        <%- include("../../public/components/slidebar.html"); %>
+        <%- include('../../public/components/vfooter.html'); %>
+        <!-- custom Module AppJS -->
         <script src="../../admin/js/app/app_employees.js"></script>
         <div class="content-wrapper">
             <section class="content">
-                <%- include("../../"+releaseEnv+"/components/controlbar.html"); %>
-                <%- include("../../"+releaseEnv+"/components/consolidatereportbar.html"); %>
+                <%- include("../../public/components/controlbar.html"); %>
+                <%- include("../../public/components/consolidatereportbar.html"); %>
                 
             </section>
         </div>
     </div>
-    <%- include("../../"+releaseEnv+"/components/modal.html"); %>
+    <%- include("../../public/components/modal.html"); %>
      
 </body>
 
