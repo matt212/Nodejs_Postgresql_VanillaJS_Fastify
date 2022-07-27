@@ -79,7 +79,7 @@
     "roleEval": "mocha ./app/utils/test/role-test.spec.js --timeout 10000 --exit",
     "mroleEval": "mocha ./app/utils/test/mrole-test.spec.js --timeout 10000 --exit",
     "userroleEval": "mocha ./app/utils/test/userrole-test.spec.js --timeout 10000 --exit",
-    "app": "cd ./app/utils && node --no-warnings app.js",
+    "app": "cd ./app/utils && node --no-warnings app.js 'dev' ",
     "app-dev": "cd ./app/utils && node --no-warnings app.js 'dev' ",
     "app-prod": "cd ./app/utils && node --no-warnings app.js 'prod' ",
     "enable-swagger": "cd ./app/utils && node --no-warnings Enable-Swagger.js",
