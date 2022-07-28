@@ -547,15 +547,26 @@
 </details>
 
 
-<details> <summary id="etl-download-user-actions">⚓ ETL download user Actions</summary>
+<details> <summary id="etl-download-user-actions">🍱 ETL download user Actions</summary>
 
 ![redlime](app/video/img/etl-download-user-actions.png) 
 </details>
 
 
-<details> <summary id="etl-download-operations">🏜️ ETL download Operations</summary>
+<details> <summary id="etl-download-operations">🍣 ETL download Operations</summary>
 
 ![redlime](app/video/img/etl-download-operations.png) 
+</details>
+
+
+<details> <summary id="api-cache-operations">🍳 Api Cache Operations</summary>
+
+![redlime](app/video/img/api-cache-operations.png) 
+</details>
+
+<details> <summary id="api-cache-drilldown">🥙 Api Cache Operations-Drilldown</summary>
+
+![redlime](app/video/img/api-cache-drilldown.png) 
 </details>
 
 
