@@ -490,6 +490,15 @@
 ![redlime](app/video/img/download-operations.png) 
 </details>
 
+<details> <summary id="api-cache-operations">🍳 Api Cache Operations</summary>
+
+![redlime](app/video/img/api-cache-operations.png) 
+</details>
+
+<details> <summary id="api-cache-drilldown">🥙 Api Cache Operations-Drilldown</summary>
+
+![redlime](app/video/img/api-cache-drilldown.png) 
+</details>
 
 
 </details>
@@ -559,15 +568,6 @@
 </details>
 
 
-<details> <summary id="api-cache-operations">🍳 Api Cache Operations</summary>
-
-![redlime](app/video/img/api-cache-operations.png) 
-</details>
-
-<details> <summary id="api-cache-drilldown">🥙 Api Cache Operations-Drilldown</summary>
-
-![redlime](app/video/img/api-cache-drilldown.png) 
-</details>
 
 
 </details>
