@@ -1,5 +1,15 @@
+#### Reach out to me
+
+[![Linkedin Profile](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
+)](https://www.linkedin.com/in/rizwan-patel/)
+<a href="mailto:captainprice212@gmail.com?"><img src="https://img.shields.io/badge/gmail-%23DD0031.svg?&style=for-the-badge&logo=gmail&logoColor=white"/></a>
+
+
 ### Badges
 [![Node.js Postgres Vanilla Fastify CI](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/node.js.yml/badge.svg)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/node.js.yml)
+
+
+
 
 ### Tech stacks
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
