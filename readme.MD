@@ -571,6 +571,25 @@
 
 
 </details>
+<summary id="Release-Flow" href="#Release-Flow"> 🍍 Release Flow 
+</summary><blockquote>
+
+<details > <summary id="nodejs-web-app-Env-pt1">🥥 Nodejs Web App Env pt1 </summary>
+
+![redlime](app/video/img/nodejs-web-app-Env-pt1.png) 
+</details>
+<details> <summary id="nodejs-web-app-Env-pt2">🍒 Nodejs Web App Env pt2 </summary>
+
+![redlime](app/video/img/nodejs-web-app-Env-pt2.png) 
+</details>
+<details> <summary id="how-to-release-node-app">
+🍌 How to Release Node App </summary>
+
+![redlime](app/video/img/how-to-release-node-app.png) 
+</details>
+
+
+</details>
 
 </details>
 
