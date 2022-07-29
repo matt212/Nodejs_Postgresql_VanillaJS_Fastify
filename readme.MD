@@ -1,8 +1,4 @@
-#### Reach out to me
 
-[![Linkedin Profile](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
-)](https://www.linkedin.com/in/rizwan-patel/)
-<a href="mailto:captainprice212@gmail.com?"><img src="https://img.shields.io/badge/gmail-%23DD0031.svg?&style=for-the-badge&logo=gmail&logoColor=white"/></a>
 
 
 ### Badges
@@ -605,5 +601,11 @@
 </details>
 
   
+<br/>
 
-  
+
+#### 🍱Reach out to me 🍝 🍤
+
+[![Linkedin Profile](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
+)](https://www.linkedin.com/in/rizwan-patel/)
+<a href="mailto:captainprice212@gmail.com?"><img src="https://img.shields.io/badge/gmail-%23DD0031.svg?&style=for-the-badge&logo=gmail&logoColor=white"/></a>
