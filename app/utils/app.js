@@ -15,19 +15,24 @@ fastify.register(
   { encodings: ["gzip"] }
 );
 
-if(process.argv[2]=="dev")
-{
+if (process.argv[2] == "dev") {
   fastify.register(require("fastify-static"), {
-  
+
     root: path.join(__dirname, "../") + "/public",
-   // prefix:'/public',
+    // prefix:'/public',
   });
-}else
-{
+} else if (process.argv[2] == "prod") {
   fastify.register(require("fastify-static"), {
-  
+
     root: path.join(__dirname, "../") + "/public-release",
-   // prefix:'/public',
+    // prefix:'/public',
+  });
+}
+else {
+  fastify.register(require("fastify-static"), {
+
+    root: path.join(__dirname, "../") + "/public",
+    // prefix:'/public',
   });
 }
 
@@ -56,14 +61,12 @@ fastify.register(require("fastify-secure-session"), {
   },
 });
 fastify.addHook('preHandler', (request, reply, next) => {
-  if(process.argv[2]=="dev")
-  {
+  if (process.argv[2] == "dev") {
     request.session.releaseEnv = "public";
-  }else
-  {
+  } else {
     request.session.releaseEnv = "public-release";
   }
-  
+
   next();
 })
 fastify.register(require("../../app/config/baseAuth"));
@@ -82,7 +85,7 @@ fastify.listen(3011, function (err, address) {
     fastify.log.error(err);
     process.exit(1);
   }
-  
+
   console.log(`App Server listening on port ${address}`);
 });
 fastify.register(require("fastify-socket.io"), {

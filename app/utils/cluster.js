@@ -1,10 +1,10 @@
-var express = require('express'),
-	cluster = require('cluster'),
+
+var	cluster = require('cluster'),
 	net = require('net'),
 
 	farmhash = require('farmhash');
 
-var port = 3009,
+var port = 3011,
 	num_processes = require('os').cpus().length;
 var app = ""
 if (cluster.isMaster) {
@@ -51,7 +51,7 @@ if (cluster.isMaster) {
 	}).listen(port);
 } else {
 	// Note we don't use a port here because the master listens on it for us.
-	app = require('./app_cluster')
+	app = require('./app')
 
 	// Here you might use middleware, attach routes, etc.
 
