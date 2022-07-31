@@ -1,6 +1,5 @@
 //const pinoInspector = require("pino-inspector");
 const path = require("path");
-
 const fastify = require("fastify")({
   //logger: { prettyPrint: true, level: "debug", prettifier: pinoInspector },
   ajv: {
@@ -35,9 +34,6 @@ else {
     // prefix:'/public',
   });
 }
-
-
-
 fastify.register(require("point-of-view"), {
   engine: {
     ejs: require("ejs"),
@@ -49,9 +45,6 @@ fastify.register(require("fastify-jwt"), {
   secret: "supersecret",
   expiresIn: "1h",
 });
-
-
-
 fastify.register(require("fastify-secure-session"), {
   secret: "averylogphrasebiggerthanfortytwochars",
   salt: "mq9hDxBVDbspDR6n",
@@ -66,7 +59,6 @@ fastify.addHook('preHandler', (request, reply, next) => {
   } else {
     request.session.releaseEnv = "public-release";
   }
-
   next();
 })
 fastify.register(require("../../app/config/baseAuth"));
@@ -78,14 +70,12 @@ let baseroutes = require("../config/baseRoute");
 baseroutes.forEach(function (dt) {
   fastify.register(require(`../routes/${dt.val}`), { prefix: dt.key });
 });
-
 // Run the server!
 fastify.listen(3012, function (err, address) {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
   }
-
   console.log(`App Server listening on port ${address}`);
 });
 fastify.register(require("fastify-socket.io"), {

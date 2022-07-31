@@ -1,65 +1,108 @@
+const cluster = require('cluster');
+const numCPUs = require('os').cpus().length;
+//const fastify = require('fastify')();
+const port = 3012;
 
-var	cluster = require('cluster'),
-	net = require('net'),
+const path = require("path");
+const fastify = require("fastify")({
+  //logger: { prettyPrint: true, level: "debug", prettifier: pinoInspector },
+  ajv: {
+    plugins: [[require("ajv-keywords"), ["transform"]]],
+  },
+});
 
-	farmhash = require('farmhash');
 
-var port = 3011,
-	num_processes = require('os').cpus().length;
-var app = ""
 if (cluster.isMaster) {
-	// This stores our workers. We need to keep them to be able to reference
-	// them based on source IP address. It's also useful for auto-restart,
-	// for example.
-	var workers = [];
-
-	// Helper function for spawning worker at index 'i'.
-	var spawn = function (i) {
-		workers[i] = cluster.fork();
-
-		// Optional: Restart worker on exit
-		workers[i].on('exit', function (code, signal) {
-			console.log('respawning worker', i);
-			spawn(i);
-		});
-	};
-
-	// Spawn workers.
-	for (var i = 0; i < num_processes; i++) {
-		spawn(i);
-	}
-
-	// Helper function for getting a worker index based on IP address.
-	// This is a hot path so it should be really fast. The way it works
-	// is by converting the IP address to a number by removing non numeric
-	// characters, then compressing it to the number of slots we have.
-	//
-	// Compared against "real" hashing (from the sticky-session code) and
-	// "real" IP number conversion, this function is on par in terms of
-	// worker index distribution only much faster.
-	var worker_index = function (ip, len) {
-		return farmhash.fingerprint32(ip) % len; // Farmhash is the fastest and works with IPv6, too
-	};
-
-	// Create the outside facing server listening on our port.
-	var server = net.createServer({ pauseOnConnect: true }, function (connection) {
-		// We received a connection and need to pass it to the appropriate
-		// worker. Get the worker for this connection's source IP and pass
-		// it the connection.
-		var worker = workers[worker_index(connection.remoteAddress, num_processes)];
-		worker.send('sticky-session:connection', connection);
-	}).listen(port);
+  console.log(`Master ${process.pid} is running`);
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+  cluster.on('exit', worker => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
 } else {
-	// Note we don't use a port here because the master listens on it for us.
-	app = require('./app')
+  
+//const pinoInspector = require("pino-inspector");
 
-	// Here you might use middleware, attach routes, etc.
+fastify.register(require("@fastify/multipart"));
 
-	// Don't expose our internal server to the outside.
+fastify.register(
+  require("fastify-compress"),
+  { global: false },
+  { encodings: ["gzip"] }
+);
+
+if (process.argv[2] == "dev") {
+  fastify.register(require("fastify-static"), {
+
+    root: path.join(__dirname, "../") + "/public",
+    // prefix:'/public',
+  });
+} else if (process.argv[2] == "prod") {
+  fastify.register(require("fastify-static"), {
+
+    root: path.join(__dirname, "../") + "/public-release",
+    // prefix:'/public',
+  });
+}
+else {
+  fastify.register(require("fastify-static"), {
+
+    root: path.join(__dirname, "../") + "/public",
+    // prefix:'/public',
+  });
+}
+fastify.register(require("point-of-view"), {
+  engine: {
+    ejs: require("ejs"),
+  },
+  root: path.join(__dirname, "../views"),
+});
+fastify.register(require("fastify-cors"));
+fastify.register(require("fastify-jwt"), {
+  secret: "supersecret",
+  expiresIn: "1h",
+});
+fastify.register(require("fastify-secure-session"), {
+  secret: "averylogphrasebiggerthanfortytwochars",
+  salt: "mq9hDxBVDbspDR6n",
+  cookie: {
+    path: "/",
+    // options for setCookie, see https://github.com/fastify/fastify-cookie
+  },
+});
+fastify.addHook('preHandler', (request, reply, next) => {
+  if (process.argv[2] == "dev") {
+    request.session.releaseEnv = "public";
+  } else {
+    request.session.releaseEnv = "public-release";
+  }
+  next();
+})
+fastify.register(require("../../app/config/baseAuth"));
+fastify.register(require("../routes/customauth"), { prefix: "/" });
+fastify.register(require("../routes/utils/misc/jynerso"), {
+  prefix: "/black-squadron",
+});
+let baseroutes = require("../config/baseRoute");
+baseroutes.forEach(function (dt) {
+  fastify.register(require(`../routes/${dt.val}`), { prefix: dt.key });
+});
+// Run the server!
+fastify.listen(port, function (err, address) {
+  if (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+  console.log(`App Server listening on port ${address}`);
+  console.log(`Fastify "Hello World" listening on port ${port}, PID: ${process.pid}`);
+});
+fastify.register(require("fastify-socket.io"), {
+  // put your options here
+});
 
 
-	// Tell Socket.IO to use the redis adapter. By default, the redis
-	// server is assumed to be on localhost:6379. You don't have to
-	// specify them explicitly unless you want to change them.
+
+
 
 }
