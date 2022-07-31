@@ -605,12 +605,14 @@
 
 <details > <summary id="normal_mode">🧄 Normal Mode </summary>
 
-<!-- ![redlime](app/video/gif/normal_mode.gif) -->
-<video src='app/video/normal_mode.mp4' width=680/>
+
+https://user-images.githubusercontent.com/1698139/182044366-3edb4b47-a7f0-4330-83fd-b2a3ea773117.mp4
+
 </details>
 <details> <summary id="cluster_mode">🥑 Cluster Mode </summary>
 
-<video src='app/video/cluster_mode.mp4' width=680/>
+https://user-images.githubusercontent.com/1698139/182044453-92bb6c7c-9628-4b0d-9a2f-b3fb22a18521.mp4
+
 </details>
 
 </details>
