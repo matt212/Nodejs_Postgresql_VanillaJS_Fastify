@@ -598,6 +598,22 @@
 
 </details>
 
+
+<details open> 
+<summary id="Performance" href="#Performance"> 🌶️ Performance  
+</summary><blockquote>
+
+<details > <summary id="normal_mode">🧄 Normal Mode </summary>
+
+![redlime](app/video/gif/normal_mode.gif) 
+</details>
+<details> <summary id="cluster_mode">🥑 Cluster Mode </summary>
+
+![redlime](app/video/gif/cluster_mode.gif) 
+</details>
+
+</details>
+
   
 <br/>
 
