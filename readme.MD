@@ -611,7 +611,7 @@ https://user-images.githubusercontent.com/1698139/182044366-3edb4b47-a7f0-4330-8
 </details>
 <details> <summary id="cluster_mode">🥑 Cluster Mode </summary>
 
-https://user-images.githubusercontent.com/1698139/182044453-92bb6c7c-9628-4b0d-9a2f-b3fb22a18521.mp4
+https://user-images.githubusercontent.com/1698139/182044831-87c0a025-0168-413b-a96f-b278ade5489f.mp4
 
 </details>
 
