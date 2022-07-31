@@ -605,11 +605,12 @@
 
 <details > <summary id="normal_mode">🧄 Normal Mode </summary>
 
-![redlime](app/video/gif/normal_mode.gif) 
+<!-- ![redlime](app/video/gif/normal_mode.gif) -->
+<video src='app/video/normal_mode.mp4' width=680/>
 </details>
 <details> <summary id="cluster_mode">🥑 Cluster Mode </summary>
 
-![redlime](app/video/gif/cluster_mode.gif) 
+<video src='app/video/cluster_mode.mp4' width=680/>
 </details>
 
 </details>
