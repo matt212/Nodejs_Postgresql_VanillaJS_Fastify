@@ -80,7 +80,7 @@ baseroutes.forEach(function (dt) {
 });
 
 // Run the server!
-fastify.listen(3011, function (err, address) {
+fastify.listen(3012, function (err, address) {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

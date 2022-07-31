@@ -46,6 +46,7 @@ let basefunction = function () {
 
             $('table').addClass('loading')
             return ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
+                console.log(typeof argument)
                 ajaxbase.response = argument;
                 ajaxbase[currentmodulename] = argument
                 /*$("#trloader").hide()
