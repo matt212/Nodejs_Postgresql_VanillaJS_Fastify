@@ -10,7 +10,7 @@ before(async () => {
 
 // This agent refers to PORT where program is running.
 
-var server = supertest.agent('http://localhost:3011')
+var server = supertest.agent('http://localhost:3012')
 
 // UNIT test begin
 let loginsuccess=function(cred)
