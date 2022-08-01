@@ -85,7 +85,7 @@
     "pm2-monitor": "cd ./app/utils && pm2 start  app.js  ",
     "pm2-monitor-cluster": "cd ./app/utils && pm2 start cluster.js  ",
     "app-prod": "cd ./app/utils && node --no-warnings app.js 'prod' ",
-    "enable-swagger": "cd ./app/utils && node --no-warnings Enable-Swagger.js",
+    "enable-swagger": "cd ./app/utils && node --no-warnings Enable-Swagger.js ",
     "node-eval": "cd ./app/utils && node node-eval.js",
     "perfapp": "cd ./app/utils && node --prof app.js",
     "cluster": "node ./app/utils/cluster.js",

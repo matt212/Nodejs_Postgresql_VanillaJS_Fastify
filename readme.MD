@@ -235,9 +235,9 @@ https://user-images.githubusercontent.com/1698139/182214015-847cced0-95a7-46ad-a
  <summary >🍑 Automated Swagger for each Module created By build in scaffoding accessed at 
   http://localhost:3013/api-docs/ </summary>
 <br/>
-  `yarn app-dev`
-  In new Terminal 
+  
   `yarn enable-swagger`
+  
   ![redlime](app/video/gif/d.gif)
 </details>
 <br/>
