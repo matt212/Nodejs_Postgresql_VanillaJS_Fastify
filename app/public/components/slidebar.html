@@ -1,3 +1,38 @@
+<style>
+  /* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+</style>
+<script>
+  function notificationSection()
+  {
+    if($("#child-notification-base").hasClass("show"))
+    {
+      $("#child-notification-base").removeClass("show")
+    }
+    else
+    {
+      $("#child-notification-base").addClass("show")
+    }
+  
+  }
+</script>
 <header class="main-header">
     <!-- Logo -->
     <a href="index2.html" class="logo">
@@ -15,13 +50,13 @@
         <div class="navbar-custom-menu">
           <ul class="nav navbar-nav">
     <!-- Messages: style can be found in dropdown.less-->
-    <li class="dropdown tasks-menu notification-alignment" id="notificationsid" style="display: none;">
+    <li class="dropdown tasks-menu notification-alignment" onclick="javascript:notificationSection()"  id="notificationsid" style="display: none;">
         <a href="javascript:void(0);" class="dropdown-toggle"  id="uploadsaveddl" data-toggle="dropdown" >
               <i class="fa fa-flag-o"></i>
               <span class="label label-warning" id="uploadsave" style="display: none;">1</span>
             </a>
           </li>
-        <ul class="dropdown-menu">
+        <ul class="dropdown-menu" id="child-notification-base" style="margin: 0 0 0 903px;">
             <li class="header" style="display: none;">You have 10 notifications</li>
             <!-- Task item -->
             <li>
@@ -41,7 +76,7 @@
                         </div>
                         </a>
                     </li>
-                    <li id="libasenotificationrow" style="display: none;">
+                    <li id="libasenotificationrow" style="display: none;overflow-y: scroll;height: calc(100vh - 300px);width: 378px">
 
                     </li>
                 </ul>

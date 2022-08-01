@@ -68,7 +68,7 @@ let setintervalparams = {
     $('#libasenotificationrow').append(
       '<span style="color: #28669c;" id="spn_dv' +
         filenames +
-        '">Data processing in progress !</span><div id="dv_set_progress' +
+        '">Data processing in progress !</span><div style="margin:0 0 0 15px" id="dv_set_progress' +
         filenames +
         '"><small class="pull-right"><label id="lbluploadprogress' +
         filenames +
