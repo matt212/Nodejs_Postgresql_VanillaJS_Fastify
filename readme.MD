@@ -603,13 +603,13 @@
 <summary id="Performance" href="#Performance"> 🌶️ Performance  
 </summary><blockquote>
 
-<details > <summary id="normal_mode">🧄 Normal Mode </summary>
+<details > <summary id="normal_mode">🧄 Normal Mode (API against 2 Million Rows) </summary>
 
 
 https://user-images.githubusercontent.com/1698139/182044366-3edb4b47-a7f0-4330-83fd-b2a3ea773117.mp4
 
 </details>
-<details> <summary id="cluster_mode">🥑 Cluster Mode </summary>
+<details> <summary id="cluster_mode">🥑 Cluster Mode (API against 2 Million Rows) </summary>
 
 https://user-images.githubusercontent.com/1698139/182044831-87c0a025-0168-413b-a96f-b278ade5489f.mp4
 
