@@ -216,8 +216,9 @@
     <summary>🍇 Dynamic pivot operation from Postgres with highchart implementation (Redis Cached)
 </summary>
  <br/>
+https://user-images.githubusercontent.com/1698139/182132755-e19fdbb3-23f3-422e-ac54-4f2e78d3a2c3.mp4
 
-![redlime](app/video/gif/pivot-final.gif)
+<!-- ![redlime](app/video/gif/pivot-final.gif) -->
 </details>
 
 <br/>
