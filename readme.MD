@@ -243,7 +243,8 @@ https://user-images.githubusercontent.com/1698139/182214015-847cced0-95a7-46ad-a
  <summary >🍐 Basic dashboard operation</summary>
 <br/>
 
-![redlime](app/video/gif/basic-dashboard.gif)
+https://user-images.githubusercontent.com/1698139/182218607-456a32d1-1239-4a98-b0a5-30ea2dc4da4a.mp4
+
 </details>
 <br/>
 <details>
