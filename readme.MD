@@ -238,7 +238,7 @@ https://user-images.githubusercontent.com/1698139/182214015-847cced0-95a7-46ad-a
   
   `yarn enable-swagger`
   
-  ![redlime](app/video/gif/d.gif)
+  https://user-images.githubusercontent.com/1698139/182231396-1a483aed-7856-4302-beba-2fd879ee87d0.mp4 
 </details>
 <br/>
 
