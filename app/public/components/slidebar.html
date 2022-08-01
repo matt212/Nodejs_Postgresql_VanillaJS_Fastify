@@ -1,4 +1,92 @@
 <style>
+div#dt-prg {
+  display: flex;
+  width: 50px;
+  height: 50px;
+  border-radius: 70%;
+  background: conic-gradient(rgb(174, 231, 20) var(--progress), gray 0deg);
+  font-size: 0;
+  animation: .4s ease-out turn_in reverse; 
+}
+
+div#dt-prg::after {
+  content: attr(data-progress);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  margin: 8px;
+  color:darkslateblue;
+  border-radius: 50%;
+  background: white;
+  font-size: 1rem;
+  text-align: center;
+}
+
+@keyframes turn_in {
+  5% {
+    background: conic-gradient(red calc(var(--progress) * .95), gray 0deg);
+  }
+  10% {
+    background: conic-gradient(red calc(var(--progress) * .9), gray 0deg);
+  }
+  15% {
+    background: conic-gradient(red calc(var(--progress) * .85), gray 0deg);
+  }
+  20% {
+    background: conic-gradient(red calc(var(--progress) * .8), gray 0deg);
+  }
+  25% {
+    background: conic-gradient(red calc(var(--progress) * .75), gray 0deg);
+  }
+  30% {
+    background: conic-gradient(red calc(var(--progress) * .7), gray 0deg);
+  }
+  35% {
+    background: conic-gradient(red calc(var(--progress) * .65), gray 0deg);
+  }
+  40% {
+    background: conic-gradient(red calc(var(--progress) * .6), gray 0deg);
+  }
+  45% {
+    background: conic-gradient(red calc(var(--progress) * .55), gray 0deg);
+  }
+  50% {
+    background: conic-gradient(red calc(var(--progress) * .5), gray 0deg);
+  }
+  55% {
+    background: conic-gradient(red calc(var(--progress) * .45), gray 0deg);
+  }
+  60% {
+    background: conic-gradient(red calc(var(--progress) * .4), gray 0deg);
+  }
+  65% {
+    background: conic-gradient(red calc(var(--progress) * .35), gray 0deg);
+  }
+  70% {
+    background: conic-gradient(red calc(var(--progress) * 0.3), gray 0deg);
+  }
+  75% {
+    background: conic-gradient(red calc(var(--progress) * 0.25), gray 0deg);
+  }
+  80% {
+    background: conic-gradient(red calc(var(--progress) * .2), gray 0deg);
+    }
+  85% {
+    background: conic-gradient(red calc(var(--progress) * .15), gray 0deg);
+    }
+  90% {
+      background: conic-gradient(red calc(var(--progress) * .1), gray 0deg);
+    }
+  95% {
+      background: conic-gradient(red calc(var(--progress) * .05), gray 0deg);
+    }
+100% {
+    background: conic-gradient(gray 0deg);
+  }
+} 
+</style>
+<style>
   /* width */
 ::-webkit-scrollbar {
   width: 10px;
@@ -48,15 +136,21 @@
         <span class="sr-only">Toggle navigation</span>
       </a>
         <div class="navbar-custom-menu">
+          
           <ul class="nav navbar-nav">
+            <li><div id="dt-prg"  data-progress="20%"
+              style="--progress:20%;display: none;">10%</div></li>
     <!-- Messages: style can be found in dropdown.less-->
     <li class="dropdown tasks-menu notification-alignment" onclick="javascript:notificationSection()"  id="notificationsid" style="display: none;">
-        <a href="javascript:void(0);" class="dropdown-toggle"  id="uploadsaveddl" data-toggle="dropdown" >
+      
+      <a href="javascript:void(0);" class="dropdown-toggle"  id="uploadsaveddl" data-toggle="dropdown" >
               <i class="fa fa-flag-o"></i>
               <span class="label label-warning" id="uploadsave" style="display: none;">1</span>
             </a>
           </li>
+         
         <ul class="dropdown-menu" id="child-notification-base" style="margin: 0 0 0 903px;">
+          
             <li class="header" style="display: none;">You have 10 notifications</li>
             <!-- Task item -->
             <li>

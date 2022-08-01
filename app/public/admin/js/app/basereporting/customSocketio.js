@@ -25,11 +25,17 @@ let setintervalparams = {
       }
     }, 20)
   })
+  var l=0
   socket.on('newsdownloadsets', function (data) {
     var filenome = data.replace('.csv', '')
     clearInterval(setintervalparams.id)
     var loop = setintervalparams.width
+    l=l+1
   
+  var f=parseInt(l)*10+'%'
+  $("#dt-prg").attr("data-progress",l+"/10")
+  $("#dt-prg").show()
+  $("#dt-prg").attr("style", "--progress:"+f+" ");
     var ids = setInterval(function () {
       loop++
       if (loop === 101) {
@@ -102,6 +108,7 @@ let setintervalparams = {
           'width',
           setintervalparams.width + '%'
         )
+        $('#uploadsave').show()
         $('#uploadsave').html(setintervalparams.width + '%')
       }
     }
