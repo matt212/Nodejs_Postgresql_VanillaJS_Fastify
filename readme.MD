@@ -226,7 +226,8 @@
  <summary >🍊 Node.js stream based CSV download for more than 1000k recordsets from PostgresSQL with socket.io as progress feature</summary>
 <br/>
 
-  ![redlime](app/video/gif/c1.gif)
+  app/video/a.mp4
+   
 </details>
 <br/>
 
