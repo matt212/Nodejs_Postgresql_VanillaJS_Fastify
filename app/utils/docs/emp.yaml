@@ -22,7 +22,7 @@ paths:
              $ref: "#/definitions/employeesSearchtypeResponseDefinitions"
       security:
         - api_accessToken: []
-  /employees/api/searchtype:
+  /employees/api/searchtype/:
     post:
       tags:
         - employees
@@ -192,17 +192,17 @@ definitions:
     properties:
       first_name:
         type: string
-        example: asa
+        example: matt
       last_name:
         type: string
-        example: asa
+        example: cityhunter
       gender:
         type: string
         example: F
       birth_date:
         type: string
-        format: date-time 
-        example: 12-10-1989
+        format: date 
+        example: 2022-08-10
       recordstate:
         type: boolean
         example: true

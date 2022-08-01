@@ -233,7 +233,7 @@ https://user-images.githubusercontent.com/1698139/182214015-847cced0-95a7-46ad-a
 
 <details>
  <summary >🍑 Automated Swagger for each Module created By build in scaffoding accessed at 
-  http://localhost:3013/api-docs/ </summary>
+ <br/> http://localhost:3013/api-docs/ </summary>
 <br/>
   
   `yarn enable-swagger`

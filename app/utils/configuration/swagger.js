@@ -6,7 +6,7 @@ const swaggerDefinition = {
     version: '1.0.0', // Version of the app
     description: 'Below one can find Different Modules with its respective list of APIs and its request and response structure', // short description of the app
   },
-  host: 'localhost:3011', // the host or url of the app
+  host: 'localhost:3012', // the host or url of the app
   basePath: '/', // the basepath of your endpoint
   hiddenTag: 'X-HIDDEN',
   exposeRoute: true,
