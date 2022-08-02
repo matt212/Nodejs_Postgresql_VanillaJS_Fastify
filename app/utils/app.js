@@ -16,8 +16,6 @@ fastify.register(helmet, { contentSecurityPolicy: {
       scriptSrc: [
         "'self'",
         "'unsafe-inline'",
-        "'unsafe-hashes'",
-        "'unsafe-eval'",
         "*.cloudflare.com",
         "*.highcharts.com"
       ],
