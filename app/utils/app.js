@@ -6,6 +6,8 @@ const fastify = require("fastify")({
     plugins: [[require("ajv-keywords"), ["transform"]]],
   },
 });
+const helmet = require('@fastify/helmet')
+fastify.register(helmet, { global: true })
 fastify.register(require("@fastify/multipart"));
 
 fastify.register(
@@ -73,6 +75,7 @@ baseroutes.forEach(function (dt) {
 // Run the server!
 fastify.listen(3012, function (err, address) {
   if (err) {
+   // console.log(err)
     fastify.log.error(err);
     process.exit(1);
   }

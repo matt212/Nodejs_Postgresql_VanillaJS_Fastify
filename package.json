@@ -7,6 +7,7 @@
     "test": "test"
   },
   "dependencies": {
+    "@fastify/helmet": "^8.1.0",
     "@fastify/multipart": "^6.0.0",
     "@fastify/static": "^6.4.0",
     "@node-minify/clean-css": "^6.2.0",
