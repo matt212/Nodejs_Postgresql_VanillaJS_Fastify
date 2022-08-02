@@ -4,7 +4,7 @@
 [![GitHub Clones ](https://img.shields.io/badge/dynamic/json?color=success&label=Clone&query=count&url=https://gist.githubusercontent.com/matt212/fff906f983d73f42eadc74ab93701a83/raw/clone.json&logo=github)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/cloneCount.yml)
 
 
- [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/Nodejs_Postgresql_VanillaJS_Fastify/issues)
+ [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/issues)
 
 
 ### Tech stacks
