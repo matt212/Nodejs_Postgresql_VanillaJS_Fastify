@@ -7,7 +7,27 @@ const fastify = require("fastify")({
   },
 });
 const helmet = require('@fastify/helmet')
-fastify.register(helmet, { global: true })
+fastify.register(helmet, { contentSecurityPolicy: {
+  directives: {
+      defaultSrc: [
+        "'self'",
+        "'unsafe-inline'",
+      ],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "'unsafe-hashes'",
+        "'unsafe-eval'",
+        "*.cloudflare.com",
+        "*.highcharts.com"
+      ],
+      styleSrc: ["'self'", 'fonts.googleapis.com', "'unsafe-inline'"],
+      //imgSrc: ["'self'", 'https://*.com'],
+      scriptSrcAttr : ["'unsafe-inline'"],
+      imgSrc: ["'self'"],
+      fontSrc: ["'self'", 'https://*.com', 'data:']
+  },
+} })
 fastify.register(require("@fastify/multipart"));
 
 fastify.register(
