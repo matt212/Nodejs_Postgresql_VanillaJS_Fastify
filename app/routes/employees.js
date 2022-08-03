@@ -70,7 +70,7 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
-          reply.code(400).send({ status: error.trim() })
+          reply.code(400).send({ status: error })
         })
     }
   )

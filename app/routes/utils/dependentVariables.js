@@ -19,8 +19,20 @@ let mod = {};
 let assignVariables = (modObj) => {
   mod = modObj;
 };
+let searchparampayloadSQLSanitize = (res,a) => {
+  a.forEach(function (g, i) {
+    g[Object.keys(g)].forEach(function (k) {
+      var re=/ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
+      let vali = new RegExp(re);
+      console.log(vali.test(k))
+      if (vali.test(k)) {
+        res.code(403).send({ status: "SQL injection detected - Bad Request" })
+      }
+    })
+  })
 
-let searchparampayload = (req) => {
+}
+let searchparampayload = (req,res) => {
   try {
     let SqlString = require("sqlstring");
     let base = {};
@@ -29,7 +41,7 @@ let searchparampayload = (req) => {
         req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
 
       //let reqcontent=JSON.parse(req.rawBody)
-
+      let j=searchparampayloadSQLSanitize(res,reqcontent.searchparam)
       var searchparam = reqcontent.searchparam;
       var columns = reqcontent.colsearch;
       var number_of_items = reqcontent.pageno;
@@ -131,8 +143,8 @@ let searchparampayload = (req) => {
                 selector =
                   "and " +
                   coltype +
-                  "(a." +"\""+
-                  SqlString.format(searchkey) +"\""+
+                  "(a." + "\"" +
+                  SqlString.format(searchkey) + "\"" +
                   ") IN " +
                   "(" +
                   stringtype +
@@ -166,8 +178,8 @@ let searchparampayload = (req) => {
                   selector +
                   " and  " +
                   coltype +
-                  "(a." +"\""+
-                  SqlString.format(searchkey) +"\""+
+                  "(a." + "\"" +
+                  SqlString.format(searchkey) + "\"" +
                   ") IN " +
                   "(" +
                   stringtype +
@@ -190,11 +202,11 @@ let searchparampayload = (req) => {
         /*end region*/
       } else if (searchtype == "consolidatesearch") {
         //*traditional search*//
-       
+
         //searchmatrixkey=consolidatesearchparam[0].consolidatecol
-        searchmatrixkey=removeDateFilterforConsolidationSearch().map(function(item) { return '"' + item + '"' });
-        searchmatrixval=consolidatesearchparam[0].consolidatecolval
-    
+        searchmatrixkey = removeDateFilterforConsolidationSearch().map(function (item) { return '"' + item + '"' });
+        searchmatrixval = consolidatesearchparam[0].consolidatecolval
+
         consolidatesearch =
           "and " +
           searchmatrixkey.join("||' '||") +
@@ -228,18 +240,17 @@ let searchparampayload = (req) => {
     return Promise.reject(error);
   }
 };
-let removeDateFilterforConsolidationSearch=function()
-{
+let removeDateFilterforConsolidationSearch = function () {
   let validationConfig = require("./" +
-          mod.Name +
-          "/validationConfig.js");
-        var jsonintern = validationConfig.validationmap;
-        var baseField= jsonintern.filter(function(a) {
-          return a.fieldtypename != "DATE"; // if truthy then keep item
-      }).map(function(k) {
-        return  k.inputname
-      });
-   return baseField;
+    mod.Name +
+    "/validationConfig.js");
+  var jsonintern = validationConfig.validationmap;
+  var baseField = jsonintern.filter(function (a) {
+    return a.fieldtypename != "DATE"; // if truthy then keep item
+  }).map(function (k) {
+    return k.inputname
+  });
+  return baseField;
 }
 let pivottransformation = (dataset) => {
   let internbase = {};
@@ -333,7 +344,7 @@ let dumpdataset = (argument) => {
             redlime.length = 0;
             resolve(a);
           })
-          .error((e) => {});
+          .error((e) => { });
       })
       .on("error", (error) => {
         console.log(error);
@@ -570,8 +581,8 @@ let paramsSearchTypeGroupBy = (req) => {
             colmetafilter =
               "and " +
               coltype +
-              "(a." +"\""+
-              SqlString.format(searchkey) +"\""+
+              "(a." + "\"" +
+              SqlString.format(searchkey) + "\"" +
               ") IN " +
               "(" +
               stringtype +
@@ -606,9 +617,9 @@ let paramsSearchTypeGroupBy = (req) => {
   } else if (searchtype == "consolidatesearch") {
     //*traditional search*//
     //searchmatrixkey=consolidatesearchparam[0].consolidatecol
-    searchmatrixkey=removeDateFilterforConsolidationSearch().map(function(item) { return '"' + item + '"' });
-    searchmatrixval=consolidatesearchparam[0].consolidatecolval
-    
+    searchmatrixkey = removeDateFilterforConsolidationSearch().map(function (item) { return '"' + item + '"' });
+    searchmatrixval = consolidatesearchparam[0].consolidatecolval
+
     consolidatesearch =
       "and " +
       searchmatrixkey.join("||' '||") +
@@ -794,8 +805,8 @@ let pivotTransform = (req) => {
           selector =
             "and " +
             coltype +
-            "(a." +"\""+
-            SqlString.format(searchkey) +"\""+
+            "(a." + "\"" +
+            SqlString.format(searchkey) + "\"" +
             ") IN " +
             "(" +
             stringtype +
@@ -939,7 +950,7 @@ let pageRender = (req, res, validationConfig) => {
   const serverdat = {
     name: d.toString(),
   };
-  
+
   res.render("" + mod.Name + "/" + mod.Name + "", {
     title: req.user,
     serverdate: serverdat,
@@ -979,7 +990,7 @@ let searchtype = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).map(function(item) { return '"' + item + '"' }).join(',');;
+        ).map(function (item) { return '"' + item + '"' }).join(',');;
 
         let sqlConstructParams = {
           fieldnames,
@@ -992,8 +1003,8 @@ let searchtype = (req, res, a) => {
         searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
           resolve(arg);
         });
-        
-        
+
+
         //caching only count since delete of records in any b2b apps is meh !
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
@@ -1012,7 +1023,7 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).map(function(item) { return '"' + item + '"' }).join(',');;
+        ).map(function (item) { return '"' + item + '"' }).join(',');;
 
         let sqlConstructParams = {
           fieldnames,
@@ -1028,7 +1039,7 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
         searchtypeOptimizedCount(res, sqlConstructParams, a).then((arg) => {
           resolve(arg);
         });
-        
+
         //caching only count since delete of records in any b2b apps is meh !
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
@@ -1047,11 +1058,11 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
 
 let searchtypeOptimizedBase = (req, res, a) => {
   return (promise = new Promise((resolve, reject) => {
-    searchparampayload(req)
+    searchparampayload(req,res)
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).map(function(item) { return '"' + item + '"' }).join(',');;
+        ).map(function (item) { return '"' + item + '"' }).join(',');;
 
         let sqlConstructParams = {
           fieldnames,
@@ -1067,7 +1078,7 @@ let searchtypeOptimizedBase = (req, res, a) => {
         searchtypeOptimized(res, sqlConstructParams, a).then((arg) => {
           resolve(arg);
         });
-        
+
         //caching only count since delete of records in any b2b apps is meh !
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
@@ -1087,7 +1098,7 @@ let searchtypePerf = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).map(function(item) { return '"' + item + '"' }).join(',');
+        ).map(function (item) { return '"' + item + '"' }).join(',');
         let sqlConstructParams = {
           fieldnames,
           arg,
@@ -1238,7 +1249,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
               connections.release();
             });
         },
-        
+
       },
       (err, results) => {
         if (err) {
@@ -1266,7 +1277,7 @@ let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
     var internset = {};
     async(
       {
-        
+
         count: (callback) => {
           let key = mod.Name + "-" + JSON.stringify(arg);
           //isCacheCount
@@ -1382,10 +1393,9 @@ let isPivotCache = (req, reply, mod) => {
     redisMiddleware.redisCount(key, true).then(function (data) {
       if (data.iscache === true) {
         console.log()
-        if(data.val=="[object Object]")
-        {
+        if (data.val == "[object Object]") {
           redisMiddleware.redisDel(key).then(function (data) {
-            
+
             pivotResultCache(req, reply, mod).then(function (count) {
               redisMiddleware.redisCount(key, JSON.stringify(count)).then(function (data) {
                 resolve(count);
@@ -1393,7 +1403,7 @@ let isPivotCache = (req, reply, mod) => {
             });
 
 
-          }); 
+          });
         }
         resolve(data.val);
       } else {
@@ -1414,10 +1424,9 @@ let isPivotCacheOptimized = (req, reply, mod) => {
     redisMiddleware.redisCount(key, true).then(function (data) {
       if (data.iscache === true) {
         console.log()
-        if(data.val=="[object Object]")
-        {
+        if (data.val == "[object Object]") {
           redisMiddleware.redisDel(key).then(function (data) {
-            
+
             pivotResultCacheOptimized(req, reply, mod).then(function (count) {
               redisMiddleware.redisCount(key, JSON.stringify(count)).then(function (data) {
                 resolve(count);
@@ -1425,7 +1434,7 @@ let isPivotCacheOptimized = (req, reply, mod) => {
             });
 
 
-          }); 
+          });
         }
         resolve(data.val);
       } else {
@@ -1471,7 +1480,7 @@ let SearchTypeGroupBy = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
     sqlConstructParams
   );
-console.log(sqlstatementsprimary)
+  console.log(sqlstatementsprimary)
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
@@ -1530,7 +1539,7 @@ let exportExcel = (req, res, a, fastify) => {
 
     //if (arg.ispaginate) {
     var fieldnames = Object.keys(models[mod.Name].tableAttributes)
-    .map(function(item) { return '"' + item + '"' }).join(',');
+      .map(function (item) { return '"' + item + '"' }).join(',');
     let sqlConstructParams = {
       fieldnames,
       arg,
@@ -1675,12 +1684,11 @@ let childStaticVariable = function (validateMap, content) {
   let col = validateMap.filter((x) => x.childcontent != undefined);
   if (col.length > 0) {
     let getMappingData = function (dt) {
-     // console.log(col[0].childcontent.filter((x) => x.val == dt)[0]);
-      if(col[0].childcontent.filter((x) => x.val == dt)[0]!=undefined)
-      {
+      // console.log(col[0].childcontent.filter((x) => x.val == dt)[0]);
+      if (col[0].childcontent.filter((x) => x.val == dt)[0] != undefined) {
         return col[0].childcontent.filter((x) => x.val == dt)[0].text;
       }
-      
+
     };
     content = content.map(function (x) {
       x[col[0].inputtypemod] = getMappingData(x[col[0].inputtypemod]);
@@ -1820,7 +1828,7 @@ let uploadContent = async (req, reply, fastify) => {
   try {
     var baseobj = {};
 
-  baseobj.ref = fastify.io;
+    baseobj.ref = fastify.io;
     const data = await req.file();
     var fil;
     var getextension = data.filename.substring(
@@ -1828,13 +1836,13 @@ let uploadContent = async (req, reply, fastify) => {
     );
     var cryptoname = crypto.randomBytes(16).toString("hex");
     var Consolidatefilename = cryptoname + "." + getextension;
-    
+
     fil = Consolidatefilename;
 
     var dest = path.join(
       path.join(__dirname, "../") +
-        "../../app/public/uploadContent/" +
-        Consolidatefilename
+      "../../app/public/uploadContent/" +
+      Consolidatefilename
     );
     //file.pipe(fs.createWriteStream(dest));
     const { pipeline } = require("stream");
@@ -1846,8 +1854,8 @@ let uploadContent = async (req, reply, fastify) => {
       directstreambulkinsert(objs)
         .then((dt) => {
           /*circle.dynamcatdata(objs).then((data)=> {*/
-          
-          
+
+
           redisMiddleware.redisDel(mod.Name).then(function (data) {
             objs.resp = dt;
             cb(objs);
@@ -1866,7 +1874,7 @@ let uploadContent = async (req, reply, fastify) => {
             "(" +
             getattributesfields().toString() +
             ") FROM STDIN WITH (FORMAT CSV, HEADER,  DELIMITER ',') ";
-            var copyQuery = copyFrom(sqlcopysyntax);
+          var copyQuery = copyFrom(sqlcopysyntax);
           var stream = client.query(copyQuery);
 
           var fileStream = fs.createReadStream(obj.saveTo);
@@ -1875,22 +1883,22 @@ let uploadContent = async (req, reply, fastify) => {
             done();
             reject(data);
           });
-          
+
           fileStream
             .pipe(stream)
-              
+
             .on("error", (data) => {
               console.log(data);
               client.release();
             })
             .on("finish", (data) => {
               resolve(copyQuery.rowCount);
-              
+
               //console.log('rowCount: %d', copyQuery.rowCount);
               client.release();
             })
-            
-            
+
+
         });
       });
     };
@@ -2010,7 +2018,7 @@ let pivotResult = (req, res, a) => {
   );
   console.log("--------ycount--------------")
   console.log(sqlstatementsprimary)
-  
+
   console.log("--------xcount--------------")
   console.log(sqlstatementsecondary)
   async.parallel(
@@ -2144,7 +2152,7 @@ let pivotResult = (req, res, a) => {
 let pivotResultCache = (req, res, a) => {
 
   return new Promise((resolve, reject) => {
-  
+
     let async = require("async");
     let tempDep = pivotTransform(req);
     // Use c as a connection
@@ -2156,21 +2164,21 @@ let pivotResultCache = (req, res, a) => {
     sqlstatementsprimary = sqlConstruct[a.type][a.sqlstatementsprimaryPivot](
       sqlConstructParams
     );
-  
+
     sqlstatementsecondary = sqlConstruct[a.type][a.sqlstatementsecondaryPivot](
       sqlConstructParams
     );
-  
+
     var sqlstatepivotcol = "";
-  
+
     sqlstatepivot = "";
-  
+
     sqlstatepivotcol = sqlConstruct[a.type][a.sqlstatepivotcol](
       sqlConstructParams
     );
     console.log("--------ycount--------------")
     console.log(sqlstatementsprimary)
-    
+
     console.log("--------xcount--------------")
     console.log(sqlstatementsecondary)
     async.parallel(
@@ -2181,10 +2189,10 @@ let pivotResultCache = (req, res, a) => {
               .query(sqlstatementsprimary)
               .then((result) => {
                 //console.log('number:', result.rows);
-  
+
                 internset.Ycount = result.rows[0].totalyaxiscnt;
                 var ycount = result.rows[0].totalyaxiscnt;
-  
+
                 callback(null, ycount);
               })
               .catch((err) => {
@@ -2199,7 +2207,7 @@ let pivotResultCache = (req, res, a) => {
             .then((result) => {
               //console.log('number:', res.rows[0].number);
               // console.log('number:', result.rows);
-  
+
               internset.Xcount = result.rows[0].totalxaxiscnt;
               var Xcount = result.rows[0].totalxaxiscnt;
               callback(null, Xcount);
@@ -2211,10 +2219,10 @@ let pivotResultCache = (req, res, a) => {
       },
       (err, results) => {
         //console.log(results);
-  
+
         internset.Xcount = results.Xcount;
         internset.Ycount = results.Ycount;
-  
+
         var interasyncset = {};
         var rollupinternobj = {};
         console.log("--------col--------------")
@@ -2228,7 +2236,7 @@ let pivotResultCache = (req, res, a) => {
                   .then((result) => {
                     var logiblock = result.rows;
                     var logiblockrollup = result.rows;
-  
+
                     var foundItemsrollup = logiblockrollup.map((doctor) => {
                       return (
                         'COALESCE(sum("' +
@@ -2238,13 +2246,13 @@ let pivotResultCache = (req, res, a) => {
                         '"'
                       );
                     });
-  
+
                     rollupinternobj.resultsetinternrollup = foundItemsrollup.toString();
-  
+
                     var foundItems = logiblock.map((doctor) => {
                       return '  "' + doctor.xaxis.toString().replace(/\ /g, "") + '" int';
                     });
-  
+
                     rollupinternobj.resultsetintern = foundItems.toString();
                     /* subtotal horizontal*/
                     colset = logiblock.map((doctor) => {
@@ -2252,10 +2260,10 @@ let pivotResultCache = (req, res, a) => {
                     });
                     var subtotal = "(" + colset.join("+") + ") as subtotal";
                     var selectclause = "yaxis," + colset.join(",");
-  
+
                     rollupinternobj.resultsetselect =
                       subtotal + "," + selectclause;
-  
+
                     callback(null, rollupinternobj);
                   })
                   .catch((err) => {
@@ -2278,7 +2286,7 @@ let pivotResultCache = (req, res, a) => {
                   .query(sqlstatepivot)
                   .then((result) => {
                     var logiblock = result.rows;
-  
+
                     callback(null, logiblock);
                   })
                   .catch((err) => {
@@ -2288,7 +2296,7 @@ let pivotResultCache = (req, res, a) => {
             ],
             (err, result) => {
               internset.rows = result;
-  
+
               resolve(internset);
               // result now equals 'done'
             }
@@ -2297,10 +2305,10 @@ let pivotResultCache = (req, res, a) => {
         }
       }
     );
-  
-  
+
+
   })
-  
+
 };
 /////////////////////End pivot cache///////////////////
 
@@ -2309,7 +2317,7 @@ let pivotResultCache = (req, res, a) => {
 let pivotResultCacheOptimized = (req, res, a) => {
 
   return new Promise((resolve, reject) => {
-  
+
     let async = require("async");
     let tempDep = pivotTransform(req);
     // Use c as a connection
@@ -2321,93 +2329,93 @@ let pivotResultCacheOptimized = (req, res, a) => {
     var sqlstatepivotcol = "";
 
     sqlstatepivot = "";
-  
+
     sqlstatepivotcol = sqlConstruct[a.type][a.sqlstatepivotcol](
       sqlConstructParams
     );
-  
-        var interasyncset = {};
-        var rollupinternobj = {};
-        console.log("--------col--------------")
-        console.log(sqlstatepivotcol)
-        try {
-          async.waterfall(
-            [
-              (callback) => {
-                connections
-                  .query(sqlstatepivotcol)
-                  .then((result) => {
-                    var logiblock = result.rows;
-                    var logiblockrollup = result.rows;
-  
-                    var foundItemsrollup = logiblockrollup.map((doctor) => {
-                      return (
-                        'COALESCE(sum("' +
-                        doctor.xaxis.toString().replace(/\ /g, "") +
-                        '"),0) AS "' +
-                        doctor.xaxis.toString().replace(/\ /g, "") +
-                        '"'
-                      );
-                    });
-  
-                    rollupinternobj.resultsetinternrollup = foundItemsrollup.toString();
-  
-                    var foundItems = logiblock.map((doctor) => {
-                      return '  "' + doctor.xaxis.toString().replace(/\ /g, "") + '" int';
-                    });
-  
-                    rollupinternobj.resultsetintern = foundItems.toString();
-                    /* subtotal horizontal*/
-                    colset = logiblock.map((doctor) => {
-                      return '"' + doctor.xaxis.toString().replace(/\ /g, "") + '"';
-                    });
-                    var subtotal = "(" + colset.join("+") + ") as subtotal";
-                    var selectclause = "yaxis," + colset.join(",");
-  
-                    rollupinternobj.resultsetselect =
-                      subtotal + "," + selectclause;
-  
-                    callback(null, rollupinternobj);
-                  })
-                  .catch((err) => {
-                    res.send(err);
-                  });
-              },
-              (arg1, callback) => {
-                
-                let sqlConstructParams = {
-                  tempDep,
-                  arg1,
-                  mod,
-                };
-                sqlstatepivot = sqlConstruct[a.type][a.SqlPivot](
-                  sqlConstructParams
-                );
-                console.log("--------base--------------")
-                console.log(sqlstatepivot)
-                connections
-                  .query(sqlstatepivot)
-                  .then((result) => {
-                    var logiblock = result.rows;
-  
-                    callback(null, logiblock);
-                  })
-                  .catch((err) => {
-                    res.send(err);
-                  });
-              },
-            ],
-            (err, result) => {
-              internset.rows = result;
-  
-              resolve(internset);
-              // result now equals 'done'
-            }
-          );
-        } finally {
+
+    var interasyncset = {};
+    var rollupinternobj = {};
+    console.log("--------col--------------")
+    console.log(sqlstatepivotcol)
+    try {
+      async.waterfall(
+        [
+          (callback) => {
+            connections
+              .query(sqlstatepivotcol)
+              .then((result) => {
+                var logiblock = result.rows;
+                var logiblockrollup = result.rows;
+
+                var foundItemsrollup = logiblockrollup.map((doctor) => {
+                  return (
+                    'COALESCE(sum("' +
+                    doctor.xaxis.toString().replace(/\ /g, "") +
+                    '"),0) AS "' +
+                    doctor.xaxis.toString().replace(/\ /g, "") +
+                    '"'
+                  );
+                });
+
+                rollupinternobj.resultsetinternrollup = foundItemsrollup.toString();
+
+                var foundItems = logiblock.map((doctor) => {
+                  return '  "' + doctor.xaxis.toString().replace(/\ /g, "") + '" int';
+                });
+
+                rollupinternobj.resultsetintern = foundItems.toString();
+                /* subtotal horizontal*/
+                colset = logiblock.map((doctor) => {
+                  return '"' + doctor.xaxis.toString().replace(/\ /g, "") + '"';
+                });
+                var subtotal = "(" + colset.join("+") + ") as subtotal";
+                var selectclause = "yaxis," + colset.join(",");
+
+                rollupinternobj.resultsetselect =
+                  subtotal + "," + selectclause;
+
+                callback(null, rollupinternobj);
+              })
+              .catch((err) => {
+                res.send(err);
+              });
+          },
+          (arg1, callback) => {
+
+            let sqlConstructParams = {
+              tempDep,
+              arg1,
+              mod,
+            };
+            sqlstatepivot = sqlConstruct[a.type][a.SqlPivot](
+              sqlConstructParams
+            );
+            console.log("--------base--------------")
+            console.log(sqlstatepivot)
+            connections
+              .query(sqlstatepivot)
+              .then((result) => {
+                var logiblock = result.rows;
+
+                callback(null, logiblock);
+              })
+              .catch((err) => {
+                res.send(err);
+              });
+          },
+        ],
+        (err, result) => {
+          internset.rows = result;
+
+          resolve(internset);
+          // result now equals 'done'
         }
-      }
-    );  
+      );
+    } finally {
+    }
+  }
+  );
 };
 
 /////////////////////End pivot Optimized///////////////////
