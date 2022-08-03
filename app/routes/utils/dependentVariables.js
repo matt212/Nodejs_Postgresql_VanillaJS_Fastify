@@ -19,12 +19,12 @@ let mod = {};
 let assignVariables = (modObj) => {
   mod = modObj;
 };
-let searchparampayloadSQLSanitize = (res,a) => {
+let searchparampayloadSQLSanitize = (res, a) => {
   a.forEach(function (g, i) {
     g[Object.keys(g)].forEach(function (k) {
-      var re=/ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
+      var re = /ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
       let vali = new RegExp(re);
-      console.log(vali.test(k))
+
       if (vali.test(k)) {
         res.code(403).send({ status: "SQL injection detected - Bad Request" })
       }
@@ -32,7 +32,7 @@ let searchparampayloadSQLSanitize = (res,a) => {
   })
 
 }
-let searchparampayload = (req,res) => {
+let searchparampayload = (req, res) => {
   try {
     let SqlString = require("sqlstring");
     let base = {};
@@ -41,7 +41,10 @@ let searchparampayload = (req,res) => {
         req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
 
       //let reqcontent=JSON.parse(req.rawBody)
-     // let j=searchparampayloadSQLSanitize(res,reqcontent.searchparam)
+      if (!reqcontent.searchparam.includes("NA")) {
+        let j = searchparampayloadSQLSanitize(res, reqcontent.searchparam)
+      }
+
       var searchparam = reqcontent.searchparam;
       var columns = reqcontent.colsearch;
       var number_of_items = reqcontent.pageno;
@@ -1058,7 +1061,7 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
 
 let searchtypeOptimizedBase = (req, res, a) => {
   return (promise = new Promise((resolve, reject) => {
-    searchparampayload(req,res)
+    searchparampayload(req, res)
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
