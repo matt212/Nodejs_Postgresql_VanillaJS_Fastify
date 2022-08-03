@@ -41,7 +41,7 @@ let searchparampayload = (req,res) => {
         req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
 
       //let reqcontent=JSON.parse(req.rawBody)
-      let j=searchparampayloadSQLSanitize(res,reqcontent.searchparam)
+     // let j=searchparampayloadSQLSanitize(res,reqcontent.searchparam)
       var searchparam = reqcontent.searchparam;
       var columns = reqcontent.colsearch;
       var number_of_items = reqcontent.pageno;
