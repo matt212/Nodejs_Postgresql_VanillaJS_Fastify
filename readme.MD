@@ -1,12 +1,12 @@
 ### Badges
 [![Node.js Postgres Vanilla Fastify CI](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/node.js.yml/badge.svg)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/node.js.yml)
 
-[![GitHub Clones ](https://img.shields.io/badge/dynamic/json?color=success&label=Clone&query=count&url=https://gist.githubusercontent.com/matt212/fff906f983d73f42eadc74ab93701a83/raw/clone.json&logo=github)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/cloneCount.yml)
+[![CodeQL](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/codeql-analysis.yml)
 
+[![GitHub Clones ](https://img.shields.io/badge/dynamic/json?color=success&label=Clone&query=count&url=https://gist.githubusercontent.com/matt212/fff906f983d73f42eadc74ab93701a83/raw/clone.json&logo=github)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/cloneCount.yml)
 
  [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/issues)
 
-[![CodeQL](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/codeql-analysis.yml)
 
 ### Tech stacks
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
