@@ -2,7 +2,7 @@ let models = require("../../models");
 let sqlConstruct = require("./sqlConstruct");
 let connections = require("../../config/db");
 let authfunctions = require("../auth/authpage");
-let cacheMiddleware = require("../utils/memcache");
+
 let redisMiddleware = require("../utils/redisMemcache");
 let Promises = require("bluebird");
 let crypto = require("crypto");
@@ -2590,7 +2590,6 @@ module.exports = {
   MemoryUsage,
   authfunctions,
   models,
-  cacheMiddleware,
   redisMiddleware,
   searchparampayload,
   paramsSearchTypeGroupBy,
