@@ -88,7 +88,8 @@ let makepayload = function (validationConfig) {
         interimObj[doctors.inputname] = makeid(doctors.fieldmaxlength)
       }
       if (doctors.fieldvalidatename == 'number') {
-        interimObj[doctors.inputname] = getRandomInt(1, doctors.fieldmaxlength)
+        //interimObj[doctors.inputname] = getRandomInt(1, (""+1).padEnd(doctors.fieldmaxlength, "0"))
+        interimObj[doctors.inputname] = (""+1).padEnd(doctors.fieldmaxlength, "0")
       }
       if (doctors.fieldvalidatename == 'mobile') {
         interimObj[doctors.inputname] = Math.round(
@@ -127,7 +128,8 @@ let makepayloadControl = function (validationConfig) {
         interimObj[doctors.inputname] = makeid(doctors.fieldmaxlength)
       }
       if (doctors.fieldvalidatename == 'number') {
-        interimObj[doctors.inputname] = getRandomInt(1, doctors.fieldmaxlength)
+        interimObj[doctors.inputname] = (""+1).padEnd(doctors.fieldmaxlength, "0")
+        //getRandomInt(1, doctors.fieldmaxlength)
       }
       if (doctors.fieldvalidatename == 'mobile') {
         interimObj[doctors.inputname] = Math.round(

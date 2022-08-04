@@ -911,7 +911,7 @@ let consolidatedPayload = function () {
     testbase.apiUrl = '/' + evalModulename + dep.create
     testbase.responseCode = 400
     testbase.payload = entry.schemaContent
-
+   
     return testbase
   }
   o.payload2 = function (testbase, evalModulename, validationConfig) {
@@ -1625,7 +1625,11 @@ let consolidatedPayload = function () {
   }
   return o
 }
-
+let customIsNumeric=function(num){
+  let value1 = num.toString();
+  let value2 = parseFloat(num).toString();
+  return (value1 === value2);
+}
 let dynamicSelectforJsonArray = function (SchemaArray, KeysArray) {
   let a = SchemaArray.map((user) => {
 
@@ -1645,6 +1649,7 @@ module.exports = {
   expect,
   dep,
   Promises,
+  customIsNumeric,
   DeleteAssimilation,
   customAssignModularAssign,
   baseDataCleanUp,

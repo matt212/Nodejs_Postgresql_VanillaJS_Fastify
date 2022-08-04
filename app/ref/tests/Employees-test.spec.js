@@ -1,7 +1,7 @@
 let genSpecs = require('./Generic.spec.js')
-let l1=genSpecs.metaTestcaseGen("employees");
-testbase=l1.a
-validationConfig=l1.b
+let l1 = genSpecs.metaTestcaseGen("employees");
+testbase = l1.a
+validationConfig = l1.b
 
 describe('Begin Tests', function () {
   before(function (done) {
@@ -12,6 +12,7 @@ describe('Begin Tests', function () {
     })
   })
   after(function (done) {
+
     genSpecs.dataCleanUp(testbase).then(function () {
       done()
     })
@@ -64,19 +65,15 @@ describe('Begin Tests', function () {
             )
           } else if (fieldtype == 'date') {
             data.body.message.should.equal(
-              `body.${entry.key} should match format "date-time"`
+              `body.${entry.key} should match format "date"`
             )
-          } else if (fieldtype == 'number'  ||fieldtype == 'mobile') {
+          } else if (fieldtype == 'number') {
             data.body.message.should.equal(
               `body.${entry.key} should be integer`
             )
-            
           } else if (fieldtype == 'email') {
-            // data.body.message.should.equal(
-            //   `body.${entry.key} should match format "email"`
-            // )
             data.body.message.should.equal(
-              `body.${entry.key} should NOT be shorter than 1 characters`
+              `body.${entry.key} should match format "email"`
             )
           } else {
             data.body.message.should.equal(
@@ -113,11 +110,11 @@ describe('Begin Tests', function () {
             )
           } else if (fieldtype.fieldtypename == 'DATE') {
             data.body.message.should.equal(
-              `body.${entry.key} should match format "date-time"`
+              `body.${entry.key} should match format "date"`
             )
           } else if (fieldtype.fieldtypename == 'INTEGER') {
             data.body.message.should.equal(
-              `body.${entry.key} should be <= 2147483648`
+              `body.${entry.key} should be integer`
             )
           } else if (fieldtype.fieldtypename == 'BIGINT') {
             data.body.message.should.equal(
@@ -210,7 +207,7 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload7(testbase, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
+         // genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
 
           genSpecs
             .expect(data.body.rows.length)
@@ -376,10 +373,10 @@ describe('Begin Tests', function () {
               .payload17(testbase, entry, evalModulename, validationConfig)
             return genSpecs.genericApiPost(testbase).then(function (data) {
               let interimval = testbase.schemaBaseValidatorPayload[entry]
-              if (Number.isInteger(interimval)) {
+              if (genSpecs.customIsNumeric(interimval)) {
                 genSpecs
                   .expect(parseInt(data.body.rows[0][entry]))
-                  .to.equal(interimval)
+                  .to.equal(parseInt(interimval))
               } else {
                 let j = validationConfig.validationmap.filter(
                   o => o.fieldvalidatename == "date"
@@ -394,7 +391,6 @@ describe('Begin Tests', function () {
                 } else {
                   genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
                 }
-
 
               }
             })
@@ -415,7 +411,7 @@ describe('Begin Tests', function () {
           var payloadCount = parseInt(
             testbase.schemaBaseValidatorPayloadAr.length
           )
-          genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
+          //genSpecs.expect(parseInt(data.body.count)).to.be.gte(payloadCount)
           var searchAssert = data.body.rows
           var firstSet = searchAssert.filter(
             word =>
@@ -441,19 +437,23 @@ describe('Begin Tests', function () {
           .payload19(testbase, entry, evalModulename, validationConfig)
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+          
+          genSpecs.expect(parseInt(data.body.rows.length)).to.be.gte(1)
         })
       })
     })
   })
+
   describe('****************Consolidated Search Across all column except auto generated dates and boolean Test Cases****************', function () {
     it(`Consolidated ResultSet Search working as expected`, function () {
       testbase = genSpecs
         .consolidatedPayload()
         .payload20(testbase, evalModulename, validationConfig)
-
+      //file :dependentvariable line no :1116 parameter : console.log(sqlstatementsprimary) 
+      //console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
       return genSpecs.genericApiPost(testbase).then(function (data) {
-        genSpecs.expect(parseInt(data.body.count)).to.be.gte(1)
+
+        genSpecs.expect(parseInt(data.body.rows.length)).to.be.gte(1)
       })
     })
   })
@@ -565,4 +565,5 @@ describe('Begin Tests', function () {
       })
     })
   })
+
 })
