@@ -6,6 +6,7 @@
 
  [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/issues)
 
+[![CodeQL](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/matt212/Nodejs_Postgresql_VanillaJS_Fastify/actions/workflows/codeql-analysis.yml)
 
 ### Tech stacks
 ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
