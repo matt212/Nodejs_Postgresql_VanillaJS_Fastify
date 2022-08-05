@@ -1,5 +1,5 @@
 //const pinoInspector = require("pino-inspector");
-const path = require("path");
+//const path = require("path");
 const fastify = require("fastify")({
   //logger: { prettyPrint: true, level: "debug", prettifier: pinoInspector },
   ajv: {
