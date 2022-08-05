@@ -89,7 +89,7 @@ let makepayload = function (validationConfig) {
       }
       if (doctors.fieldvalidatename == 'number') {
         //interimObj[doctors.inputname] = getRandomInt(1, (""+1).padEnd(doctors.fieldmaxlength, "0"))
-        interimObj[doctors.inputname] = (""+1).padEnd(doctors.fieldmaxlength, "0")
+        interimObj[doctors.inputname] = parseInt((""+1).padEnd(doctors.fieldmaxlength, "0"))
       }
       if (doctors.fieldvalidatename == 'mobile') {
         interimObj[doctors.inputname] = Math.round(

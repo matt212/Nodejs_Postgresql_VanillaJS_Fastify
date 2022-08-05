@@ -114,7 +114,7 @@ describe('Begin Tests', function () {
             )
           } else if (fieldtype.fieldtypename == 'INTEGER') {
             data.body.message.should.equal(
-              `body.${entry.key} should be integer`
+              `body.${entry.key} should be <= ${parseInt((""+1).padEnd(fieldtype.fieldmaxlength, "0"))}`
             )
           } else if (fieldtype.fieldtypename == 'BIGINT') {
             data.body.message.should.equal(
