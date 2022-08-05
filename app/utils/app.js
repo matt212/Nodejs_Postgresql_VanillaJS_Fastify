@@ -7,8 +7,9 @@ const fastify = require("fastify")({
   },
 });
 const helmet = require('@fastify/helmet')
-fastify.register(helmet, { contentSecurityPolicy: {
-  directives: {
+fastify.register(helmet, {
+  contentSecurityPolicy: {
+    directives: {
       defaultSrc: [
         "'self'",
         "'unsafe-inline'",
@@ -23,11 +24,12 @@ fastify.register(helmet, { contentSecurityPolicy: {
       ],
       styleSrc: ["'self'", 'fonts.googleapis.com', "'unsafe-inline'"],
       //imgSrc: ["'self'", 'https://*.com'],
-      scriptSrcAttr : ["'unsafe-inline'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
       imgSrc: ["'self'"],
       fontSrc: ["'self'", 'https://*.com', 'data:']
-  },
-} })
+    },
+  }
+})
 fastify.register(require("@fastify/multipart"));
 
 fastify.register(
@@ -95,7 +97,7 @@ baseroutes.forEach(function (dt) {
 // Run the server!
 fastify.listen(3012, function (err, address) {
   if (err) {
-   // console.log(err)
+    // console.log(err)
     fastify.log.error(err);
     process.exit(1);
   }
