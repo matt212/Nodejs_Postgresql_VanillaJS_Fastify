@@ -18,11 +18,13 @@ async function routes (fastify, options) {
       let validationConfig = require('./utils/' +
         mod.Name +
         '/validationConfig.js')
-      reply.header('x-token', request.session.get('userLoggedInfor'))
-      reply.view(
-        `${mod.Name}/${mod.Name}.ejs`,
-        dep.pageRenderObj(request, reply, validationConfig)
-      )
+        reply.header('x-token', request.session.get('userLoggedInfor'))
+        let ejsRelease=(request.session["releaseEnv"] == "public-release" ? '-release' : '')
+         
+        reply.view(
+          `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
+          dep.pageRenderObj(request, reply, validationConfig)
+        )
     }
   )
   fastify.get(

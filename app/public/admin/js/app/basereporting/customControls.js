@@ -76,7 +76,9 @@ multiCheckBoxPopulate: function (elem, currentset) {
     <label class="lblhide" id="lblmsg${element.inputname}">
     <i class="fa fa-bell-o"></i>  ${element.inputname} is required
     </label>
-    <input type="text" data-attribute="${
+    <input type="text" data-key-type="${
+      element.inputname
+    }" data-attribute="${
       element.fieldvalidatename
     }" class="form-control" maxLength="${element.fieldmaxlength}"
     data-form-type="false" onkeyup="javascript:reqopsValidate.formvalidation(this)" id="cltrl${
