@@ -164,7 +164,7 @@
 🍩 app Usage
 </summary>
 
->*`goto localhost:3011/employees`*
+>*`goto localhost:3012/employees`*
 
 >*`username : krennic and  password:orson`*
 
@@ -178,7 +178,7 @@
  🍜 app SuperAdmin Usage
 </summary>
 
->*`goto localhost:3011/black-squadron`*
+>*`goto localhost:3012/black-squadron`*
 
 >*`username : krennic and password:orson`*
 
@@ -194,7 +194,7 @@
  🍘 API Documentation Usage(Swagger)
 </summary>
 
->*`goto localhost:3011/getAccessToken`*
+>*`goto localhost:3012/getAccessToken`*
 
 >*`Click on Get AccessToken button and copy the newly generated Access Token`*
 
@@ -345,7 +345,7 @@ https://user-images.githubusercontent.com/1698139/182218607-456a32d1-1239-4a98-b
 - ### `Release notes 1 July 2022`
 
 > **Superadmin scaffolding/ boilerplate Access URL**
- > *http://localhost:3011/black-squadron*
+ > *http://localhost:3012/black-squadron*
  
  > _`username : krennic and password:orson`_
 
