@@ -55,7 +55,7 @@ async function routes(fastify, options) {
     {
       config: dep.cGzip,
       schema: validatorSchema.searchLoadSchema,
-      preValidation: [fastify.authenticate]
+      preValidation: [fastify.authenticate,fastify.isPayLoadSecure]
     },
     async (request, reply) => {
       // fastify.log.debug(request.body);
@@ -63,6 +63,7 @@ async function routes(fastify, options) {
       var req = {}
 
       req.body = request.body
+      
       //dep.searchtype
       dep
         .searchtypeOptimizedBase(req, reply, mod)

@@ -32,6 +32,7 @@ let searchparampayloadSQLSanitize = (res, a) => {
   })
 
 }
+
 let searchparampayload = (req, res) => {
   try {
     let SqlString = require("sqlstring");
@@ -41,9 +42,9 @@ let searchparampayload = (req, res) => {
         req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
 
       //let reqcontent=JSON.parse(req.rawBody)
-      if (!reqcontent.searchparam.includes("NA")) {
-        let j = searchparampayloadSQLSanitize(res, reqcontent.searchparam)
-      }
+      // if (!reqcontent.searchparam.includes("NA")) {
+      //   let j = searchparampayloadSQLSanitize(res, reqcontent.searchparam)
+      // }
 
       var searchparam = reqcontent.searchparam;
       var columns = reqcontent.colsearch;

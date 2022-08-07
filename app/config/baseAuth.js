@@ -114,6 +114,31 @@ async function baseDecorator (fastify, options) {
       reply.send({ status: 'no login' })
     }
   })
+  fastify.decorate('isPayLoadSecure', async function (request, reply, done) {
+
+
+    var re = /ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
+    let vali = new RegExp(re);
+    if (!request.body.searchparam.includes("NA")) {
+    
+      if (vali.test(JSON.stringify(request.body.searchparam))) {
+        reply.code(403).send({ status: "SQL injection detected - Bad Request" })
+      }
+      else
+      {
+        done()
+      }
+    
+    
+    }
+    else
+    {
+      done()
+    }
+
+
+
+  })
   fastify.decorate('isModuleAccess', async function (request, reply, done) {
     let baseurlar = request.raw.url.split('/')
 

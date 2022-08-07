@@ -12,73 +12,9 @@
 }
 </style>
 <script type="text/javascript" src="../../js/papaparse.min.js"></script>
-<script src="../../vdashboard/bower_components/jquery/dist/jquery.min.js"></script>
-
-<!--   <script>
-window.paceOptions = {
-    ajax: {
-        trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE']
-    }
-};
-</script> -->
-<script type="text/javascript">
-/*
-readyState  Holds the status of the XMLHttpRequest. 
-0: request not initialized 
-1: server connection established
-2: request received 
-3: processing request 
-4: request finished and response is ready*/
-
-
-/*var oldXHR = window.XMLHttpRequest;
-
-function newXHR() {
-    var realXHR = new oldXHR();
-    realXHR.addEventListener("readystatechange", function() {
-
-            if (realXHR.readyState == 4 && realXHR.status == 200) {
-              //  console.log(realXHR.responseURL);
-                var meh = realXHR.responseURL;
-                substring = "api";
-                if (meh.indexOf(substring) !== -1) {
-                    //Pace.restart();
-                    
-                }
-            }
-
-            }, false);
-        return realXHR;
-    }
-    window.XMLHttpRequest = newXHR;
-*/
-
-
-
-window.paceOptions = {
-    document: true, // disabled
-    eventLag: true,
-    restartOnPushState: true,
-    restartOnRequestAfter: true,
-    ajax: {
-        trackMethods: [ 'POST','GET'],
-        ignoreURLs: ['searchtype','pivotresult','login','exportexcel','create','update','socket.io']
-    }
-
-};
-
-
- /*   window.paceOptions = {
-        document: true, // disabled
-        eventLag: true,
-        restartOnPushState: true,
-        restartOnRequestAfter: true,
-        ajax: {
-            trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE']
-        }
-
-    };*/
-</script>
+<!-- <script src="../../vdashboard/bower_components/jquery/dist/jquery.min.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" integrity="sha512-n/4gHW3atM3QqRcbCn6ewmpxcLAHGaDjpEBu4xZd47N0W2oQ+6q7oc3PXstrJYXcbNU1OHdQ1T7pAP+gi5Yu8g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="../admin/js/app/basereporting/addressloader.js"></script>
 <script src="../../pace/pace.min.js"></script>
 <link href="../../pace/theme/flattop.css" rel="stylesheet" />
 <!-- <link href="../../pace/theme/pace_analytics.css" rel="stylesheet" /> -->
