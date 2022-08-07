@@ -198,7 +198,7 @@
 
 >*`Click on Get AccessToken button and copy the newly generated Access Token`*
 
->*`goto localhost:3012/api-docs`*
+>*`goto localhost:3013/api-docs/`*
 
 >*`Click on authorize and paste the access Token`*
 
