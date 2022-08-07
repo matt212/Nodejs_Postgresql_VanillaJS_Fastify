@@ -48,7 +48,7 @@ async function routes (fastify, options) {
     {
       config: dep.cGzip,
       schema: validatorSchema.searchLoadSchema,
-      preValidation: [fastify.authenticate,fastify.isPayLoadSecure]
+      preValidation: [fastify.authenticate]
     },
     (request, reply) => {
       dep.assignVariables(mod)
