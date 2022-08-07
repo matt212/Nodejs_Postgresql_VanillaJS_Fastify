@@ -724,7 +724,7 @@ let pivotTransform = (req) => {
   var sqlstatepivot;
 
   var daterange = "1=1";
-  var dynamicquerdatrange = "1=1";
+  var dynamicquerydaterange = "1=1";
   if (startdate != undefined && enddate != undefined) {
     //for sql based pivot
     //daterange = "DATE(createdAt) between ('" + startdate + "') and ('" + enddate + "')  ";
