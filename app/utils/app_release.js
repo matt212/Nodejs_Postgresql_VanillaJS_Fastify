@@ -2,7 +2,7 @@
 const path = require("path");
 const fastify = require("fastify")({
   //logger: { prettyPrint: true, level: "debug", prettifier: pinoInspector },
-  //connectionTimeout:20000,
+  connectionTimeout:20000,
   ajv: {
     plugins: [[require("ajv-keywords"), ["transform"]]],
   },
@@ -39,12 +39,12 @@ fastify.register(
   { encodings: ["gzip"] }
 );
 
+  
+  fastify.register(require("fastify-static"), {
 
-fastify.register(require("fastify-static"), {
-
-  root: path.join(__dirname, "../") + "/public",
-  // prefix:'/public',
-});
+    root: path.join(__dirname, "../") + "/public-release",
+    // prefix:'/public',
+  });
 
 fastify.register(require("point-of-view"), {
   engine: {
@@ -66,8 +66,9 @@ fastify.register(require("fastify-secure-session"), {
   },
 });
 fastify.addHook('preHandler', (request, reply, next) => {
-
-  request.session.releaseEnv = "public";
+  
+    request.session.releaseEnv = "public-release";
+  
   next();
 })
 fastify.register(require("../../app/config/baseAuth"));

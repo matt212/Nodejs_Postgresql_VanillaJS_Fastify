@@ -11,22 +11,25 @@ const instance = autocannon({
   method: "POST",
   debug: true,
 
-  headers: { "Content-Type": "application/json; charset=UTF-8", 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTkxMjMxMTd9.xavjahsbNggTSDBu6Vmsxzz6olPMXHTPggkFForZqaU' },
+  headers: { "Content-Type": "application/json; charset=UTF-8", 'x-access-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTk4ODYzNzZ9.UUvGnD5IR12UQfiB7-_wRnfELqwnHHyMiahxrRsQPM8' },
   body: JSON.stringify(customRequest),
-  expectBody: JSON.stringify(customResponse),
+  //expectBody: JSON.stringify(customResponse),
   //  verifyBody: verifyBodyResponse,
 
 }, (err, result) => {
 
-  console.log(err);
-  if (err != null) return; // or do some error handling
+  
+  if (err != null) 
+  {
+    console.log(err);
+  } // or do some error handling
   handleResults(result);
 })
 instance.on('done', handleResults)
 
 
 instance.on('response', handleResponse)
-instance.on('verifyBody', verifyBodyResponse)
+//instance.on('verifyBody', verifyBodyResponse)
 
 function verifyBodyResponse(client) {
   console.log(typeof client)
