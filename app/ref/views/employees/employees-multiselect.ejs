@@ -3,14 +3,18 @@
 
 <head>
 
-    <%- include('../../public/components/loader.html'); %>
-        <%- include('../../public/components/legacyinnerheadercontent.html'); %>
+    <%- include("../../public/components/loader.html"); %>
+   <!-- Dev version -->
+   
+     <%- include("../../public/components/headercontent.html") -%>
+     
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
 
         <%- include('../../public/components/slidebar.html'); %>
+        <%- include('../../public/components/vfooter.html'); %>
             <!-- Multiselect .js -->
             <link rel="stylesheet" href="../../vdashboard/dist/css/multiselect.css" />
             <script src="../../vdashboard/plugins/multiselect/multiselect.js"></script>

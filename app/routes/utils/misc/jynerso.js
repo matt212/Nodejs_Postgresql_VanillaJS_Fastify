@@ -634,7 +634,7 @@ let multiClearCode = function (validationmap, mod) {
     var test21 = conditions.some((el) => isMultiControl.includes(el));
     
     if (test21) {
-      r2 = r2 + "\n multiselects={}";
+      r2 = r2 + "\n multiselects={}; \n multiselectfunc.name.basesearchar=[];\n ajaxbase.isedit=false";
     }
     return r2;
   } else {
