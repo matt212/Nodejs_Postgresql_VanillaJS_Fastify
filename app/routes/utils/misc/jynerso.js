@@ -557,7 +557,7 @@ var radioMultiControl = function (redlime) {
     current${dt.inputtypemod}.data={[key]:val}
    }
    else {
-     baseurlobj["DelObj"].push({[currentmodname.id]:val})
+     baseurlobj["DelObj"].push({[currentmoduleid]:val})
      delete current${dt.inputtypemod}.data[key]
    }
 },`;
@@ -578,7 +578,7 @@ var checkboxMultiControl = function (redlime) {
       current${dt.inputtypemod}.data[key] = [...current${dt.inputtypemod}.data[key], ...[val]]
     }
     else {
-      baseurlobj["DelObj"].push({[currentmodname.id]:val})
+      baseurlobj["DelObj"].push({[currentmoduleid]:val})
       current${dt.inputtypemod}.data[key] = current${dt.inputtypemod}.data[key].filter(item => (isNaN(parseInt(item))?item:parseInt(item)) !== val)
     }
     reqopsValidate.formvalidation(data);
