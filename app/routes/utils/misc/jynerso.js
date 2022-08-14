@@ -320,7 +320,7 @@ var radioEditPopulate = function (redlime) {
   var r1 = "";
   redlime.forEach(function (dt) {
     if (dt.inputtype == "radio") {
-      r1 = r1 + `current${dt.inputtypemod}.data=data.val`;
+      r1 = r1 + `current${dt.inputtypemod}.data={[data.key]:data.val}`;
     }
   });
   return r1;
@@ -1356,6 +1356,7 @@ baseCheckbox:htmlPopulateCustomControl.genericCheckboxHtmlPrimary()
              }
              else if (data.inputtype == "radio") {
               $(\`#overlaycontent .form-group.overlaytxtalign.col-md-5 .custom-control.custom-radio  [data-val="\${data.val}"]\`).prop("checked", true)
+              $('*[data-attribute="radio"]').removeAttr('data-form-type');
               //editRadio
              }
                else if (data.inputtype == "checkbox") {
