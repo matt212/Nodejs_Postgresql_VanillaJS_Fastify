@@ -1,6 +1,10 @@
 //const pinoInspector = require("pino-inspector");
 const pino = require('pino');
-const logger = pino({level: 'error'}, './app/utils/log/error.log');
+const logger = pino(
+  {level:'error'},
+//pino.destination("./pino-logger.log")
+pino.destination("./error.log")
+);
 
 const path = require("path");
 /*fastify middleware*/
