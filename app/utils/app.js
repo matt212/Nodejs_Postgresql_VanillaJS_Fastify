@@ -1,7 +1,11 @@
 //const pinoInspector = require("pino-inspector");
+const pino = require('pino');
+const logger = pino({level: 'error'}, './app/utils/log/error.log');
+
 const path = require("path");
 /*fastify middleware*/
 const fastify = require("fastify")({
+  logger,
   //logger: { prettyPrint: true, level: "debug", prettifier: pinoInspector },
   //connectionTimeout:20000,
   ajv: {

@@ -76,6 +76,15 @@ https://www.tablesgenerator.com/html_tables
 > run * `sudo nano /etc/postgresql/12/main/pg_hba.conf`
 > `change peer to m`
 
+### try catch 
+try {
+
+} catch (error) {
+      
+      request.log.info({"error":error,"modname":mod.Name,"payload":request.body})
+    }
+
+
 > * `CREATE DATABASE demodb;`
 > **uninstall node** 
 > * `sudo apt-get remove nodejs`

@@ -14,17 +14,22 @@ async function routes(fastify, options) {
     '/',
     { preValidation: [fastify.isSession, fastify.isModuleAccess] },
     async (request, reply) => {
-      dep.assignVariables(mod)
-      let validationConfig = require('./utils/' +
-        mod.Name +
-        '/validationConfig.js')
-      reply.header('x-token', request.session.get('userLoggedInfor'))
-      let ejsRelease=(request.session["releaseEnv"] == "public-release" ? '-release' : '')
-       
-      reply.view(
-        `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
-        dep.pageRenderObj(request, reply, validationConfig)
-      )
+      try {
+        dep.assignVariables(mod)
+        let validationConfig = require('./utils/' +
+          mod.Name +
+          '/validationConfig.js')
+        reply.header('x-token', request.session.get('userLoggedInfor'))
+        let ejsRelease = (request.session["releaseEnv"] == "public-release" ? '-release' : '')
+
+        reply.view(
+          `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
+          dep.pageRenderObj(request, reply, validationConfig)
+        )
+      } catch (error) {
+
+        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+      }
     }
   )
 
@@ -46,6 +51,7 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
+          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
           reply.code(400).send(error.trim())
         })
     }
@@ -63,7 +69,7 @@ async function routes(fastify, options) {
       var req = {}
 
       req.body = request.body
-      
+
       //dep.searchtype
       dep
         .searchtypeOptimizedBase(req, reply, mod)
@@ -71,6 +77,7 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
+          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
           reply.code(400).send({ status: error.trim() })
         })
     }
@@ -97,6 +104,7 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
+          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
           reply.code(400).send({ status: error.trim() })
         })
     }
@@ -123,8 +131,13 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      dep.assignVariables(mod)
-      dep.createRecord(request, reply)
+      try {
+        dep.assignVariables(mod)
+        dep.createRecord(request, reply)
+      } catch (error) {
+
+        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+      }
     }
   )
   fastify.post(
@@ -133,8 +146,13 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      dep.assignVariables(mod)
-      dep.exportExcel(request, reply, mod, fastify)
+      try {
+        dep.assignVariables(mod)
+        dep.exportExcel(request, reply, mod, fastify)
+      } catch (error) {
+
+        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+      }
     }
   )
 
@@ -144,8 +162,13 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      dep.assignVariables(mod)
-      return dep.uploadContent(request, reply)
+      try {
+        dep.assignVariables(mod)
+        return dep.uploadContent(request, reply)
+      } catch (error) {
+
+        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+      }
     }
   )
   fastify.post(
@@ -155,7 +178,12 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      dep.updateRecord(request, reply)
+      try {
+        dep.updateRecord(request, reply)
+      } catch (error) {
+
+        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+      }
     }
   )
   fastify.post(
@@ -164,8 +192,13 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      dep.assignVariables(mod)
-      dep.searchtypegroupbyId(request, reply, mod)
+      try {
+        dep.assignVariables(mod)
+        dep.searchtypegroupbyId(request, reply, mod)
+      } catch (error) {
+
+        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+      }
     }
   )
   fastify.post(
@@ -174,8 +207,13 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      dep.assignVariables(mod)
-      dep.deleteHardRecord(request, reply)
+      try {
+        dep.assignVariables(mod)
+        dep.deleteHardRecord(request, reply)
+      } catch (error) {
+
+        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+      }
     }
   )
   fastify.post(
@@ -198,6 +236,7 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
+          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
           reply.code(400).send(error.trim())
         })
     }
