@@ -259,9 +259,11 @@ let searchparampayload = (req, res) => {
       resolve(base);
     });
     return promise.catch(function (error) {
+      captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
       return Promise.reject(error);
     });
   } catch (err) {
+    captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
     return Promise.reject(error);
   }
 };
@@ -1069,6 +1071,7 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
       .catch(function (error) {
+        captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
         reject(error);
       });
   }));
@@ -1108,6 +1111,7 @@ let searchtypeOptimizedBase = (req, res, a) => {
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
       .catch(function (error) {
+        captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
         reject(error);
       });
   }));
@@ -1135,11 +1139,12 @@ let searchtypePerf = (req, res, a) => {
             resolve(arg);
           })
           .catch(function (error) {
+            captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
             reject(error);
           });
       })
       .catch(function (error) {
-        console.log("here man");
+        captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
         reject(error);
       });
   }));
@@ -1512,6 +1517,7 @@ let SearchTypeGroupBy = (req, res, a) => {
       res.send({ rows: result.rows });
     })
     .catch((err) => {
+      captureErrorLog({ "error": err, "modname": mod.name, "payload": req.body })
       res.send(err);
     });
 };
@@ -1542,7 +1548,7 @@ let createRecord = (req, res) => {
       });
     },
     (err) => {
-      console.log(err);
+      captureErrorLog({ "error": err, "modname": mod.name, "payload": req.body })
       res.status(412);
       resp.par = err;
       res.send(resp);
@@ -1593,6 +1599,9 @@ var qelasticbeta = new Queue((objs, cb) => {
   exportdataset(objs).then((data) => {
     objs.resp = data;
     cb(objs);
+  })
+  .catch((err) => {
+    captureErrorLog({ "error": err, "modname": mod.Name, "payload": JSON.stringify(objs) })
   });
 });
 var base = {};
@@ -1683,25 +1692,10 @@ let fdone = (val) => {
           }
           resolve(data.csvfilename + ".csv");
         });
-        /* connections.query(intersql)
-                 .then((result) => {
-
-                     var doctors = result.rows;
-
-                     var xls = json2xls(doctors);
-                     doctors="";
-                     fs.writeFileSync(__dirname.replace("routes", "/") + '/public/' + red.filenames + '.xlsx', xls, 'binary');
-                      xls="";
-                    
-                    base.argument.ref.emit('newsdownloadsets', red.filenames + ".xlsx");
-                     resolve(red.filenames + ".xlsx")
-                 })*/
+        
       })
       .catch((err) => {
-        // something bad happened
-        // process and error, but resolve a fullfilled Promise!
-
-        console.log(err);
+        captureErrorLog({ "error": err, "modname": mod.name, "payload": JSON.stringify(red) })
       });
   });
 };
