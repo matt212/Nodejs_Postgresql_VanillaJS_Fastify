@@ -21,14 +21,14 @@ async function routes(fastify, options) {
           '/validationConfig.js')
         reply.header('x-token', request.session.get('userLoggedInfor'))
         let ejsRelease = (request.session["releaseEnv"] == "public-release" ? '-release' : '')
-
+        
         reply.view(
           `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
           dep.pageRenderObj(request, reply, validationConfig)
         )
       } catch (error) {
-
-        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({ "error": error, "url":"/", "modname": mod.Name, "payload": request.body })
+        
       }
     }
   )
@@ -51,7 +51,8 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
-          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+          dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[0], "modname": mod.Name, "payload": request.body })
+          
           reply.code(400).send(error.trim())
         })
     }
@@ -77,7 +78,8 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
-          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+          dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[1], "modname": mod.Name, "payload": request.body })
+          
           reply.code(400).send({ status: error.trim() })
         })
     }
@@ -104,7 +106,8 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
-          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+          dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[2], "modname": mod.Name, "payload": request.body })
+          
           reply.code(400).send({ status: error.trim() })
         })
     }
@@ -120,10 +123,15 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
+      try {
       dep.assignVariables(mod)
       dep.SearchTypeGroupBy(request, reply, mod)
     }
-  )
+   catch (error) {
+    dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtypegroupby, "modname": mod.Name, "payload": request.body })
+    
+  }
+})
   fastify.post(
     dep.routeUrls.create,
     {
@@ -135,8 +143,8 @@ async function routes(fastify, options) {
         dep.assignVariables(mod)
         dep.createRecord(request, reply)
       } catch (error) {
-
-        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({ "error": error,"url":dep.routeUrls.create, "modname": mod.Name, "payload": request.body })
+        
       }
     }
   )
@@ -150,8 +158,8 @@ async function routes(fastify, options) {
         dep.assignVariables(mod)
         dep.exportExcel(request, reply, mod, fastify)
       } catch (error) {
-
-        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({ "error": error,"url":dep.routeUrls.exportexcel, "modname": mod.Name, "payload": request.body })
+        
       }
     }
   )
@@ -167,7 +175,8 @@ async function routes(fastify, options) {
         return dep.uploadContent(request, reply)
       } catch (error) {
 
-        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({ "error": error,"url":dep.routeUrls.uploadcontent, "modname": mod.Name, "payload": request.body })
+        
       }
     }
   )
@@ -181,8 +190,8 @@ async function routes(fastify, options) {
       try {
         dep.updateRecord(request, reply)
       } catch (error) {
-
-        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({ "error": error,"url":dep.routeUrls.update, "modname": mod.Name, "payload": request.body })
+        
       }
     }
   )
@@ -196,8 +205,8 @@ async function routes(fastify, options) {
         dep.assignVariables(mod)
         dep.searchtypegroupbyId(request, reply, mod)
       } catch (error) {
-
-        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtypegroupbyId, "modname": mod.Name, "payload": request.body })
+        
       }
     }
   )
@@ -211,8 +220,8 @@ async function routes(fastify, options) {
         dep.assignVariables(mod)
         dep.deleteHardRecord(request, reply)
       } catch (error) {
-
-        fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({ "error": error,"url":dep.routeUrls.delete, "modname": mod.Name, "payload": request.body })
+        
       }
     }
   )
@@ -236,7 +245,8 @@ async function routes(fastify, options) {
           reply.send(arg)
         })
         .catch(function (error) {
-          fastify.log.error({ "error": error, "modname": mod.Name, "payload": request.body })
+          dep.captureErrorLog({ "error": error,"url":dep.routeUrls.pivotresult, "modname": mod.Name, "payload": request.body })
+          
           reply.code(400).send(error.trim())
         })
     }

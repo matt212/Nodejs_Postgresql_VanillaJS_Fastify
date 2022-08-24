@@ -32,7 +32,28 @@ let searchparampayloadSQLSanitize = (res, a) => {
   })
 
 }
+let captureErrorLog=function(appsgenerator)
+{
+  var today  = new Date();
+  appsgenerator.datecapture=today.toLocaleString()
+  var filetoday=today.toLocaleString().split('/').join('-').split(",")[0]
 
+  new Promise((resolve, reject) => {
+  //../utils/log/
+    fs.writeFile(
+      path.join(__dirname, "../")+"../utils/log/error-"+filetoday+".json",
+      JSON.stringify(appsgenerator)+ "\n"+ ",",
+       { flag: "a+" },
+      function (err, data) {
+        console.log(err)
+        resolve("error logged");
+      }
+    );
+  
+  })
+  
+  
+}
 let searchparampayload = (req, res) => {
   try {
     let SqlString = require("sqlstring");
@@ -2580,6 +2601,7 @@ let baseUtilsRoutes = {
   SqlPivot: "SqlPivot",
 };
 module.exports = {
+  captureErrorLog,
   searchtypeOptimizedBaseCount,
   searchtypeOptimizedBase,
   datatransformutils,
