@@ -72,6 +72,33 @@ async function routes (fastify, options) {
     }
   )
   fastify.post(
+    dep.routeUrls.searchtype[2],
+    {
+      config: dep.cGzip,
+      schema: validatorSchema.searchLoadSchema,
+      preValidation: [fastify.authenticate]
+    },
+    async (request, reply) => {
+      // fastify.log.debug(request.body);
+      dep.assignVariables(mod)
+      var req = {}
+
+      req.body = request.body
+      //dep.searchtype
+      dep
+        .searchtypeOptimizedBaseCount(req, reply, mod)
+        .then(arg => {
+          reply.send(arg)
+        })
+        .catch(function (error) {
+          dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[2], "modname": mod.Name, "payload": request.body })
+          
+          reply.code(400).send({ status: error.trim() })
+        })
+    }
+  )
+
+  fastify.post(
     dep.routeUrls.searchtypegroupby,
     {
       config: dep.cGzip,
