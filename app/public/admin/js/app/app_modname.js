@@ -2,6 +2,7 @@ let currentmodulename = "modname";
 let currentmoduleid = "modnameid";
 let baseurlobj = {
   getpaginatesearchtypeurl: "/" + currentmodulename + "/api/searchtype/",
+  getpaginatesearchtypeCounturl: '/' + currentmodulename + '/api/searchtypeCount/',
   createdata: "/" + currentmodulename + "/api/create/",
   updatedata: "/" + currentmodulename + "/api/update/",
   exceldata: "/" + currentmodulename + "/api/exportexcel/",
@@ -31,6 +32,16 @@ let basefunction = function() {
         return argument;
       });
     },
+    getpaginatesearchtypeCount: function (base) {
+      ajaxbase.payload = base.datapayload
+      ajaxbase.url = baseurlobj.getpaginatesearchtypeCounturl;
+      $('#dvpaginationsections').addClass('loading')
+      return ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
+          $('#dvpaginationsections').removeClass('loading')
+          return argument;
+      })
+
+  },
     getpaginatesearchtypegroupby: function(base) {
       ajaxbase.payload = base.datapayload;
       ajaxbase.url = baseurlobj.getpaginatesearchtypegroupby;

@@ -3,15 +3,17 @@
 
 <head>
    
-    <%- include('../../public/components/loader.html'); %>
-    <%- include('../../public/components/legacyinnerheadercontent.html'); %>
+    <%- include("../../public/components/loader.html"); %>
+    <!-- Dev version -->
+    
+      <%- include("../../public/components/headercontent.html") -%>
 </head>
 
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
         
         <%- include('../../public/components/slidebar.html'); %>
-        
+        <%- include('../../public/components/vfooter.html'); %>
         <script src="../../admin/js/app/app_muser.js"></script>
         <div class="content-wrapper">
             <section class="content">
