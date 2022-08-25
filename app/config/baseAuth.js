@@ -187,30 +187,29 @@ async function baseDecorator (fastify, options) {
       var sqlstatement = ''
       if (id == 1 || id == 2) {
         sqlstatement =
-          'select array_agg(DISTINCT Mname) Modulename ' +
-          'from ' +
-          '( ' +
-          'select Mname ' +
-          'from modname limit 100 offset 0 ' +
-          ') as a'
+          `select array_agg(DISTINCT Mname) Modulename 
+          from 
+          ( 
+          select Mname 
+          from modname limit 100 offset 0 
+          ) as a`
       } else {
-        //sqlstatement = 'set @_total = 0;  call shitgotdeep.utils(' + id + ', 1, @_total); select @_total;';
+        //sqlstatement = 'set @_total = 0;  call shitgotdeep.utils(' + id + ', 1, @_total); select @_total;`
 
         sqlstatement =
-          'select   ROLEID as RoleID,Rolename,  isactive ,muserid,' +
-          " string_agg(distinct ModID::text,',') as ModID," +
-          " string_agg(distinct Modulename,',')as Modulename," +
-          " string_agg(distinct Accestype,',') as accesstype ," +
-          " string_agg(distinct mroleID::text,',') as mroleID from" +
-          ' (' +
-          ' select ur.muserid,r.mroleid, r.recordstate as isactive,rl.roleid AS ROLEID,n.modnameID as modID, n.Mname as Modulename,rl.rolename as Rolename, r.accesstype as Accestype' +
-          ' from mrole r' +
-          ' left join modname n on r.modulename::int=n.modnameid' +
-          ' left join role rl on r.rolename::int=rl.roleid' +
-          ' join userrolemapping ur on ur.muserid=' +
-          id +
-          ')' +
-          ' as a  GROUP BY ROLEID,Rolename,isactive,muserid'
+          `select   ROLEID as RoleID,Rolename,  isactive ,muserid,
+           string_agg(distinct ModID::text,',') as ModID, 
+           string_agg(distinct Modulename,',')as Modulename, 
+           string_agg(distinct Accestype,',') as accesstype , 
+           string_agg(distinct mroleID::text,',') as mroleID from 
+           ( 
+           select ur.muserid,r.mroleid, r.recordstate as isactive,rl.roleid AS ROLEID,n.modnameID as modID, n.Mname as Modulename,rl.rolename as Rolename, r.accesstype as Accestype
+           from mrole r
+           left join modname n on r.modulename::int=n.modnameid
+           left join role rl on r.rolename::int=rl.roleid
+           join userrolemapping ur on ur.muserid=${id}
+          )
+           as a  GROUP BY ROLEID,Rolename,isactive,muserid`
       }
 
       connections
