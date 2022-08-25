@@ -580,9 +580,15 @@ https://user-images.githubusercontent.com/1698139/182218607-456a32d1-1239-4a98-b
 ![redlime](app/video/img/etl-download-operations.png) 
 </details>
 
+</details>
+<details>
+<summary id="DB-Side-Code-Flow" href="#DB-Side-Code-Flow"> 🌯 Database Side
+</summary><blockquote>
 
+<details> <summary id="RBAC-operations">🥐 RBAC </summary>
 
-
+![redlime](app/video/img/RBAC-ERD.png)
+</details>
 </details>
 </details>
 <details open> 
