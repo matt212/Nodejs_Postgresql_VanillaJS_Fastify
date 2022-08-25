@@ -585,7 +585,7 @@ https://user-images.githubusercontent.com/1698139/182218607-456a32d1-1239-4a98-b
 <summary id="DB-Side-Code-Flow" href="#DB-Side-Code-Flow"> 🌯 Database Side
 </summary><blockquote>
 
-<details> <summary id="RBAC-operations">🥐 RBAC </summary>
+<details> <summary id="RBAC-operations">🥐 RBAC-ERD </summary>
 
 ![redlime](app/video/img/RBAC-ERD.png)
 </details>
