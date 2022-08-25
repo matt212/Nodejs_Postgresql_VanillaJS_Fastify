@@ -589,6 +589,11 @@ https://user-images.githubusercontent.com/1698139/182218607-456a32d1-1239-4a98-b
 
 ![redlime](app/video/img/RBAC-ERD.png)
 </details>
+<details> <summary id="RBAC-CaseScenarios">🍄  RBAC-Case Scenarios </summary>
+
+![redlime](app/video/img/rbac-case-scenarios.jpg)
+
+</details>
 </details>
 </details>
 <details open> 
