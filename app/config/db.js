@@ -102,9 +102,16 @@ module.exports.pgQueryStream = function (sql) {
 }
 
 //pipe 1,000,000 rows to stdout without blowing up your memory usage
+let multiWhereConstructValues=function(searchparam)
+{
 
+let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
+
+return result 
+
+}
 module.exports.query = function (sql) {
-  
+
   return new Promise((resolve, reject) => {
     pool.connect(function (err, client, release) {
       if (err) {
@@ -113,7 +120,7 @@ module.exports.query = function (sql) {
       }
       client.query(sql, function (err, result) {
         if (err) {
-          console.log(sql)
+          console.log(err)
           release(true)
           reject(err)
         } else {
@@ -124,6 +131,29 @@ module.exports.query = function (sql) {
     })
   })
 }
+
+module.exports.queryParameterized = function (sql,customvalues) {
+
+  return new Promise((resolve, reject) => {
+    pool.connect(function (err, client, release) {
+      if (err) {
+        release(true)
+        reject(err)
+      }
+      client.query(sql,customvalues, function (err, result) {
+        if (err) {
+          console.log(err)
+          release(true)
+          reject(err)
+        } else {
+          release(true)
+          resolve(result)
+        }
+      })
+    })
+  })
+}
+
 
 // the pool also supports checking out a client for
 // multiple operations, such as a transaction

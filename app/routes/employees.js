@@ -1,3 +1,4 @@
+const { isError } = require('util')
 let dep = require('./utils/dependentVariables')
 let mod = Object.assign(
   {},
@@ -73,14 +74,15 @@ async function routes(fastify, options) {
 
       //dep.searchtype
       dep
-        .searchtypeOptimizedBase(req, reply, mod)
+        //.searchtypeOptimizedBase(req, reply, mod)
+        .searchtypeOptimizedBaseParameterized(req, reply, mod)
         .then(arg => {
           reply.send(arg)
         })
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[1], "modname": mod.Name, "payload": request.body })
           
-          reply.code(400).send({ status: error.trim() })
+          reply.code(400).send({ status: isError })
         })
     }
   )
