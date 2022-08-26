@@ -295,7 +295,7 @@ let searchparampayloadParameterized = (req, res, a) => {
         startdate = reqcontent.daterange.startdate + " 00:00:00";
         enddate = reqcontent.daterange.enddate + "  24:00:00";
         base.parameterValues = multiWhereConstructValues(searchparam, [startdate, enddate])
-        
+
       }
       var searchtype = reqcontent.searchtype;
       var sortcolumn = reqcontent.sortcolumn;
@@ -376,10 +376,10 @@ let searchparampayloadParameterized = (req, res, a) => {
         //searchmatrixkey=consolidatesearchparam[0].consolidatecol
         searchmatrixkey = removeDateFilterforConsolidationSearch().map(function (item) { return '"' + item + '"' });
         searchmatrixval = consolidatesearchparam[0].consolidatecolval
-        
+
         consolidatesearch = consolidateSearchParameterizedConstruct(mod)
-        let c=[startdate,enddate,'%'+searchmatrixval+'%']
-        base.parameterValues=c  
+        let c = [startdate, enddate, '%' + searchmatrixval + '%']
+        base.parameterValues = c
         /*without vector column*/
         //consolidatesearch='and to_tsvector("'+consolidatesearchparam[0].consolidatecol.join("\"||' '||\"")+'") @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
         /*with vector column*/
@@ -636,19 +636,18 @@ let dateRangeConstructColumn = function (datecolsearch, mod) {
   return `and a.${dtcol} >= $1 AND a.${dtcol} <=$2`
 }
 
-let consolidateSearchParameterizedConstruct=function(mod)
-{
+let consolidateSearchParameterizedConstruct = function (mod) {
   var fieldvals = Object.keys(
     models[mod.Name].tableAttributes
   ).map(b => b)
 
-let f= fieldvals
-f.removear("updated_date")
-f.removear("created_date")
-f.removear("recordstate")
-f.removear(mod.id);
-custWhere="and "+f.join(" ||' '|| ")+' like $3'
-return custWhere
+  let f = fieldvals
+  f.removear("updated_date")
+  f.removear("created_date")
+  f.removear("recordstate")
+  f.removear(mod.id);
+  custWhere = "and " + f.join(" ||' '|| ") + ' like $3'
+  return custWhere
 }
 let multiWhereConstructValues = function (searchparam, daterange) {
 
@@ -1332,7 +1331,7 @@ let searchtypeOptimizedBaseParameterized = (req, res, a) => {
           mod,
 
         };
-        
+
         //searchtypeExplain(res, sqlConstructParams, a)
         /* do not delete function since it fallback to Conventional count*/
         /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
@@ -1501,8 +1500,7 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
       sqlConstructParams
     );
 
-console.log(sqlstatementsprimary)
-console.log(sqlConstructParams.arg.parameterValues)
+
     var internset = {};
     async(
       {
