@@ -282,7 +282,6 @@ let searchparampayloadParameterized = (req, res, a) => {
       }
 
       var searchparam = reqcontent.searchparam;
-      base.parameterValues = multiWhereConstructValues(searchparam)
       var columns = reqcontent.colsearch;
       var number_of_items = reqcontent.pageno;
       var pageSize = reqcontent.pageSize;
@@ -295,6 +294,8 @@ let searchparampayloadParameterized = (req, res, a) => {
       if (req.body.daterange != undefined) {
         startdate = reqcontent.daterange.startdate + " 00:00:00";
         enddate = reqcontent.daterange.enddate + "  24:00:00";
+        base.parameterValues = multiWhereConstructValues(searchparam, [startdate, enddate])
+        
       }
       var searchtype = reqcontent.searchtype;
       var sortcolumn = reqcontent.sortcolumn;
@@ -303,18 +304,7 @@ let searchparampayloadParameterized = (req, res, a) => {
       var daterange = "";
       if (startdate != undefined && enddate != undefined) {
         //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
-        daterange =
-          "and " +
-          "a." +
-          datecolsearch +
-          " >= '" +
-          startdate +
-          "' AND " +
-          "a." +
-          datecolsearch +
-          " <='" +
-          enddate +
-          "'";
+        daterange = dateRangeConstructColumn(datecolsearch, mod)
       }
       if (reqcontent.disableDate) {
         daterange = " ";
@@ -337,7 +327,7 @@ let searchparampayloadParameterized = (req, res, a) => {
           var interns = searchparam;
 
           interns.forEach((item, index) => {
-            
+
             var searchvalue = item[Object.keys(item)[0]];
             var searchkey = Object.keys(item)[0];
             var isBaseArray = item.isArray;
@@ -411,7 +401,7 @@ let searchparampayloadParameterized = (req, res, a) => {
       base.searchtype = searchtype;
       base.consolidatesearch = consolidatesearch;
 
-      
+
       resolve(base);
     });
     return promise.catch(function (error) {
@@ -472,7 +462,7 @@ let pivottransformation = (dataset) => {
       var foundItem = doctors.filter(
         (item) => item.yaxis == unique[attributename]
       );
-      
+
       var foundItems = foundItem.map((doctor) => {
         var o = {};
         o[doctor.xaxis] = doctor.cnt;
@@ -531,7 +521,7 @@ let dumpdataset = (argument) => {
           .error((e) => { });
       })
       .on("error", (error) => {
-        
+
         resp.status = error;
         res.send(resp);
       });
@@ -617,7 +607,7 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod) {
     mod.Name +
     "/validationConfig.js");
   let a = Object.values(searchparam).map(b => Object.keys(b).toString())
-  
+
   let allowableColumns = []
   a.forEach(function (c) {
 
@@ -629,19 +619,30 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod) {
   })
 
   let custWhere = ''
-  allowableColumns.forEach(function (k, i) {
-    custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (i + 1) + ')'
+  var w = 2
+  allowableColumns.forEach(function (k) {
+    w = w + 1
+    custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
 
   })
 
   return custWhere
 }
+let dateRangeConstructColumn = function (datecolsearch, mod) {
+  var fieldvals = Object.keys(
+    models[mod.Name].tableAttributes
+  ).map(b => b)
 
-let multiWhereConstructValues = function (searchparam) {
+  let dtcol = fieldvals.filter(b => b == datecolsearch)
+    .map(d => d).toString()
+
+  return `and a.${dtcol} >= $1 AND a.${dtcol} <=$2`
+}
+let multiWhereConstructValues = function (searchparam, daterange) {
 
   let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
 
-  return result
+  return [...daterange, ...result].filter(Boolean)
 
 }
 //values
@@ -696,7 +697,7 @@ let paramsSearchTypeGroupBy = (req) => {
   if (req.body.sortcolumn == 1) {
     sortcolumn = mod.id;
   }
- 
+
 
   //emp_no, '', salary
   var selector = "";
@@ -708,7 +709,7 @@ let paramsSearchTypeGroupBy = (req) => {
       var internsearchparammetafilter = searchparammetafilter;
 
       interns.forEach((item, index) => {
-        
+
         var searchvalue = item[Object.keys(item)];
         searchkey = Object.keys(item)[0];
         var coltype = "";
@@ -727,7 +728,7 @@ let paramsSearchTypeGroupBy = (req) => {
         var obj;
         if (selector == "") {
           if (searchvalue.constructor === Array) {
-            
+
             //ARRAY[5,7] && modnameid;
             selector =
               "ARRAY [" +
@@ -748,7 +749,7 @@ let paramsSearchTypeGroupBy = (req) => {
           }
         } else {
           if (searchvalue.constructor === Array) {
-            
+
             //ARRAY[5,7] && modnameid;
             selector =
               selector +
@@ -777,7 +778,7 @@ let paramsSearchTypeGroupBy = (req) => {
       //remove `!` to include multi column filter for each other !
       if (Object.keys(internsearchparammetafilter).length > 0) {
         internsearchparammetafilter.forEach((item, index) => {
-          
+
           var searchvalue = item[Object.keys(item)];
           var searchkey = Object.keys(item)[0];
 
@@ -976,7 +977,7 @@ let pivotTransform = (req) => {
     sortcolumn = mod.id;
   }
 
-  
+
   var selector = "";
   var selectordynamic = "";
   if (searchtype == "Columnwise") {
@@ -984,7 +985,7 @@ let pivotTransform = (req) => {
       var interns = searchparam;
 
       interns.forEach((item, index) => {
-        
+
 
         var searchvalue = item[Object.keys(item)];
         var searchkey = Object.keys(item)[0];
@@ -1282,7 +1283,7 @@ let searchtypeOptimizedBase = (req, res, a) => {
           arg,
           mod,
         };
-        
+
         //searchtypeExplain(res, sqlConstructParams, a)
         /* do not delete function since it fallback to Conventional count*/
         /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
@@ -1328,14 +1329,14 @@ let searchtypeOptimizedBaseParameterized = (req, res, a) => {
 
 
         if (arg.parameterValues.toString() != "") {
-           
+
           searchtypeOptimizedParameterized(res, sqlConstructParams, a).then((arg) => {
             resolve(arg);
           });
 
         }
         else {
-          
+
           searchtypeOptimized(res, sqlConstructParams, a).then((arg) => {
             resolve(arg);
           });
@@ -1402,7 +1403,7 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
             callback(null, internset.rows);
           })
           .catch((err) => {
-            
+
             connections.release();
           });
       },
@@ -1422,7 +1423,7 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
           })
           .catch((err) => {
             connections.release();
-            
+
           });
       },
     },
@@ -1458,7 +1459,7 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
               callback(null, internset.rows);
             })
             .catch((err) => {
-              
+
               connections.release();
             });
         },
@@ -1503,7 +1504,7 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
               callback(null, internset.rows);
             })
             .catch((err) => {
-              
+
               connections.release();
             });
         },
@@ -1511,7 +1512,7 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
       },
       (err, results) => {
         if (err) {
-          
+
           reject(err);
         }
 
@@ -1528,7 +1529,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
       sqlConstructParams
     );
 
-console.log(sqlstatementsprimary)
+    console.log(sqlstatementsprimary)
 
     var internset = {};
     async(
@@ -1544,7 +1545,7 @@ console.log(sqlstatementsprimary)
               callback(null, internset.rows);
             })
             .catch((err) => {
-              
+
               connections.release();
             });
         },
@@ -1552,7 +1553,7 @@ console.log(sqlstatementsprimary)
       },
       (err, results) => {
         if (err) {
-          
+
           reject(err);
         }
 
@@ -1624,7 +1625,7 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
               callback(null, internset.rows);
             })
             .catch((err) => {
-              
+
               connections.release();
             });
         },
@@ -1641,7 +1642,7 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
             })
             .catch((err) => {
               connections.release();
-              
+
             });
         },
       },
@@ -1691,7 +1692,7 @@ let isPivotCache = (req, reply, mod) => {
   return new Promise((resolve, reject) => {
     redisMiddleware.redisCount(key, true).then(function (data) {
       if (data.iscache === true) {
-        
+
         if (data.val == "[object Object]") {
           redisMiddleware.redisDel(key).then(function (data) {
 
@@ -1722,7 +1723,7 @@ let isPivotCacheOptimized = (req, reply, mod) => {
   return new Promise((resolve, reject) => {
     redisMiddleware.redisCount(key, true).then(function (data) {
       if (data.iscache === true) {
-        
+
         if (data.val == "[object Object]") {
           redisMiddleware.redisDel(key).then(function (data) {
 
@@ -1779,7 +1780,7 @@ let SearchTypeGroupBy = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
     sqlConstructParams
   );
-  
+
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
@@ -1955,7 +1956,7 @@ let fdone = (val) => {
                 dt
               );
               streamingexportcsv(internobj).then(function (a) {
-                
+
               });
             });
           }
@@ -2014,7 +2015,7 @@ let customReadCSV = (argument) => {
         //   .error(e => {})
       })
       .on("error", (error) => {
-        
+
         resp.status = error;
         res.send(resp);
       });
@@ -2067,7 +2068,7 @@ let streamingexportcsv = (internobj) => {
     });
 
     /*end region */
-   
+
     var s = require("stream");
     var objcsv = new s.Readable();
     objcsv.push(JSON.stringify(internobj.content));
@@ -2167,7 +2168,7 @@ let uploadContent = async (req, reply, fastify) => {
 
           var fileStream = fs.createReadStream(obj.saveTo);
           fileStream.on("error", (data) => {
-            
+
             done();
             reject(data);
           });
@@ -2176,7 +2177,7 @@ let uploadContent = async (req, reply, fastify) => {
             .pipe(stream)
 
             .on("error", (data) => {
-              
+
               client.release();
             })
             .on("finish", (data) => {
@@ -2217,7 +2218,7 @@ let uploadContent = async (req, reply, fastify) => {
     readexcel(fil);
     reply.send();
   } catch (error) {
-    
+
     if (error instanceof fastify.multipartErrors.FilesLimitError) {
       // handle error
     }
