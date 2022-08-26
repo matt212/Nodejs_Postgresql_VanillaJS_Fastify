@@ -376,13 +376,10 @@ let searchparampayloadParameterized = (req, res, a) => {
         //searchmatrixkey=consolidatesearchparam[0].consolidatecol
         searchmatrixkey = removeDateFilterforConsolidationSearch().map(function (item) { return '"' + item + '"' });
         searchmatrixval = consolidatesearchparam[0].consolidatecolval
-
-        consolidatesearch =
-          "and " +
-          searchmatrixkey.join("||' '||") +
-          " LIKE '%" +
-          searchmatrixval +
-          "%'";
+        
+        consolidatesearch = consolidateSearchParameterizedConstruct(mod)
+        let c=[startdate,enddate,'%'+searchmatrixval+'%']
+        base.parameterValues=c  
         /*without vector column*/
         //consolidatesearch='and to_tsvector("'+consolidatesearchparam[0].consolidatecol.join("\"||' '||\"")+'") @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
         /*with vector column*/
@@ -637,6 +634,21 @@ let dateRangeConstructColumn = function (datecolsearch, mod) {
     .map(d => d).toString()
 
   return `and a.${dtcol} >= $1 AND a.${dtcol} <=$2`
+}
+
+let consolidateSearchParameterizedConstruct=function(mod)
+{
+  var fieldvals = Object.keys(
+    models[mod.Name].tableAttributes
+  ).map(b => b)
+
+let f= fieldvals
+f.removear("updated_date")
+f.removear("created_date")
+f.removear("recordstate")
+f.removear(mod.id);
+custWhere="and "+f.join(" ||' '|| ")+' like $3'
+return custWhere
 }
 let multiWhereConstructValues = function (searchparam, daterange) {
 
@@ -1489,7 +1501,8 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
       sqlConstructParams
     );
 
-
+console.log(sqlstatementsprimary)
+console.log(sqlConstructParams.arg.parameterValues)
     var internset = {};
     async(
       {
