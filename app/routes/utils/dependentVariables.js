@@ -270,7 +270,7 @@ let searchparampayload = (req, res) => {
 
 let searchparampayloadParameterized = (req, res, a) => {
   try {
-    
+
     let base = {};
     promise = new Promise((resolve, reject) => {
       let reqcontent =
@@ -356,7 +356,7 @@ let searchparampayloadParameterized = (req, res, a) => {
 
             if (selector == "") {
 
-              selector = multiWhereConstructColumn(searchparam, coltype, a)
+              selector = multiWhereConstructColumn(searchparam, coltype, a, 2)
 
             } else {
 
@@ -595,12 +595,12 @@ let streambulkinsert = (data) => {
 };
 
 //parameterized custom Where
-let multiWhereConstructColumn = function (searchparam, coltype, mod) {
+let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
   let validationConfig = require("./" +
     mod.Name +
     "/validationConfig.js");
   let a = Object.values(searchparam).map(b => Object.keys(b).toString())
-
+  console.log(searchparam);
   let allowableColumns = []
   a.forEach(function (c) {
 
@@ -612,13 +612,13 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod) {
   })
 
   let custWhere = ''
-  var w = 2
+
   allowableColumns.forEach(function (k) {
     w = w + 1
     custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
 
   })
-
+  console.log(custWhere)
   return custWhere
 }
 let dateRangeConstructColumn = function (datecolsearch, mod) {
@@ -645,11 +645,33 @@ let consolidateSearchParameterizedConstruct = function (mod) {
   custWhere = "and " + f.join(" ||' '|| ") + ' like $3'
   return custWhere
 }
+
+let groupByConstruct = function (mod, colname, coltype) {
+  var fieldvals = Object.keys(
+    models[mod.Name].tableAttributes
+  ).map(b => b)
+  let colnm = fieldvals.filter(b => b == colname)
+    .map(d => d).toString()
+
+  return '' + coltype + '( a."' + colnm + '" )' + ' like $3'
+
+}
+
+
 let multiWhereConstructValues = function (searchparam, daterange) {
 
   let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
 
   return [...daterange, ...result].filter(Boolean)
+
+}
+let multiWhereConstructValuesGroupBy = function (daterange, searchparam, interim) {
+
+  let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
+  let result1 = Object.values(interim).map(a => a[Object.getOwnPropertyNames(a)])
+
+  console.log(interim)
+  return [...daterange, result + '%', ...result1].filter(Boolean)
 
 }
 //values
@@ -854,6 +876,11 @@ let paramsSearchTypeGroupBy = (req) => {
     /*with vector column*/
     //consolidatesearch='and weighted_tsv @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
   }
+  console.log(searchkey)
+  console.log("-------")
+  console.log(selector)
+  console.log("-------")
+  console.log(colmetafilter)
   return {
     searchkey: searchkey,
     selector: selector,
@@ -862,6 +889,107 @@ let paramsSearchTypeGroupBy = (req) => {
     searchparamkey: searchparamkey,
   };
 };
+
+
+
+let paramsSearchTypeGroupByParameterized = (req) => {
+
+  var searchparam = req.body.searchparam;
+  var searchparammetafilter = req.body.searchparammetafilter;
+  var searchparamkey = req.body.searchparamkey;
+  var columns = req.body.colsearch;
+  var number_of_items = req.body.pageno;
+  var pageSize = req.body.pageSize;
+  var startdate;
+  var enddate;
+  var base = {}
+  if (req.body.daterange != undefined) {
+    startdate = req.body.daterange.startdate + " 00:00:00";
+    enddate = req.body.daterange.enddate + "  24:00:00";
+    base.parameterValues = multiWhereConstructValuesGroupBy([startdate, enddate], searchparam, searchparammetafilter)
+  }
+  var searchtype = req.body.searchtype;
+  var sortcolumn = req.body.sortcolumn;
+  var sortcolumnorder = req.body.sortcolumnorder;
+  var datecolsearch = req.body.datecolsearch;
+
+  var daterange = "1=1";
+  if (startdate != undefined && enddate != undefined) {
+    daterange = dateRangeConstructColumn(datecolsearch, mod)
+  }
+
+  if (
+    req.body.sortcolumnorder == undefined &&
+    req.body.sortcolumn == undefined
+  ) {
+    sortcolumn = mod.id;
+    sortcolumnorder = "desc";
+  }
+  if (req.body.sortcolumn == 1) {
+    sortcolumn = mod.id;
+  }
+
+
+  //emp_no, '', salary
+  var selector = "";
+  var colmetafilter = "";
+  var searchkey;
+
+  if (searchparam.constructor === Array) {
+    var interns = searchparam;
+    var internsearchparammetafilter = searchparammetafilter;
+
+    interns.forEach((item, index) => {
+
+      var searchvalue = item[Object.keys(item)];
+      searchkey = Object.keys(item)[0];
+      var coltype = "";
+      var stringtype = "";
+      var stringCasting = "";
+
+      if (isNaN(searchvalue)) {
+        coltype = "lower";
+        stringtype = "'";
+      } else {
+        coltype = "";
+        stringtype = "";
+        stringCasting = " ::TEXT";
+      }
+
+      var obj;
+      if (selector == "") {
+
+        selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, searchkey, coltype)
+
+
+      }
+
+
+      if (internsearchparammetafilter.length > 0) {
+
+
+        colmetafilter = multiWhereConstructColumn(internsearchparammetafilter, coltype, mod, 3)
+
+      }
+      // finale.push(obj)
+    });
+    //remove `!` to include multi column filter for each other !
+
+  }
+
+  console.log(colmetafilter)
+  return {
+    parameterValues: base.parameterValues,
+    searchkey: searchkey,
+    selector: selector,
+    colmetafilter: colmetafilter,
+    sortcolumnorder: sortcolumnorder,
+    searchparamkey: searchparamkey,
+  };
+};
+
+
+
 let pivotTransform = (req) => {
   let SqlString = require("sqlstring");
   var searchparam = req.body.searchparam;
@@ -1857,7 +1985,7 @@ let searchtypegroupbyId = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupbyId](
     sqlConstructParams
   );
-
+  console.log(sqlstatementsprimary)
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
@@ -1877,7 +2005,7 @@ let SearchTypeGroupBy = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
     sqlConstructParams
   );
-
+  console.log(sqlstatementsprimary)
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
@@ -1888,6 +2016,30 @@ let SearchTypeGroupBy = (req, res, a) => {
       res.send(err);
     });
 };
+
+let SearchTypeGroupByParameterized = (req, res, a) => {
+  let tempDep = paramsSearchTypeGroupByParameterized(req);
+  let sqlConstructParams = {
+    tempDep,
+    mod,
+  };
+
+  var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
+    sqlConstructParams
+  );
+
+  connections
+    .queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
+    .then((result) => {
+      res.send({ rows: result.rows });
+    })
+    .catch((err) => {
+      captureErrorLog({ "error": err, "modname": mod.name, "payload": req.body })
+      res.send(err);
+    });
+};
+
+
 let bulkCreate = (req, res) => {
   var lime = req.body.payset;
   models[mod.Name]
@@ -2964,6 +3116,7 @@ let baseUtilsRoutes = {
 module.exports = {
   searchtypeOptimizedBaseParameterized,
   searchtypeOptimizedBaseCountParamterized,
+  SearchTypeGroupByParameterized,
   captureErrorLog,
   searchtypeOptimizedBaseCount,
   searchtypeOptimizedBase,
