@@ -82,7 +82,7 @@ async function routes(fastify, options) {
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[1], "modname": mod.Name, "payload": request.body })
           
-          reply.code(400).send({ status: isError })
+          reply.code(400).send({ status: error })
         })
     }
   )
@@ -103,7 +103,7 @@ async function routes(fastify, options) {
       req.body = request.body
       //dep.searchtype
       dep
-        .searchtypeOptimizedBaseCount(req, reply, mod)
+        .searchtypeOptimizedBaseCountParamterized(req, reply, mod)
         .then(arg => {
           reply.send(arg)
         })

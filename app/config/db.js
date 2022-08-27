@@ -102,14 +102,7 @@ module.exports.pgQueryStream = function (sql) {
 }
 
 //pipe 1,000,000 rows to stdout without blowing up your memory usage
-let multiWhereConstructValues=function(searchparam)
-{
 
-let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
-
-return result 
-
-}
 module.exports.query = function (sql) {
 
   return new Promise((resolve, reject) => {

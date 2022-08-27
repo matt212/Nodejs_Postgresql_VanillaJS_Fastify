@@ -1247,6 +1247,40 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
+        ).map(function (item) { return '"' + item + '"' }).join(',');
+
+        let sqlConstructParams = {
+          fieldnames,
+          arg,
+          mod,
+        };
+
+        //searchtypeExplain(res, sqlConstructParams, a)
+        /* do not delete function since it fallback to Conventional count*/
+        /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
+          resolve(arg);
+        });*/
+        searchtypeOptimizedCount(res, sqlConstructParams, a, arg).then((args) => {
+          resolve(args);
+        });
+
+        //caching only count since delete of records in any b2b apps is meh !
+        //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+      })
+      .catch(function (error) {
+        captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
+        reject(error);
+      });
+  }));
+};
+
+
+let searchtypeOptimizedBaseCountParamterized = (req, res, a) => {
+  return (promise = new Promise((resolve, reject) => {
+    searchparampayloadParameterized(req, res, a)
+      .then((arg) => {
+        var fieldnames = Object.keys(
+          models[mod.Name].tableAttributes
         ).map(function (item) { return '"' + item + '"' }).join(',');;
 
         let sqlConstructParams = {
@@ -1260,9 +1294,19 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
         /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
           resolve(arg);
         });*/
-        searchtypeOptimizedCount(res, sqlConstructParams, a).then((arg) => {
-          resolve(arg);
-        });
+        if (arg.parameterValues.toString() != "") {
+
+          searchtypeOptimizedCountParameterized(res, sqlConstructParams, a, arg).then((args) => {
+            resolve(args);
+          });
+
+        }
+        else {
+
+          searchtypeOptimizedCount(res, sqlConstructParams, a, arg).then((args) => {
+            resolve(args);
+          });
+        }
 
         //caching only count since delete of records in any b2b apps is meh !
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
@@ -1577,9 +1621,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
 
 let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
   return (promise = new Promise((resolve, reject) => {
-    let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
-      sqlConstructParams
-    );
+
 
     let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
       sqlConstructParams
@@ -1606,11 +1648,43 @@ let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
         resolve(results);
       }
     );
+
   }));
 };
 
 
+let searchtypeOptimizedCountParameterized = (res, sqlConstructParams, a, arg) => {
+  return (promise = new Promise((resolve, reject) => {
 
+
+    let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
+      sqlConstructParams
+    );
+
+    var internset = {};
+    async(
+      {
+
+        count: (callback) => {
+          //let key = mod.Name + "-" + JSON.stringify(arg);
+          //isCacheCount
+          getCountparameterized(sqlstatementsecondary, sqlConstructParams).then(function (data) {
+            internset.count = data;
+            callback(null, internset.count);
+          });
+        },
+      },
+      (err, results) => {
+        if (err) {
+          //res.send(err);
+          reject(err);
+        }
+        resolve(results);
+      }
+    );
+
+  }));
+};
 
 let searchtypeConventional = (res, sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
@@ -1668,6 +1742,22 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
     );
   }));
 };
+
+let getCountparameterized = (sqlstatementsecondary, sqlConstructParams) => {
+  return new Promise((resolve, reject) => {
+    connections
+      .queryParameterized(sqlstatementsecondary, sqlConstructParams.arg.parameterValues)
+      .then((result) => {
+        resolve(result.rows[0].count);
+      })
+      .catch((err) => {
+        connections.release();
+
+        reject(err);
+      });
+  });
+};
+
 let getCount = (sqlstatementsecondary) => {
   return new Promise((resolve, reject) => {
     connections
@@ -2877,6 +2967,7 @@ let baseUtilsRoutes = {
 };
 module.exports = {
   searchtypeOptimizedBaseParameterized,
+  searchtypeOptimizedBaseCountParamterized,
   captureErrorLog,
   searchtypeOptimizedBaseCount,
   searchtypeOptimizedBase,
