@@ -1,3 +1,6 @@
+parameterized release notes
+
+Bolierplate implementation parameterized applied for multiselect , multicolumn and base gen api count 
 
 ** reporting fetching from million rows  **
 this indexes is catch 22 if we apply below its works great for report but distarous for group by clause (multiselect and 
