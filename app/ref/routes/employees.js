@@ -151,7 +151,7 @@ async function routes (fastify, options) {
     try
     {
       dep.assignVariables(mod)
-      dep.SearchTypeGroupBy(request, reply, mod)
+      dep.SearchTypeGroupByParameterized(request, reply, mod)
     }
     catch (error) {
      dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtypegroupby, "modname": mod.Name, "payload": request.body })
