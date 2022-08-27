@@ -54,7 +54,7 @@ async function routes(fastify, options) {
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[0], "modname": mod.Name, "payload": request.body })
           
-          reply.code(400).send(error.trim())
+          reply.code(400).send(error)
         })
     }
   )
@@ -110,7 +110,7 @@ async function routes(fastify, options) {
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[2], "modname": mod.Name, "payload": request.body })
           
-          reply.code(400).send({ status: error.trim() })
+          reply.code(400).send({ status: error })
         })
     }
   )
@@ -249,7 +249,7 @@ async function routes(fastify, options) {
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.pivotresult, "modname": mod.Name, "payload": request.body })
           
-          reply.code(400).send(error.trim())
+          reply.code(400).send(error)
         })
     }
   )

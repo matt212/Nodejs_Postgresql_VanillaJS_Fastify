@@ -39,14 +39,25 @@ async function routes (fastify, options) {
     },
     async (request, reply) => {
       dep.assignVariables(mod)
-      let validationConfig = require('./utils/' +
-        mod.Name +
-        '/validationConfig.js')
-      reply.header('x-token', request.session.get('userLoggedInfor'))
-      reply.view(
-        `${mod.Name}/${mod.Name}_client.ejs`,
-        dep.pageRenderObj(request, reply, validationConfig)
-      )
+        
+      try {
+        dep.assignVariables(mod)
+        let validationConfig = require('./utils/' +
+          mod.Name +
+          '/validationConfig.js')
+        reply.header('x-token', request.session.get('userLoggedInfor'))
+        let ejsRelease = (request.session["releaseEnv"] == "public-release" ? '-release' : '')
+        
+        reply.view(
+          `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
+          dep.pageRenderObj(request, reply, validationConfig)
+        )
+      } catch (error) {
+        dep.captureErrorLog({ "error": error, "url":"/", "modname": mod.Name, "payload": request.body })
+        
+      }
+
+
     }
   )
   fastify.post(
@@ -68,7 +79,7 @@ async function routes (fastify, options) {
         })
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[0], "modname": mod.Name, "payload": request.body })
-          reply.code(400).send(error.trim())
+          reply.code(400).send(error)
         })
     }
   )
@@ -93,7 +104,7 @@ async function routes (fastify, options) {
         })
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[1], "modname": mod.Name, "payload": request.body })
-          reply.code(400).send({ status: error.trim() })
+          reply.code(400).send({ status: error })
         })
     }
   )
@@ -119,7 +130,7 @@ async function routes (fastify, options) {
         })
         .catch(function (error) {
           dep.captureErrorLog({ "error": error,"url":dep.routeUrls.searchtype[2], "modname": mod.Name, "payload": request.body })
-          reply.code(400).send({ status: error.trim() })
+          reply.code(400).send({ status: error })
         })
     }
   )
