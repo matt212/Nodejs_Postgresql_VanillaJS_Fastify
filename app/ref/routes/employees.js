@@ -87,7 +87,7 @@ async function routes (fastify, options) {
       req.body = request.body
       //dep.searchtype
       dep
-        .searchtypeOptimizedBase(req, reply, mod)
+        .searchtypeOptimizedBaseParameterized(req, reply, mod)
         .then(arg => {
           reply.send(arg)
         })
@@ -113,7 +113,7 @@ async function routes (fastify, options) {
       req.body = request.body
       //dep.searchtype
       dep
-        .searchtypeOptimizedBaseCount(req, reply, mod)
+        .searchtypeOptimizedBaseCountParamterized(req, reply, mod)
         .then(arg => {
           reply.send(arg)
         })
