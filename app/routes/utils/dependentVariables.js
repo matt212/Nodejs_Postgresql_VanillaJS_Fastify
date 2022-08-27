@@ -270,7 +270,7 @@ let searchparampayload = (req, res) => {
 
 let searchparampayloadParameterized = (req, res, a) => {
   try {
-    let SqlString = require("sqlstring");
+    
     let base = {};
     promise = new Promise((resolve, reject) => {
       let reqcontent =
@@ -386,10 +386,8 @@ let searchparampayloadParameterized = (req, res, a) => {
         //consolidatesearch='and weighted_tsv @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
       }
       var next_offset = pageSize * number_of_items;
-
       base.daterange = daterange;
       base.selector = selector;
-
       base.sortcolumn = sortcolumn;
       base.sortcolumnorder = sortcolumnorder;
       base.pageSize = pageSize;
@@ -397,8 +395,6 @@ let searchparampayloadParameterized = (req, res, a) => {
       base.ispaginate = ispaginate;
       base.searchtype = searchtype;
       base.consolidatesearch = consolidatesearch;
-
-
       resolve(base);
     });
     return promise.catch(function (error) {
