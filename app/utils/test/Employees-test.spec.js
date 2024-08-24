@@ -371,7 +371,9 @@ describe('Begin Tests', function () {
             testbase = genSpecs
               .consolidatedPayload()
               .payload17(testbase, entry, evalModulename, validationConfig)
+              
             return genSpecs.genericApiPost(testbase).then(function (data) {
+              
               let interimval = testbase.schemaBaseValidatorPayload[entry]
               if (genSpecs.customIsNumeric(interimval)) {
                 genSpecs
@@ -450,7 +452,7 @@ describe('Begin Tests', function () {
         .consolidatedPayload()
         .payload20(testbase, evalModulename, validationConfig)
       //file :dependentvariable line no :1116 parameter : console.log(sqlstatementsprimary) 
-      //console.log(testbase.payload.basesearcharconsolidated[0].consolidatecolval)
+      
       return genSpecs.genericApiPost(testbase).then(function (data) {
 
         genSpecs.expect(parseInt(data.body.rows.length)).to.be.gte(1)
@@ -478,7 +480,8 @@ describe('Begin Tests', function () {
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
           if (data.body.statusCode === undefined) {
-            data.body.status.should.equal(`${entry} is undefined`)
+            let interim=data.body.status.trim()
+            interim.should.equal(`${entry} is undefined`)
           } else {
             data.body.message.should.equal(
               `body.daterange should have required property \'startdate\'`
@@ -502,7 +505,8 @@ describe('Begin Tests', function () {
             data.body.statusCode === undefined &&
             testbase.schemaBaseValidatorPayload[entry] != undefined
           ) {
-            data.body.status.should.equal(
+            let interim=data.body.status.trim() 
+            interim.should.equal(
               `key of ${testbase.schemaBaseValidatorPayload[entry]} is undefined`
             )
           } else if (testbase.schemaBaseValidatorPayload[entry] === undefined) {

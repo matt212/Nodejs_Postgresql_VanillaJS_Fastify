@@ -150,9 +150,7 @@ basefunction().mroleMultiKeysLoad(currentModName).then(function (data) {
     var killzone = data.rows
     killzone.forEach((element, index) => {
 
-        console.log(`keys:` + Object.keys(element))
-        console.log(`values:` + element[Object.keys(element)])
-        console.log(element)
+        
     })
 });
 //  let radioModular=function(data)

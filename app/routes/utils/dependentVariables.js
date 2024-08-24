@@ -32,27 +32,26 @@ let searchparampayloadSQLSanitize = (res, a) => {
   })
 
 }
-let captureErrorLog=function(appsgenerator)
-{
-  var today  = new Date();
-  appsgenerator.datecapture=today.toLocaleString()
-  var filetoday=today.toLocaleString().split('/').join('-').split(",")[0]
+let captureErrorLog = function (appsgenerator) {
+  var today = new Date();
+  appsgenerator.datecapture = today.toLocaleString()
+  var filetoday = today.toLocaleString().split('/').join('-').split(",")[0]
 
   new Promise((resolve, reject) => {
-  //../utils/log/
+    //../utils/log/
     fs.writeFile(
-      path.join(__dirname, "../")+"../utils/log/error-"+filetoday+".json",
-      JSON.stringify(appsgenerator)+ "\n"+ ",",
-       { flag: "a+" },
+      path.join(__dirname, "../") + "../utils/log/error-" + filetoday + ".json",
+      JSON.stringify(appsgenerator) + "\n" + ",",
+      { flag: "a+" },
       function (err, data) {
         console.log(err)
         resolve("error logged");
       }
     );
-  
+
   })
-  
-  
+
+
 }
 let searchparampayload = (req, res) => {
   try {
@@ -255,7 +254,7 @@ let searchparampayload = (req, res) => {
       base.searchtype = searchtype;
       base.consolidatesearch = consolidatesearch;
 
-      //console.log(base)
+      
       resolve(base);
     });
     return promise.catch(function (error) {
@@ -267,6 +266,151 @@ let searchparampayload = (req, res) => {
     return Promise.reject(error);
   }
 };
+
+
+let searchparampayloadParameterized = (req, res, a) => {
+  try {
+
+    let base = {};
+    promise = new Promise((resolve, reject) => {
+      let reqcontent =
+        req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
+
+      //let reqcontent=JSON.parse(req.rawBody)
+      if (!reqcontent.searchparam.includes("NA")) {
+        let j = searchparampayloadSQLSanitize(res, reqcontent.searchparam)
+      }
+
+      var searchparam = reqcontent.searchparam;
+      var columns = reqcontent.colsearch;
+      var number_of_items = reqcontent.pageno;
+      var pageSize = reqcontent.pageSize;
+      var ispaginate = reqcontent.ispaginate;
+      var datecolsearch = reqcontent.datecolsearch;
+      var consolidatesearchparam = reqcontent.basesearcharconsolidated;
+      var consolidatesearch = "";
+      var startdate;
+      var enddate;
+      
+      if (req.body.daterange != undefined) {
+        startdate = reqcontent.daterange.startdate + " 00:00:00";
+        enddate = reqcontent.daterange.enddate + "  24:00:00";
+        base.parameterValues = multiWhereConstructValues(searchparam, [startdate, enddate])
+
+      }
+      var searchtype = reqcontent.searchtype;
+      var sortcolumn = reqcontent.sortcolumn;
+      var sortcolumnorder = reqcontent.sortcolumnorder;
+
+      var daterange = "";
+      if (startdate != undefined && enddate != undefined) {
+        //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
+        daterange = dateRangeConstructColumn(datecolsearch, mod)
+      }
+      if (reqcontent.disableDate) {
+        daterange = " ";
+      }
+      if (
+        reqcontent.sortcolumnorder == undefined &&
+        reqcontent.sortcolumn == undefined
+      ) {
+        sortcolumn = mod.id;
+        sortcolumnorder = "desc";
+      }
+      if (req.body.sortcolumn == 1) {
+        sortcolumn = mod.id;
+      }
+
+      var selector = "";
+      var consolidatesearchparams = "";
+      if (searchtype == "Columnwise") {
+        if (searchparam.constructor === Array) {
+          var interns = searchparam;
+
+          interns.forEach((item, index) => {
+
+            var searchvalue = item[Object.keys(item)[0]];
+            var searchkey = Object.keys(item)[0];
+            var isBaseArray = item.isArray;
+
+            //var result = (typeof searchvalue === 'number');
+
+            if (searchkey == "undefined" || searchkey == undefined) {
+              reject(`key of ${searchvalue} is undefined `);
+            }
+            var coltype = "";
+            var stringtype = "";
+            if (
+              searchvalue != undefined &&
+              searchvalue.filter((e) => e).length
+            ) {
+              if (!searchvalue.some(isNaN)) {
+                coltype = "";
+                stringtype = "";
+              } else {
+                coltype = "lower";
+                stringtype = "'";
+              }
+            } else {
+              reject(`${searchkey} is undefined `);
+            }
+
+            if (selector == "") {
+
+              selector = multiWhereConstructColumn(searchparam, coltype, a, 0)
+              
+              
+            } else {
+
+            }
+
+            // finale.push(obj)
+          });
+        }
+        /*comment this for legacy search !*/
+        /* selector = "";
+             
+             consolidatesearch = 'and weighted_tsv @@ to_tsquery(\'' + consolidatesearchparams + '\')'*/
+        /*end region*/
+        base.parameterValues = multiWhereConstructValuesDateDisabled(searchparam)
+      } else if (searchtype == "consolidatesearch") {
+        //*traditional search*//
+
+        //searchmatrixkey=consolidatesearchparam[0].consolidatecol
+        searchmatrixkey = removeDateFilterforConsolidationSearch().map(function (item) { return '"' + item + '"' });
+        searchmatrixval = consolidatesearchparam[0].consolidatecolval
+
+        consolidatesearch = consolidateSearchParameterizedConstruct(mod)
+        let c = [startdate, enddate, '%' + searchmatrixval + '%']
+        base.parameterValues = c
+        /*without vector column*/
+        //consolidatesearch='and to_tsvector("'+consolidatesearchparam[0].consolidatecol.join("\"||' '||\"")+'") @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
+        /*with vector column*/
+        //consolidatesearch='and weighted_tsv @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
+      }
+      var next_offset = pageSize * number_of_items;
+      base.daterange = daterange;
+      base.selector = selector;
+      base.sortcolumn = sortcolumn;
+      base.sortcolumnorder = sortcolumnorder;
+      base.pageSize = pageSize;
+      base.next_offset = next_offset;
+      base.ispaginate = ispaginate;
+      base.searchtype = searchtype;
+      base.consolidatesearch = consolidatesearch;
+      
+      resolve(base);
+    });
+    return promise.catch(function (error) {
+      captureErrorLog({ "searchparampayloadParameterizederror": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
+      return Promise.reject(error);
+    });
+  } catch (err) {
+    captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
+    return Promise.reject(error);
+  }
+};
+
 let removeDateFilterforConsolidationSearch = function () {
   let validationConfig = require("./" +
     mod.Name +
@@ -315,7 +459,7 @@ let pivottransformation = (dataset) => {
       var foundItem = doctors.filter(
         (item) => item.yaxis == unique[attributename]
       );
-      // console.log(foundItem);
+
       var foundItems = foundItem.map((doctor) => {
         var o = {};
         o[doctor.xaxis] = doctor.cnt;
@@ -374,7 +518,7 @@ let dumpdataset = (argument) => {
           .error((e) => { });
       })
       .on("error", (error) => {
-        console.log(error);
+
         resp.status = error;
         res.send(resp);
       });
@@ -454,6 +598,101 @@ let streambulkinsert = (data) => {
   });
 };
 
+//parameterized custom Where
+let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
+  let validationConfig = require("./" +
+    mod.Name +
+    "/validationConfig.js");
+  let a = Object.values(searchparam).map(b => Object.keys(b).toString())
+  
+  let allowableColumns = []
+  a.forEach(function (c) {
+
+
+    let g = validationConfig.validationmap
+
+    allowableColumns.push(g.filter(b => b.inputname == c)
+      .map(d => d.inputname).toString())
+  })
+
+  let custWhere = ''
+  
+  allowableColumns.forEach(function (k) {
+    w = w + 1
+    custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
+
+  })
+  
+  return custWhere
+}
+let dateRangeConstructColumn = function (datecolsearch, mod) {
+  var fieldvals = Object.keys(
+    models[mod.Name].tableAttributes
+  ).map(b => b)
+
+  let dtcol = fieldvals.filter(b => b == datecolsearch)
+    .map(d => d).toString()
+
+  return `and a.${dtcol} >= $1 AND a.${dtcol} <=$2`
+}
+
+let consolidateSearchParameterizedConstruct = function (mod) {
+  var fieldvals = Object.keys(
+    models[mod.Name].tableAttributes
+  ).map(b => b)
+
+  let f = fieldvals
+  f.removear("updated_date")
+  f.removear("created_date")
+  f.removear("recordstate")
+  f.removear(mod.id);
+  custWhere = "and " + f.join(" ||' '|| ") + ' like $1'
+  return custWhere
+}
+
+let groupByConstruct = function (mod, colname, coltype) {
+  var fieldvals = Object.keys(
+    models[mod.Name].tableAttributes
+  ).map(b => b)
+  let colnm = fieldvals.filter(b => b == colname)
+    .map(d => d).toString()
+
+  return '' + coltype + '( a."' + colnm + '" )' + ' like $3'
+
+}
+
+
+let multiWhereConstructValues = function (searchparam, daterange) {
+
+  let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
+
+  return [...daterange, ...result].filter(Boolean)
+
+}
+let multiWhereConstructValuesDateDisabled = function (searchparam) {
+
+  let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
+  result=result.filter(Boolean)
+  
+  return result
+
+}
+let multiWhereConstructValuesGroupBy = function (daterange, searchparam, interim) {
+
+  let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
+  let result1 = Object.values(interim).map(a => a[Object.getOwnPropertyNames(a)])
+
+  
+  return [...daterange, result + '%', ...result1].filter(Boolean)
+
+}
+//values
+
+
+// end here
+
+
+
 let paramsSearchTypeGroupBy = (req) => {
   let SqlString = require("sqlstring");
   var searchparam = req.body.searchparam;
@@ -473,12 +712,6 @@ let paramsSearchTypeGroupBy = (req) => {
   var sortcolumnorder = req.body.sortcolumnorder;
   var datecolsearch = req.body.datecolsearch;
 
-  /*console.log(searchparam);
-  console.log(columns);
-  console.log(number_of_items)
-  console.log(pageSize)
-  console.log(startdate)
-  console.log(enddate)*/
   var daterange = "1=1";
   if (startdate != undefined && enddate != undefined) {
     //daterange = "DATE(a.createdAt) between (\'" + startdate + "\') and (\'" + enddate + "\')  ";
@@ -505,8 +738,7 @@ let paramsSearchTypeGroupBy = (req) => {
   if (req.body.sortcolumn == 1) {
     sortcolumn = mod.id;
   }
-  /*    console.log(columns);
-  console.log(words);*/
+
 
   //emp_no, '', salary
   var selector = "";
@@ -518,7 +750,7 @@ let paramsSearchTypeGroupBy = (req) => {
       var internsearchparammetafilter = searchparammetafilter;
 
       interns.forEach((item, index) => {
-        //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
+
         var searchvalue = item[Object.keys(item)];
         searchkey = Object.keys(item)[0];
         var coltype = "";
@@ -537,8 +769,7 @@ let paramsSearchTypeGroupBy = (req) => {
         var obj;
         if (selector == "") {
           if (searchvalue.constructor === Array) {
-            console.log("arrays");
-            console.log(searchvalue);
+
             //ARRAY[5,7] && modnameid;
             selector =
               "ARRAY [" +
@@ -559,8 +790,7 @@ let paramsSearchTypeGroupBy = (req) => {
           }
         } else {
           if (searchvalue.constructor === Array) {
-            console.log("arrays");
-            console.log(searchvalue);
+
             //ARRAY[5,7] && modnameid;
             selector =
               selector +
@@ -570,7 +800,7 @@ let paramsSearchTypeGroupBy = (req) => {
               "" +
               SqlString.format(searchkey) +
               "";
-            //console.log(selector)
+            //
           } else {
             selector =
               selector +
@@ -589,7 +819,7 @@ let paramsSearchTypeGroupBy = (req) => {
       //remove `!` to include multi column filter for each other !
       if (Object.keys(internsearchparammetafilter).length > 0) {
         internsearchparammetafilter.forEach((item, index) => {
-          //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
+
           var searchvalue = item[Object.keys(item)];
           var searchkey = Object.keys(item)[0];
 
@@ -658,6 +888,11 @@ let paramsSearchTypeGroupBy = (req) => {
     /*with vector column*/
     //consolidatesearch='and weighted_tsv @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
   }
+  console.log(searchkey)
+  console.log("-------")
+  console.log(selector)
+  console.log("-------")
+  console.log(colmetafilter)
   return {
     searchkey: searchkey,
     selector: selector,
@@ -666,6 +901,107 @@ let paramsSearchTypeGroupBy = (req) => {
     searchparamkey: searchparamkey,
   };
 };
+
+
+
+let paramsSearchTypeGroupByParameterized = (req) => {
+
+  var searchparam = req.body.searchparam;
+  var searchparammetafilter = req.body.searchparammetafilter;
+  var searchparamkey = req.body.searchparamkey;
+  var columns = req.body.colsearch;
+  var number_of_items = req.body.pageno;
+  var pageSize = req.body.pageSize;
+  var startdate;
+  var enddate;
+  var base = {}
+  if (req.body.daterange != undefined) {
+    startdate = req.body.daterange.startdate + " 00:00:00";
+    enddate = req.body.daterange.enddate + "  24:00:00";
+    base.parameterValues = multiWhereConstructValuesGroupBy([startdate, enddate], searchparam, searchparammetafilter)
+  }
+  var searchtype = req.body.searchtype;
+  var sortcolumn = req.body.sortcolumn;
+  var sortcolumnorder = req.body.sortcolumnorder;
+  var datecolsearch = req.body.datecolsearch;
+
+  var daterange = "1=1";
+  if (startdate != undefined && enddate != undefined) {
+    daterange = dateRangeConstructColumn(datecolsearch, mod)
+  }
+
+  if (
+    req.body.sortcolumnorder == undefined &&
+    req.body.sortcolumn == undefined
+  ) {
+    sortcolumn = mod.id;
+    sortcolumnorder = "desc";
+  }
+  if (req.body.sortcolumn == 1) {
+    sortcolumn = mod.id;
+  }
+
+
+  //emp_no, '', salary
+  var selector = "";
+  var colmetafilter = "";
+  var searchkey;
+
+  if (searchparam.constructor === Array) {
+    var interns = searchparam;
+    var internsearchparammetafilter = searchparammetafilter;
+
+    interns.forEach((item, index) => {
+
+      var searchvalue = item[Object.keys(item)];
+      searchkey = Object.keys(item)[0];
+      var coltype = "";
+      var stringtype = "";
+      var stringCasting = "";
+
+      if (isNaN(searchvalue)) {
+        coltype = "lower";
+        stringtype = "'";
+      } else {
+        coltype = "";
+        stringtype = "";
+        stringCasting = " ::TEXT";
+      }
+
+      var obj;
+      if (selector == "") {
+
+        selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, searchkey, coltype)
+
+
+      }
+
+
+      if (internsearchparammetafilter.length > 0) {
+
+
+        colmetafilter = multiWhereConstructColumn(internsearchparammetafilter, coltype, mod, 3)
+
+      }
+      // finale.push(obj)
+    });
+    //remove `!` to include multi column filter for each other !
+
+  }
+
+  
+  return {
+    parameterValues: base.parameterValues,
+    searchkey: searchkey,
+    selector: selector,
+    colmetafilter: colmetafilter,
+    sortcolumnorder: sortcolumnorder,
+    searchparamkey: searchparamkey,
+  };
+};
+
+
+
 let pivotTransform = (req) => {
   let SqlString = require("sqlstring");
   var searchparam = req.body.searchparam;
@@ -788,10 +1124,7 @@ let pivotTransform = (req) => {
     sortcolumn = mod.id;
   }
 
-  /*    console.log(columns);
-    console.log(words);*/
-
-  //emp_no, '', salary
+  
   var selector = "";
   var selectordynamic = "";
   if (searchtype == "Columnwise") {
@@ -799,7 +1132,7 @@ let pivotTransform = (req) => {
       var interns = searchparam;
 
       interns.forEach((item, index) => {
-        //console.log(item[Object.keys(item)]+"--"+Object.keys(item))
+
 
         var searchvalue = item[Object.keys(item)];
         var searchkey = Object.keys(item)[0];
@@ -1050,6 +1383,40 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
+        ).map(function (item) { return '"' + item + '"' }).join(',');
+
+        let sqlConstructParams = {
+          fieldnames,
+          arg,
+          mod,
+        };
+
+        //searchtypeExplain(res, sqlConstructParams, a)
+        /* do not delete function since it fallback to Conventional count*/
+        /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
+          resolve(arg);
+        });*/
+        searchtypeOptimizedCount(res, sqlConstructParams, a, arg).then((args) => {
+          resolve(args);
+        });
+
+        //caching only count since delete of records in any b2b apps is meh !
+        //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+      })
+      .catch(function (error) {
+        captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
+        reject(error);
+      });
+  }));
+};
+
+
+let searchtypeOptimizedBaseCountParamterized = (req, res, a) => {
+  return (promise = new Promise((resolve, reject) => {
+    searchparampayloadParameterized(req, res, a)
+      .then((arg) => {
+        var fieldnames = Object.keys(
+          models[mod.Name].tableAttributes
         ).map(function (item) { return '"' + item + '"' }).join(',');;
 
         let sqlConstructParams = {
@@ -1063,9 +1430,19 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
         /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
           resolve(arg);
         });*/
-        searchtypeOptimizedCount(res, sqlConstructParams, a).then((arg) => {
-          resolve(arg);
-        });
+        if (arg.parameterValues.toString() != "") {
+
+          searchtypeOptimizedCountParameterized(res, sqlConstructParams, a, arg).then((args) => {
+            resolve(args);
+          });
+
+        }
+        else {
+
+          searchtypeOptimizedCount(res, sqlConstructParams, a, arg).then((args) => {
+            resolve(args);
+          });
+        }
 
         //caching only count since delete of records in any b2b apps is meh !
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
@@ -1090,7 +1467,7 @@ let searchtypeOptimizedBase = (req, res, a) => {
       .then((arg) => {
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).map(function (item) { return '"' + item + '"' }).join(',');;
+        ).map(function (item) { return '"' + item + '"' }).join(',');
 
         let sqlConstructParams = {
           fieldnames,
@@ -1119,7 +1496,63 @@ let searchtypeOptimizedBase = (req, res, a) => {
 
 
 
+let searchtypeOptimizedBaseParameterized = (req, res, a) => {
+  return (promise = new Promise((resolve, reject) => {
+    
+    searchparampayloadParameterized(req, res, a)
+      .then((arg) => {
+        
+        var fieldnames = Object.keys(
+          models[mod.Name].tableAttributes
+        ).map(function (item) { return '"' + item + '"' }).join(',');
+        
+        let sqlConstructParams = {
+          fieldnames,
+          arg,
+          mod,
 
+        };
+
+        //searchtypeExplain(res, sqlConstructParams, a)
+        /* do not delete function since it fallback to Conventional count*/
+        /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
+          resolve(arg);
+        });*/
+        
+
+        if(arg.hasOwnProperty('parameterValues')){
+        //if (arg.parameterValues.toString() != "") {
+          
+          searchtypeOptimizedParameterized(res, sqlConstructParams, a).then((argres) => {
+            
+            resolve(argres);
+          });
+
+        }
+        else {
+        if(Object.keys(arg.selector).length === 0)
+          {
+            searchtypeOptimized(res, sqlConstructParams, a).then((argres) => {
+              resolve(argres);
+            });
+          }else
+          {
+           
+          }    
+          
+        }
+
+
+        //caching only count since delete of records in any b2b apps is meh !
+        //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+      })
+      .catch(function (error) {
+        
+        captureErrorLog({ "searchtypeOptimizedBaseParameterizedERROR": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
+        reject(error);
+      });
+  }));
+};
 
 let searchtypePerf = (req, res, a) => {
   return (promise = new Promise((resolve, reject) => {
@@ -1164,14 +1597,14 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
         connections
           .query(sqlstatementsprimary)
           .then((result) => {
-            //console.log('number:', res.rows[0].number);
+            //
 
             internset.rows = result.rows;
 
             callback(null, internset.rows);
           })
           .catch((err) => {
-            console.log(err);
+            console.log(sqlstatementsprimary)
             connections.release();
           });
       },
@@ -1179,7 +1612,7 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
         connections
           .query(sqlstatementsecondary)
           .then((result) => {
-            //console.log('number:', res.rows[0].number);
+            //
 
             var rwlenght = result.rows[0]["QUERY PLAN"].split("rows");
 
@@ -1191,7 +1624,7 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
           })
           .catch((err) => {
             connections.release();
-            console.log(err);
+
           });
       },
     },
@@ -1220,14 +1653,14 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
           connections
             .pgQueryStream(sqlstatementsprimary)
             .then((result) => {
-              //console.log('number:', res.rows[0].number);
+              //
 
               internset.rows = result.rows;
 
               callback(null, internset.rows);
             })
             .catch((err) => {
-              console.log(err);
+console.log(sqlstatementsprimary)
               connections.release();
             });
         },
@@ -1242,8 +1675,51 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
       (err, results) => {
         if (err) {
           //res.send(err);
+          console.log(sqlstatementsprimary)
           reject(err);
         }
+        resolve(results);
+      }
+    );
+  }));
+};
+
+
+let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
+  return (promise = new Promise((resolve, reject) => {
+    let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
+      sqlConstructParams
+    );
+
+
+sqlConstructParams.arg.parameterValues=sqlConstructParams.arg.parameterValues.filter( Boolean );
+
+var internset = {};
+    async(
+      {
+        rows: (callback) => {
+          connections
+            .queryParameterized(sqlstatementsprimary, sqlConstructParams.arg.parameterValues)
+            .then((result) => {
+              //
+
+              internset.rows = result.rows;
+             
+              callback(null, internset.rows);
+            })
+            .catch((err) => {
+                 
+              connections.release();
+            });
+        },
+
+      },
+      (err, results) => {
+        if (err) {
+          
+          reject(err);
+        }
+
         resolve(results);
       }
     );
@@ -1257,9 +1733,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
       sqlConstructParams
     );
 
-    let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
-      sqlConstructParams
-    );
+    
 
     var internset = {};
     async(
@@ -1268,14 +1742,14 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
           connections
             .query(sqlstatementsprimary)
             .then((result) => {
-              //console.log('number:', res.rows[0].number);
+              //
 
               internset.rows = result.rows;
 
               callback(null, internset.rows);
             })
             .catch((err) => {
-              console.log(err);
+              captureErrorLog({'sql':sqlstatementsprimary,'error':err})
               connections.release();
             });
         },
@@ -1283,7 +1757,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
       },
       (err, results) => {
         if (err) {
-          console.log(err);
+         captureErrorLog({'sql':sqlstatementsprimary,'error':err})
           reject(err);
         }
 
@@ -1296,9 +1770,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
 
 let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
   return (promise = new Promise((resolve, reject) => {
-    let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](
-      sqlConstructParams
-    );
+
 
     let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
       sqlConstructParams
@@ -1325,11 +1797,43 @@ let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
         resolve(results);
       }
     );
+
   }));
 };
 
 
+let searchtypeOptimizedCountParameterized = (res, sqlConstructParams, a, arg) => {
+  return (promise = new Promise((resolve, reject) => {
 
+
+    let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](
+      sqlConstructParams
+    );
+
+    var internset = {};
+    async(
+      {
+
+        count: (callback) => {
+          //let key = mod.Name + "-" + JSON.stringify(arg);
+          //isCacheCount
+          getCountparameterized(sqlstatementsecondary, sqlConstructParams).then(function (data) {
+            internset.count = data;
+            callback(null, internset.count);
+          });
+        },
+      },
+      (err, results) => {
+        if (err) {
+          //res.send(err);
+          reject(err);
+        }
+        resolve(results);
+      }
+    );
+
+  }));
+};
 
 let searchtypeConventional = (res, sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
@@ -1348,14 +1852,15 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
           connections
             .query(sqlstatementsprimary)
             .then((result) => {
-              //console.log('number:', res.rows[0].number);
+              //
 
               internset.rows = result.rows;
 
               callback(null, internset.rows);
             })
             .catch((err) => {
-              console.log(err);
+              
+captureErrorLog({'sql':sqlstatementsprimary})
               connections.release();
             });
         },
@@ -1372,12 +1877,13 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
             })
             .catch((err) => {
               connections.release();
-              console.log(err);
+
             });
         },
       },
       (err, results) => {
         if (err) {
+          console.log(sqlstatementsprimary);
           console.log(err);
           reject(err);
         }
@@ -1387,6 +1893,22 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
     );
   }));
 };
+
+let getCountparameterized = (sqlstatementsecondary, sqlConstructParams) => {
+  return new Promise((resolve, reject) => {
+    connections
+      .queryParameterized(sqlstatementsecondary, sqlConstructParams.arg.parameterValues)
+      .then((result) => {
+        resolve(result.rows[0].count);
+      })
+      .catch((err) => {
+        connections.release();
+
+        reject(err);
+      });
+  });
+};
+
 let getCount = (sqlstatementsecondary) => {
   return new Promise((resolve, reject) => {
     connections
@@ -1422,7 +1944,7 @@ let isPivotCache = (req, reply, mod) => {
   return new Promise((resolve, reject) => {
     redisMiddleware.redisCount(key, true).then(function (data) {
       if (data.iscache === true) {
-        console.log()
+
         if (data.val == "[object Object]") {
           redisMiddleware.redisDel(key).then(function (data) {
 
@@ -1453,7 +1975,7 @@ let isPivotCacheOptimized = (req, reply, mod) => {
   return new Promise((resolve, reject) => {
     redisMiddleware.redisCount(key, true).then(function (data) {
       if (data.iscache === true) {
-        console.log()
+
         if (data.val == "[object Object]") {
           redisMiddleware.redisDel(key).then(function (data) {
 
@@ -1490,7 +2012,7 @@ let searchtypegroupbyId = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupbyId](
     sqlConstructParams
   );
-
+  console.log(sqlstatementsprimary)
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
@@ -1510,7 +2032,7 @@ let SearchTypeGroupBy = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
     sqlConstructParams
   );
-  console.log(sqlstatementsprimary)
+  
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
@@ -1521,6 +2043,30 @@ let SearchTypeGroupBy = (req, res, a) => {
       res.send(err);
     });
 };
+
+let SearchTypeGroupByParameterized = (req, res, a) => {
+  let tempDep = paramsSearchTypeGroupByParameterized(req);
+  let sqlConstructParams = {
+    tempDep,
+    mod,
+  };
+
+  var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
+    sqlConstructParams
+  );
+
+  connections
+    .queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
+    .then((result) => {
+      res.send({ rows: result.rows });
+    })
+    .catch((err) => {
+      captureErrorLog({ "error": err, "modname": mod.name, "payload": req.body })
+      res.send(err);
+    });
+};
+
+
 let bulkCreate = (req, res) => {
   var lime = req.body.payset;
   models[mod.Name]
@@ -1600,9 +2146,9 @@ var qelasticbeta = new Queue((objs, cb) => {
     objs.resp = data;
     cb(objs);
   })
-  .catch((err) => {
-    captureErrorLog({ "error": err, "modname": mod.Name, "payload": JSON.stringify(objs) })
-  });
+    .catch((err) => {
+      captureErrorLog({ "error": err, "modname": mod.Name, "payload": JSON.stringify(objs) })
+    });
 });
 var base = {};
 
@@ -1686,13 +2232,13 @@ let fdone = (val) => {
                 dt
               );
               streamingexportcsv(internobj).then(function (a) {
-                console.log(a);
+
               });
             });
           }
           resolve(data.csvfilename + ".csv");
         });
-        
+
       })
       .catch((err) => {
         captureErrorLog({ "error": err, "modname": mod.name, "payload": JSON.stringify(red) })
@@ -1703,7 +2249,7 @@ let childStaticVariable = function (validateMap, content) {
   let col = validateMap.filter((x) => x.childcontent != undefined);
   if (col.length > 0) {
     let getMappingData = function (dt) {
-      // console.log(col[0].childcontent.filter((x) => x.val == dt)[0]);
+      // 
       if (col[0].childcontent.filter((x) => x.val == dt)[0] != undefined) {
         return col[0].childcontent.filter((x) => x.val == dt)[0].text;
       }
@@ -1745,7 +2291,7 @@ let customReadCSV = (argument) => {
         //   .error(e => {})
       })
       .on("error", (error) => {
-        console.log(error);
+
         resp.status = error;
         res.send(resp);
       });
@@ -1798,7 +2344,7 @@ let streamingexportcsv = (internobj) => {
     });
 
     /*end region */
-    console.log(internobj.content);
+
     var s = require("stream");
     var objcsv = new s.Readable();
     objcsv.push(JSON.stringify(internobj.content));
@@ -1829,7 +2375,7 @@ let streamingexportexcel = (internobj) => {
       highWaterMark: 16384,
     });
     stream.on("end", () => {
-      // console.log('stream end')
+      // 
 
       stream.destroy();
       resolve(internobj);
@@ -1898,7 +2444,7 @@ let uploadContent = async (req, reply, fastify) => {
 
           var fileStream = fs.createReadStream(obj.saveTo);
           fileStream.on("error", (data) => {
-            console.log(data);
+
             done();
             reject(data);
           });
@@ -1907,7 +2453,7 @@ let uploadContent = async (req, reply, fastify) => {
             .pipe(stream)
 
             .on("error", (data) => {
-              console.log(data);
+
               client.release();
             })
             .on("finish", (data) => {
@@ -1948,7 +2494,7 @@ let uploadContent = async (req, reply, fastify) => {
     readexcel(fil);
     reply.send();
   } catch (error) {
-    console.log(error);
+
     if (error instanceof fastify.multipartErrors.FilesLimitError) {
       // handle error
     }
@@ -2595,6 +3141,9 @@ let baseUtilsRoutes = {
   SqlPivot: "SqlPivot",
 };
 module.exports = {
+  searchtypeOptimizedBaseParameterized,
+  searchtypeOptimizedBaseCountParamterized,
+  SearchTypeGroupByParameterized,
   captureErrorLog,
   searchtypeOptimizedBaseCount,
   searchtypeOptimizedBase,

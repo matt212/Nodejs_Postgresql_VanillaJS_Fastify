@@ -1,3 +1,6 @@
+parameterized release notes
+
+Bolierplate implementation parameterized applied for multiselect , multicolumn and base gen api count 
 
 ** reporting fetching from million rows  **
 this indexes is catch 22 if we apply below its works great for report but distarous for group by clause (multiselect and 
@@ -22,6 +25,8 @@ https://www.tablesgenerator.com/html_tables
 ** after workstation restart **
  > *`sudo service redis-server restart` *
  > *`sudo service postgresql restart` *
+
+
 
 ** Superadmin scafolding/ boilerplate**
  > *http://127.0.0.1:3011/black-squadron*
