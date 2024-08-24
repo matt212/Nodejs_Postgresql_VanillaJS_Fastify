@@ -79,10 +79,11 @@ async function routes(fastify, options) {
         .then(arg => {
           reply.send(arg)
         })
-        .catch(function (error) {
-          dep.captureErrorLog({ "error": error, "url": dep.routeUrls.searchtype[1], "modname": mod.Name, "payload": request.body })
+        .catch(function (err) {
+          
+          dep.captureErrorLog({ "error": err, "url": dep.routeUrls.searchtype[1], "modname": mod.Name, "payload": request.body })
 
-          reply.code(400).send({ status: error })
+          reply.code(400).send({ status: err })
         })
     }
   )

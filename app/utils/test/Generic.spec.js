@@ -583,8 +583,10 @@ let genericApiPost = function (data) {
         .expect(data.responseCode)
         .end(function (err, res) {
           if (err) {
-            //console.log({error:err.message,url:data.apiUrl, payload:JSON.stringify(data.payload)})
+            
+//            console.log({error:err.message,url:data.apiUrl, payload:JSON.stringify(data.payload)})
             reject({
+              err,
               error: err.message,
               url: data.apiUrl,
               payload: JSON.stringify(data.payload)

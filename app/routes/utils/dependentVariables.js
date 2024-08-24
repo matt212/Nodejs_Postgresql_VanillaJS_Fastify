@@ -254,7 +254,7 @@ let searchparampayload = (req, res) => {
       base.searchtype = searchtype;
       base.consolidatesearch = consolidatesearch;
 
-      //console.log(base)
+      
       resolve(base);
     });
     return promise.catch(function (error) {
@@ -291,6 +291,7 @@ let searchparampayloadParameterized = (req, res, a) => {
       var consolidatesearch = "";
       var startdate;
       var enddate;
+      
       if (req.body.daterange != undefined) {
         startdate = reqcontent.daterange.startdate + " 00:00:00";
         enddate = reqcontent.daterange.enddate + "  24:00:00";
@@ -356,8 +357,9 @@ let searchparampayloadParameterized = (req, res, a) => {
 
             if (selector == "") {
 
-              selector = multiWhereConstructColumn(searchparam, coltype, a, 2)
-
+              selector = multiWhereConstructColumn(searchparam, coltype, a, 0)
+              
+              
             } else {
 
             }
@@ -370,6 +372,7 @@ let searchparampayloadParameterized = (req, res, a) => {
              
              consolidatesearch = 'and weighted_tsv @@ to_tsquery(\'' + consolidatesearchparams + '\')'*/
         /*end region*/
+        base.parameterValues = multiWhereConstructValuesDateDisabled(searchparam)
       } else if (searchtype == "consolidatesearch") {
         //*traditional search*//
 
@@ -395,10 +398,11 @@ let searchparampayloadParameterized = (req, res, a) => {
       base.ispaginate = ispaginate;
       base.searchtype = searchtype;
       base.consolidatesearch = consolidatesearch;
+      
       resolve(base);
     });
     return promise.catch(function (error) {
-      captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
+      captureErrorLog({ "searchparampayloadParameterizederror": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
       return Promise.reject(error);
     });
   } catch (err) {
@@ -600,7 +604,7 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
     mod.Name +
     "/validationConfig.js");
   let a = Object.values(searchparam).map(b => Object.keys(b).toString())
-  console.log(searchparam);
+  
   let allowableColumns = []
   a.forEach(function (c) {
 
@@ -612,13 +616,13 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
   })
 
   let custWhere = ''
-
+  
   allowableColumns.forEach(function (k) {
     w = w + 1
     custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
 
   })
-  console.log(custWhere)
+  
   return custWhere
 }
 let dateRangeConstructColumn = function (datecolsearch, mod) {
@@ -642,7 +646,7 @@ let consolidateSearchParameterizedConstruct = function (mod) {
   f.removear("created_date")
   f.removear("recordstate")
   f.removear(mod.id);
-  custWhere = "and " + f.join(" ||' '|| ") + ' like $3'
+  custWhere = "and " + f.join(" ||' '|| ") + ' like $1'
   return custWhere
 }
 
@@ -665,12 +669,20 @@ let multiWhereConstructValues = function (searchparam, daterange) {
   return [...daterange, ...result].filter(Boolean)
 
 }
+let multiWhereConstructValuesDateDisabled = function (searchparam) {
+
+  let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
+  result=result.filter(Boolean)
+  
+  return result
+
+}
 let multiWhereConstructValuesGroupBy = function (daterange, searchparam, interim) {
 
   let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
   let result1 = Object.values(interim).map(a => a[Object.getOwnPropertyNames(a)])
 
-  console.log(interim)
+  
   return [...daterange, result + '%', ...result1].filter(Boolean)
 
 }
@@ -977,7 +989,7 @@ let paramsSearchTypeGroupByParameterized = (req) => {
 
   }
 
-  console.log(colmetafilter)
+  
   return {
     parameterValues: base.parameterValues,
     searchkey: searchkey,
@@ -1112,7 +1124,7 @@ let pivotTransform = (req) => {
     sortcolumn = mod.id;
   }
 
-
+  
   var selector = "";
   var selectordynamic = "";
   if (searchtype == "Columnwise") {
@@ -1486,13 +1498,14 @@ let searchtypeOptimizedBase = (req, res, a) => {
 
 let searchtypeOptimizedBaseParameterized = (req, res, a) => {
   return (promise = new Promise((resolve, reject) => {
+    
     searchparampayloadParameterized(req, res, a)
       .then((arg) => {
-
+        
         var fieldnames = Object.keys(
           models[mod.Name].tableAttributes
         ).map(function (item) { return '"' + item + '"' }).join(',');
-
+        
         let sqlConstructParams = {
           fieldnames,
           arg,
@@ -1505,20 +1518,28 @@ let searchtypeOptimizedBaseParameterized = (req, res, a) => {
         /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
           resolve(arg);
         });*/
+        
 
-
-        if (arg.parameterValues.toString() != "") {
-
-          searchtypeOptimizedParameterized(res, sqlConstructParams, a).then((arg) => {
-            resolve(arg);
+        if(arg.hasOwnProperty('parameterValues')){
+        //if (arg.parameterValues.toString() != "") {
+          
+          searchtypeOptimizedParameterized(res, sqlConstructParams, a).then((argres) => {
+            
+            resolve(argres);
           });
 
         }
         else {
-
-          searchtypeOptimized(res, sqlConstructParams, a).then((arg) => {
-            resolve(arg);
-          });
+        if(Object.keys(arg.selector).length === 0)
+          {
+            searchtypeOptimized(res, sqlConstructParams, a).then((argres) => {
+              resolve(argres);
+            });
+          }else
+          {
+           
+          }    
+          
         }
 
 
@@ -1526,7 +1547,8 @@ let searchtypeOptimizedBaseParameterized = (req, res, a) => {
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
       .catch(function (error) {
-        captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
+        
+        captureErrorLog({ "searchtypeOptimizedBaseParameterizedERROR": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
         reject(error);
       });
   }));
@@ -1582,7 +1604,7 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
             callback(null, internset.rows);
           })
           .catch((err) => {
-
+            console.log(sqlstatementsprimary)
             connections.release();
           });
       },
@@ -1638,7 +1660,7 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
               callback(null, internset.rows);
             })
             .catch((err) => {
-
+console.log(sqlstatementsprimary)
               connections.release();
             });
         },
@@ -1653,6 +1675,7 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
       (err, results) => {
         if (err) {
           //res.send(err);
+          console.log(sqlstatementsprimary)
           reject(err);
         }
         resolve(results);
@@ -1669,7 +1692,9 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
     );
 
 
-    var internset = {};
+sqlConstructParams.arg.parameterValues=sqlConstructParams.arg.parameterValues.filter( Boolean );
+
+var internset = {};
     async(
       {
         rows: (callback) => {
@@ -1679,11 +1704,11 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
               //
 
               internset.rows = result.rows;
-
+             
               callback(null, internset.rows);
             })
             .catch((err) => {
-
+                 
               connections.release();
             });
         },
@@ -1691,7 +1716,7 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
       },
       (err, results) => {
         if (err) {
-
+          
           reject(err);
         }
 
@@ -1708,7 +1733,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
       sqlConstructParams
     );
 
-    console.log(sqlstatementsprimary)
+    
 
     var internset = {};
     async(
@@ -1724,7 +1749,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
               callback(null, internset.rows);
             })
             .catch((err) => {
-
+              captureErrorLog({'sql':sqlstatementsprimary,'error':err})
               connections.release();
             });
         },
@@ -1732,7 +1757,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
       },
       (err, results) => {
         if (err) {
-
+         captureErrorLog({'sql':sqlstatementsprimary,'error':err})
           reject(err);
         }
 
@@ -1834,7 +1859,8 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
               callback(null, internset.rows);
             })
             .catch((err) => {
-
+              
+captureErrorLog({'sql':sqlstatementsprimary})
               connections.release();
             });
         },
@@ -1857,6 +1883,7 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
       },
       (err, results) => {
         if (err) {
+          console.log(sqlstatementsprimary);
           console.log(err);
           reject(err);
         }
@@ -2005,7 +2032,7 @@ let SearchTypeGroupBy = (req, res, a) => {
   var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
     sqlConstructParams
   );
-  console.log(sqlstatementsprimary)
+  
   connections
     .query(sqlstatementsprimary)
     .then((result) => {
