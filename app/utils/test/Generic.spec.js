@@ -103,7 +103,7 @@ let customMultiInsertDelete = function (testbase, evalModulename) {
           })
           .catch(err => console.log(err))
       } catch (error) {
-        console.log(error)
+        
         reject(error)
       }
     })
@@ -596,7 +596,7 @@ let genericApiPost = function (data) {
           }
         })
     } catch (error) {
-      console.log(error)
+      
       reject({ error: true, payload: data })
     }
   }))
@@ -875,7 +875,7 @@ let FirstTimeloadCurrentModule = function () {
         //.expect('Content-type', /text\/html/)
         .end(function (err, res) {
           if (err) {
-            console.log(err)
+            
             reject(err)
           }
 
