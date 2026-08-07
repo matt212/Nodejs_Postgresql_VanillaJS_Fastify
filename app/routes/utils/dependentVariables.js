@@ -1693,7 +1693,7 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
 
 
 sqlConstructParams.arg.parameterValues=sqlConstructParams.arg.parameterValues.filter( Boolean );
-
+console.log(sqlstatementsprimary)
 var internset = {};
     async(
       {
@@ -2022,26 +2022,37 @@ let searchtypegroupbyId = (req, res, a) => {
       res.send(err);
     });
 };
-let SearchTypeGroupBy = (req, res, a) => {
-  let tempDep = paramsSearchTypeGroupBy(req);
-  let sqlConstructParams = {
-    tempDep,
-    mod,
-  };
+let SearchTypeGroupBy = async (request, reply, a) => {
+  try {
+    let tempDep = paramsSearchTypeGroupBy(request);
 
-  var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
-    sqlConstructParams
-  );
-  
-  connections
-    .query(sqlstatementsprimary)
-    .then((result) => {
-      res.send({ rows: result.rows });
-    })
-    .catch((err) => {
-      captureErrorLog({ "error": err, "modname": mod.name, "payload": req.body })
-      res.send(err);
+    let sqlConstructParams = {
+      tempDep,
+      mod
+    };
+
+    let sqlstatementsprimary =
+      sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams);
+
+    let result = await connections.query(sqlstatementsprimary);
+
+    return reply.send({
+      rows: result.rows
     });
+
+  } catch (err) {
+
+    captureErrorLog({
+      error: err,
+      modname: mod.name,
+      payload: request.body
+    });
+
+    return reply.code(500).send({
+      status: 'error',
+      message: err.message
+    });
+  }
 };
 
 let SearchTypeGroupByParameterized = (req, res, a) => {

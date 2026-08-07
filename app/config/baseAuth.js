@@ -63,124 +63,162 @@ async function baseDecorator (fastify, options) {
       reply.send(err)
     }
   })
-  fastify.decorate('islogin', async function (
+  fastify.decorate(
+  'islogin',
+  async function (
     request,
     reply,
-    done,
-    basestate = { successRedirect: '/employees', failureRedirect: '/login' }
+    basestate = {
+      successRedirect: '/employees',
+      failureRedirect: '/login'
+    }
   ) {
+
     try {
-      return models.muser
-        .findOne({
-          where: {
-            username: request.body.username,
-            password: request.body.password
-          },
-          attributes: ['email', 'username', 'muserid']
-        })
-        .then(function (user) {
-          if (user == undefined) {
-            reply.send({
-              status: 'fail',
-              msgstatus: 'Invalid Username/Password'
-            })
-            return false
-          } else {
-            rbac(user.dataValues.muserid).then(function (data) {
-              var ObjLoggedinfo = {}
-              ObjLoggedinfo.base = data
 
-              var token = fastify.jwt.sign(ObjLoggedinfo)
-              request.session.set('userLoggedInfor', token)
-              if (request.session.get('intendedredirect')) {
-                request.session.set(
-                  'redirectURL',
-                  request.session.get('intendedredirect')
-                )
-              } else {
-                if (basestate.successRedirect != undefined) {
-                  request.session.set('redirectURL', basestate.successRedirect)
-                } else {
-                  request.session.set('redirectURL', '/employees')
-                }
-              }
-
-              done()
-              //set cookie and data here
-            })
-          }
-        })
-    } catch (err) {
-      reply.send({ status: 'no login' })
-    }
-  })
-  fastify.decorate('isPayLoadSecure', async function (request, reply, done) {
-
-
-    var re = /ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
-    let vali = new RegExp(re);
-    if (!request.body.searchparam.includes("NA")) {
-    
-      if (vali.test(JSON.stringify(request.body.searchparam))) {
-        reply.code(403).send({ status: "SQL injection detected - Bad Request" })
-      }
-      else
-      {
-        done()
-      }
-    
-    
-    }
-    else
-    {
-      done()
-    }
-
-
-
-  })
-  fastify.decorate('isModuleAccess', async function (request, reply, done) {
-    let baseurlar = request.raw.url.split('/')
-
-    let fileusers = request.session.get('decodeduserLoggedInfor').base
-
-    //check if module/page  exists in db
-    if (fileusers != undefined) {
-      fileusers = fileusers.map(function (doctor) {
-        return (
-          doctor.Modulename.toString()
-            .split(',')
-            .indexOf(baseurlar[1]) > -1
-        )
+      const user = await models.muser.findOne({
+        where: {
+          username: request.body.username,
+          password: request.body.password
+        },
+        attributes: [
+          'email',
+          'username',
+          'muserid'
+        ]
       })
 
-      let ispageexists
-      if (fileusers.toString().indexOf('true') > -1) {
-        ispageexists = true
-        done()
-        return true
-      } else {
-        //not authorize for this module
-        ispageexists = false
-        //either redirect to this generic listing landing page/screen or login with message
 
-        //reply.redirect('/login');
+      if (!user) {
+
+        return reply.send({
+          status: 'fail',
+          msgstatus: 'Invalid Username/Password'
+        })
+
+      }
+
+
+      const data = await rbac(user.dataValues.muserid)
+
+
+      const ObjLoggedinfo = {}
+
+      ObjLoggedinfo.base = data
+
+
+      const token = fastify.jwt.sign(ObjLoggedinfo)
+
+
+      request.session.set(
+        'userLoggedInfor',
+        token
+      )
+
+
+      if (request.session.get('intendedredirect')) {
 
         request.session.set(
-          'statusMessage',
-          'you are not authorized to view that module'
+          'redirectURL',
+          request.session.get('intendedredirect')
         )
 
-        reply.redirect('/login')
+      } else {
+
+        request.session.set(
+          'redirectURL',
+          basestate.successRedirect || '/employees'
+        )
+
       }
-    } else {
-      request.session.set('statusMessage', 'Session expire Please re login')
 
-      reply.redirect('/login')
 
-      //throw 404 page not found
+      return
+
+
+    } catch (err) {
+
+      fastify.log.error(err)
+
+      return reply.send({
+        status: 'no login'
+      })
+
     }
-  })
+
+  }
+)
+  fastify.decorate('isPayLoadSecure', async function (request, reply) {
+
+  var re = /ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
+
+  let vali = new RegExp(re)
+
+  if (!request.body.searchparam.includes("NA")) {
+
+    if (vali.test(JSON.stringify(request.body.searchparam))) {
+
+      return reply.code(403).send({
+        status: "SQL injection detected - Bad Request"
+      })
+
+    }
+
+  }
+
+  return
+
+})
+  fastify.decorate('isModuleAccess', async function (request, reply) {
+
+  let baseurlar = request.raw.url.split('/')
+
+  let fileusers = request.session.get('decodeduserLoggedInfor')?.base
+
+
+  // check if module/page exists in db
+  if (fileusers !== undefined) {
+
+    fileusers = fileusers.map(function (doctor) {
+      return (
+        doctor.Modulename
+          .toString()
+          .split(',')
+          .indexOf(baseurlar[1]) > -1
+      )
+    })
+
+
+    if (fileusers.toString().indexOf('true') > -1) {
+
+      // authorized
+      return
+
+    } else {
+
+      // not authorized
+      request.session.set(
+        'statusMessage',
+        'you are not authorized to view that module'
+      )
+
+      return reply.redirect('/login')
+
+    }
+
+
+  } else {
+
+    request.session.set(
+      'statusMessage',
+      'Session expire Please re login'
+    )
+
+    return reply.redirect('/login')
+
+  }
+
+})
 
   let rbac = function (id) {
     return new Promise((resolve, reject) => {

@@ -80,7 +80,7 @@ async function routes (fastify, options) {
     },
     async (request, reply) => {
       dep.assignVariables(mod)
-      dep.SearchTypeGroupBy(request, reply, mod)
+     return dep.SearchTypeGroupBy(request, reply, mod)
     }
   )
   fastify.post(

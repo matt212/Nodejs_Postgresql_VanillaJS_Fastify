@@ -1,5 +1,5 @@
-const { isError } = require('util')
 let dep = require('./utils/dependentVariables')
+
 let mod = Object.assign(
   {},
   {
@@ -9,31 +9,75 @@ let mod = Object.assign(
   },
   dep.baseUtilsRoutes
 )
-var validatorSchema = require('./utils/' + mod.Name + '/payloadSchema')
+
+var validatorSchema = require(
+  './utils/' + mod.Name + '/payloadSchema'
+)
+
 async function routes(fastify, options) {
+
+  /*
+   * GET Employees page
+   */
   fastify.get(
     '/',
-    { preValidation: [fastify.isSession, fastify.isModuleAccess] },
+    {
+      preValidation: [
+        fastify.isSession,
+        fastify.isModuleAccess
+      ]
+    },
     async (request, reply) => {
+
       try {
+
         dep.assignVariables(mod)
-        let validationConfig = require('./utils/' +
+
+        const validationConfig = require(
+          './utils/' +
           mod.Name +
-          '/validationConfig.js')
-        reply.header('x-token', request.session.get('userLoggedInfor'))
-        let ejsRelease = (request.session["releaseEnv"] == "public-release" ? '-release' : '')
-
-        reply.view(
-          `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
-          dep.pageRenderObj(request, reply, validationConfig)
+          '/validationConfig.js'
         )
-      } catch (error) {
-        dep.captureErrorLog({ "error": error, "url": "/", "modname": mod.Name, "payload": request.body })
 
+        reply.header(
+          'x-token',
+          request.session.get('userLoggedInfor')
+        )
+
+        const ejsRelease =
+          request.session.get('releaseEnv') === 'public-release'
+            ? '-release'
+            : ''
+
+        return reply.view(
+          `${mod.Name}/${mod.Name}${ejsRelease}.ejs`,
+          dep.pageRenderObj(
+            request,
+            reply,
+            validationConfig
+          )
+        )
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: '/',
+          modname: mod.Name,
+          payload: request.body
+        })
+
+        return reply.code(500).send({
+          error: 'Internal Server Error'
+        })
       }
     }
   )
 
+
+  /*
+   * SEARCH TYPE - Load
+   */
   fastify.post(
     dep.routeUrls.searchtype[0],
     {
@@ -41,23 +85,44 @@ async function routes(fastify, options) {
       schema: validatorSchema.searchLoadSchema,
       preValidation: [fastify.authenticate]
     },
-    (request, reply) => {
-      dep.assignVariables(mod)
-      var req = {}
-      req.body = request.body
-      dep
-        .searchtypePerf(req, reply, mod)
-        .then(arg => {
-          reply.code = 200
-          reply.send(arg)
-        })
-        .catch(function (error) {
-          dep.captureErrorLog({ "error": error, "url": dep.routeUrls.searchtype[0], "modname": mod.Name, "payload": request.body })
+    async (request, reply) => {
 
-          reply.code(400).send(error)
+      try {
+
+        dep.assignVariables(mod)
+
+        const req = {
+          body: request.body
+        }
+
+        const result = await dep.searchtypePerf(
+          req,
+          reply,
+          mod
+        )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.searchtype[0],
+          modname: mod.Name,
+          payload: request.body
         })
+
+        return reply.code(400).send({
+          status: error
+        })
+      }
     }
   )
+
+
+  /*
+   * SEARCH TYPE - Optimized
+   */
   fastify.post(
     dep.routeUrls.searchtype[1],
     {
@@ -66,29 +131,44 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      // fastify.log.debug(request.body);
-      dep.assignVariables(mod)
-      var req = {}
 
-      req.body = request.body
+      try {
 
-      //dep.searchtype
-      dep
-        //.searchtypeOptimizedBase(req, reply, mod)
-        .searchtypeOptimizedBaseParameterized(req, reply, mod)
-        .then(arg => {
-          reply.send(arg)
+        dep.assignVariables(mod)
+
+        const req = {
+          body: request.body
+        }
+
+        const result =
+          await dep.searchtypeOptimizedBaseParameterized(
+            req,
+            reply,
+            mod
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.searchtype[1],
+          modname: mod.Name,
+          payload: request.body
         })
-        .catch(function (err) {
-          
-          dep.captureErrorLog({ "error": err, "url": dep.routeUrls.searchtype[1], "modname": mod.Name, "payload": request.body })
 
-          reply.code(400).send({ status: err })
+        return reply.code(400).send({
+          status: error
         })
+      }
     }
   )
 
 
+  /*
+   * SEARCH TYPE - Count
+   */
   fastify.post(
     dep.routeUrls.searchtype[2],
     {
@@ -97,27 +177,44 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      // fastify.log.debug(request.body);
-      dep.assignVariables(mod)
-      var req = {}
 
-      req.body = request.body
-      //dep.searchtype
-      dep
-        .searchtypeOptimizedBaseCountParamterized(req, reply, mod)
-        .then(arg => {
-          reply.send(arg)
-        })
-        .catch(function (error) {
-          dep.captureErrorLog({ "error": error, "url": dep.routeUrls.searchtype[2], "modname": mod.Name, "payload": request.body })
+      try {
 
-          reply.code(400).send({ status: error })
+        dep.assignVariables(mod)
+
+        const req = {
+          body: request.body
+        }
+
+        const result =
+          await dep.searchtypeOptimizedBaseCountParamterized(
+            req,
+            reply,
+            mod
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.searchtype[2],
+          modname: mod.Name,
+          payload: request.body
         })
+
+        return reply.code(400).send({
+          status: error
+        })
+      }
     }
   )
 
 
-
+  /*
+   * SEARCH TYPE GROUP BY
+   */
   fastify.post(
     dep.routeUrls.searchtypegroupby,
     {
@@ -126,15 +223,40 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      try {
-        dep.assignVariables(mod)
-        dep.SearchTypeGroupByParameterized(request, reply, mod)
-      }
-      catch (error) {
-        dep.captureErrorLog({ "error": error, "url": dep.routeUrls.searchtypegroupby, "modname": mod.Name, "payload": request.body })
 
+      try {
+
+        dep.assignVariables(mod)
+
+        const result =
+          await dep.SearchTypeGroupByParameterized(
+            request,
+            reply,
+            mod
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.searchtypegroupby,
+          modname: mod.Name,
+          payload: request.body
+        })
+
+        return reply.code(400).send({
+          status: error
+        })
       }
-    })
+    }
+  )
+
+
+  /*
+   * CREATE RECORD
+   */
   fastify.post(
     dep.routeUrls.create,
     {
@@ -142,47 +264,119 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      try {
-        dep.assignVariables(mod)
-        dep.createRecord(request, reply)
-      } catch (error) {
-        dep.captureErrorLog({ "error": error, "url": dep.routeUrls.create, "modname": mod.Name, "payload": request.body })
 
+      try {
+
+        dep.assignVariables(mod)
+
+        const result =
+          await dep.createRecord(
+            request,
+            reply
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.create,
+          modname: mod.Name,
+          payload: request.body
+        })
+
+        return reply.code(400).send({
+          status: error
+        })
       }
     }
   )
+
+
+  /*
+   * EXPORT EXCEL
+   */
   fastify.post(
     dep.routeUrls.exportexcel,
     {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      try {
-        dep.assignVariables(mod)
-        dep.exportExcel(request, reply, mod, fastify)
-      } catch (error) {
-        dep.captureErrorLog({ "error": error, "url": dep.routeUrls.exportexcel, "modname": mod.Name, "payload": request.body })
 
+      try {
+
+        dep.assignVariables(mod)
+
+        const result =
+          await dep.exportExcel(
+            request,
+            reply,
+            mod,
+            fastify
+          )
+
+        return result
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.exportexcel,
+          modname: mod.Name,
+          payload: request.body
+        })
+
+        return reply.code(400).send({
+          status: error
+        })
       }
     }
   )
 
+
+  /*
+   * UPLOAD CONTENT
+   */
   fastify.post(
     dep.routeUrls.uploadcontent,
     {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
+
       try {
+
         dep.assignVariables(mod)
-        return dep.uploadContent(request, reply)
+
+        const result =
+          await dep.uploadContent(
+            request,
+            reply
+          )
+
+        return result
+
       } catch (error) {
 
-        dep.captureErrorLog({ "error": error, "url": dep.routeUrls.uploadcontent, "modname": mod.Name, "payload": request.body })
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.uploadcontent,
+          modname: mod.Name,
+          payload: request.body
+        })
 
+        return reply.code(400).send({
+          status: error
+        })
       }
     }
   )
+
+
+  /*
+   * UPDATE RECORD
+   */
   fastify.post(
     dep.routeUrls.update,
     {
@@ -190,44 +384,118 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      try {
-        dep.updateRecord(request, reply)
-      } catch (error) {
-        dep.captureErrorLog({ "error": error, "url": dep.routeUrls.update, "modname": mod.Name, "payload": request.body })
 
+      try {
+
+        dep.assignVariables(mod)
+
+        const result =
+          await dep.updateRecord(
+            request,
+            reply
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.update,
+          modname: mod.Name,
+          payload: request.body
+        })
+
+        return reply.code(400).send({
+          status: error
+        })
       }
     }
   )
+
+
+  /*
+   * SEARCH TYPE GROUP BY ID
+   */
   fastify.post(
     dep.routeUrls.searchtypegroupbyId,
     {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      try {
-        dep.assignVariables(mod)
-        dep.searchtypegroupbyId(request, reply, mod)
-      } catch (error) {
-        dep.captureErrorLog({ "error": error, "url": dep.routeUrls.searchtypegroupbyId, "modname": mod.Name, "payload": request.body })
 
+      try {
+
+        dep.assignVariables(mod)
+
+        const result =
+          await dep.searchtypegroupbyId(
+            request,
+            reply,
+            mod
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.searchtypegroupbyId,
+          modname: mod.Name,
+          payload: request.body
+        })
+
+        return reply.code(400).send({
+          status: error
+        })
       }
     }
   )
+
+
+  /*
+   * DELETE RECORD
+   */
   fastify.post(
     dep.routeUrls.delete,
     {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      try {
-        dep.assignVariables(mod)
-        dep.deleteHardRecord(request, reply)
-      } catch (error) {
-        dep.captureErrorLog({ "error": error, "url": dep.routeUrls.delete, "modname": mod.Name, "payload": request.body })
 
+      try {
+
+        dep.assignVariables(mod)
+
+        const result =
+          await dep.deleteHardRecord(
+            request,
+            reply
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.delete,
+          modname: mod.Name,
+          payload: request.body
+        })
+
+        return reply.code(400).send({
+          status: error
+        })
       }
     }
   )
+
+
+  /*
+   * PIVOT RESULT
+   */
   fastify.post(
     dep.routeUrls.pivotresult,
     {
@@ -236,24 +504,37 @@ async function routes(fastify, options) {
       preValidation: [fastify.authenticate]
     },
     async (request, reply) => {
-      dep.assignVariables(mod)
-      //dep.pivotResult(request, reply, mod)
-      //dep.isPivotCache(request, reply, mod)
-      //isPivotCacheOptimized
-      dep
-        .isPivotCacheOptimized(request, reply, mod)
-        .then(arg => {
-          reply.code = 200
 
-          reply.send(arg)
-        })
-        .catch(function (error) {
-          dep.captureErrorLog({ "error": error, "url": dep.routeUrls.pivotresult, "modname": mod.Name, "payload": request.body })
+      try {
 
-          reply.code(400).send(error)
+        dep.assignVariables(mod)
+
+        const result =
+          await dep.isPivotCacheOptimized(
+            request,
+            reply,
+            mod
+          )
+
+        return reply.code(200).send(result)
+
+      } catch (error) {
+
+        dep.captureErrorLog({
+          error,
+          url: dep.routeUrls.pivotresult,
+          modname: mod.Name,
+          payload: request.body
         })
+
+        return reply.code(400).send({
+          status: error
+        })
+      }
     }
   )
+
 }
+
 
 module.exports = routes

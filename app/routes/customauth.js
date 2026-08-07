@@ -1,5 +1,6 @@
 let dep = require('./utils/dependentVariables.js')
 let baseAuthObj = require('../../app/config/baseAuth')
+
 let mod = Object.assign(
   {},
   {
@@ -11,16 +12,25 @@ let mod = Object.assign(
 )
 
 async function routes (fastify, options) {
+
   fastify.get('/', async function (request, reply) {
     let statusMsg = request.session.get('statusMessage')
 
-    return reply.view('../views/login/login.ejs', { statusMessage: statusMsg })
+    return reply.view('../views/login/login.ejs', {
+      statusMessage: statusMsg
+    })
   })
+
+
   fastify.get('/login', async function (request, reply) {
     let statusMsg = request.session.get('statusMessage')
 
-    return reply.view('../views/login/login.ejs', { statusMessage: statusMsg })
+    return reply.view('../views/login/login.ejs', {
+      statusMessage: statusMsg
+    })
   })
+
+
   fastify.get(
     '/getAccessToken',
     { preValidation: [fastify.isSession] },
@@ -28,38 +38,66 @@ async function routes (fastify, options) {
       return reply.view('../views/login/accessTokenlisting.ejs')
     }
   )
-  fastify.post('/getToken', function (request, reply) {
-    var Objappkey = {}
+
+
+  fastify.post('/getToken', async function (request, reply) {
+
+    let Objappkey = {}
+
     Objappkey.base = request.body.appkey
-    var token = fastify.jwt.sign(Objappkey)
-    reply.send({ token: token })
+
+    let token = fastify.jwt.sign(Objappkey)
+
+    return reply.send({
+      token: token
+    })
+
   })
+
+
   fastify.post(
     '/logout',
     { preValidation: [fastify.isSession] },
-    async (request, reply, err) => {
+    async (request, reply) => {
+
       let token = request.session.get('userLoggedInfor')
 
       if (token) {
         request.session.delete()
-        reply.send({ status: 'success', redirect: '/login' })
+
+        return reply.send({
+          status: 'success',
+          redirect: '/login'
+        })
       }
+
+      return reply.send({
+        status: 'failed'
+      })
     }
   )
+
+
   fastify.post(
     '/login',
     { preValidation: [fastify.islogin] },
-    async (request, reply, err) => {
+    async (request, reply) => {
+
       let token = request.session.get('userLoggedInfor')
 
       if (token) {
-        reply.send({
+        return reply.send({
           status: 'success',
           redirect: request.session.get('redirectURL')
         })
       }
+
+      return reply.send({
+        status: 'failed'
+      })
     }
   )
+
 }
 
 module.exports = routes
