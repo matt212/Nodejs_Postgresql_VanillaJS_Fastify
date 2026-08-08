@@ -133,7 +133,7 @@
 
    
 
-> _`Please note if you have node/postgres/redis server installed in your instance/machine. Please comment the install information in primarySetup.sh file and then run this file`_
+> _`Please note if you have node/postgres/redis server installed in your instance/machine. Please comment the install information in primarySetup.sh file and then run this file also run if redis error redis-server --daemonize yes `_
 </details>
   
   <details>

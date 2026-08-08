@@ -231,10 +231,8 @@ async function routes(fastify, options) {
         const result =
           await dep.SearchTypeGroupByParameterized(
             request,
-            reply,
             mod
           )
-
         return reply.code(200).send(result)
 
       } catch (error) {

@@ -296,6 +296,7 @@ let searchparampayloadParameterized = (req, res, a) => {
         startdate = reqcontent.daterange.startdate + " 00:00:00";
         enddate = reqcontent.daterange.enddate + "  24:00:00";
         base.parameterValues = multiWhereConstructValues(searchparam, [startdate, enddate])
+       
 
       }
       var searchtype = reqcontent.searchtype;
@@ -372,7 +373,10 @@ let searchparampayloadParameterized = (req, res, a) => {
              
              consolidatesearch = 'and weighted_tsv @@ to_tsquery(\'' + consolidatesearchparams + '\')'*/
         /*end region*/
-        base.parameterValues = multiWhereConstructValuesDateDisabled(searchparam)
+        //base.parameterValues = multiWhereConstructValuesDateDisabled(searchparam)
+        base.parameterValues = multiWhereConstructValues(searchparam, [startdate, enddate])
+        
+        
       } else if (searchtype == "consolidatesearch") {
         //*traditional search*//
 
@@ -402,12 +406,13 @@ let searchparampayloadParameterized = (req, res, a) => {
       resolve(base);
     });
     return promise.catch(function (error) {
+      throw error
       captureErrorLog({ "searchparampayloadParameterizederror": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
       return Promise.reject(error);
     });
   } catch (err) {
-    captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
-    return Promise.reject(error);
+    captureErrorLog({ "error": err, "modname": mod.name, "payload": JSON.stringify(req.body) })
+    return Promise.reject(err);
   }
 };
 
@@ -618,7 +623,7 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
   let custWhere = ''
   
   allowableColumns.forEach(function (k) {
-    w = w + 1
+    w = w + 3
     custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
 
   })
@@ -646,7 +651,7 @@ let consolidateSearchParameterizedConstruct = function (mod) {
   f.removear("created_date")
   f.removear("recordstate")
   f.removear(mod.id);
-  custWhere = "and " + f.join(" ||' '|| ") + ' like $1'
+  custWhere = "and " + f.join(" ||' '|| ") + ' like $3'
   return custWhere
 }
 
@@ -670,6 +675,7 @@ let multiWhereConstructValues = function (searchparam, daterange) {
 
 }
 let multiWhereConstructValuesDateDisabled = function (searchparam) {
+  
 
   let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
   result=result.filter(Boolean)
@@ -981,6 +987,7 @@ let paramsSearchTypeGroupByParameterized = (req) => {
 
 
         colmetafilter = multiWhereConstructColumn(internsearchparammetafilter, coltype, mod, 3)
+        
 
       }
       // finale.push(obj)
@@ -1448,6 +1455,8 @@ let searchtypeOptimizedBaseCountParamterized = (req, res, a) => {
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
       .catch(function (error) {
+        console.log("---------error")
+        console.log(error)
         captureErrorLog({ "error": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
         reject(error);
       });
@@ -1547,9 +1556,10 @@ let searchtypeOptimizedBaseParameterized = (req, res, a) => {
         //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
       })
       .catch(function (error) {
-        
-        captureErrorLog({ "searchtypeOptimizedBaseParameterizedERROR": error, "modname": mod.name, "payload": JSON.stringify(req.body) })
-        reject(error);
+        console.log("---------error--------")
+        console.log(error);
+        captureErrorLog({ "searchtypeOptimizedBaseParameterizedERROR": error.stack.toString(), "modname": mod.name, "payload": JSON.stringify(req.body) })
+        reject(error.stack.toString());
       });
   }));
 };
@@ -1693,7 +1703,9 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
 
 
 sqlConstructParams.arg.parameterValues=sqlConstructParams.arg.parameterValues.filter( Boolean );
+console.log("ipopopoo")
 console.log(sqlstatementsprimary)
+console.log(sqlConstructParams.arg.parameterValues);
 var internset = {};
     async(
       {
@@ -2055,27 +2067,36 @@ let SearchTypeGroupBy = async (request, reply, a) => {
   }
 };
 
-let SearchTypeGroupByParameterized = (req, res, a) => {
-  let tempDep = paramsSearchTypeGroupByParameterized(req);
-  let sqlConstructParams = {
-    tempDep,
-    mod,
-  };
+let SearchTypeGroupByParameterized = async (req, a) => {
+  try {
+    let tempDep = paramsSearchTypeGroupByParameterized(req)
 
-  var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](
-    sqlConstructParams
-  );
+    let sqlConstructParams = {
+      tempDep,
+      mod
+    }
 
-  connections
-    .queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
-    .then((result) => {
-      res.send({ rows: result.rows });
+    let sqlstatementsprimary =
+      sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams)
+
+    let result = await connections.queryParameterized(
+      sqlstatementsprimary,
+      tempDep.parameterValues
+    )
+
+    return {
+      rows: result.rows
+    }
+  } catch (err) {
+    captureErrorLog({
+      error: err,
+      modname: mod.name,
+      payload: req.body
     })
-    .catch((err) => {
-      captureErrorLog({ "error": err, "modname": mod.name, "payload": req.body })
-      res.send(err);
-    });
-};
+
+    throw err
+  }
+}
 
 
 let bulkCreate = (req, res) => {
