@@ -150,16 +150,12 @@ async function routes(fastify, options) {
         return reply.code(200).send(result)
 
       } catch (error) {
+console.log("---------error111111--------")
+       console.log(error);
 
-        dep.captureErrorLog({
-          error,
-          url: dep.routeUrls.searchtype[1],
-          modname: mod.Name,
-          payload: request.body
-        })
 
         return reply.code(400).send({
-          status: error
+          status: error.toString()
         })
       }
     }
@@ -198,7 +194,7 @@ async function routes(fastify, options) {
       } catch (error) {
 
         dep.captureErrorLog({
-          error,
+          error: error.stack.toString(),
           url: dep.routeUrls.searchtype[2],
           modname: mod.Name,
           payload: request.body
@@ -267,10 +263,10 @@ async function routes(fastify, options) {
 
         dep.assignVariables(mod)
 
-        const result =
+        let result =
           await dep.createRecord(
             request,
-            reply
+            mod
           )
 
         return reply.code(200).send(result)
@@ -278,7 +274,7 @@ async function routes(fastify, options) {
       } catch (error) {
 
         dep.captureErrorLog({
-          error,
+          error: error.stack.toString(),
           url: dep.routeUrls.create,
           modname: mod.Name,
           payload: request.body
@@ -455,40 +451,35 @@ async function routes(fastify, options) {
   /*
    * DELETE RECORD
    */
+  
   fastify.post(
-    dep.routeUrls.delete,
-    {
-      preValidation: [fastify.authenticate]
-    },
-    async (request, reply) => {
+  dep.routeUrls.delete,
+  {
+    preValidation: [fastify.authenticate]
+  },
+  async (request, reply) => {
+    try {
+      dep.assignVariables(mod);
 
-      try {
+      const result = await dep.deleteHardRecord(request);
 
-        dep.assignVariables(mod)
+      return reply.code(200).send(result);
 
-        const result =
-          await dep.deleteHardRecord(
-            request,
-            reply
-          )
+    } catch (error) {
+      dep.captureErrorLog({
+        error,
+        url: dep.routeUrls.delete,
+        modname: mod.Name,
+        payload: request.body
+      });
 
-        return reply.code(200).send(result)
-
-      } catch (error) {
-
-        dep.captureErrorLog({
-          error,
-          url: dep.routeUrls.delete,
-          modname: mod.Name,
-          payload: request.body
-        })
-
-        return reply.code(400).send({
-          status: error
-        })
-      }
+      return reply.code(500).send({
+        status: "failed",
+        error: error.message
+      });
     }
-  )
+  }
+);
 
 
   /*

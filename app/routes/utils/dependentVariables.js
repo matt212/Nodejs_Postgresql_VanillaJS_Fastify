@@ -621,9 +621,9 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
   })
 
   let custWhere = ''
-  
+  w = 2
   allowableColumns.forEach(function (k) {
-    w = w + 3
+    w=w+1
     custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
 
   })
@@ -1506,63 +1506,112 @@ let searchtypeOptimizedBase = (req, res, a) => {
 
 
 let searchtypeOptimizedBaseParameterized = (req, res, a) => {
-  return (promise = new Promise((resolve, reject) => {
-    
+
+  return new Promise((resolve, reject) => {
+
     searchparampayloadParameterized(req, res, a)
+
       .then((arg) => {
-        
-        var fieldnames = Object.keys(
+
+        const fieldnames = Object.keys(
           models[mod.Name].tableAttributes
-        ).map(function (item) { return '"' + item + '"' }).join(',');
-        
-        let sqlConstructParams = {
+        )
+          .map(function (item) {
+            return '"' + item + '"';
+          })
+          .join(',');
+
+        const sqlConstructParams = {
           fieldnames,
           arg,
-          mod,
-
+          mod
         };
 
-        //searchtypeExplain(res, sqlConstructParams, a)
-        /* do not delete function since it fallback to Conventional count*/
-        /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
-          resolve(arg);
-        });*/
-        
+        // searchtypeExplain(res, sqlConstructParams, a)
 
-        if(arg.hasOwnProperty('parameterValues')){
-        //if (arg.parameterValues.toString() != "") {
-          
-          searchtypeOptimizedParameterized(res, sqlConstructParams, a).then((argres) => {
-            
-            resolve(argres);
-          });
+        /*
+         * Do not delete this function.
+         * It is a fallback to Conventional count.
+         *
+         * searchtypeConventional(res, sqlConstructParams, a)
+         *   .then((arg) => {
+         *     resolve(arg);
+         *   })
+         */
 
-        }
-        else {
-        if(Object.keys(arg.selector).length === 0)
-          {
-            searchtypeOptimized(res, sqlConstructParams, a).then((argres) => {
+        /*
+         * Parameterized search
+         */
+        if (Object.prototype.hasOwnProperty.call(arg, 'parameterValues')) {
+
+          return searchtypeOptimizedParameterized(
+            res,
+            sqlConstructParams,
+            a
+          )
+            .then((argres) => {
               resolve(argres);
+            })
+            .catch((error) => {
+              reject(error);
             });
-          }else
-          {
-           
-          }    
-          
         }
 
+        /*
+         * Normal optimized search
+         */
+        if (
+          arg.selector &&
+          Object.keys(arg.selector).length === 0
+        ) {
 
-        //caching only count since delete of records in any b2b apps is meh !
-        //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
+          return searchtypeOptimized(
+            res,
+            sqlConstructParams,
+            a
+          )
+            .then((argres) => {
+              resolve(argres);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        }
+
+        /*
+         * No valid search path was found.
+         * Previously this branch did nothing, which left
+         * the Promise pending forever.
+         */
+        
+        const isObjectEmpty = Object.values(arg.daterange)[0].trim().length === 0 ;
+        
+        return reject(
+  new Error(
+    Object.values(arg.daterange)[0].trim().length === 0
+      ? 'body must have required property \'datecolsearch\''
+      : `No  valid search method found for the supplied search parameters`
+  )
+);
       })
-      .catch(function (error) {
-        console.log("---------error--------")
+
+      .catch((error) => {
+
+        console.log("---------error--------");
         console.log(error);
-        captureErrorLog({ "searchtypeOptimizedBaseParameterizedERROR": error.stack.toString(), "modname": mod.name, "payload": JSON.stringify(req.body) })
-        reject(error.stack.toString());
+
+        captureErrorLog({
+          searchtypeOptimizedBaseParameterizedERROR:
+            error?.stack || error?.message || String(error),
+          modname: mod.Name,
+          payload: JSON.stringify(req.body)
+        });
+
+        reject(error);
       });
-  }));
+  });
 };
+
 
 let searchtypePerf = (req, res, a) => {
   return (promise = new Promise((resolve, reject) => {
@@ -2014,25 +2063,38 @@ let isPivotCacheOptimized = (req, reply, mod) => {
 
 
 
-let searchtypegroupbyId = (req, res, a) => {
-  let tempDep = paramsSearchTypeGroupBy(req);
-  let sqlConstructParams = {
-    tempDep,
-    mod,
-  };
+let searchtypegroupbyId = async (request, reply, a) => {
+  try {
+    let tempDep = paramsSearchTypeGroupBy(request);
 
-  var sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupbyId](
-    sqlConstructParams
-  );
-  console.log(sqlstatementsprimary)
-  connections
-    .query(sqlstatementsprimary)
-    .then((result) => {
-      res.send({ rows: result.rows });
-    })
-    .catch((err) => {
-      res.send(err);
+    let sqlConstructParams = {
+      tempDep,
+      mod
+    };
+
+    let sqlStatement =
+      sqlConstruct[a.type][a.searchtypegroupbyId](sqlConstructParams);
+
+    console.log(sqlStatement);
+
+    let result = await connections.query(sqlStatement);
+
+    return reply.send({
+      rows: result.rows
     });
+
+  } catch (error) {
+    captureErrorLog({
+      error,
+      modname: mod.Name,
+      payload: request.body
+    });
+
+    return reply.code(500).send({
+      status: "failed",
+      error
+    });
+  }
 };
 let SearchTypeGroupBy = async (request, reply, a) => {
   try {
@@ -2113,25 +2175,29 @@ let bulkCreate = (req, res) => {
     });
 };
 
-let createRecord = (req, res) => {
-  var resp = new Object();
+let createRecord = async (request, mod) => {
+  try {
+    const data =
+      request.rawBody !== undefined
+        ? JSON.parse(request.rawBody)
+        : request.body;
 
-  let lime = req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
+    const result = await models[mod.Name].create(data);
 
-  models[mod.Name].create(lime).then(
-    (x) => {
-      res.send({
-        createdId: x[mod.id],
-        Message: "Record SuccessFully Inserted",
-      });
-    },
-    (err) => {
-      captureErrorLog({ "error": err, "modname": mod.name, "payload": req.body })
-      res.status(412);
-      resp.par = err;
-      res.send(resp);
-    }
-  );
+    return {
+      createdId: result[mod.id],
+      Message: "Record Successfully Inserted"
+    };
+
+  } catch (error) {
+    captureErrorLog({
+      error,
+      modname: mod.Name,
+      payload: request.body
+    });
+
+    throw error;
+  }
 };
 
 let QueryStream = require("pg-query-stream");
@@ -2532,24 +2598,41 @@ let uploadContent = async (req, reply, fastify) => {
     }
   }
 };
-let updateRecord = (req, res) => {
-  let lime = req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
 
-  models[mod.Name]
-    .update(
-      lime,
+let updateRecord = async (request, reply) => {
+  try {
+    let data =
+      request.rawBody !== undefined
+        ? JSON.parse(request.rawBody)
+        : request.body;
+
+    let affectedRows = await models[mod.Name].update(
+      data,
       {
         where: {
-          [mod.id]: lime[mod.id],
+          [mod.id]: data[mod.id]
         },
         returning: true,
-        plain: true,
-      } /* where criteria */
-    )
-    .then((affectedRows) => {
-      res.send(affectedRows);
+        plain: true
+      }
+    );
+
+    return reply.send(affectedRows);
+
+  } catch (error) {
+    captureErrorLog({
+      error,
+      modname: mod.Name,
+      payload: request.body
     });
+
+    return reply.code(412).send({
+      status: "failed",
+      error
+    });
+  }
 };
+
 let deleteRecord = (req, res) => {
   models[mod.Name]
     .update(
@@ -2566,16 +2649,12 @@ let deleteRecord = (req, res) => {
       res.send(affectedRows);
     });
 };
-let deleteHardRecord = (req, res) => {
-  models[mod.Name]
-    .destroy({
-      where: {
-        [mod.id]: req.body[mod.id],
-      },
-    })
-    .then((affectedRows) => {
-      res.send(affectedRows);
-    });
+const deleteHardRecord = async (request) => {
+  return await models[mod.Name].destroy({
+    where: {
+      [mod.id]: request.body[mod.id]
+    }
+  });
 };
 let customDestroy = (req, res) => {
   let delobj = req.body.delObj;

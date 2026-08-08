@@ -957,9 +957,9 @@ let consolidatedPayload = function () {
   o.payload7 = function (testbase, evalModulename) {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     var o = JSON.parse(JSON.stringify(loadModulePayLoad))
-    o.disableDate = true
+    //o.disableDate = true
     testbase.payload = o
-    testbase.responseCode = 200
+    testbase.responseCode = 400
     return testbase
   }
   o.payload8 = function (testbase, evalModulename) {
@@ -1070,8 +1070,14 @@ let consolidatedPayload = function () {
         testbase.responseCode = 200
         var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
         let fieldtype = controlPayset(validationConfig, entry)
-
-        if (fieldtype.fieldtypename == 'DATE') {
+/* default date */
+o1.daterange = {
+            startdate: new Date().toLocaleDateString(),
+            enddate: new Date().toLocaleDateString()
+          }
+         o1.datecolsearch = 'created_date';
+          o1.disableDate = false        
+if (fieldtype.fieldtypename == 'DATE') {
           o1.daterange = {
             startdate: new Date(
               testbase.schemaBaseValidatorPayload[entry]
@@ -1092,9 +1098,10 @@ let consolidatedPayload = function () {
               [entry]: [testbase.schemaBaseValidatorPayload[entry]]
             }
           ]
-          o1.disableDate = true
+          //o1.disableDate = true
           o1.searchtype = 'Columnwise'
         } else if (fieldtype.fieldtypename == 'STRING') {
+          
           let interimval = testbase.schemaBaseValidatorPayload[entry]
           if (
             fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
@@ -1112,8 +1119,9 @@ let consolidatedPayload = function () {
               [entry]: [interimval]
             }
           ]
-          o1.disableDate = true
+         // o1.disableDate = true
           o1.searchtype = 'Columnwise'
+          
         }
 
         testbase.payload = o1
@@ -1130,7 +1138,12 @@ let consolidatedPayload = function () {
         var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
 
         let fieldtype = controlPayset(validationConfig, entry)
-
+o1.daterange = {
+            startdate: new Date().toLocaleDateString(),
+            enddate: new Date().toLocaleDateString()
+          }
+         o1.datecolsearch = 'created_date';
+          o1.disableDate = false    
         if (fieldtype.fieldtypename == 'DATE') {
           o1.daterange = {
             startdate: new Date(
@@ -1155,7 +1168,7 @@ let consolidatedPayload = function () {
               ]
             }
           ]
-          o1.disableDate = true
+         // o1.disableDate = true
           o1.searchtype = 'Columnwise'
         } else if (fieldtype.fieldtypename == 'STRING') {
           let interimval1 = testbase.schemaBaseValidatorPayloadAr[0][entry]
@@ -1179,7 +1192,7 @@ let consolidatedPayload = function () {
               [entry]: [interimval1, interimval2]
             }
           ]
-          o1.disableDate = true
+         // o1.disableDate = true
           o1.searchtype = 'Columnwise'
         }
         testbase.payload = o1
@@ -1216,7 +1229,13 @@ let consolidatedPayload = function () {
             entry
           )
 
-          o1.disableDate = true
+         // o1.disableDate = true
+         o1.daterange = {
+            startdate: new Date().toLocaleDateString(),
+            enddate: new Date().toLocaleDateString()
+          }
+         o1.datecolsearch = 'created_date';
+          o1.disableDate = false      
           o1.searchtype = 'Columnwise'
         }
         testbase.payload = o1
@@ -1246,7 +1265,13 @@ let consolidatedPayload = function () {
             consolidatecolval: searchVal
           }
         ]
-        o1.disableDate = true
+       // o1.disableDate = true
+       o1.daterange = {
+            startdate: new Date().toLocaleDateString(),
+            enddate: new Date().toLocaleDateString()
+          }
+         o1.datecolsearch = 'created_date';
+          o1.disableDate = false      
         o1.searchtype = 'consolidatesearch'
         testbase.payload = o1
         return testbase
@@ -1265,7 +1290,7 @@ let consolidatedPayload = function () {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     testbase.responseCode = 400
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
-
+    
     let fieldtype = controlPayset(validationConfig, entry).fieldtypename
 
     if (fieldtype == 'DATE') {
@@ -1333,7 +1358,12 @@ let consolidatedPayload = function () {
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
     o1.sortcolumnorder = 'ASC'
     o1.sortcolumn = entry
-    o1.disableDate = true
+    o1.disableDate = false
+    o1.datecolsearch = 'created_date';
+    o1.daterange = {
+            startdate: new Date().toLocaleDateString(),
+            enddate: new Date().toLocaleDateString()
+          }
     testbase.payload = o1
     return testbase
   }
@@ -1343,7 +1373,12 @@ let consolidatedPayload = function () {
       var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
       o1.sortcolumnorder = 'DESC'
       o1.sortcolumn = entry
-      o1.disableDate = true
+      o1.disableDate = false
+      o1.datecolsearch = 'created_date';
+      o1.daterange = {
+            startdate: new Date().toLocaleDateString(),
+            enddate: new Date().toLocaleDateString()
+          }
       testbase.payload = o1
       return testbase
     }),

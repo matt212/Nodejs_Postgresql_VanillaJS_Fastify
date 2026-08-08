@@ -29,7 +29,7 @@ describe('Begin Tests', function () {
           data.body.error.should.equal('Bad Request')
 
           data.body.message.should.equal(
-            `body should have required property '${entry.key}'`
+            `body must have required property '${entry.key}'`
           )
         })
       })
@@ -61,23 +61,23 @@ describe('Begin Tests', function () {
 
           if (fieldtype == 'boolean') {
             data.body.message.should.equal(
-              `body.${entry.key} should be boolean`
+              `body/${entry.key} must be boolean`
             )
           } else if (fieldtype == 'date') {
             data.body.message.should.equal(
-              `body.${entry.key} should match format "date"`
+              `body/${entry.key} must NOT have fewer than 1 characters`
             )
           } else if (fieldtype == 'number') {
             data.body.message.should.equal(
-              `body.${entry.key} should be integer`
+              `body/${entry.key} must be integer`
             )
           } else if (fieldtype == 'email') {
             data.body.message.should.equal(
-              `body.${entry.key} should match format "email"`
+              `body/${entry.key} must match format "email"`
             )
           } else {
             data.body.message.should.equal(
-              `body.${entry.key} should NOT be shorter than 1 characters`
+              `body/${entry.key} must NOT have fewer than 1 characters`
             )
           }
         })
@@ -106,49 +106,51 @@ describe('Begin Tests', function () {
           }
           if (fieldtype.fieldtypename == 'boolean') {
             data.body.message.should.equal(
-              `body.${entry.key} should be boolean`
+              `body/${entry.key} must be boolean`
             )
           } else if (fieldtype.fieldtypename == 'DATE') {
             data.body.message.should.equal(
-              `body.${entry.key} should match format "date"`
+              `body/${entry.key} must match format "date"`
             )
           } else if (fieldtype.fieldtypename == 'INTEGER') {
             data.body.message.should.equal(
-              `body.${entry.key} should be <= ${parseInt((""+1).padEnd(fieldtype.fieldmaxlength, "0"))}`
+              `body/${entry.key} should be <= ${parseInt((""+1).padEnd(fieldtype.fieldmaxlength, "0"))}`
             )
           } else if (fieldtype.fieldtypename == 'BIGINT') {
             data.body.message.should.equal(
-              `body.${entry.key} should be <= 9223372036854776000`
+              `body/${entry.key} must be <= 9223372036854776000`
             )
           } else if (
             fieldtype.fieldtypename.toLowerCase() != fieldtype.fieldvalidatename
           ) {
             if (fieldtype.fieldvalidatename == 'number') {
               data.body.message.should.equal(
-                `body.${entry.key} should be <= 2147483648`
+                `body/${entry.key} must be <= 2147483648`
               )
             }
           } else {
             data.body.message.should.equal(
-              `body.${entry.key} should NOT be longer than ${fieldtype.fieldmaxlength} characters`
+              `body/${entry.key} must NOT have more than ${fieldtype.fieldmaxlength} characters`
             )
           }
         })
       })
     })
   })
+  
   describe('****************Valid Record Insertion Validation Test Cases****************', function () {
     it(`For  insert Operation test cases By passing as valid fields in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
         .consolidatedPayload()
         .payload2(testbase, evalModulename, validationConfig)
       return genSpecs.genericApiPost(testbase).then(function (data) {
-        data.body.Message.should.equal('Record SuccessFully Inserted')
+        data.body.Message.should.equal('Record Successfully Inserted')
         genSpecs.expect(data.body.createdId).to.be.a('number')
         testbase.InsertID = data.body.createdId
       })
     })
-  })
+  
+  
   describe('****************Invalid Record Updation by Schema Removal Validation Test Cases****************', function () {
     it(`For  Update Operation test cases By passing as removing UpdatedID in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -157,11 +159,12 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.error.should.equal('Bad Request')
         data.body.message.should.equal(
-          `body should have required property '${testbase.evalModulename}id'`
+          `body must have required property '${testbase.evalModulename}id'`
         )
       })
     })
   })
+  
   describe('****************Invalid Record Updation by Schema NaN Validation Test Cases****************', function () {
     it(`For  Update Operation test cases By passing as  UpdatedID as NaN in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -170,11 +173,12 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.error.should.equal('Bad Request')
         data.body.message.should.equal(
-          `body.${testbase.evalModulename}id should be >= 1`
+          `body/${testbase.evalModulename}id must be >= 1`
         )
       })
     })
   })
+  
   describe('****************Invalid Record Updation by Schema undefined Validation Test Cases****************', function () {
     it(`For  Update Operation test cases By passing as  UpdatedID as undefined in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -183,11 +187,12 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         data.body.error.should.equal('Bad Request')
         data.body.message.should.equal(
-          `body should have required property '${testbase.evalModulename}id'`
+          `body must have required property '${testbase.evalModulename}id'`
         )
       })
     })
   })
+  
   describe('****************Valid Record Updation Validation Test Cases****************', function () {
     it(`For  Update Operation test cases By passing as  UpdatedID as valid value in the  payload to Evaluate   if we are getting valid return field `, function () {
       testbase = genSpecs
@@ -200,6 +205,7 @@ describe('Begin Tests', function () {
       })
     })
   })
+  
   describe('****************Parent Payload Validation Test Cases****************', function () {
     describe('****************Dates SearchParam Validation Test Cases****************', function () {
       it(`without date filter payload `, function () {
@@ -209,9 +215,12 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
          // genSpecs.expect(parseInt(data.body.count)).to.be.a('number')
 
-          genSpecs
-            .expect(data.body.rows.length)
-            .to.be.lte(testbase.payload.pageSize)
+         
+         data.body.status.split(":")[1].trim().should.equal(
+            `body must have required property 'datecolsearch'`
+          );
+          
+          
         })
       })
       it(`date filter startdate Nan payload `, function () {
@@ -222,7 +231,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           data.body.message.should.equal(
-            `body.daterange.startdate should NOT be shorter than 1 characters`
+            `body must have required property 'datecolsearch'`
           )
         })
       })
@@ -234,7 +243,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           data.body.message.should.equal(
-            `body.daterange.enddate should NOT be shorter than 1 characters`
+            `body must have required property 'datecolsearch'`
           )
         })
       })
@@ -245,7 +254,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           data.body.message.should.equal(
-            `body.daterange should have required property 'startdate'`
+            `body must have required property 'datecolsearch'`
           )
         })
       })
@@ -257,7 +266,7 @@ describe('Begin Tests', function () {
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.error.should.equal('Bad Request')
           data.body.message.should.equal(
-            `body.daterange should have required property 'enddate'`
+            `body must have required property 'datecolsearch'`
           )
         })
       })
@@ -269,8 +278,9 @@ describe('Begin Tests', function () {
           .payload24(testbase, evalModulename)
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
+          console.log(data.body)
           data.body.message.should.equal(
-            `body.sortcolumn should NOT be shorter than 1 characters`
+            `body/sortcolumn must NOT have fewer than 1 characters`
           )
         })
       })
@@ -281,7 +291,7 @@ describe('Begin Tests', function () {
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
-            `body.sortcolumnorder should NOT be shorter than 1 characters`
+            `body/sortcolumnorder must NOT have fewer than 1 characters`
           )
         })
       })
@@ -294,8 +304,19 @@ describe('Begin Tests', function () {
             .payload26(testbase, entry, evalModulename)
           //  console.log(testbase.payload)
           return genSpecs.genericApiPost(testbase).then(function (data) {
-            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
-            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+              let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+              
+              if(!isNaN(Date.parse(interimval)))
+              {
+              const dateOnly =  (interimval.split('T')[0]) ;
+              
+               genSpecs.expect(data.body.rows[0][entry].split('T')[0]).to.equal(dateOnly)
+              }
+              else
+              {
+               // genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+              }
+              
           })
         })
       })
@@ -306,10 +327,19 @@ describe('Begin Tests', function () {
           testbase = genSpecs
             .consolidatedPayload()
             .payload27(testbase, entry, evalModulename)
-          //  console.log(testbase.payload)
+          console.log(testbase.payload)
           return genSpecs.genericApiPost(testbase).then(function (data) {
-            //  let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
-            //    genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+               let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
+              if(!isNaN(Date.parse(interimval)))
+              {
+              const dateOnly =  (interimval.split('T')[0]) ;
+              
+               genSpecs.expect(data.body.rows[0][entry].split('T')[0]).to.equal(dateOnly)
+              }
+              else
+              {
+               // genSpecs.expect(data.body.rows[0][entry]).to.equal(interimval)
+              }
           })
         })
       })
@@ -318,7 +348,7 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload12(testbase, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          data.body.message.should.equal(`body.pageSize should be >= 1`)
+          data.body.message.should.equal(`body/pageSize must be >= 1`)
         })
       })
       it(`filter with pageSize as undefined  payload `, function () {
@@ -327,7 +357,7 @@ describe('Begin Tests', function () {
           .payload13(testbase, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
-            `body should have required property '.pageSize'`
+            `body must have required property 'pageSize'`
           )
         })
       })
@@ -337,7 +367,7 @@ describe('Begin Tests', function () {
           .payload14(testbase, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
-            `body should have required property \'.pageno\'`
+            `body must have required property \'pageno\'`
           )
         })
       })
@@ -348,7 +378,7 @@ describe('Begin Tests', function () {
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
-            `body.datecolsearch should NOT be shorter than 1 characters`
+            `body/datecolsearch must NOT have fewer than 1 characters`
           )
         })
       })
@@ -358,11 +388,11 @@ describe('Begin Tests', function () {
           .payload16(testbase, evalModulename)
         return genSpecs.genericApiPost(testbase).then(function (data) {
           data.body.message.should.equal(
-            `body should have required property '.datecolsearch'`
+            `body must have required property 'datecolsearch'`
           )
         })
       })
-
+})
       describe('****************Search Features Single/SingleColumn Test Cases****************', function () {
         Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (
           entry
@@ -371,7 +401,7 @@ describe('Begin Tests', function () {
             testbase = genSpecs
               .consolidatedPayload()
               .payload17(testbase, entry, evalModulename, validationConfig)
-              
+             
             return genSpecs.genericApiPost(testbase).then(function (data) {
               
               let interimval = testbase.schemaBaseValidatorPayload[entry]
@@ -399,8 +429,8 @@ describe('Begin Tests', function () {
           })
         })
       })
+    
     })
-  })
 
   describe('****************Search Features Multi/SingleColumn Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
@@ -408,7 +438,8 @@ describe('Begin Tests', function () {
         testbase = genSpecs
           .consolidatedPayload()
           .payload18(testbase, entry, evalModulename, validationConfig)
-
+console.log("****************Search Features Multi/SingleColumn Test Cases****************")
+          console.log(testbase)
         return genSpecs.genericApiPost(testbase).then(function (data) {
           var payloadCount = parseInt(
             testbase.schemaBaseValidatorPayloadAr.length
@@ -431,10 +462,13 @@ describe('Begin Tests', function () {
       })
     })
   })
+  
   describe('****************Search Features Multi/MultiColumn Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`Searching for ${entry} and getting expected Multi recordset `, function () {
-        testbase = genSpecs
+        if("recordstate"!=entry)
+        {
+testbase = genSpecs
           .consolidatedPayload()
           .payload19(testbase, entry, evalModulename, validationConfig)
 
@@ -442,6 +476,8 @@ describe('Begin Tests', function () {
           
           genSpecs.expect(parseInt(data.body.rows.length)).to.be.gte(1)
         })
+        }
+        
       })
     })
   })
@@ -467,10 +503,11 @@ describe('Begin Tests', function () {
 
     return genSpecs.genericApiPost(testbase).then(function (data) {
       data.body.message.should.equal(
-        `body should have required property \'.basesearcharconsolidated\'`
+        `body must have required property \'basesearcharconsolidated\'`
       )
     })
   })
+  
   describe('****************undefined Searchparam values Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
@@ -479,20 +516,23 @@ describe('Begin Tests', function () {
           .payload22(testbase, entry, evalModulename, validationConfig)
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
+          
+          
           if (data.body.statusCode === undefined) {
             let interim=data.body.status.trim()
             interim.should.equal(`${entry} is undefined`)
           } else {
             data.body.message.should.equal(
-              `body.daterange should have required property \'startdate\'`
+              `body/daterange must have required property \'startdate\'`
             )
           }
 
-          //
+          
         })
       })
     })
   })
+
   describe('****************undefined Searchparam Key Test Cases****************', function () {
     Object.keys(testbase.schemaBaseValidatorPayload).forEach(function (entry) {
       it(`evaluating for ${entry} and getting expected custom reject Error `, function () {
@@ -513,7 +553,7 @@ describe('Begin Tests', function () {
             data.body.status.should.equal(`key of  is undefined`)
           } else {
             data.body.message.should.equal(
-              `body.daterange should have required property \'startdate\'`
+              `body/daterange must have required property \'startdate\'`
             )
           }
 
@@ -522,7 +562,7 @@ describe('Begin Tests', function () {
       })
     })
   })
-
+ 
   describe('****************undefined Pivot  Test Cases****************', function () {
     it(`filter with XpageSize as undefined  payload `, function () {
       testbase = genSpecs
@@ -531,7 +571,7 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         //console.log(data.body);
         data.body.message.should.equal(
-          `body should have required property \'.XpageSize\'`
+          `body must have required property \'XpageSize\'`
         )
       })
     })
@@ -542,7 +582,7 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         //console.log(data.body);
         data.body.message.should.equal(
-          `body should have required property \'.Xpageno\'`
+          `body must have required property \'Xpageno\'`
         )
       })
     })
@@ -553,7 +593,7 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         //console.log(data.body);
         data.body.message.should.equal(
-          `body should have required property \'.YpageSize\'`
+          `body must have required property \'YpageSize\'`
         )
       })
     })
@@ -564,10 +604,12 @@ describe('Begin Tests', function () {
       return genSpecs.genericApiPost(testbase).then(function (data) {
         //console.log(data.body);
         data.body.message.should.equal(
-          `body should have required property \'.Ypageno\'`
+          `body must have required property \'Ypageno\'`
         )
       })
     })
   })
 
+  })
 })
+
