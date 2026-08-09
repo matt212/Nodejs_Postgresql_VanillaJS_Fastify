@@ -299,14 +299,21 @@ let reqops = {
     basefunction()
       .getpaginatesearchtype(base)
       .then(function (data) {
+         
+
         htmlpopulate.htmlpopulatetable(data)
-        basepagination.bootpagination(data)
+        //basepagination.bootpagination(data)
 
         if ($('#dvreportcontainer').hasClass('collapsed-box')) {
           $('#rptwidget').click()
         }
         basefunction().getpaginatesearchtypeCount(base).then(function (argument) {
           htmlpopulate.htmltablecount(argument);
+          if(!base.multisearchpaginate)
+          {
+            basepagination.bootpagination(argument)
+          }
+          
         })
 
       })
@@ -324,7 +331,8 @@ let basepagination = {
     var totalpagecount = argument.count
     var maxvisiblesize =
       argument.count <= 100 ? Math.round(totalpagecount / pagesize) : 5
-    //console.log(maxvisiblesize);
+    console.log(argument);
+    console.log(maxvisiblesize);
     if (maxvisiblesize > 0) {
       $('#page-selection')
         .bootpag({
@@ -337,10 +345,22 @@ let basepagination = {
     }
   },
   bootpagescallback: function (event, num) {
+    //console.log(num);
     base.pageno = num - 1
-
+    
+    //console.log(base.datapayload.searchtype);
+     //"NoFilter"
+     if(base.datapayload.searchtype == "NoFilter")
+      {
     baseloadsegments.initialdatatableload()
     return false
+      }else
+      {
+        base.multisearchpaginate=true;
+        base.multisearchpaginateno=num-1;
+        reqops.srchparams()
+        return false
+      }
   },
   // end region
   bootpaginationxaxis: function (argument) {
@@ -523,7 +543,11 @@ function payloadprepared() {
     base.pageno = 0
     //base.pageSize = parseInt($("#sptotalUsers").html());
   }
+if(base.multisearchpaginate)
+{
+    base.pageno = base.multisearchpaginateno
 
+}
   filterparam.pageno = base.pageno
   filterparam.pageSize = base.pageSize
   filterparam.pivotparamXaxis = base.pivotparamXaxis
