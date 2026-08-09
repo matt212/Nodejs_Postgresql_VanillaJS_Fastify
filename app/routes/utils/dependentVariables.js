@@ -1719,7 +1719,7 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
               callback(null, internset.rows);
             })
             .catch((err) => {
-console.log(sqlstatementsprimary)
+
               connections.release();
             });
         },
@@ -1752,9 +1752,7 @@ let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
 
 
 sqlConstructParams.arg.parameterValues=sqlConstructParams.arg.parameterValues.filter( Boolean );
-console.log("ipopopoo")
-console.log(sqlstatementsprimary)
-console.log(sqlConstructParams.arg.parameterValues);
+
 var internset = {};
     async(
       {

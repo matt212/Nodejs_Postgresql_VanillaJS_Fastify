@@ -150,7 +150,7 @@ async function routes(fastify, options) {
         return reply.code(200).send(result)
 
       } catch (error) {
-console.log("---------error111111--------")
+
        console.log(error);
 
 

@@ -278,7 +278,7 @@ describe('Begin Tests', function () {
           .payload24(testbase, evalModulename)
 
         return genSpecs.genericApiPost(testbase).then(function (data) {
-          console.log(data.body)
+        //  console.log(data.body)
           data.body.message.should.equal(
             `body/sortcolumn must NOT have fewer than 1 characters`
           )
@@ -327,7 +327,7 @@ describe('Begin Tests', function () {
           testbase = genSpecs
             .consolidatedPayload()
             .payload27(testbase, entry, evalModulename)
-          console.log(testbase.payload)
+         // console.log(testbase.payload)
           return genSpecs.genericApiPost(testbase).then(function (data) {
                let interimval = testbase.schemaBaseValidatorPayloadAr[0][entry]
               if(!isNaN(Date.parse(interimval)))
@@ -439,7 +439,7 @@ describe('Begin Tests', function () {
           .consolidatedPayload()
           .payload18(testbase, entry, evalModulename, validationConfig)
 console.log("****************Search Features Multi/SingleColumn Test Cases****************")
-          console.log(testbase)
+         // console.log(testbase)
         return genSpecs.genericApiPost(testbase).then(function (data) {
           var payloadCount = parseInt(
             testbase.schemaBaseValidatorPayloadAr.length
