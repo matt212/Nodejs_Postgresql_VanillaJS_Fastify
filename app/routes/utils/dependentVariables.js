@@ -605,6 +605,7 @@ let streambulkinsert = (data) => {
 
 //parameterized custom Where
 let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
+  console.log("herer"+w);
   let validationConfig = require("./" +
     mod.Name +
     "/validationConfig.js");
@@ -621,7 +622,8 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
   })
 
   let custWhere = ''
-  w = 2
+  w=w === 4 ? 3 : 2
+  console.log(w);
   allowableColumns.forEach(function (k) {
     w=w+1
     custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
@@ -985,8 +987,8 @@ let paramsSearchTypeGroupByParameterized = (req) => {
 
       if (internsearchparammetafilter.length > 0) {
 
-
-        colmetafilter = multiWhereConstructColumn(internsearchparammetafilter, coltype, mod, 3)
+console.log("sdsdsdsdsdsdsdsdsdsdher 4")
+        colmetafilter = multiWhereConstructColumn(internsearchparammetafilter, coltype, mod, 4)
         
 
       }
@@ -2138,7 +2140,8 @@ let SearchTypeGroupByParameterized = async (req, a) => {
 
     let sqlstatementsprimary =
       sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams)
-
+console.log(sqlstatementsprimary)
+console.log(tempDep.parameterValues)
     let result = await connections.queryParameterized(
       sqlstatementsprimary,
       tempDep.parameterValues
