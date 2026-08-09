@@ -171,13 +171,17 @@ let reqops = {
       .getpaginatesearchtype(base)
       .then(function (data) {
         htmlpopulate.htmlpopulatetable(data)
-        basepagination.bootpagination(data)
+        //basepagination.bootpagination(data)
         htmlpopulate.highlightconsolidatesearch()
         if ($('#dvreportcontainer').hasClass('collapsed-box')) {
           $('#rptwidget').click()
         }
         basefunction().getpaginatesearchtypeCount(base).then(function (argument) {
           htmlpopulate.htmltablecount(argument);
+          if(!base.consolidatesearchpaginate)
+          {
+            basepagination.bootpagination(argument)
+          }
         })
 
       })
@@ -356,10 +360,19 @@ let basepagination = {
     return false
       }else
       {
-        base.multisearchpaginate=true;
+        if(base.datapayload.searchtype == "Columnwise"){
+         base.multisearchpaginate=true;
         base.multisearchpaginateno=num-1;
         reqops.srchparams()
         return false
+        }else if(base.datapayload.searchtype == "consolidatesearch")
+        {
+        base.consolidatesearchpaginate=true;
+        base.consolidatesearchpaginateno=num-1;
+        reqops.consolidatesearch()
+        return false
+        }
+        
       }
   },
   // end region
@@ -546,6 +559,11 @@ function payloadprepared() {
 if(base.multisearchpaginate)
 {
     base.pageno = base.multisearchpaginateno
+
+}
+if(base.consolidatesearchpaginate)
+{
+    base.pageno = base.consolidatesearchpaginateno
 
 }
   filterparam.pageno = base.pageno
