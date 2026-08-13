@@ -1682,6 +1682,25 @@ let dynamicSelectforJsonArray = function (SchemaArray, KeysArray) {
   })
   return a;
 }
+const sortArBy = (key, direction = 'asc') => (a, b) => {
+  const valueA = a[key];
+  const valueB = b[key];
+
+  if (valueA == null && valueB == null) return 0;
+  if (valueA == null) return 1;
+  if (valueB == null) return -1;
+
+  const result = String(valueA).localeCompare(
+    String(valueB),
+    undefined,
+    {
+      numeric: true,
+      sensitivity: 'base'
+    }
+  );
+
+  return direction.toLowerCase() === 'desc' ? -result : result;
+};
 module.exports = {
   expect,
   dep,
@@ -1725,5 +1744,6 @@ module.exports = {
   genericApiPost,
   PrimarytestInit,
   dataCleanUp,
-  getidfromobj
+  getidfromobj,
+  sortArBy
 }
