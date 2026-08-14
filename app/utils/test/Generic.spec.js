@@ -1689,7 +1689,7 @@ const sortArBy = (key, direction = 'asc') => (a, b) => {
   if (valueA == null && valueB == null) return 0;
   if (valueA == null) return 1;
   if (valueB == null) return -1;
-
+console.log('valueA', valueA, 'valueB', valueB, 'direction', direction);
   const result = String(valueA).localeCompare(
     String(valueB),
     undefined,

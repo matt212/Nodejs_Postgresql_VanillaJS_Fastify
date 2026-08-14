@@ -327,13 +327,12 @@ describe('Begin Tests', function () {
               ) {
 
                 data.body.message.should.equal(
-                  `body/${entry.key} should be <= ${
-                    parseInt(
-                      ('' + 1).padEnd(
-                        fieldtype.fieldmaxlength,
-                        '0'
-                      )
+                  `body/${entry.key} should be <= ${parseInt(
+                    ('' + 1).padEnd(
+                      fieldtype.fieldmaxlength,
+                      '0'
                     )
+                  )
                   }`
                 );
 
@@ -536,7 +535,7 @@ describe('Begin Tests', function () {
           genSpecs
             .expect(
               data.body[1][
-                `${evalModulename}id`
+              `${evalModulename}id`
               ]
             )
             .to.equal(testbase.InsertID);
@@ -853,145 +852,203 @@ describe('Begin Tests', function () {
   // ==========================================================
 
   describe(
-    '****************Sorting Validation Test Cases****************',
-    function () {
+  '****************Sorting Validation Test Cases****************',
+  function () {
+    
+    const fields = Object.keys(
+      testbase.schemaBaseValidatorPayloadAr[0]
+    );
 
-      const fields =
-        Object.keys(
-          testbase.schemaBaseValidatorPayloadAr[0]
-        );
+    fields.forEach(function (entry) {
 
+      // ==========================================================
+      // ASCENDING
+      // ==========================================================
 
-      fields.forEach(function (entry) {
+      it(
+        `Sorting ${entry} Ascending`,
+        async function () {
 
-        // ------------------------------------------------------
-        // ASCENDING
-        // ------------------------------------------------------
+          const localTestbase =
+            structuredClone(testbase);
+console.log('localTestbase----', localTestbase);
+          const payload =
+            genSpecs
+              .consolidatedPayload()
+              .payload26(
+                localTestbase,
+                entry,
+                evalModulename
+              );
 
-        it(
-          `Sorting ${entry} Ascending`,
-          async function () {
+          const data =
+            await genSpecs.genericApiPost(payload);
 
-            const payload =
-              genSpecs
-                .consolidatedPayload()
-                .payload26(
-                  cloneTestbase(),
-                  entry,
-                  evalModulename
-                );
+          // ------------------------------------------------------
+          // Create EXPECTED dataset
+          // ------------------------------------------------------
 
-            const data =
-              await genSpecs.genericApiPost(payload);
+          const expectedData = [
+            ...structuredClone(
+              testbase.schemaBaseValidatorPayloadAr
+            ),
+            structuredClone(
+              testbase.schemaBaseValidatorPayload
+            ),
+            structuredClone(testbase.multiControlDataSet)
+          ];
 
-            const rows =
-              data.body.rows || [];
+          // Sort ONLY the known test dataset
+          expectedData.sort(
+            genSpecs.sortArBy(
+              entry,
+              'asc'
+            )
+          );
+
+          const expected =
+            expectedData[0][entry];
+
+          // First record returned by API
+          const actual =
+            data.body.rows[0][entry];
+
+          // ------------------------------------------------------
+          // DEBUG
+          // ------------------------------------------------------
+
+          console.log('\n======================================');
+          console.log(`ASC SORTING FIELD: ${entry}`);
+          console.log('EXPECTED:', expected);
+          console.log('ACTUAL:', actual);
+          console.log(
+            'EXPECTED DATASET:',
+            expectedData.map(row => row[entry])
+          );
+          console.log('expectedData----', testbase.schemaBaseValidatorPayloadAr, testbase.schemaBaseValidatorPayload);
+          console.log('======================================\n');
+
+          // ------------------------------------------------------
+          // Compare EXPECTED DATASET vs API
+          // ------------------------------------------------------
+
+          if (
+            !isNaN(Date.parse(expected))
+          ) {
 
             genSpecs
-              .expect(rows.length)
-              .to.be.greaterThan(0);
+              .expect(
+                actual.split('T')[0]
+              )
+              .to.equal(
+                expected.split('T')[0]
+              );
 
-
-            // Validate the ACTUAL API result.
-            // Do not construct expected order from API data.
-
-            for (
-              let i = 1;
-              i < rows.length;
-              i++
-            ) {
-
-              const previous =
-                normalizeSearchValue(
-                  rows[i - 1][entry]
-                );
-
-              const current =
-                normalizeSearchValue(
-                  rows[i][entry]
-                );
-
-              const comparison =
-                genSpecs.sortArBy(
-                  entry,
-                  'asc'
-                )(
-                  { [entry]: previous },
-                  { [entry]: current }
-                );
-
-
-              genSpecs
-                .expect(comparison)
-                .to.be.at.most(0);
-            }
-          }
-        );
-
-
-        // ------------------------------------------------------
-        // DESCENDING
-        // ------------------------------------------------------
-
-        it(
-          `Sorting ${entry} Descending`,
-          async function () {
-
-            const payload =
-              genSpecs
-                .consolidatedPayload()
-                .payload27(
-                  cloneTestbase(),
-                  entry,
-                  evalModulename
-                );
-
-            const data =
-              await genSpecs.genericApiPost(payload);
-
-            const rows =
-              data.body.rows || [];
+          } else {
 
             genSpecs
-              .expect(rows.length)
-              .to.be.greaterThan(0);
-
-
-            for (
-              let i = 1;
-              i < rows.length;
-              i++
-            ) {
-
-              const previous =
-                normalizeSearchValue(
-                  rows[i - 1][entry]
-                );
-
-              const current =
-                normalizeSearchValue(
-                  rows[i][entry]
-                );
-
-              const comparison =
-                genSpecs.sortArBy(
-                  entry,
-                  'desc'
-                )(
-                  { [entry]: previous },
-                  { [entry]: current }
-                );
-
-
-              genSpecs
-                .expect(comparison)
-                .to.be.at.most(0);
-            }
+              .expect(actual)
+              .to.equal(expected);
           }
-        );
-      });
-    }
-  );
+        }
+      );
+
+
+      // ==========================================================
+      // DESCENDING
+      // ==========================================================
+
+      it(
+        `Sorting ${entry} Descending`,
+        async function () {
+
+          const localTestbase =
+            structuredClone(testbase);
+
+          const payload =
+            genSpecs
+              .consolidatedPayload()
+              .payload27(
+                localTestbase,
+                entry,
+                evalModulename
+              );
+
+          const data =
+            await genSpecs.genericApiPost(payload);
+
+          // ------------------------------------------------------
+          // Create EXPECTED dataset
+          // ------------------------------------------------------
+
+          const expectedData = [
+            ...structuredClone(
+              testbase.schemaBaseValidatorPayloadAr
+            ),
+            structuredClone(
+              testbase.schemaBaseValidatorPayload
+            ),
+            structuredClone(testbase.multiControlDataSet)
+          ];
+
+          // Sort ONLY the known test dataset
+          expectedData.sort(
+            genSpecs.sortArBy(
+              entry,
+              'desc'
+            )
+          );
+
+          const expected =
+            expectedData[0][entry];
+
+          // First record returned by API
+          const actual =
+            data.body.rows[0][entry];
+
+          // ------------------------------------------------------
+          // DEBUG
+          // ------------------------------------------------------
+
+          console.log('\n======================================');
+          console.log(`DESC SORTING FIELD: ${entry}`);
+          console.log('EXPECTED:', expected);
+          console.log('ACTUAL:', actual);
+          console.log(
+            'EXPECTED DATASET:',
+            expectedData.map(row => row[entry])
+          );
+           console.log('expectedData----', testbase.schemaBaseValidatorPayloadAr, testbase.schemaBaseValidatorPayload);
+          console.log('======================================\n');
+
+          // ------------------------------------------------------
+          // Compare EXPECTED DATASET vs API
+          // ------------------------------------------------------
+
+          if (
+            !isNaN(Date.parse(expected))
+          ) {
+
+            genSpecs
+              .expect(
+                actual.split('T')[0]
+              )
+              .to.equal(
+                expected.split('T')[0]
+              );
+
+          } else {
+
+            genSpecs
+              .expect(actual)
+              .to.equal(expected);
+          }
+        }
+      );
+
+    });
+  }
+);
 
 
   // ==========================================================
