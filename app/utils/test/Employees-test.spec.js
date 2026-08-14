@@ -871,7 +871,7 @@ describe('Begin Tests', function () {
 
           const localTestbase =
             structuredClone(testbase);
-console.log('localTestbase----', localTestbase);
+//console.log('localTestbase----', localTestbase);
           const payload =
             genSpecs
               .consolidatedPayload()
@@ -917,16 +917,16 @@ console.log('localTestbase----', localTestbase);
           // DEBUG
           // ------------------------------------------------------
 
-          console.log('\n======================================');
-          console.log(`ASC SORTING FIELD: ${entry}`);
-          console.log('EXPECTED:', expected);
-          console.log('ACTUAL:', actual);
-          console.log(
-            'EXPECTED DATASET:',
-            expectedData.map(row => row[entry])
-          );
-          console.log('expectedData----', testbase.schemaBaseValidatorPayloadAr, testbase.schemaBaseValidatorPayload);
-          console.log('======================================\n');
+          // console.log('\n======================================');
+          // console.log(`ASC SORTING FIELD: ${entry}`);
+          // console.log('EXPECTED:', expected);
+          // console.log('ACTUAL:', actual);
+          // console.log(
+          //   'EXPECTED DATASET:',
+          //   expectedData.map(row => row[entry])
+          // );
+          // console.log('expectedData----', testbase.schemaBaseValidatorPayloadAr, testbase.schemaBaseValidatorPayload);
+          // console.log('======================================\n');
 
           // ------------------------------------------------------
           // Compare EXPECTED DATASET vs API
@@ -1010,16 +1010,16 @@ console.log('localTestbase----', localTestbase);
           // DEBUG
           // ------------------------------------------------------
 
-          console.log('\n======================================');
-          console.log(`DESC SORTING FIELD: ${entry}`);
-          console.log('EXPECTED:', expected);
-          console.log('ACTUAL:', actual);
-          console.log(
-            'EXPECTED DATASET:',
-            expectedData.map(row => row[entry])
-          );
-           console.log('expectedData----', testbase.schemaBaseValidatorPayloadAr, testbase.schemaBaseValidatorPayload);
-          console.log('======================================\n');
+          // console.log('\n======================================');
+          // console.log(`DESC SORTING FIELD: ${entry}`);
+          // console.log('EXPECTED:', expected);
+          // console.log('ACTUAL:', actual);
+          // console.log(
+          //   'EXPECTED DATASET:',
+          //   expectedData.map(row => row[entry])
+          // );
+          //  console.log('expectedData----', testbase.schemaBaseValidatorPayloadAr, testbase.schemaBaseValidatorPayload);
+          // console.log('======================================\n');
 
           // ------------------------------------------------------
           // Compare EXPECTED DATASET vs API
