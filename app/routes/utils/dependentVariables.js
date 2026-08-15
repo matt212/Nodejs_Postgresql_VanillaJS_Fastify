@@ -33,10 +33,37 @@ let searchparampayloadSQLSanitize = (res, a) => {
 
 }
 let captureErrorLog = function (appsgenerator) {
-  var today = new Date();
-  appsgenerator.datecapture = today.toLocaleString()
-  var filetoday = today.toLocaleString().split('/').join('-').split(",")[0]
+  // var today = new Date();
+  // appsgenerator.datecapture = today.toLocaleString()
+  // var filetoday = today.toLocaleString().split('/').join('-').split(",")[0]
+var today = new Date();
 
+appsgenerator.datecapture = today.toLocaleString('en-US', {
+  month: '2-digit',
+  day: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: true
+});
+
+var filetoday = today.toLocaleString('en-US', {
+  month: '2-digit',
+  day: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: true
+})
+  .replace(/\//g, '-')
+  .replace(/,/g, '')
+  .replace(/:/g, '-')
+  .replace(/\s+/g, '_');
+
+console.log(appsgenerator.datecapture);
+console.log(filetoday);
   new Promise((resolve, reject) => {
     //../utils/log/
     fs.writeFile(
