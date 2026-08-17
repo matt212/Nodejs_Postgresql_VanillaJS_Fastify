@@ -157,7 +157,7 @@ let multisel = function basemultiselect (selconfig, callback) {
     }),
     (me.onsearchtext = function (obj) {
       // $("#dv_" + key).remove();
-
+console.log(obj);
       this.$el.find('#dv_' + obj.key + ' ').html(' ')
       this.$el.find('#dv_' + obj.key + ' ').hide()
       //$("#dv_" + key).html(" ");

@@ -159,12 +159,23 @@ let datatransformutils = {
         return inten;
       });
     })[0];
+console.log(a1)
 
     a1.forEach(function (dt) {
       var textval = dt.inputtextval;
-      obj.content[0][dt.inputParent].forEach(function (dt1) {
-        obj.multiselectfunc[textval].onsearchtext(dt1);
-      });
+      console.log(obj.content[0])
+      console.log(dt.inputParent)
+      console.log(textval)
+      console.log(obj.content[0][dt.inputtextval])
+      console.log(dt.inputname);
+      console.log({key:dt.inputname,text:textval,vals:obj.content[0][dt.inputtextval]});
+      obj.multiselectfunc[textval].onsearchtext({key:textval,text:obj.content[0][dt.inputtextval],vals:obj.content[0][dt.inputname]});
+     //do not delete this if for reference 
+      //{key: 'rolename', text: 'admin', vals: 1}
+
+      //  obj.content[0][dt.inputtextval].forEach(function (dt1) {
+      //    obj.multiselectfunc[textval].onsearchtext(dt1);
+      //  });
     });
   },
   getminusincrement: function (a, b) {

@@ -229,7 +229,7 @@ async function routes(fastify, options) {
     }, async (request, reply) => {
       try {
         dep.assignVariables(mod)
-        const result = await dep.searchtypegroupbyId(request, reply, mod)
+        const result = await dep.searchtypegroupbyId(request, mod)
         return reply.code(200).send(result)
       } catch (error) {
         dep.captureErrorLog({

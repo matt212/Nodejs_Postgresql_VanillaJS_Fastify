@@ -7,6 +7,7 @@ let multiselects = {}
 let multiselectfunc = {}
 let baseurlobj = {
   getpaginatesearchtypeurl: `/${currentmodulename}/api/searchtype/`,
+  getpaginatesearchtypeCounturl: '/' + currentmodulename + '/api/searchtypeCount/',
   createdata: `/${currentmodulename}/api/bulkCreate/`,
   updatedata: `/${currentmodulename}/api/update/`,
   exceldata: `/${currentmodulename}/api/exportexcel/`,
@@ -68,6 +69,16 @@ let basefunction = function() {
       })
 
     },
+    getpaginatesearchtypeCount: function (base) {
+            ajaxbase.payload = base.datapayload
+            ajaxbase.url = baseurlobj.getpaginatesearchtypeCounturl;
+            $('#dvpaginationsections').addClass('loading')
+            return ajaxutils.basepostmethod(ajaxbase).then(function (argument) {
+                $('#dvpaginationsections').removeClass('loading')
+                return argument;
+            })
+
+        },
     getpaginatesearchtypegroupby: function(base) {
 
 
@@ -456,6 +467,7 @@ let basemod_modal = {
   populatemodularddl: function() {
     validationmap.forEach2(function(data) {
       if (data.inputtype == 'multiselect') {
+        console.log(data);
         var p = {}
         p.fieldname = data.inputtextval
         p.fieldkey = data.inputtextval

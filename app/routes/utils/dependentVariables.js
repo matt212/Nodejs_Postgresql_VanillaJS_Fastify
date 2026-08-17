@@ -1190,11 +1190,8 @@ let searchtypeConventionalCache = (sqlConstructParams, a, arg) => {
 };
 let searchtypeOptimizedParameterized = (sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
-    
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](sqlConstructParams);
-    
     sqlConstructParams.arg.parameterValues = sqlConstructParams.arg.parameterValues.filter(Boolean);
-    
     var internset = {};
     async ({
         rows: (callback) => {
@@ -1335,8 +1332,13 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
 };
 let getCountparameterized = (sqlstatementsecondary, sqlConstructParams) => {
   return new Promise((resolve, reject) => {
+    console.log(sqlstatementsecondary);
     connections.queryParameterized(sqlstatementsecondary, sqlConstructParams.arg.parameterValues).then((result) => {
-      resolve(result.rows[0].count);
+      if (result.rows.length > 0) {
+        resolve(result.rows[0].count);
+      } else {
+        resolve(0);
+      }
     }).catch((err) => {
       connections.release();
       reject(err);
@@ -1423,21 +1425,13 @@ let isPivotCacheOptimized = (req, reply, mod) => {
 const searchtypegroupbyId = async (request, a) => {
   try {
     const tempDep = paramsSearchTypeGroupBy(request);
-
     const sqlConstructParams = {
       tempDep,
       mod
     };
-
-    const sqlStatement =
-      sqlConstruct[a.type][a.searchtypegroupbyId](
-        sqlConstructParams
-      );
-
+    const sqlStatement = sqlConstruct[a.type][a.searchtypegroupbyId](sqlConstructParams);
     console.log(sqlStatement);
-
     const result = await connections.query(sqlStatement);
-
     return {
       rows: result.rows
     };
@@ -1447,7 +1441,6 @@ const searchtypegroupbyId = async (request, a) => {
       modname: mod.Name,
       payload: request.body
     });
-
     throw error;
   }
 };
@@ -1868,13 +1861,11 @@ const deleteHardRecord = async (request) => {
 const customDestroy = async (request, reply) => {
   const delObj = request.body.delObj;
   const key = Object.keys(delObj)[0];
-
   const affectedRows = await models[mod.Name].destroy({
     where: {
       [key]: delObj[key]
     }
   });
-
   return reply.send(affectedRows);
 };
 let pivotResult = (req, res, a) => {
