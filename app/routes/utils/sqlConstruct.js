@@ -213,7 +213,7 @@ let base = {
 }
 let mrole = {
   basesqlscrp: {
-    a: 'select a.mroleid, a.recordstate,rl.roleid AS roleid,n.modnameid as modID, n.Mname as Modulename,n.Mname as mname,rl.rolename as Rolename, a.accesstype as accesstype  from mrole a ' +
+    a: 'select  a.mroleid, a.recordstate,rl.roleid AS roleid,n.modnameid as modID, n.Mname as Modulename,n.Mname as mname,rl.rolename as Rolename, a.accesstype as accesstype  from mrole a ' +
       'left join modname n ' +
       'on a.modnameid::int=n.modnameid ' +
       'left join role rl ' +
@@ -227,8 +227,9 @@ let mrole = {
       "string_agg(distinct accesstype,',') as Accesstype ,recordstate," +
       "string_agg(distinct ModID::text,',') as modnameid, string_agg(distinct ModID::text,',') as mname , " +
       "string_agg(distinct roleid::text,',') as mroleID," +
-      'ROLEID as RoleID from ' +
-      '( ' +
+      'ROLEID as RoleID , ' +
+      'jsonb_object_agg(ModID::text,jsonb_build_object(\'key\', ModID,\'value\', mname) ) AS Modulename_map '+
+      ' from ( ' +
       this.basesqlscrp.a +
       ' ' +
       tunnel.arg.daterange +

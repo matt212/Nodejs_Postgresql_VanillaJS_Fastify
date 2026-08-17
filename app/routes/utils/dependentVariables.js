@@ -1192,6 +1192,7 @@ let searchtypeOptimizedParameterized = (sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](sqlConstructParams);
     sqlConstructParams.arg.parameterValues = sqlConstructParams.arg.parameterValues.filter(Boolean);
+    console.log(sqlstatementsprimary);
     var internset = {};
     async ({
         rows: (callback) => {
