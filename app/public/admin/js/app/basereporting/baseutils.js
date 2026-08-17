@@ -250,7 +250,7 @@ let reqops = {
 
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
-
+          ajaxbase.isedit=false
           $('#btnmodalclose').click()
         })
     } else {
@@ -261,6 +261,17 @@ let reqops = {
       basefunction()
         .insert(base)
         .then(function (argument) {
+//           var datefilter = new Object();
+          
+
+// let endDT = new Date();
+// let startDT= new Date();
+// start.setDate(startDT.getDate() - 7);
+//             datefilter.startdate = startDT.format('YYYY-MM-DD');
+//             datefilter.enddate = endDT.format('YYYY-MM-DD');
+             
+//             //filterparam.colsearch = "createdAt";
+//             base.searchdatefilter=datefilter
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
 

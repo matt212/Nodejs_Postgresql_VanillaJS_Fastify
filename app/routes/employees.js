@@ -17,6 +17,7 @@ async function routes(fastify, options) {
       const validationConfig = require('./utils/' + mod.Name + '/validationConfig.js')
       reply.header('x-token', request.session.get('userLoggedInfor'))
       const ejsRelease = request.session.get('releaseEnv') === 'public-release' ? '-release' : ''
+      
       return reply.view(`${mod.Name}/${mod.Name}${ejsRelease}.ejs`, dep.pageRenderObj(request, reply, validationConfig))
     } catch (error) {
       dep.captureErrorLog({
@@ -43,7 +44,7 @@ async function routes(fastify, options) {
       const req = {
         body: request.body
       }
-      const result = await dep.searchtypePerf(req, reply, mod)
+      const result = await dep.searchtypePerf(req, mod)
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
@@ -70,7 +71,7 @@ async function routes(fastify, options) {
       const req = {
         body: request.body
       }
-      const result = await dep.searchtypeOptimizedBaseParameterized(req, reply, mod)
+      const result = await dep.searchtypeOptimizedBaseParameterized(req, mod)
       return reply.code(200).send(result)
     } catch (error) {
       console.log(error)
@@ -92,7 +93,7 @@ async function routes(fastify, options) {
       const req = {
         body: request.body
       }
-      const result = await dep.searchtypeOptimizedBaseCountParamterized(req, reply, mod)
+      const result = await dep.searchtypeOptimizedBaseCountParamterized(req, mod)
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({

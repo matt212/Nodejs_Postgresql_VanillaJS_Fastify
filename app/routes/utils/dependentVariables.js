@@ -15,15 +15,13 @@ let mod = {};
 let assignVariables = (modObj) => {
   mod = modObj;
 };
-let searchparampayloadSQLSanitize = (res, a) => {
+let searchparampayloadSQLSanitize = (a) => {
   a.forEach(function(g, i) {
     g[Object.keys(g)].forEach(function(k) {
       var re = /ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
       let vali = new RegExp(re);
       if (vali.test(k)) {
-        res.code(403).send({
-          status: "SQL injection detected - Bad Request"
-        })
+        return false
       }
     })
   })
@@ -71,7 +69,7 @@ let searchparampayload = (req, res) => {
       let reqcontent = req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
       //let reqcontent=JSON.parse(req.rawBody)
       if (!reqcontent.searchparam.includes("NA")) {
-        let j = searchparampayloadSQLSanitize(res, reqcontent.searchparam)
+        let j = searchparampayloadSQLSanitize(reqcontent.searchparam)
       }
       var searchparam = reqcontent.searchparam;
       var columns = reqcontent.colsearch;
@@ -207,14 +205,14 @@ let searchparampayload = (req, res) => {
     return Promise.reject(error);
   }
 };
-let searchparampayloadParameterized = (req, res, a) => {
+let searchparampayloadParameterized = (req, a) => {
   try {
     let base = {};
     promise = new Promise((resolve, reject) => {
       let reqcontent = req.rawBody != undefined ? JSON.parse(req.rawBody) : req.body;
       //let reqcontent=JSON.parse(req.rawBody)
       if (!reqcontent.searchparam.includes("NA")) {
-        let j = searchparampayloadSQLSanitize(res, reqcontent.searchparam)
+        let j = searchparampayloadSQLSanitize(reqcontent.searchparam)
       }
       var searchparam = reqcontent.searchparam;
       var columns = reqcontent.colsearch;
@@ -930,7 +928,7 @@ let searchtype = (req, res, a) => {
     });
   }));
 };
-let searchtypeOptimizedBaseCount = (req, res, a) => {
+let searchtypeOptimizedBaseCount = (req, a) => {
   return (promise = new Promise((resolve, reject) => {
     searchparampayload(req).then((arg) => {
       var fieldnames = Object.keys(models[mod.Name].tableAttributes).map(function(item) {
@@ -946,7 +944,7 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
       /*searchtypeConventional(res, sqlConstructParams, a).then((arg) => {
         resolve(arg);
       });*/
-      searchtypeOptimizedCount(res, sqlConstructParams, a, arg).then((args) => {
+      searchtypeOptimizedCount(sqlConstructParams, a, arg).then((args) => {
         resolve(args);
       });
       //caching only count since delete of records in any b2b apps is meh !
@@ -961,9 +959,9 @@ let searchtypeOptimizedBaseCount = (req, res, a) => {
     });
   }));
 };
-let searchtypeOptimizedBaseCountParamterized = (req, res, a) => {
+let searchtypeOptimizedBaseCountParamterized = (req, a) => {
   return (promise = new Promise((resolve, reject) => {
-    searchparampayloadParameterized(req, res, a).then((arg) => {
+    searchparampayloadParameterized(req, a).then((arg) => {
       var fieldnames = Object.keys(models[mod.Name].tableAttributes).map(function(item) {
         return '"' + item + '"'
       }).join(',');;
@@ -978,11 +976,11 @@ let searchtypeOptimizedBaseCountParamterized = (req, res, a) => {
         resolve(arg);
       });*/
       if (arg.parameterValues.toString() != "") {
-        searchtypeOptimizedCountParameterized(res, sqlConstructParams, a, arg).then((args) => {
+        searchtypeOptimizedCountParameterized(sqlConstructParams, a, arg).then((args) => {
           resolve(args);
         });
       } else {
-        searchtypeOptimizedCount(res, sqlConstructParams, a, arg).then((args) => {
+        searchtypeOptimizedCount(sqlConstructParams, a, arg).then((args) => {
           resolve(args);
         });
       }
@@ -1031,9 +1029,9 @@ let searchtypeOptimizedBase = (req, res, a) => {
     });
   }));
 };
-let searchtypeOptimizedBaseParameterized = (req, res, a) => {
+let searchtypeOptimizedBaseParameterized = (req, a) => {
   return new Promise((resolve, reject) => {
-    searchparampayloadParameterized(req, res, a).then((arg) => {
+    searchparampayloadParameterized(req, a).then((arg) => {
       const fieldnames = Object.keys(models[mod.Name].tableAttributes).map(function(item) {
         return '"' + item + '"';
       }).join(',');
@@ -1055,8 +1053,9 @@ let searchtypeOptimizedBaseParameterized = (req, res, a) => {
       /*
        * Parameterized search
        */
+      console.log(sqlConstructParams)
       if (Object.prototype.hasOwnProperty.call(arg, 'parameterValues')) {
-        return searchtypeOptimizedParameterized(res, sqlConstructParams, a).then((argres) => {
+        return searchtypeOptimizedParameterized(sqlConstructParams, a).then((argres) => {
           resolve(argres);
         }).catch((error) => {
           reject(error);
@@ -1091,7 +1090,7 @@ let searchtypeOptimizedBaseParameterized = (req, res, a) => {
     });
   });
 };
-let searchtypePerf = (req, res, a) => {
+let searchtypePerf = (req, a) => {
   return (promise = new Promise((resolve, reject) => {
     searchparampayload(req).then((arg) => {
       var fieldnames = Object.keys(models[mod.Name].tableAttributes).map(function(item) {
@@ -1102,7 +1101,7 @@ let searchtypePerf = (req, res, a) => {
         arg,
         mod,
       };
-      searchtypeConventionalCache(res, sqlConstructParams, a, req.body).then((arg) => {
+      searchtypeConventionalCache(sqlConstructParams, a, req.body).then((arg) => {
         resolve(arg);
       }).catch(function(error) {
         captureErrorLog({
@@ -1156,7 +1155,7 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
       res.send(results);
     });
 };
-let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
+let searchtypeConventionalCache = (sqlConstructParams, a, arg) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](sqlConstructParams);
     let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](sqlConstructParams);
@@ -1189,10 +1188,13 @@ let searchtypeConventionalCache = (res, sqlConstructParams, a, arg) => {
       });
   }));
 };
-let searchtypeOptimizedParameterized = (res, sqlConstructParams, a) => {
+let searchtypeOptimizedParameterized = (sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
+    
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](sqlConstructParams);
+    
     sqlConstructParams.arg.parameterValues = sqlConstructParams.arg.parameterValues.filter(Boolean);
+    
     var internset = {};
     async ({
         rows: (callback) => {
@@ -1244,7 +1246,7 @@ let searchtypeOptimized = (res, sqlConstructParams, a) => {
       });
   }));
 };
-let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
+let searchtypeOptimizedCount = (sqlConstructParams, a, arg) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](sqlConstructParams);
     var internset = {};
@@ -1267,7 +1269,7 @@ let searchtypeOptimizedCount = (res, sqlConstructParams, a, arg) => {
       });
   }));
 };
-let searchtypeOptimizedCountParameterized = (res, sqlConstructParams, a, arg) => {
+let searchtypeOptimizedCountParameterized = (sqlConstructParams, a, arg) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](sqlConstructParams);
     var internset = {};
@@ -1418,29 +1420,35 @@ let isPivotCacheOptimized = (req, reply, mod) => {
     });
   });
 };
-let searchtypegroupbyId = async (request, reply, a) => {
+const searchtypegroupbyId = async (request, a) => {
   try {
-    let tempDep = paramsSearchTypeGroupBy(request);
-    let sqlConstructParams = {
+    const tempDep = paramsSearchTypeGroupBy(request);
+
+    const sqlConstructParams = {
       tempDep,
       mod
     };
-    let sqlStatement = sqlConstruct[a.type][a.searchtypegroupbyId](sqlConstructParams);
+
+    const sqlStatement =
+      sqlConstruct[a.type][a.searchtypegroupbyId](
+        sqlConstructParams
+      );
+
     console.log(sqlStatement);
-    let result = await connections.query(sqlStatement);
-    return reply.send({
+
+    const result = await connections.query(sqlStatement);
+
+    return {
       rows: result.rows
-    });
+    };
   } catch (error) {
     captureErrorLog({
       error,
       modname: mod.Name,
       payload: request.body
     });
-    return reply.code(500).send({
-      status: "failed",
-      error
-    });
+
+    throw error;
   }
 };
 let SearchTypeGroupBy = async (request, reply, a) => {

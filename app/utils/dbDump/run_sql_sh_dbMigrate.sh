@@ -1,0 +1,1 @@
+psql "dbname='demodb' user='postgres' password='abc123' host='localhost'"  -f ./app/utils/dbDump/run_sql_db_migrate.sql

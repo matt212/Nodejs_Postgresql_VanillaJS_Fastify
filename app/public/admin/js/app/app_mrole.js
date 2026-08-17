@@ -187,7 +187,7 @@ let basemultiselectaccess = {
       data
     ) {
       multiselects[arg.secondaryKey] = data
-      reqops.formvalidation(
+      reqopsValidate.formvalidation(
         $(`#overlaycontent [data-key='${arg.secondaryKey}']`)
       )
       validationListener()
@@ -242,7 +242,7 @@ let basemultiselectaccess = {
        <label class="lblhide" id="lblmsgddlddlmulti">
        <i class="fa fa-bell-o"></i> Please Select ${fieldname.inputCustomMapping} 
        </label>
-       <div onkeyup="javascript:reqops.formvalidation(this)" data-attribute="multiSelect"
+       <div onkeyup="javascript:reqopsValidate.formvalidation(this)" data-attribute="multiSelect"
        data-key="${fieldname.inputname}" data-form-type="false" id="in${fieldname.inputtextval}"></div>
        </div></div>`
     return htmlcontents
@@ -323,7 +323,7 @@ let basemod_modal = {
                    <i class="fa fa-bell-o"></i>  ${element.inputname} is required
                    </label>
                    <input type="text" data-attribute="${element.fieldvalidatename}" class="form-control" maxLength="${element.fieldmaxlength}"
-                   data-form-type="false" onkeyup="javascript:reqops.formvalidation(this)" id="cltrl${element.inputname}" placeholder="${element.inputplaceholder.capitalize()}">
+                   data-form-type="false" onkeyup="javascript:reqopsValidate.formvalidation(this)" id="cltrl${element.inputname}" placeholder="${element.inputplaceholder.capitalize()}">
                    </div></div>`;
         }
 

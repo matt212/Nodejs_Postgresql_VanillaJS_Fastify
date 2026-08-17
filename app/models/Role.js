@@ -18,6 +18,18 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: true,
             defaultValue: true
         },
+        created_date: {
+        field: "created_date",
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.fn("NOW")
+      },
+      updated_date: {
+        field: "updated_date",
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: sequelize.fn("NOW")
+      }
 
     }, {
      
