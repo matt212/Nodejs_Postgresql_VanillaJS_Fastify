@@ -59,6 +59,7 @@ async function routes(fastify, options) {
         const req = {
           body: request.body
         }
+        req.ismultiselect=true;
         const result = await dep.searchtypeOptimizedBaseParameterized(req, mod)
         return reply.code(200).send(result)
       } catch (error) {

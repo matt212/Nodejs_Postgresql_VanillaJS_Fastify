@@ -297,7 +297,14 @@ let searchparampayloadParameterized = (req, a) => {
           return '"' + item + '"'
         });
         searchmatrixval = consolidatesearchparam[0].consolidatecolval
-        consolidatesearch = consolidateSearchParameterizedConstruct(mod)
+        if (req.ismultiselect != undefined && req.ismultiselect) {
+          consolidatesearch = consolidateSearchParameterizedConstructMultiselect(mod)
+        } else {
+          consolidatesearch = consolidateSearchParameterizedConstruct(mod)
+        }
+        console.log("**********consolidated search*******")
+        console.log(consolidatesearch);
+        console.log()
         let c = [startdate, enddate, '%' + searchmatrixval + '%']
         base.parameterValues = c
         /*without vector column*/
@@ -474,7 +481,7 @@ let multiWhereConstructColumn = function(searchparam, coltype, mod, w) {
   let a = Object.values(searchparam).map(b => Object.keys(b).toString())
   console.log("---first a")
   console.log(a)
-console.log(validationConfig.validationmap);
+  console.log(validationConfig.validationmap);
   let allowableColumns = []
   a.forEach(function(c) {
     let g = validationConfig.validationmap
@@ -482,7 +489,7 @@ console.log(validationConfig.validationmap);
   })
   let custWhere = ''
   w = w === 4 ? 3 : 2
-  console.log("---------poli--------");
+  
   console.log(w);
   console.log(allowableColumns);
   allowableColumns.forEach(function(k) {
@@ -506,22 +513,25 @@ let consolidateSearchParameterizedConstruct = function(mod) {
   custWhere = "and " + f.join(" ||' '|| ") + ' like $3'
   return custWhere
 }
+let consolidateSearchParameterizedConstructMultiselect = function(mod) {
+  console.log("consolidate multiselect")
+  let validationConfig = require("./" + mod.Name + "/validationConfig.js");
+  var jsonintern = validationConfig.validationmap;
+  var baseField = jsonintern.filter(function(a) {
+    return a.fieldtypename != "DATE"; // if truthy then keep item
+  }).map(function(k) {
+    return k.inputCustomMapping
+  });
+  console.log(baseField)
+  return "and " + baseField.join(" ||' '|| ") + ' like $3'
+}
 let groupByConstruct = function(mod, colname, coltype) {
   var fieldvals = Object.keys(models[mod.Name].tableAttributes).map(b => b)
-  console.log("----kkkkil");
-  console.log(fieldvals);
-  console.log(colname);
-  console.log(coltype);
   let colnm = fieldvals.filter(b => b == colname).map(d => d).toString()
   return '' + coltype + '( a."' + colnm + '" )' + ' like $3'
 }
 let groupByConstructforMultiSelect = function(mod, colname, coltype) {
   var fieldvals = Object.keys(models[mod.Name].tableAttributes).map(b => b)
-  console.log("----MULTISELECT kkkkil");
-  console.log(fieldvals);
-  console.log(colname);
-  console.log(coltype);
-  
   return '' + coltype + '( a."' + colname + '" )' + ' like $3'
 }
 let multiWhereConstructValues = function(searchparam, daterange) {
@@ -696,7 +706,7 @@ let paramsSearchTypeGroupByParameterized = (req) => {
   var selector = "";
   var colmetafilter = "";
   var searchkey;
-  var dateselector="";
+  var dateselector = "";
   if (searchparam.constructor === Array) {
     var interns = searchparam;
     var internsearchparammetafilter = searchparammetafilter;
@@ -719,16 +729,13 @@ let paramsSearchTypeGroupByParameterized = (req) => {
       var obj;
       if (selector == "") {
         console.log("when selector is null")
-        if (req.ismultiselect!=undefined)
-        {
-          coltype=""
-selector = groupByConstructforMultiSelect(mod, searchkey, coltype)
-dateselector=" and "+daterange.replace('and', '')
-        }else
-        {
-selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, searchkey, coltype)
+        if (req.ismultiselect != undefined) {
+          coltype = ""
+          selector = groupByConstructforMultiSelect(mod, searchkey, coltype)
+          dateselector = " and " + daterange.replace('and', '')
+        } else {
+          selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, searchkey, coltype)
         }
-        
       }
       if (internsearchparammetafilter.length > 0) {
         console.log("sdsdsdsdsdsdsdsdsdsdher 4")
@@ -737,7 +744,6 @@ selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, search
       // finale.push(obj)
     });
     //remove `!` to include multi column filter for each other !
-
     console.log("important-------")
     console.log(searchkey)
     console.log(searchparamkey)
@@ -747,7 +753,7 @@ selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, search
     parameterValues: base.parameterValues,
     searchkey: searchkey,
     selector: selector,
-    dateselector:dateselector,
+    dateselector: dateselector,
     colmetafilter: colmetafilter,
     sortcolumnorder: sortcolumnorder,
     searchparamkey: searchparamkey,
@@ -1512,7 +1518,6 @@ let SearchTypeGroupBy = async (request, reply, a) => {
 };
 let SearchTypeGroupByParameterized = async (req, a) => {
   try {
-   
     let tempDep = paramsSearchTypeGroupByParameterized(req)
     let sqlConstructParams = {
       tempDep,
@@ -1522,7 +1527,7 @@ let SearchTypeGroupByParameterized = async (req, a) => {
     console.log(sqlConstructParams);
     let sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams)
     console.log(sqlstatementsprimary)
-   
+    console.log(tempDep.parameterValues);
     let result = await connections.queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
     return {
       rows: result.rows
@@ -1545,7 +1550,6 @@ const bulkCreate = async (request, reply) => {
     return reply.send(error);
   }
 };
-
 let createRecord = async (request, mod) => {
   try {
     const data = request.rawBody !== undefined ? JSON.parse(request.rawBody) : request.body;
@@ -1565,7 +1569,9 @@ let createRecord = async (request, mod) => {
 };
 let QueryStream = require("pg-query-stream");
 let JSONStream = require("JSONStream");
-const { Console } = require("console");
+const {
+  Console
+} = require("console");
 let Json2csvTransform = require("json2csv").Transform;
 let exportExcel = (req, res, a, fastify) => {
   var baseobj = {};
@@ -1907,7 +1913,6 @@ const deleteHardRecord = async (request) => {
     });
   } catch (error) {
     console.error("Error deleting record:", error);
-
     return {
       success: false,
       error: error.message
