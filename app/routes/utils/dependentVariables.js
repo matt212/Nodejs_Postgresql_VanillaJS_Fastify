@@ -475,13 +475,21 @@ let streambulkinsert = (data) => {
   });
 };
 //parameterized custom Where
+/*
 let multiWhereConstructColumn = function(searchparam, coltype, mod, w) {
-  console.log("herer" + w);
+  
+  console.log("----------------optimized")
+  console.log(searchparam);
+  // sample searchparam=[ { roleid: [ '1' ] }, { modnameid: [ '28', '29' ] } ] //
   let validationConfig = require("./" + mod.Name + "/validationConfig.js");
   let a = Object.values(searchparam).map(b => Object.keys(b).toString())
-  console.log("---first a")
-  console.log(a)
+  const allowedColumnspoli = new Set(
+    validationConfig.validationmap.map(item => item.inputname)
+  );
+  console.log("validationmap inputname")
+  console.log(allowedColumnspoli)
   console.log(validationConfig.validationmap);
+  // sample validationConfig.validationmap->inputname= { 'roleid', 'modnameid', 'accesstype' } //
   let allowableColumns = []
   a.forEach(function(c) {
     let g = validationConfig.validationmap
@@ -490,14 +498,39 @@ let multiWhereConstructColumn = function(searchparam, coltype, mod, w) {
   let custWhere = ''
   w = w === 4 ? 3 : 2
   
-  console.log(w);
-  console.log(allowableColumns);
   allowableColumns.forEach(function(k) {
     w = w + 1
     custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
   })
+  console.log("where clause")
+  console.log(custWhere)
+  //sample output -> and (a."roleid") = ANY($3) and (a."modnameid") = ANY($4)//
   return custWhere
-}
+}*/
+
+let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
+  const validationConfig = require(
+    "./" + mod.Name + "/validationConfig.js"
+  );
+console.log(searchparam);
+  // sample searchparam=[ { roleid: [ '1' ] }, { modnameid: [ '28', '29' ] } ] //
+  const allowedColumns = new Set(
+    validationConfig.validationmap.map(item => item.inputname)
+  );
+// sample validationConfig.validationmap->inputname= { 'roleid', 'modnameid', 'accesstype' } //
+  const startParam = w === 4 ? 3 : 2;
+
+  return Object.values(searchparam)
+    .flatMap(obj => Object.keys(obj))
+    .filter(column => allowedColumns.has(column))
+    .map((column, index) => {
+      const paramNumber = startParam + index + 1;
+
+      return ` and ${coltype}(a."${column}") = ANY($${paramNumber})`;
+    })
+    .join("");
+};
+
 let dateRangeConstructColumn = function(datecolsearch, mod) {
   var fieldvals = Object.keys(models[mod.Name].tableAttributes).map(b => b)
   let dtcol = fieldvals.filter(b => b == datecolsearch).map(d => d).toString()
@@ -672,6 +705,7 @@ let paramsSearchTypeGroupBy = (req) => {
     searchparamkey: searchparamkey,
   };
 };
+/* non ai optimized code
 let paramsSearchTypeGroupByParameterized = (req) => {
   var searchparam = req.body.searchparam;
   var searchparammetafilter = req.body.searchparammetafilter;
@@ -738,7 +772,7 @@ let paramsSearchTypeGroupByParameterized = (req) => {
         }
       }
       if (internsearchparammetafilter.length > 0) {
-        console.log("sdsdsdsdsdsdsdsdsdsdher 4")
+        
         colmetafilter = multiWhereConstructColumn(internsearchparammetafilter, coltype, mod, 4)
       }
       // finale.push(obj)
@@ -759,6 +793,100 @@ let paramsSearchTypeGroupByParameterized = (req) => {
     searchparamkey: searchparamkey,
   };
 };
+*/
+let paramsSearchTypeGroupByParameterized = req => {
+  const body = req.body;
+
+  const {
+    searchparam = [],
+    searchparammetafilter = [],
+    searchparamkey,
+    daterange: dateRange,
+    datecolsearch
+  } = body;
+
+  let parameterValues;
+  let selector = "";
+  let colmetafilter = "";
+  let dateselector = "";
+  let searchkey;
+
+  let startdate;
+  let enddate;
+
+  // Date range
+  if (dateRange) {
+    startdate = `${dateRange.startdate} 00:00:00`;
+    enddate = `${dateRange.enddate} 24:00:00`;
+
+    parameterValues = multiWhereConstructValuesGroupBy(
+      [startdate, enddate],
+      searchparam,
+      searchparammetafilter
+    );
+  }
+
+  // Date filter
+  let daterange = "1=1";
+
+  if (startdate && enddate) {
+    daterange = dateRangeConstructColumn(datecolsearch, mod);
+  }
+
+  // Search filter
+  if (Array.isArray(searchparam) && searchparam.length) {
+    const searchItem = searchparam[0];
+
+    searchkey = Object.keys(searchItem)[0];
+    
+    const searchvalue = searchItem[searchkey];
+
+
+    let coltype = isNaN(searchvalue) ? "lower" : "";
+
+
+    if (req.ismultiselect !== undefined && req.ismultiselect) {
+      coltype=""
+      selector = groupByConstructforMultiSelect(
+        mod,
+        searchkey,
+        coltype
+      );
+
+      dateselector = ` and ${daterange.replace("and", "")}`;
+    } else {
+      selector =
+        daterange.replace("and", "") +
+        " and " +
+        groupByConstruct(mod, searchkey, coltype);
+    }
+
+    if (searchparammetafilter.length>0) {
+      console.log("why not hererer")
+      colmetafilter = multiWhereConstructColumn(
+        searchparammetafilter,
+        coltype,
+        mod,
+        4
+      );
+    }
+  }
+
+  return {
+    parameterValues,
+    searchkey,
+    selector,
+    dateselector,
+    colmetafilter,
+    sortcolumnorder:
+      body.sortcolumnorder === undefined && body.sortcolumn === undefined
+        ? "desc"
+        : body.sortcolumnorder,
+    searchparamkey
+  };
+};
+
+
 let pivotTransform = (req) => {
   let SqlString = require("sqlstring");
   var searchparam = req.body.searchparam;
@@ -1100,7 +1228,7 @@ let searchtypeOptimizedBaseParameterized = (req, a) => {
       /*
        * Parameterized search
        */
-      console.log(sqlConstructParams)
+      
       if (Object.prototype.hasOwnProperty.call(arg, 'parameterValues')) {
         return searchtypeOptimizedParameterized(sqlConstructParams, a).then((argres) => {
           resolve(argres);
