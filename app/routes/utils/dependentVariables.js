@@ -1501,6 +1501,7 @@ const bulkCreate = async (request, reply) => {
     return reply.send(error);
   }
 };
+
 let createRecord = async (request, mod) => {
   try {
     const data = request.rawBody !== undefined ? JSON.parse(request.rawBody) : request.body;
@@ -1853,11 +1854,20 @@ let deleteRecord = (req, res) => {
   });
 };
 const deleteHardRecord = async (request) => {
-  return await models[mod.Name].destroy({
-    where: {
-      [mod.id]: request.body[mod.id]
-    }
-  });
+  try {
+    return await models[mod.Name].destroy({
+      where: {
+        [mod.id]: request.body[mod.id]
+      }
+    });
+  } catch (error) {
+    console.error("Error deleting record:", error);
+
+    return {
+      success: false,
+      error: error.message
+    };
+  }
 };
 const customDestroy = async (request, reply) => {
   const delObj = request.body.delObj;

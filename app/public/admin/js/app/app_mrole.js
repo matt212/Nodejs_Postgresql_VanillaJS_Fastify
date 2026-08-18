@@ -78,6 +78,7 @@ let basefunction = function() {
     insert: function(base) {
       ajaxbase.payload = basemod_modal.payloadformat(base).datapayload
       ajaxbase.url = baseurlobj.createdata;
+      console.log(ajaxbase.payload)
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         ajaxbase.response = argument;
         return argument;
@@ -86,16 +87,27 @@ let basefunction = function() {
     deleterecord: function(base) {
       ajaxbase.payload = base.datapayload
       ajaxbase.url = baseurlobj.deletemrole
+      console.log(ajaxbase)
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         return base
       })
     },
     update: function(base) {
       base = basemod_modal.payloadformat(base)
-      return this.deleterecord(base).then(this.insert).then(function(data) {
+      
+      const hasEmptyValue = base.datapayload.payset.some(obj => Object.values(obj).some(value => value == null || (typeof value === 'string' && !value.trim())));
+      console.log(hasEmptyValue);
+      if(!hasEmptyValue){
+       return this.deleterecord(base).then(this.insert).then(function(data) {
         ajaxbase.response = data
         return ajaxbase
       })
+      }else
+      {
+          console.log(base.datapayload.payset)
+          return Promise.reject('Required fields cannot be empty');
+      }
+      
     },
     exportexcel: function(base) {
       ajaxbase.url = baseurlobj.exceldata;
@@ -358,12 +370,12 @@ let basemod_modal = {
         console.log({
           key: dt.key,
           text: text,
-          val: dt.vals[index]
+          vals: dt.vals[index]
         })
         mroleresult.obj.multiselectfunc[dt.controlname].onsearchtext({
           key: dt.controlname,
           text: text,
-          val: dt.vals[index]
+          vals: dt.vals[index]
         });
       });
     })

@@ -108,7 +108,7 @@ async function routes(fastify, options) {
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     dep.assignVariables(mod);
-    return dep.createRecord(request, reply);
+    return dep.createRecord(request, mod);
   });
   fastify.post(dep.routeUrls.exportexcel, {
     preValidation: [fastify.authenticate]
@@ -149,11 +149,14 @@ async function routes(fastify, options) {
     }
   })
   fastify.post(dep.routeUrls.delete, {
-    preValidation: [fastify.authenticate]
-  }, async (request, reply) => {
-    dep.assignVariables(mod);
-    return dep.deleteHardRecord(request, reply);
-  });
+  preValidation: [fastify.authenticate]
+}, async (request, reply) => {
+  dep.assignVariables(mod);
+
+  const result = await dep.deleteHardRecord(request);
+
+  return reply.code(200).send(result);
+});
   fastify.post(dep.routeUrls.pivotresult, {
     config: dep.cGzip,
     schema: validatorSchema.searchPivotJsonSchema,
