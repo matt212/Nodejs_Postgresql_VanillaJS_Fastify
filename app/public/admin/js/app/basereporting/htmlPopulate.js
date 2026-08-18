@@ -101,16 +101,19 @@ $("#sptotalUsers").html(arg.count)
     base.idstatus = true
     //var internsearchbar = baseloadsegments.moduleattributepopulate();
     var internsearchbar = applyfields
+    console.log(applyfields)
     var htmlcontent = ''
     internsearchbar.forEach(function (element) {
       var onsearchfield = validationmap
         .filter(function (data) {
-          return data.inputtextval == element
+          //return data.inputtextval == element
+          return data.inputCustomMapping == element
         })
         .map(function (dt) {
           return dt.inputname
         })[0]
-
+console.log("key pair")
+console.log(onsearchfield)
       onsearchfield = onsearchfield != undefined ? onsearchfield : element
       htmlcontent +=
         '<div style="display: inline-block;">' +

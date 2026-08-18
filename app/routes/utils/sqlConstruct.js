@@ -213,7 +213,7 @@ let base = {
 }
 let mrole = {
   basesqlscrp: {
-    a: 'select  a.mroleid, a.recordstate,rl.roleid AS roleid,n.modnameid as modID, n.Mname as Modulename,n.Mname as mname,rl.rolename as Rolename, a.accesstype as accesstype  from mrole a ' +
+    a: 'select  a.mroleid, a.recordstate,rl.roleid AS roleid,n.modnameid,n.modnameid as modID, n.Mname as Modulename,n.Mname as mname,rl.rolename as Rolename, a.accesstype as accesstype  from mrole a ' +
       'left join modname n ' +
       'on a.modnameid::int=n.modnameid ' +
       'left join role rl ' +
@@ -278,6 +278,8 @@ let mrole = {
       tunnel.tempDep.searchparamkey +
       '  from (' +
       this.basesqlscrp.a +
+      ' ' +
+      tunnel.tempDep.dateselector +
       ') as a where  ' +
       tunnel.tempDep.selector +
       ' ' +

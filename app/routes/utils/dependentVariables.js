@@ -274,6 +274,10 @@ let searchparampayloadParameterized = (req, a) => {
               reject(`${searchkey} is undefined `);
             }
             if (selector == "") {
+              console.log("-----coming from herere")
+              console.log(searchparam)
+              console.log(coltype)
+              console.log(a)
               selector = multiWhereConstructColumn(searchparam, coltype, a, 0)
             } else {}
             // finale.push(obj)
@@ -468,6 +472,9 @@ let multiWhereConstructColumn = function(searchparam, coltype, mod, w) {
   console.log("herer" + w);
   let validationConfig = require("./" + mod.Name + "/validationConfig.js");
   let a = Object.values(searchparam).map(b => Object.keys(b).toString())
+  console.log("---first a")
+  console.log(a)
+console.log(validationConfig.validationmap);
   let allowableColumns = []
   a.forEach(function(c) {
     let g = validationConfig.validationmap
@@ -475,7 +482,9 @@ let multiWhereConstructColumn = function(searchparam, coltype, mod, w) {
   })
   let custWhere = ''
   w = w === 4 ? 3 : 2
+  console.log("---------poli--------");
   console.log(w);
+  console.log(allowableColumns);
   allowableColumns.forEach(function(k) {
     w = w + 1
     custWhere = custWhere + ' and ' + coltype + '(a."' + k + '") = ANY($' + (w) + ')'
@@ -499,8 +508,21 @@ let consolidateSearchParameterizedConstruct = function(mod) {
 }
 let groupByConstruct = function(mod, colname, coltype) {
   var fieldvals = Object.keys(models[mod.Name].tableAttributes).map(b => b)
+  console.log("----kkkkil");
+  console.log(fieldvals);
+  console.log(colname);
+  console.log(coltype);
   let colnm = fieldvals.filter(b => b == colname).map(d => d).toString()
   return '' + coltype + '( a."' + colnm + '" )' + ' like $3'
+}
+let groupByConstructforMultiSelect = function(mod, colname, coltype) {
+  var fieldvals = Object.keys(models[mod.Name].tableAttributes).map(b => b)
+  console.log("----MULTISELECT kkkkil");
+  console.log(fieldvals);
+  console.log(colname);
+  console.log(coltype);
+  
+  return '' + coltype + '( a."' + colname + '" )' + ' like $3'
 }
 let multiWhereConstructValues = function(searchparam, daterange) {
   let result = Object.values(searchparam).map(a => a[Object.getOwnPropertyNames(a)])
@@ -674,11 +696,14 @@ let paramsSearchTypeGroupByParameterized = (req) => {
   var selector = "";
   var colmetafilter = "";
   var searchkey;
+  var dateselector="";
   if (searchparam.constructor === Array) {
     var interns = searchparam;
     var internsearchparammetafilter = searchparammetafilter;
     interns.forEach((item, index) => {
       var searchvalue = item[Object.keys(item)];
+      console.log("-----searchley----")
+      console.log(searchvalue)
       searchkey = Object.keys(item)[0];
       var coltype = "";
       var stringtype = "";
@@ -693,7 +718,17 @@ let paramsSearchTypeGroupByParameterized = (req) => {
       }
       var obj;
       if (selector == "") {
-        selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, searchkey, coltype)
+        console.log("when selector is null")
+        if (req.ismultiselect!=undefined)
+        {
+          coltype=""
+selector = groupByConstructforMultiSelect(mod, searchkey, coltype)
+dateselector=" and "+daterange.replace('and', '')
+        }else
+        {
+selector = daterange.replace('and', '') + " and " + groupByConstruct(mod, searchkey, coltype)
+        }
+        
       }
       if (internsearchparammetafilter.length > 0) {
         console.log("sdsdsdsdsdsdsdsdsdsdher 4")
@@ -702,11 +737,17 @@ let paramsSearchTypeGroupByParameterized = (req) => {
       // finale.push(obj)
     });
     //remove `!` to include multi column filter for each other !
+
+    console.log("important-------")
+    console.log(searchkey)
+    console.log(searchparamkey)
+    console.log(JSON.stringify(base.parameterValues))
   }
   return {
     parameterValues: base.parameterValues,
     searchkey: searchkey,
     selector: selector,
+    dateselector:dateselector,
     colmetafilter: colmetafilter,
     sortcolumnorder: sortcolumnorder,
     searchparamkey: searchparamkey,
@@ -1471,14 +1512,17 @@ let SearchTypeGroupBy = async (request, reply, a) => {
 };
 let SearchTypeGroupByParameterized = async (req, a) => {
   try {
+   
     let tempDep = paramsSearchTypeGroupByParameterized(req)
     let sqlConstructParams = {
       tempDep,
       mod
     }
+    console.log("above sql")
+    console.log(sqlConstructParams);
     let sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams)
     console.log(sqlstatementsprimary)
-    console.log(tempDep.parameterValues)
+   
     let result = await connections.queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
     return {
       rows: result.rows
@@ -1521,6 +1565,7 @@ let createRecord = async (request, mod) => {
 };
 let QueryStream = require("pg-query-stream");
 let JSONStream = require("JSONStream");
+const { Console } = require("console");
 let Json2csvTransform = require("json2csv").Transform;
 let exportExcel = (req, res, a, fastify) => {
   var baseobj = {};

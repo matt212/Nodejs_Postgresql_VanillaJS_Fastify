@@ -100,8 +100,26 @@ async function routes(fastify, options) {
     schema: validatorSchema.searchGroupbyJsonSchema,
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
-    dep.assignVariables(mod);
-    return dep.SearchTypeGroupBy(request, reply, mod);
+    // dep.assignVariables(mod);
+    // return dep.SearchTypeGroupBy(request, reply, mod);
+    try {
+          dep.assignVariables(mod)
+          request.ismultiselect=true;
+          console.log("searchparamkey*******")
+          console.log(request.body)
+          const result = await dep.SearchTypeGroupByParameterized(request, mod)
+          return reply.code(200).send(result)
+        } catch (error) {
+          dep.captureErrorLog({
+            error,
+            url: dep.routeUrls.searchtypegroupby,
+            modname: mod.Name,
+            payload: request.body
+          })
+          return reply.code(400).send({
+            status: error
+          })
+        }
   });
   fastify.post(dep.routeUrls.create, {
     schema: validatorSchema.insertLoadSchema,

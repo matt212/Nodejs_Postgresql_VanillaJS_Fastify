@@ -72,7 +72,8 @@ let multiselect = {
           }
         }
         //end region
-
+        console.log("------internset")
+console.log(internset)
         let redlime = ''
         internset.forEach(function (obj) {
           redlime +=
@@ -110,6 +111,11 @@ let multiselect = {
     $(red).insertAfter($(arg))
   },
   onsearchtext: function (key, val, valid) {
+
+    console.log("we are herere")
+    console.log(key)
+    console.log(val)
+    console.log(valid)
     $('#dv_' + key).html(' ')
     $('#dv_' + key).hide()
     $('#cltrl_filter_' + key).val('')
