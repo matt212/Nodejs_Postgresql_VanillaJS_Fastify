@@ -233,7 +233,7 @@ let mrole = {
       this.basesqlscrp.a +
       ' ' +
       tunnel.arg.daterange +
-      ' ) as b where b.recordstate=true  ' +
+      ' ) as a where a.recordstate=true  ' +
       tunnel.arg.selector +
       tunnel.arg.consolidatesearch +
       '  GROUP BY ROLEID,Rolename,recordstate '
@@ -250,7 +250,7 @@ let mrole = {
       this.basesqlscrp.a +
       ' ' +
       tunnel.arg.daterange +
-      ' ) as b where b.recordstate=true  ' +
+      ' ) as a where a.recordstate=true  ' +
       tunnel.arg.selector +
       tunnel.arg.consolidatesearch +
       '  GROUP BY ROLEID,Rolename,recordstate '
