@@ -91,7 +91,7 @@ fastify.register(require("@fastify/cors"));
 
 /* JWT */
 fastify.register(require("@fastify/jwt"), {
-  secret: "supersecret",
+  secret: "7f4c9a2e8b1d6f3a5c0e7b9d2a4f8c1e6d3b7a0f5c9e2d8b4a6f1c7e9d3b5a",
   expiresIn: "1h"
 });
 

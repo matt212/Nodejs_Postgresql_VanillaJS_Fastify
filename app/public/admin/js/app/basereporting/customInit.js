@@ -25,7 +25,7 @@ let base = {
   interimdatapayload: {}
 }
 let ajaxurl = {
-  auth: '/getToken'
+  auth: ''
 }
 
 let ajaxbase = {
