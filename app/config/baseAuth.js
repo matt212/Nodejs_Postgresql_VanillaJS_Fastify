@@ -791,25 +791,95 @@ async function baseDecorator (fastify, options) {
    */
   fastify.decorate('isPayLoadSecure', async function (request, reply) {
 
-    var re = /ALTER|alter|CREATE|create|DELETE|delete|DROP|drop|EXECUTE|execute|INSERT|insert|MERGE|merge|select|SELECT|update|UPDATE|UNION|union/
+  /*
+   * SQL keywords that should not appear in user-controlled
+   * query parameters.
+   *
+   * The `i` flag makes the expression case-insensitive.
+   */
+  const sqlInjectionPattern =
+    /\b(ALTER|CREATE|DELETE|DROP|EXECUTE|INSERT|MERGE|SELECT|UPDATE|UNION)\b/i
 
-    let vali = new RegExp(re)
 
-    if (!request.body.searchparam.includes("NA")) {
+  /*
+   * Values that need to be checked for SQL injection.
+   *
+   * searchparam:
+   *   Existing search/filter input.
+   *
+   * sortcolumn:
+   *   User-controlled sort column.
+   *
+   * sortcolumnorder:
+   *   User-controlled sort direction/order.
+   */
+  const searchparam = request.body?.searchparam
+  const sortcolumn = request.body?.sortcolumn
+  const sortcolumnorder = request.body?.sortcolumnorder
 
-      if (vali.test(JSON.stringify(request.body.searchparam))) {
 
-        return reply.code(403).send({
-          status: "SQL injection detected - Bad Request"
-        })
+  /*
+   * Check searchparam.
+   *
+   * "NA" is an existing valid application value and therefore
+   * remains exempt from the SQL keyword check.
+   */
+  if (
+    searchparam !== undefined &&
+    searchparam !== null &&
+    !(
+      Array.isArray(searchparam) &&
+      searchparam.length === 1 &&
+      searchparam[0] === "NA"
+    )
+  ) {
 
-      }
+    if (sqlInjectionPattern.test(JSON.stringify(searchparam))) {
+
+      return reply.code(403).send({
+        status: "SQL injection detected - Bad Request"
+      })
 
     }
 
-    return
+  }
 
-  })
+
+  /*
+   * Check sortcolumn.
+   */
+  if (
+    sortcolumn !== undefined &&
+    sortcolumn !== null &&
+    sqlInjectionPattern.test(JSON.stringify(sortcolumn))
+  ) {
+
+    return reply.code(403).send({
+      status: "SQL injection detected - Bad Request"
+    })
+
+  }
+
+
+  /*
+   * Check sortcolumnorder.
+   */
+  if (
+    sortcolumnorder !== undefined &&
+    sortcolumnorder !== null &&
+    sqlInjectionPattern.test(JSON.stringify(sortcolumnorder))
+  ) {
+
+    return reply.code(403).send({
+      status: "SQL injection detected - Bad Request"
+    })
+
+  }
+
+
+  return
+
+})
 
 
   /*
