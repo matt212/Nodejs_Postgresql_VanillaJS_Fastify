@@ -51,6 +51,32 @@ let pgRestore = function () {
 
 
 }
+let indiviualMigrationDB = function () {
+
+
+
+   const fs = require('fs');
+  
+    const child_process = require('child_process');
+
+    var spawn_process_cmd = 'sh ./app/utils/dbDump/run_sql_sh_dbMigrate.sh'
+    
+
+    child_process.exec(spawn_process_cmd, (error, stdout, stderr) => {
+        
+        if (error) {
+            console.error(`exec error: ${error}`);
+            process.exit(1);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.log(`stderr: ${stderr}`);
+        process.exit(0);
+    });
+
+
+
+}
 let pgcreateDb = function () {
 
 // var Promise = require('bluebird');
@@ -86,7 +112,7 @@ let pgcreateDb = function () {
   
     const child_process = require('child_process');
 
-    var spawn_process_cmd = 'sh ./app/utils/dbDump/run_sql_commands.sh'
+    var spawn_process_cmd = 'sh ./app/utils/dbDump/run_sql_dbMigrations.sh'
     
 
     child_process.exec(spawn_process_cmd, (error, stdout, stderr) => {
@@ -111,4 +137,4 @@ let applychangesDB=function()
     process.exit(0);
   })
 }
-module.exports = { pgRestore, pgbaseDump, pgcreateDb,applychangesDB }
+module.exports = { pgRestore, pgbaseDump, pgcreateDb,applychangesDB ,indiviualMigrationDB}

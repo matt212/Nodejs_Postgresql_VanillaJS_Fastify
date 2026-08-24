@@ -96,36 +96,35 @@ async function routes(fastify, options) {
       }
     });
 
-    reply.view(`base_scaffolding.ejs`, { mod: JSON.stringify(baseOBj) });
+   return reply.view(`base_scaffolding.ejs`, { mod: JSON.stringify(baseOBj) });
   });
 
-  fastify.post("/jedha", (request, reply) => {
-    var req = {};
-    req.body = request.body;
-    var mainapp = req.body;
+  fastify.post("/jedha", async (request, reply) => {
+  try {
+    const mainapp = request.body;
 
-    applymodel(mainapp)
-      .then(applyApp)
-      .then(applyroutes)
-      .then(applyserverValidationConfig)
-      .then(applyserverschemaValidator)
-      .then(applyMochaChaiTestCases)
-      .then(swaggerdocs)
-      .then(applyMultiControls)
-      .then(applyhtml)
-      .then(packageJsonUpdate)
-      .then(superadminUpdate)
-      .then(SqlConstructMulti)
-      .then(function (data) {
-        reply.send({
-          a: "  yarn applychangesDB ",
-          b: ` yarn ${mainapp[0].datapayloadModulename}Eval`,
-        });
-      })
-      .catch((e) => {
-        reply.send(e);
-      });
-  });
+    let data = await applymodel(mainapp);
+    data = await applyApp(data);
+    data = await applyroutes(data);
+    data = await applyserverValidationConfig(data);
+    data = await applyserverschemaValidator(data);
+    data = await applyMochaChaiTestCases(data);
+    data = await swaggerdocs(data);
+    data = await applyMultiControls(data);
+    data = await applyhtml(data);
+    data = await packageJsonUpdate(data);
+    data = await superadminUpdate(data);
+    data = await SqlConstructMulti(data);
+
+    return reply.send({
+      a: "yarn applychangesDB",
+      b: `yarn ${mainapp[0].datapayloadModulename}Eval`,
+    });
+  } catch (error) {
+    request.log.error(error);
+    return reply.send(error);
+  }
+})
 }
 function packageJsonUpdate(mainapp) {
   return new Promise((resolve, reject) => {

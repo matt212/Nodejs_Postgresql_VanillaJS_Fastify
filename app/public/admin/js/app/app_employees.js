@@ -145,14 +145,14 @@ let basefunction = function () {
     }
 }
 
-basefunction().mroleMultiKeysLoad(currentModName).then(function (data) {
-    console.log(data.rows)
-    var killzone = data.rows
-    killzone.forEach((element, index) => {
+// basefunction().mroleMultiKeysLoad(currentModName).then(function (data) {
+//     console.log(data.rows)
+//     var killzone = data.rows
+//     killzone.forEach((element, index) => {
 
         
-    })
-});
+//     })
+//});
 //  let radioModular=function(data)
 //  {
 //   re=`<div class="checkbox tablechk">`

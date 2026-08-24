@@ -1,12 +1,12 @@
 let currentmodulename = "mrole";
 let currentmoduleid = "mroleid"
-
 let currentrole = 'role'
 let currentmodname = 'modname'
 let multiselects = {}
 let multiselectfunc = {}
 let baseurlobj = {
   getpaginatesearchtypeurl: `/${currentmodulename}/api/searchtype/`,
+  getpaginatesearchtypeCounturl: '/' + currentmodulename + '/api/searchtypeCount/',
   createdata: `/${currentmodulename}/api/bulkCreate/`,
   updatedata: `/${currentmodulename}/api/update/`,
   exceldata: `/${currentmodulename}/api/exportexcel/`,
@@ -24,30 +24,23 @@ let basefunction = function() {
     roleMultiKeysLoad: function(keys) {
       //keys="gender"
       base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
-      return this
-        .getcurrentModrolegroupby(base)
-        .then(function(argument) {
-          return argument
-        })
+      return this.getcurrentModrolegroupby(base).then(function(argument) {
+        return argument
+      })
     },
     modnameMultiKeysLoad: function(keys) {
       //keys="gender"
       base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
-      return this
-        .getcurrentModmodnamegroupby(base)
-        .then(function(argument) {
-          return argument
-        })
+      return this.getcurrentModmodnamegroupby(base).then(function(argument) {
+        return argument
+      })
     },
-
     aaaMultiKeysLoad: function(keys) {
       //keys="gender"
       base.datapayload = baseloadsegments.basePopulateMultiControls(keys)
-      return this
-        .getpaginatesearchtypegroupby(base)
-        .then(function(argument) {
-          return argument
-        })
+      return this.getpaginatesearchtypegroupby(base).then(function(argument) {
+        return argument
+      })
     },
     getpaginatesearchtype: function(base) {
       ajaxbase.payload = base.datapayload
@@ -55,7 +48,6 @@ let basefunction = function() {
       $("a[href$='revenue-chart']").tab('show');
       //$("#trloader").show()
       //$("#basetable tbody").slideUp("slow").hide();
-
       $('table').addClass('loading')
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         ajaxbase.response = argument;
@@ -63,84 +55,79 @@ let basefunction = function() {
         /*$("#trloader").hide()
         $("#basetable tbody").slideDown("slow").show();*/
         $('table').removeClass('loading')
-
         return argument;
       })
-
+    },
+    getpaginatesearchtypeCount: function(base) {
+      ajaxbase.payload = base.datapayload
+      ajaxbase.url = baseurlobj.getpaginatesearchtypeCounturl;
+      $('#dvpaginationsections').addClass('loading')
+      return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
+        $('#dvpaginationsections').removeClass('loading')
+        return argument;
+      })
     },
     getpaginatesearchtypegroupby: function(base) {
-
-
       ajaxbase.payload = base.datapayload
       ajaxbase.url = baseurlobj.getpaginatesearchtypegroupby;
-
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         ajaxbase.response = argument;
         return argument;
       })
-
     },
     insert: function(base) {
-
-
       ajaxbase.payload = basemod_modal.payloadformat(base).datapayload
       ajaxbase.url = baseurlobj.createdata;
-
+      console.log(ajaxbase.payload)
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         ajaxbase.response = argument;
         return argument;
       })
-
     },
     deleterecord: function(base) {
       ajaxbase.payload = base.datapayload
       ajaxbase.url = baseurlobj.deletemrole
-
+      console.log(ajaxbase)
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         return base
       })
     },
     update: function(base) {
-
       base = basemod_modal.payloadformat(base)
-      return this.deleterecord(base)
-        .then(this.insert)
-        .then(function(data) {
-          ajaxbase.response = data
-          return ajaxbase
-        })
+      
+      const hasEmptyValue = base.datapayload.payset.some(obj => Object.values(obj).some(value => value == null || (typeof value === 'string' && !value.trim())));
+      console.log(hasEmptyValue);
+      if(!hasEmptyValue){
+       return this.deleterecord(base).then(this.insert).then(function(data) {
+        ajaxbase.response = data
+        return ajaxbase
+      })
+      }else
+      {
+          console.log(base.datapayload.payset)
+          return Promise.reject('Required fields cannot be empty');
+      }
+      
     },
     exportexcel: function(base) {
-
-
-
       ajaxbase.url = baseurlobj.exceldata;
       ajaxbase.payload = base.datapayload;
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         ajaxbase.response = argument;
         return argument;
       })
-
     },
     getpivotreport: function(base) {
-
-
       $("#dvloader").show()
-
-
       ajaxbase.url = baseurlobj.pivotresult;
       ajaxbase.payload = base.datapayload;
       return ajaxutils.basepostmethod(ajaxbase).then(function(argument) {
         ajaxbase.response = argument;
-
         $("#dvloader").hide()
-
         return argument;
       })
-
     },
     //
-
     getcurrentModrolegroupby: function(base) {
       ajaxbase.payload = base.datapayload
       ajaxbase.url = baseurlobj.getcurrentModrolegroupby;
@@ -157,20 +144,17 @@ let basefunction = function() {
         return argument;
       })
     },
-
   }
 }
 //
 let validationListener = function() {
   var sel = $('.form-horizontal input:text[data-form-type], input:checkbox[data-form-type], div[data-form-type]').length;
-
   if (sel <= 0) {
     $('#btnmodalsub').prop('disabled', false)
   } else {
     $('#btnmodalsub').prop('disabled', true)
   }
 }
-
 let basemultiselectaccess = {
   multiselectmodular: function(arg) {
     var multiselectconfig = {
@@ -181,15 +165,9 @@ let basemultiselectaccess = {
       placeholder: arg.fieldname,
       remotefunc: this['remotefunc' + arg.fieldname]
     }
-
-
-    multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function(
-      data
-    ) {
+    multiselectfunc[arg.fieldname] = new multisel(multiselectconfig, function(data) {
       multiselects[arg.secondaryKey] = data
-      reqops.formvalidation(
-        $(`#overlaycontent [data-key='${arg.secondaryKey}']`)
-      )
+      reqopsValidate.formvalidation($(`#overlaycontent [data-key='${arg.secondaryKey}']`))
       validationListener()
     })
     multiselectfunc[arg.fieldname].init()
@@ -213,6 +191,7 @@ let basemultiselectaccess = {
         val: doctor[internfield[1]]
       }
     })
+    console.log(sets);
     return sets
   },
   htmlpopulatemodnamefilterparam: function(internar) {
@@ -225,7 +204,6 @@ let basemultiselectaccess = {
     filtparam.ispaginate = true
     filtparam.disableDate = true
     base.datapayload = filtparam
-
     return base
   },
   htmlpopulatemrolefilterparam: function(internar) {
@@ -233,7 +211,6 @@ let basemultiselectaccess = {
     filtparam.modulename = internar.mname
     filtparam.rolename = internar.roleid
     base.datapayload = filtparam
-
     return base
   },
   htmlpopulatemodular: function(fieldname) {
@@ -242,45 +219,30 @@ let basemultiselectaccess = {
        <label class="lblhide" id="lblmsgddlddlmulti">
        <i class="fa fa-bell-o"></i> Please Select ${fieldname.inputCustomMapping} 
        </label>
-       <div onkeyup="javascript:reqops.formvalidation(this)" data-attribute="multiSelect"
+       <div onkeyup="javascript:reqopsValidate.formvalidation(this)" data-attribute="multiSelect"
        data-key="${fieldname.inputname}" data-form-type="false" id="in${fieldname.inputtextval}"></div>
        </div></div>`
     return htmlcontents
-
     //$(htmlcontents).insertBefore($("#overlaycontent.form-group.overlaytxtalign.col-md-12"))
   },
   remotefuncrolename: function(data) {
     return new Promise(function(resolve, reject) {
-      basefunction()
-        .getcurrentModrolegroupby(
-          basemultiselectaccess.multiSelectCommon(data)
-        )
-        .then(function(argument) {
-          var sets = argument.rows
-
-          if (sets[0] != undefined) {
-            resolve(
-              basemultiselectaccess.multiSelectCommonResponse(data, argument)
-            )
-          }
-        })
+      basefunction().getcurrentModrolegroupby(basemultiselectaccess.multiSelectCommon(data)).then(function(argument) {
+        var sets = argument.rows
+        if (sets[0] != undefined) {
+          resolve(basemultiselectaccess.multiSelectCommonResponse(data, argument))
+        }
+      })
     })
   },
   remotefuncmname: function(data) {
     return new Promise(function(resolve, reject) {
-      basefunction()
-        .getcurrentModmodnamegroupby(
-          basemultiselectaccess.multiSelectCommon(data)
-        )
-        .then(function(argument) {
-          var sets = argument.rows
-
-          if (sets[0] != undefined) {
-            resolve(
-              basemultiselectaccess.multiSelectCommonResponse(data, argument)
-            )
-          }
-        })
+      basefunction().getcurrentModmodnamegroupby(basemultiselectaccess.multiSelectCommon(data)).then(function(argument) {
+        var sets = argument.rows
+        if (sets[0] != undefined) {
+          resolve(basemultiselectaccess.multiSelectCommonResponse(data, argument))
+        }
+      })
     })
   },
   remotefuncaccesstype: function(data) {
@@ -291,13 +253,11 @@ let basemultiselectaccess = {
 }
 $(function() {
   basemod_modal.modalpopulate()
-
   basemod_modal.populatemodularddl()
   $('.form-horizontal input[type="text"], input[type="checkbox"]').on("keydown keyup change", function() {
     validationListener()
   })
 })
-
 let basemod_modal = {
   modalpopulate: function() {
     var interset = validationmap
@@ -306,15 +266,11 @@ let basemod_modal = {
     var htmlcontent = "";
     var internhtmlcontent = "";
     redlime.forEach(function(item) {
-
       htmlcontent += `<div class="row">`
       item.forEach2(function(element) {
-
         if (element.inputtype == 'multiselect') {
           htmlcontent += basemultiselectaccess.htmlpopulatemodular(element)
         }
-
-
         //rchkelse   
         else {
           htmlcontent += `<div class="form-group overlaytxtalign col-md-5">
@@ -323,15 +279,12 @@ let basemod_modal = {
                    <i class="fa fa-bell-o"></i>  ${element.inputname} is required
                    </label>
                    <input type="text" data-attribute="${element.fieldvalidatename}" class="form-control" maxLength="${element.fieldmaxlength}"
-                   data-form-type="false" onkeyup="javascript:reqops.formvalidation(this)" id="cltrl${element.inputname}" placeholder="${element.inputplaceholder.capitalize()}">
+                   data-form-type="false" onkeyup="javascript:reqopsValidate.formvalidation(this)" id="cltrl${element.inputname}" placeholder="${element.inputplaceholder.capitalize()}">
                    </div></div>`;
         }
-
       })
-
       htmlcontent += `</div>`
     })
-
     var chkcontent = `<input type="hidden" name="${currentmoduleid}" value="0" id="cltrl${currentmoduleid}"> 
    <div class="form-group overlaytxtalign col-md-5"><div class="col-sm-offset-2 col-sm-15"><div><label><div class="checkbox tablechk">
   <label>
@@ -345,10 +298,8 @@ let basemod_modal = {
   </span> 
   </label>
   </div></label></div></div></div>`;
-
     $("#overlaycontent").html(htmlcontent + chkcontent);
   },
-
   onMultiControlChk: function(data) {},
   baseCheckbox: `<div class="checkbox tablechk">
   <label>
@@ -357,26 +308,21 @@ let basemod_modal = {
   </span> 
   </label>
   </div>`,
-
-
   afterhtmlpopulate: function() {
     $('#basetable tbody tr td:last-child').attr('onclick', 'javascript:basemod_modal.ontdedit(this)')
     $('#basetable tbody tr td:nth-child(1) input:checkbox').attr('onclick', 'javascript:basemod_modal.tablechkbox(this)')
     //$("a[href='#sales-chart'").hide()
   },
   payloadformat: function(arg) {
-
     {
       var isactivearrayobj = {
         recordstate: base.interimdatapayload.recordstate
       }
       //flatting multiselects objects
-      var temp = Object.fromEntries(
-        Object.entries(multiselects).map(([k, v]) => [
-          k,
-          datatransformutils.flat(v)
-        ])
-      )
+      var temp = Object.fromEntries(Object.entries(multiselects).map(([k, v]) => [
+        k,
+        datatransformutils.flat(v)
+      ]))
       let b = {
         ...temp,
         ...isactivearrayobj
@@ -394,44 +340,59 @@ let basemod_modal = {
     }
   },
   ontdedit: function(arg) {
-
     var armodid = $(arg).attr('data-tbledit-type')
     ajaxbase.isedit = true;
     var interncontent = ajaxbase[currentmodulename].rows;
-
     interncontent = interncontent.filter(function(doctor) {
       return doctor[currentmoduleid] == armodid;
     })
+    console.log(interncontent);
     base.editrecord = interncontent;
     $('#cltrl' + currentmoduleid).val(armodid);
     var formatresponse = this.formatresponse(interncontent);
-
-    datatransformutils.editMultiSelect({
+    const mroleresult = datatransformutils.editMultiSelect({
       multiselectfunc,
       validationmap,
       content: interncontent
     })
+    mroleresult.basegen = mroleresult.basegen.map(dt => {
+      if (dt.key !== "accesstype") {
+        return dt;
+      }
+      return {
+        ...dt,
+        text: accesstypecontent.map(item => item.text),
+        vals: accesstypecontent.map(item => item.val)
+      };
+    });
+    mroleresult.basegen.forEach(function(dt) {
+      dt.text.forEach(function(text, index) {
+        console.log({
+          key: dt.key,
+          text: text,
+          vals: dt.vals[index]
+        })
+        mroleresult.obj.multiselectfunc[dt.controlname].onsearchtext({
+          key: dt.controlname,
+          text: text,
+          vals: dt.vals[index]
+        });
+      });
+    })
     $("[data-attribute='multiSelect']").removeAttr('data-form-type')
     formatresponse.forEach2(function(data) {
-
       if (data.inputtype == "textbox") {
         $("#cltrl" + data.inputname).val(data.vals)
         $("#cltrl" + data.inputname).removeAttr('data-form-type');
       } else if (data.inputtype == "radio") {
         $(`#overlaycontent .form-group .custom-control.custom-radio  [data-val="${data.vals}"]`).prop("checked", true)
-
-
       } else if (data.inputtype == "checkbox") {
         $(`#overlaycontent .checkbox.tablechk [type="checkbox"]`).each(function(index) {
           $(this).attr("checked", false)
         })
         data.vals.forEach(function(dr) {
-
           $(`#overlaycontent .form-group .custom-control.custom-checkbox  [data-val='${dr}']`).prop("checked", true)
-
         })
-
-
       }
     })
     //active comma denominator
@@ -451,11 +412,12 @@ let basemod_modal = {
     $("#btnbutton").click();
   },
   tablechkbox: function(arg) {},
-  customClearControl:function(){//clearControls
+  customClearControl: function() { //clearControls
   },
   populatemodularddl: function() {
     validationmap.forEach2(function(data) {
       if (data.inputtype == 'multiselect') {
+        console.log(data);
         var p = {}
         p.fieldname = data.inputtextval
         p.fieldkey = data.inputtextval
@@ -466,9 +428,7 @@ let basemod_modal = {
     })
   },
   formatresponse: function(data) {
-
     var res = this.formatserverfieldmap(data)
-
     var result = equijoin(res, validationmap, "key", "inputCustomMapping",
       ({
         vals
@@ -480,15 +440,12 @@ let basemod_modal = {
         inputname,
         vals
       }));
-
     return result;
   },
   formatserverfieldmap: function(data) {
-
     var applyfield = applyfields;
     var res = data.map(function(data) {
       return applyfield.map(function(da) {
-
         //var y = (data[da].indexOf(',') != -1 ? data[da].split(',') : data[da]);
         var y = data[da]
         return {
@@ -499,17 +456,14 @@ let basemod_modal = {
     })[0]
     return res;
   },
-
 }
 //
 let accesstypecontent = [{
-    "text": "ViewOnly",
-    "val": "VO",
-    "key": "accesstype"
-  },
-  {
-    "text": "AllAccess",
-    "val": "AA",
-    "key": "accesstype"
-  }
-]
+  "text": "ViewOnly",
+  "val": "VO",
+  "key": "accesstype"
+}, {
+  "text": "AllAccess",
+  "val": "AA",
+  "key": "accesstype"
+}]

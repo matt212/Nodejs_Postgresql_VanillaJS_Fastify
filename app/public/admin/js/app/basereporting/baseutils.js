@@ -171,13 +171,17 @@ let reqops = {
       .getpaginatesearchtype(base)
       .then(function (data) {
         htmlpopulate.htmlpopulatetable(data)
-        basepagination.bootpagination(data)
+        //basepagination.bootpagination(data)
         htmlpopulate.highlightconsolidatesearch()
         if ($('#dvreportcontainer').hasClass('collapsed-box')) {
           $('#rptwidget').click()
         }
         basefunction().getpaginatesearchtypeCount(base).then(function (argument) {
           htmlpopulate.htmltablecount(argument);
+          if(!base.consolidatesearchpaginate)
+          {
+            basepagination.bootpagination(argument)
+          }
         })
 
       })
@@ -246,7 +250,7 @@ let reqops = {
 
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
-
+          ajaxbase.isedit=false
           $('#btnmodalclose').click()
         })
     } else {
@@ -257,6 +261,17 @@ let reqops = {
       basefunction()
         .insert(base)
         .then(function (argument) {
+//           var datefilter = new Object();
+          
+
+// let endDT = new Date();
+// let startDT= new Date();
+// start.setDate(startDT.getDate() - 7);
+//             datefilter.startdate = startDT.format('YYYY-MM-DD');
+//             datefilter.enddate = endDT.format('YYYY-MM-DD');
+             
+//             //filterparam.colsearch = "createdAt";
+//             base.searchdatefilter=datefilter
           baseloadsegments.initialdatatableload()
           reqops.clearControls()
 
@@ -299,14 +314,21 @@ let reqops = {
     basefunction()
       .getpaginatesearchtype(base)
       .then(function (data) {
+         
+
         htmlpopulate.htmlpopulatetable(data)
-        basepagination.bootpagination(data)
+        //basepagination.bootpagination(data)
 
         if ($('#dvreportcontainer').hasClass('collapsed-box')) {
           $('#rptwidget').click()
         }
         basefunction().getpaginatesearchtypeCount(base).then(function (argument) {
           htmlpopulate.htmltablecount(argument);
+          if(!base.multisearchpaginate)
+          {
+            basepagination.bootpagination(argument)
+          }
+          
         })
 
       })
@@ -324,7 +346,8 @@ let basepagination = {
     var totalpagecount = argument.count
     var maxvisiblesize =
       argument.count <= 100 ? Math.round(totalpagecount / pagesize) : 5
-    //console.log(maxvisiblesize);
+    console.log(argument);
+    console.log(maxvisiblesize);
     if (maxvisiblesize > 0) {
       $('#page-selection')
         .bootpag({
@@ -337,10 +360,31 @@ let basepagination = {
     }
   },
   bootpagescallback: function (event, num) {
+    //console.log(num);
     base.pageno = num - 1
-
+    
+    //console.log(base.datapayload.searchtype);
+     //"NoFilter"
+     if(base.datapayload.searchtype == "NoFilter")
+      {
     baseloadsegments.initialdatatableload()
     return false
+      }else
+      {
+        if(base.datapayload.searchtype == "Columnwise"){
+         base.multisearchpaginate=true;
+        base.multisearchpaginateno=num-1;
+        reqops.srchparams()
+        return false
+        }else if(base.datapayload.searchtype == "consolidatesearch")
+        {
+        base.consolidatesearchpaginate=true;
+        base.consolidatesearchpaginateno=num-1;
+        reqops.consolidatesearch()
+        return false
+        }
+        
+      }
   },
   // end region
   bootpaginationxaxis: function (argument) {
@@ -523,7 +567,16 @@ function payloadprepared() {
     base.pageno = 0
     //base.pageSize = parseInt($("#sptotalUsers").html());
   }
+if(base.multisearchpaginate)
+{
+    base.pageno = base.multisearchpaginateno
 
+}
+if(base.consolidatesearchpaginate)
+{
+    base.pageno = base.consolidatesearchpaginateno
+
+}
   filterparam.pageno = base.pageno
   filterparam.pageSize = base.pageSize
   filterparam.pivotparamXaxis = base.pivotparamXaxis

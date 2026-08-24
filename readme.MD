@@ -111,19 +111,29 @@
 🍕sh file Setup
 </summary>
 
-> *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*  
+> *`chmod +x ./app/utils/serverSetup/primarySetup.sh `*
+
+> for MacOS *`chmod +x ./app/utils/serverSetup/primarySetupMacOS.sh`*
 
 > *`sed -i -e 's/\r$//' ./app/utils/serverSetup/> primarySetup.sh`*
+
+> for MacOS*`sed -i '' -e 's/\r$//' "./app/utils/serverSetup/primarySetupMacOS.sh"`*
+
 
 >*`chmod +x ./app/utils/serverSetup/secondarySetup.sh`*
 
 >*`sed -i -e 's/\r$//' ./app/utils/serverSetup/secondarySetup.sh`*
 
+>for MacOS *`sed -i '' -e 's/\r$//' "./app/utils/serverSetup/secondarySetup.sh"`*
+
+
 >*`bash ./app/utils/serverSetup/primarySetup.sh`*
+
+> for MacOS *`bash ./app/utils/serverSetup/primarySetupMacOS.sh`*
 
    
 
-> _`Please note if you have node/postgres/redis server installed in your instance/machine. Please comment the install information in primarySetup.sh file and then run this file`_
+> _`Please note if you have node/postgres/redis server installed in your instance/machine. Please comment the install information in primarySetup.sh file and then run this file also run if redis error redis-server --daemonize yes `_
 </details>
   
   <details>

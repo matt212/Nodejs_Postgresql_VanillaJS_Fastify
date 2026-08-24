@@ -1,23 +1,32 @@
-//const pinoInspector = require("pino-inspector");
-
-
 const path = require("path");
-/*fastify middleware*/
+
+/* Fastify initialization */
 const fastify = require("fastify")({
-  //logger: { prettyPrint: true, level: "debug", prettifier: pinoInspector },
-  //connectionTimeout:20000,
+  logger: true,
   ajv: {
-    plugins: [[require("ajv-keywords"), ["transform"]]],
-  },
+    customOptions: {
+      strict: false
+    },
+    plugins: [
+      require("ajv-keywords")
+    ]
+  }
 });
-/* ContentSecurityPolicy */
-const helmet = require('@fastify/helmet')
+
+
+/* Socket.IO decorator placeholder */
+fastify.decorate("io", null);
+
+
+/* Content Security Policy */
+const helmet = require("@fastify/helmet");
+
 fastify.register(helmet, {
   contentSecurityPolicy: {
     directives: {
       defaultSrc: [
         "'self'",
-        "'unsafe-inline'",
+        "'unsafe-inline'"
       ],
       scriptSrc: [
         "'self'",
@@ -27,75 +36,186 @@ fastify.register(helmet, {
         "*.cloudflare.com",
         "*.highcharts.com"
       ],
-      styleSrc: ["'self'", 'fonts.googleapis.com', "'unsafe-inline'"],
-      //imgSrc: ["'self'", 'https://*.com'],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      imgSrc: ["'self'"],
-      fontSrc: ["'self'", 'https://*.com', 'data:']
-    },
+      styleSrc: [
+        "'self'",
+        "fonts.googleapis.com",
+        "'unsafe-inline'"
+      ],
+      scriptSrcAttr: [
+        "'unsafe-inline'"
+      ],
+      imgSrc: [
+        "'self'"
+      ],
+      fontSrc: [
+        "'self'",
+        "data:"
+      ]
+    }
   }
-})
+});
+
+
+/* Multipart */
 fastify.register(require("@fastify/multipart"));
-/*Gzip Compression for API*/
+
+
+/* Compression */
 fastify.register(
-  require("fastify-compress"),
-  { global: false },
-  { encodings: ["gzip"] }
+  require("@fastify/compress"),
+  {
+    global: false,
+    encodings: ["gzip"]
+  }
 );
 
-/*static file routing*/
-fastify.register(require("fastify-static"), {
 
-  root: path.join(__dirname, "../") + "/public",
-  // prefix:'/public',
+/* Static files */
+fastify.register(require("@fastify/static"), {
+  root: path.join(__dirname, "../public")
 });
-/*Views for EJS template Render*/
-fastify.register(require("point-of-view"), {
+
+
+/* EJS Views */
+fastify.register(require("@fastify/view"), {
   engine: {
-    ejs: require("ejs"),
+    ejs: require("ejs")
   },
-  root: path.join(__dirname, "../views"),
+  root: path.join(__dirname, "../views")
 });
-/*Cors*/
-fastify.register(require("fastify-cors"));
-fastify.register(require("fastify-jwt"), {
-  secret: "supersecret",
-  expiresIn: "1h",
+
+
+/* CORS */
+fastify.register(require("@fastify/cors"));
+
+
+/* JWT */
+fastify.register(require("@fastify/jwt"), {
+  secret: "7f4c9a2e8b1d6f3a5c0e7b9d2a4f8c1e6d3b7a0f5c9e2d8b4a6f1c7e9d3b5a",
+  expiresIn: "1h"
 });
-fastify.register(require("fastify-secure-session"), {
-  secret: "averylogphrasebiggerthanfortytwochars",
+
+
+/* Secure Session */
+fastify.register(require("@fastify/secure-session"), {
+  secret: Buffer.from(
+    "f4e97164dff7c9a9db4188364b3bd336e8898feb7338d5fe4d7f77913668f5a8",
+    "hex"
+  ),
   salt: "mq9hDxBVDbspDR6n",
   cookie: {
-    path: "/",
-    // options for setCookie, see https://github.com/fastify/fastify-cookie
-  },
-});
-/*this is used for any preHandler activities currently setting for Dev and Prod Release */
-fastify.addHook('preHandler', (request, reply, next) => {
-  request.session.releaseEnv = "public";
-  next();
-})
-/*Pre validation check for all routes */
-fastify.register(require("../../app/config/baseAuth"));
-/* login Module */
-fastify.register(require("../routes/customauth"), { prefix: "/" });
-/*SuperAdmin Routes*/
-fastify.register(require("../routes/utils/misc/jynerso"), {
-  prefix: "/black-squadron",
-});
-/*Dynamic Module Routes*/
-let baseroutes = require("../config/baseRoute");
-baseroutes.forEach(function (dt) {
-  fastify.register(require(`../routes/${dt.val}`), { prefix: dt.key });
-});
-// Run the server!
-fastify.listen(3012, function (err, address) {
-  if (err) {
-    // console.log(err)
-    fastify.log.error(err);
-    process.exit(1);
+    path: "/"
   }
-  console.log(`App Server listening on port ${address}`);
 });
-/*Socket IO for download and upload Notification services*/
-fastify.register(require("fastify-socket.io"), {});
+
+
+/* Global preHandler */
+fastify.addHook(
+  "preHandler",
+  async (request, reply) => {
+    request.session.releaseEnv = "public";
+  }
+);
+
+
+/* Authentication */
+fastify.register(
+  require("../../app/config/baseAuth")
+);
+
+
+/* Login */
+fastify.register(
+  require("../routes/customauth"),
+  {
+    prefix: "/"
+  }
+);
+
+
+/* Super Admin Routes */
+fastify.register(
+  require("../routes/utils/misc/jynerso"),
+  {
+    prefix: "/black-squadron"
+  }
+);
+
+
+/* Dynamic Routes */
+const baseroutes = require("../config/baseRoute");
+
+baseroutes.forEach((dt) => {
+
+  fastify.register(
+    require(`../routes/${dt.val}`),
+    {
+      prefix: dt.key
+    }
+  );
+
+});
+
+
+/* Socket.IO */
+const { Server } = require("socket.io");
+
+const io = new Server(
+  fastify.server,
+  {
+    cors: {
+      origin: "*"
+    }
+  }
+);
+
+
+/*
+  Do NOT use fastify.decorate("io", io)
+  because it already exists.
+*/
+fastify.io = io;
+
+
+io.on(
+  "connection",
+  (socket) => {
+
+    console.log(
+      "Client connected:",
+      socket.id
+    );
+
+  }
+);
+
+
+
+/* Start Server */
+const start = async () => {
+
+  try {
+
+    await fastify.listen({
+      port: 3012,
+      host: "0.0.0.0"
+    });
+
+
+    console.log(
+      `App Server listening on ${fastify.server.address().port}`
+    );
+
+
+  } catch (err) {
+
+    fastify.log.error(err);
+
+    process.exit(1);
+
+  }
+
+};
+
+
+start();
