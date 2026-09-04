@@ -1,5 +1,5 @@
 let genSpecs = require('./Generic.spec.js')
-let l1 = genSpecs.metaTestcaseGen('employees')
+let l1 = genSpecs.metaTestcaseGen('sample')
 testbase = l1.a
 
 describe('Begin Tests', function() {
@@ -8,7 +8,8 @@ describe('Begin Tests', function() {
       .MultiControlTestCaseGeneric(testbase, l1.b)
       .then(function(data) {
         testbase = data
-        
+        console.log("yaaaaaaaaa")
+        console.log(testbase)
         done()
       })
       .catch(err => console.log(err))
@@ -25,7 +26,8 @@ describe('Begin Tests', function() {
 
   describe('****************Schema Removal Validation Test Cases****************', function() {
     it(`PayLoad Init `, function() {
-      
+      console.log("cmoon")
+      console.log(testbase.schemaValValidatorPayload)
       testbase.schemaValValidatorPayload.forEach(function(entry) {
         it(`For insert Operation test case By Removing ${entry.key} from payload to Evaluate  if schema validator is throwing field specific error or not `, function() {
           testbase = genSpecs

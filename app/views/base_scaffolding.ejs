@@ -99,7 +99,55 @@
         $("#childname_" + ids).html(re)
     }
     $(document).ready(function () {
+document.addEventListener("input", function (e) {
+    if (e.target.matches("input[type='text'], textarea")) {
 
+        const td = e.target.closest("td");
+        const nextTd = td?.nextElementSibling;
+        const placeholderTextbox =
+            nextTd?.querySelector("input[type='text'], textarea");
+
+        if (placeholderTextbox) {
+            const select = e.target.closest("tr")?.querySelector("td:first-child select");
+const secondSelect =
+    e.target.closest("tr")?.querySelector("td:nth-child(2) select");
+            const prefix =
+                select?.value === "textbox"
+                    ? "Please enter "
+                    : "Please select ";
+if(select.value === "textbox")
+{
+ placeholderTextbox.value =
+                "Please enter " + e.target.value;
+}else
+{
+placeholderTextbox.value =
+                "Please select " + secondSelect.value;
+}
+           
+        }
+    }
+});
+
+document.addEventListener("change", function (e) {
+    if (e.target.matches("select")) {
+
+        const td = e.target.closest("td");
+        const nextTd = td?.nextElementSibling;
+        const placeholderTextbox =
+            nextTd?.querySelector("input[type='text'], textarea");
+
+        if (placeholderTextbox) {
+            placeholderTextbox.placeholder =
+                "Please select " +
+                e.target.options[e.target.selectedIndex].text;
+                const textLength = ("Please enter " + e.target.value).length;
+                placeholderTextbox.style.width =
+                Math.max(150, textLength * 8) + "px";
+
+        }
+    }
+});
         
 var table = document.getElementsByTagName('table')[0];
 resizableGrid(table);
