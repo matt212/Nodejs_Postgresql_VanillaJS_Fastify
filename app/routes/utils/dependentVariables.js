@@ -49,8 +49,7 @@ let captureErrorLog = function(appsgenerator) {
     second: '2-digit',
     hour12: true
   }).replace(/\//g, '-').replace(/,/g, '').replace(/:/g, '-').replace(/\s+/g, '_');
-  console.log(appsgenerator.datecapture);
-  console.log(filetoday);
+ 
   new Promise((resolve, reject) => {
     //../utils/log/
     fs.writeFile(path.join(__dirname, "../") + "../utils/log/error-" + filetoday + ".json", JSON.stringify(appsgenerator) + "\n" + ",", {
@@ -274,10 +273,7 @@ let searchparampayloadParameterized = (req, a) => {
               reject(`${searchkey} is undefined `);
             }
             if (selector == "") {
-              console.log("-----coming from herere")
-              console.log(searchparam)
-              console.log(coltype)
-              console.log(a)
+              
               selector = multiWhereConstructColumn(searchparam, coltype, a, 0)
             } else {}
             // finale.push(obj)
@@ -303,8 +299,7 @@ let searchparampayloadParameterized = (req, a) => {
           consolidatesearch = consolidateSearchParameterizedConstruct(mod)
         }
         console.log("**********consolidated search*******")
-        console.log(consolidatesearch);
-        console.log()
+        
         let c = [startdate, enddate, '%' + searchmatrixval + '%']
         base.parameterValues = c
         /*without vector column*/
@@ -512,7 +507,7 @@ let multiWhereConstructColumn = function (searchparam, coltype, mod, w) {
   const validationConfig = require(
     "./" + mod.Name + "/validationConfig.js"
   );
-console.log(searchparam);
+
   // sample searchparam=[ { roleid: [ '1' ] }, { modnameid: [ '28', '29' ] } ] //
   const allowedColumns = new Set(
     validationConfig.validationmap.map(item => item.inputname)
@@ -547,7 +542,7 @@ let consolidateSearchParameterizedConstruct = function(mod) {
   return custWhere
 }
 let consolidateSearchParameterizedConstructMultiselect = function(mod) {
-  console.log("consolidate multiselect")
+ 
   let validationConfig = require("./" + mod.Name + "/validationConfig.js");
   var jsonintern = validationConfig.validationmap;
   var baseField = jsonintern.filter(function(a) {
@@ -555,7 +550,7 @@ let consolidateSearchParameterizedConstructMultiselect = function(mod) {
   }).map(function(k) {
     return k.inputCustomMapping
   });
-  console.log(baseField)
+ 
   return "and " + baseField.join(" ||' '|| ") + ' like $3'
 }
 let groupByConstruct = function(mod, colname, coltype) {
@@ -692,11 +687,7 @@ let paramsSearchTypeGroupBy = (req) => {
     /*with vector column*/
     //consolidatesearch='and weighted_tsv @@ to_tsquery(\''+consolidatesearchparam[0].consolidatecolval+'\:\*\')'
   }
-  console.log(searchkey)
-  console.log("-------")
-  console.log(selector)
-  console.log("-------")
-  console.log(colmetafilter)
+  
   return {
     searchkey: searchkey,
     selector: selector,
@@ -862,7 +853,7 @@ let paramsSearchTypeGroupByParameterized = req => {
     }
 
     if (searchparammetafilter.length>0) {
-      console.log("why not hererer")
+      
       colmetafilter = multiWhereConstructColumn(
         searchparammetafilter,
         coltype,
@@ -1307,7 +1298,7 @@ let searchtypeExplain = (res, sqlConstructParams, a) => {
           internset.rows = result.rows;
           callback(null, internset.rows);
         }).catch((err) => {
-          console.log(sqlstatementsprimary)
+          
           connections.release();
         });
       },
@@ -1356,7 +1347,7 @@ let searchtypeConventionalCache = (sqlConstructParams, a, arg) => {
       (err, results) => {
         if (err) {
           //res.send(err);
-          console.log(sqlstatementsprimary)
+          
           reject(err);
         }
         resolve(results);
@@ -1367,7 +1358,7 @@ let searchtypeOptimizedParameterized = (sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](sqlConstructParams);
     sqlConstructParams.arg.parameterValues = sqlConstructParams.arg.parameterValues.filter(Boolean);
-    console.log(sqlstatementsprimary);
+    
     var internset = {};
     async ({
         rows: (callback) => {
@@ -1498,7 +1489,7 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
       },
       (err, results) => {
         if (err) {
-          console.log(sqlstatementsprimary);
+          
           console.log(err);
           reject(err);
         }
@@ -1508,7 +1499,7 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
 };
 let getCountparameterized = (sqlstatementsecondary, sqlConstructParams) => {
   return new Promise((resolve, reject) => {
-    console.log(sqlstatementsecondary);
+    
     connections.queryParameterized(sqlstatementsecondary, sqlConstructParams.arg.parameterValues).then((result) => {
       if (result.rows.length > 0) {
         resolve(result.rows[0].count);
@@ -1606,7 +1597,7 @@ const searchtypegroupbyId = async (request, a) => {
       mod
     };
     const sqlStatement = sqlConstruct[a.type][a.searchtypegroupbyId](sqlConstructParams);
-    console.log(sqlStatement);
+    
     const result = await connections.query(sqlStatement);
     return {
       rows: result.rows
@@ -1651,10 +1642,10 @@ let SearchTypeGroupByParameterized = async (req, a) => {
       tempDep,
       mod
     }
-    console.log("above sql")
-    console.log(sqlConstructParams);
+    
+    
     let sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams)
-    console.log(sqlstatementsprimary)
+    
     console.log(tempDep.parameterValues);
     let result = await connections.queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
     return {

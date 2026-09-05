@@ -334,6 +334,7 @@ const searchPivotJsonSchema = {
 
 module.exports = {
   commonConfig: commonConfig,
+  headersJsonSchema: headersJsonSchema,
   searchLoadSchema: searchLoadSchema,
   searchGroupbyJsonSchema: searchGroupbyJsonSchema,
   searchPivotJsonSchema: searchPivotJsonSchema
