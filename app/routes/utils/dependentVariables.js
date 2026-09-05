@@ -55,7 +55,7 @@ let captureErrorLog = function(appsgenerator) {
     fs.writeFile(path.join(__dirname, "../") + "../utils/log/error-" + filetoday + ".json", JSON.stringify(appsgenerator) + "\n" + ",", {
       flag: "a+"
     }, function(err, data) {
-      console.log(err)
+      
       resolve("error logged");
     });
   })
@@ -1153,8 +1153,8 @@ let searchtypeOptimizedBaseCountParamterized = (req, a) => {
       //caching only count since delete of records in any b2b apps is meh !
       //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
     }).catch(function(error) {
-      console.log("---------error")
-      console.log(error)
+      
+      
       captureErrorLog({
         "error": error,
         "modname": mod.name,
@@ -1245,8 +1245,7 @@ let searchtypeOptimizedBaseParameterized = (req, a) => {
       const isObjectEmpty = Object.values(arg.daterange)[0].trim().length === 0;
       return reject(new Error(Object.values(arg.daterange)[0].trim().length === 0 ? 'body must have required property \'datecolsearch\'' : `No  valid search method found for the supplied search parameters`));
     }).catch((error) => {
-      console.log("---------error--------");
-      console.log(error);
+      
       captureErrorLog({
         searchtypeOptimizedBaseParameterizedERROR: (error && error.stack) || (error && error.message) || String(error),
         modname: mod.Name,
@@ -1490,7 +1489,7 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
       (err, results) => {
         if (err) {
           
-          console.log(err);
+          
           reject(err);
         }
         resolve(results);
@@ -1646,7 +1645,7 @@ let SearchTypeGroupByParameterized = async (req, a) => {
     
     let sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams)
     
-    console.log(tempDep.parameterValues);
+    
     let result = await connections.queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
     return {
       rows: result.rows
@@ -1941,7 +1940,7 @@ let uploadContent = async (req, reply, fastify) => {
           cb(objs);
         });
       }).catch((err) => {
-        console.log(err);
+       
       });
     });
     let directstreambulkinsert = (obj) => {

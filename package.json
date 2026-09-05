@@ -17,12 +17,12 @@
     "@fastify/view": "^12.0.0",
     "@node-minify/clean-css": "^6.2.0",
     "@node-minify/core": "^6.2.0",
-    "@node-minify/html-minifier": "^6.2.0",
+    "@node-minify/html-minifier": "^11.0.0",
     "@node-minify/uglify-es": "^6.2.0",
     "ajv-keywords": "^5.1.0",
     "async": "^3.2.0",
-    "autocannon": "^7.9.0",
-    "better-queue": "^3.8.10",
+    "autocannon": "^2.0.1",
+    "better-queue": "^3.8.4",
     "bluebird": "^3.7.2",
     "busboy": "^1.6.0",
     "ejs": "^3.1.8",
@@ -56,8 +56,9 @@
     "yargs": "^18.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "chai": "^4.3.4",
-    "mocha": "^11.8.0",
+    "mocha": "^12.0.0",
     "supertest": "^6.1.3"
   },
   "scripts": {
@@ -93,7 +94,7 @@
     "createDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgcreateDb()'",
     "createDB_updated": "npx run-func ./app/utils/dbDump/databaseUtils.js pgcreateDb",
     "applychangesDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").applychangesDB()'",
-    "indiviualMigrationDB":"node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").indiviualMigrationDB()'",
+    "indiviualMigrationDB": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").indiviualMigrationDB()'",
     "pgRestore": "node -e 'require(\"./app/utils/dbDump/databaseUtils.js\").pgRestore()'",
     "getkeys": "node -e 'require(\"./app/routes/utils/redisMemcache.js\").redisDel()'",
     "genderEval": "mocha ./app/utils/test/gender-test.spec.js --timeout 10000 --exit",

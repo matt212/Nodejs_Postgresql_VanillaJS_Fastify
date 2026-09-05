@@ -74,7 +74,7 @@ async function routes(fastify, options) {
       const result = await dep.searchtypeOptimizedBaseParameterized(req, mod)
       return reply.code(200).send(result)
     } catch (error) {
-      console.log(error)
+      
       return reply.code(400).send({
         status: error.toString()
       })

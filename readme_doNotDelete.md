@@ -279,3 +279,31 @@ source ~/.nvm/nvm.sh
 nvm install --lts
 nvm use --lts
 npm --version
+
+
+##################playwright commands#####################
+
+
+--install 
+Run these in order:
+
+npm install -D @playwright/test
+npx playwright install chromium
+npx playwright --version
+
+Then create:
+
+playwright.config.js
+playwright/tests/smoke.spec.js
+
+using the code above.
+
+Start your app:
+
+yarn app or npm run app
+
+Then, in another terminal:
+
+npx playwright test playwright/tests/smoke.spec.js
+----run- smoke.specs.js
+npx playwright test smoke

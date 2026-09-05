@@ -2,7 +2,7 @@ const path = require("path");
 
 /* Fastify initialization */
 const fastify = require("fastify")({
-  logger: true,
+  logger: false,
   ajv: {
     customOptions: {
       strict: false

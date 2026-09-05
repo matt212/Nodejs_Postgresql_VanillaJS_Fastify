@@ -88,9 +88,9 @@ let customMultiInsertDelete = function(testbase, evalModulename) {
           entry.createdID = data.body.createdId
           entry.evalModulename = evalModulename
           resolve(entry)
-        }).catch(err => console.log(err))
+        }).catch(err => console.log(""))
       } catch (error) {
-        console.log(error)
+        
         reject(error)
       }
     })
@@ -105,7 +105,7 @@ let customMultiInsertDelete = function(testbase, evalModulename) {
       testbase.payload = delObj
       genericApiPost(testbase).then(function(data) {
         resolve(data)
-      }).catch(err => console.log(err))
+      }).catch(err => console.log(""))
     })
   }
   o.multiInsertforSearch = function(val) {
@@ -122,7 +122,7 @@ let customMultiInsertDelete = function(testbase, evalModulename) {
           allDatasetAr: a
         }
         resolve(o1)
-      }).catch(err => console.log(err))
+      }).catch(err => console.log(""))
     })
   }
   o.multiDelete = function(ar) {
@@ -330,7 +330,7 @@ let MultiControlTestCaseGeneric = function(testbase, validationConfig) {
         })
       }).catch(err => console.log(err))
     } catch (error) {
-      console.log(error)
+      
       reject(error)
     }
   }))
@@ -358,7 +358,7 @@ let MultiControlTestCaseGen = function(testbase, validationConfig) {
         })
       }).catch(err => console.log(err))
     } catch (error) {
-      console.log(error)
+      
       reject(error)
     }
   }))
@@ -410,7 +410,7 @@ let loginsuccess = function(cred) {
       })
     }))
   } catch (error) {
-    console.error(error)
+   
   }
 }
 let ModularizeDataGen = function(applyfields) {
@@ -446,7 +446,7 @@ let customRefentialModnameInsert = function(modulename) {
       insertMochaScript(data, modulename).then(function(dt) {
         resolve(dt)
       })
-    }).catch(err => console.log(err))
+    }).catch(err => console.log(""))
   })
 }
 let insertMochaScript = function(payload, evalModname) {
@@ -477,7 +477,7 @@ let insertMochaScript = function(payload, evalModname) {
         g: Deletesampledatset
       }
       resolve(resp)
-    }).catch(err => console.log(err))
+    }).catch(err => console.log(""))
   })
 }
 let genericApiPost = function(data) {
@@ -497,7 +497,7 @@ let genericApiPost = function(data) {
         }
       })
     } catch (error) {
-      console.log(error)
+     
       reject({
         error: true,
         payload: data
@@ -675,7 +675,7 @@ let PrimarytestInit = function(testbase) {
         testbase.multiControlDataSet = data.allDataset
         testbase.multiControlDataSetAr = data.allDatasetAr
         resolve(testbase)
-      }).catch(err => console(err))
+      }).catch(err => console.log(""))
     })
   })
 }
@@ -728,7 +728,7 @@ let FirstTimeloadCurrentModule = function() {
         //.expect('Content-type', /text\/html/)
         .end(function(err, res) {
           if (err) {
-            console.log(err)
+            
             reject(err)
           }
           res.statusCode.should.equal(302)
@@ -747,7 +747,7 @@ let loadCurrentModule = function(data) {
     if (data.status == 'pass') {
       server.get('/' + evalModulename).expect('Content-type', /text\/html/).expect(200).end(function(err, res) {
         if (err) {
-          console.log(err)
+          
           reject(err)
         }
         resolve(res.headers['x-token'])
@@ -1389,7 +1389,7 @@ const sortArBy = (key, direction = 'asc') => (a, b) => {
   if (valueA == null && valueB == null) return 0;
   if (valueA == null) return 1;
   if (valueB == null) return -1;
-  console.log('valueA', valueA, 'valueB', valueB, 'direction', direction);
+  
   const result = String(valueA).localeCompare(String(valueB), undefined, {
     numeric: true,
     sensitivity: 'base'
