@@ -16,6 +16,7 @@ module.exports = defineConfig({
 
     reporter: 'html',
 
+    // Common settings for ALL projects
     use: {
         baseURL: 'http://127.0.0.1:3012',
 
@@ -28,6 +29,32 @@ module.exports = defineConfig({
         video: 'retain-on-failure',
 
         trace: 'on-first-retry'
-    }
+    },
 
+    projects: [
+
+        // --------------------------------------------------
+        // Authentication setup
+        // --------------------------------------------------
+        {
+            name: 'setup',
+
+            testDir: './playwright/auth',
+
+            testMatch: /.*\.setup\.js/
+        },
+
+        // --------------------------------------------------
+        // Employees / E2E tests
+        // --------------------------------------------------
+        {
+            name: 'chromium',
+
+            dependencies: ['setup'],
+
+            use: {
+                storageState: 'playwright/.auth/user.json'
+            }
+        }
+    ]
 });
