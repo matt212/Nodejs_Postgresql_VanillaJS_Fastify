@@ -370,10 +370,25 @@ test(
         await openFilterBar(page);
 
 
-        // Same search value from your original test.
+        const firstRowSecondColumnText =
+            await page.locator(
+                '#basetable tbody tr'
+            ).first().locator('td').nth(1).textContent();
+
+
+        const searchValue =
+            firstRowSecondColumnText
+                .trim()
+                .substring(0, 2);
+
+
+        expect(searchValue.length)
+            .toBe(2);
+
+
         await page.locator(
             '#txtconsolidatesearch'
-        ).fill('ab');
+        ).fill(searchValue);
 
 
         await page.locator(
@@ -411,7 +426,7 @@ test(
             page.locator(
                 '#basetable tbody tr td span.highlightedsearch'
             ).filter({
-                hasText: 'ab'
+                hasText: new RegExp(searchValue, 'i')
             });
 
 
@@ -441,7 +456,9 @@ test(
 
         console.log(
             'Consolidated search results:',
-            wordsContainingAb
+            wordsContainingAb,
+            'Search value:',
+            searchValue
         );
 
 
