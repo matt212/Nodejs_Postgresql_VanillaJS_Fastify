@@ -705,7 +705,7 @@ test(
                     ].toLowerCase()
                     : 'a';
 
-console.log("firstCharacterToFill"+firstCharacterToFill);
+
             await filterInput.fill(
                 firstCharacterToFill
             );
@@ -875,11 +875,190 @@ console.log("firstCharacterToFill"+firstCharacterToFill);
 
 // ============================================================
 // TEST 12
+// DYNAMIC FILTER PERMUTATIONS
+// ============================================================
+
+test(
+    '12 - Multi-Column Filter - Dynamic field permutations return results',
+    async ({ page }) => {
+
+        test.setTimeout(600000);
+
+        await loadEmployeesReport(page);
+
+        await openFilterBar(page);
+
+        await page.locator(
+            "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+        ).click();
+
+        await expect(
+            page.locator('.fieldsfilterbar')
+        ).toBeVisible();
+
+
+        const fieldKeys =
+            await page.locator(
+                '.fieldsfilterbar input[data-multipleselect-autocomplete]'
+            ).evaluateAll(elements =>
+                elements
+                    .map(element =>
+                        element.getAttribute(
+                            'data-multipleselect-autocomplete'
+                        )
+                    )
+                    .filter(Boolean)
+            );
+
+
+        expect(fieldKeys.length)
+            .toBeGreaterThan(0);
+
+
+        for (const firstField of fieldKeys) {
+            for (const secondField of fieldKeys) {
+
+                await loadEmployeesReport(page);
+
+                await openFilterBar(page);
+
+                await page.locator(
+                    "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+                ).click();
+
+                await expect(
+                    page.locator('.fieldsfilterbar')
+                ).toBeVisible();
+
+
+                const getFirstCharacterForField = async fieldKey => {
+                    const header =
+                        page.locator(
+                            `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                        );
+
+                    const columnIndex =
+                        await header.evaluate(
+                            element => element.cellIndex
+                        );
+
+                    const values =
+                        await page.locator(
+                            `#basetable tbody tr td:nth-child(${columnIndex})`
+                        ).allTextContents();
+
+                    const firstValue =
+                        values
+                            .map(value => value.trim())
+                            .find(value => value.length > 0);
+
+                    expect(firstValue)
+                        .toBeTruthy();
+
+                    return firstValue.charAt(0).toLowerCase();
+                };
+
+
+                const permutation = [
+                    firstField,
+                    secondField
+                ];
+
+
+                for (const fieldKey of new Set(permutation)) {
+
+                    const filterInput =
+                        page.locator(
+                            `.fieldsfilterbar input[data-multipleselect-autocomplete="${fieldKey}"]`
+                        );
+
+
+                    const searchCharacter =
+                        await getFirstCharacterForField(fieldKey);
+
+
+                    const dropdown =
+                        page.locator(
+                            `#dv_${fieldKey}`
+                        ).first();
+
+
+                    await Promise.all([
+                        page.waitForResponse(response =>
+                            response.url().includes(
+                                '/api/searchtypegroupby'
+                            ) &&
+                            response.status() === 200
+                        ),
+                        filterInput.fill(searchCharacter)
+                    ]);
+
+
+                    await expect(dropdown).toBeVisible();
+
+
+                    const option =
+                        dropdown.locator(
+                            'div a.highlightselect'
+                        ).first();
+
+
+                    await expect(option).toBeVisible();
+
+                    const selectedValue =
+                        (await option.textContent()).trim();
+
+
+                    await option.click();
+
+
+                    await expect(
+                        page.locator(
+                            `#cltrl_filter_chips_${fieldKey}`
+                        )
+                    ).toContainText(selectedValue);
+                }
+
+
+                await Promise.all([
+                    page.waitForResponse(response =>
+                        response.url().includes('/api/searchtype/') &&
+                        response.status() === 200
+                    ),
+                    page.waitForResponse(response =>
+                        response.url().includes('/api/searchtypeCount/') &&
+                        response.status() === 200
+                    ),
+                    page.locator(
+                        "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                    ).click()
+                ]);
+
+
+                await expect(
+                    page.locator('#sptotalUsers')
+                ).not.toHaveText('0');
+
+
+                console.log(
+                    `[PASS] Filter permutation: ${firstField} -> ${secondField}`
+                );
+            }
+        }
+
+
+        await page.waitForTimeout(3000);
+    }
+);
+
+
+// ============================================================
+// TEST 13
 // DYNAMIC COLUMN SORTING
 // ============================================================
 
 test(
-    '12 - Multi-Column Sort - Dynamic fields sort ascending and descending',
+    '13 - Multi-Column Sort - Dynamic fields sort ascending and descending',
     async ({ page }) => {
 
         await loadEmployeesReport(page);
@@ -952,12 +1131,12 @@ test(
 
 
 // ============================================================
-// TEST 13
+// TEST 14
 // FILTER BAR SCREENSHOT / FINAL UI STATE
 // ============================================================
 
 test(
-    '13 - Employees - Filtered report UI is displayed correctly',
+    '14 - Employees - Filtered report UI is displayed correctly',
     async ({ page }) => {
 
         await loadEmployeesReport(page);
