@@ -311,4 +311,4 @@ npx playwright test smoke
 npx playwright test employees -g "11 - Multi-Column Filter - Dynamic fields return matching results"
 
 
-npx playwright test employees -g "11 - Multi-Column Filter - Dynamic fields return matching results"
+npx playwright test employees -g "13 - Multi-Column Filter - Dynamic multi-select permutations return results"

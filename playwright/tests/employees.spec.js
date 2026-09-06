@@ -915,6 +915,19 @@ test(
             .toBeGreaterThan(0);
 
 
+        const expectedPermutations =
+            fieldKeys.length * fieldKeys.length;
+
+        let completedPermutations = 0;
+        let verifiedColumnAssertions = 0;
+
+
+        await test.step(
+            `Permutation summary: ${fieldKeys.length} fields | ${expectedPermutations} combinations planned | Fields: ${fieldKeys.join(', ')}`,
+            async () => {}
+        );
+
+
         for (const firstField of fieldKeys) {
             for (const secondField of fieldKeys) {
 
@@ -964,6 +977,8 @@ test(
                     secondField
                 ];
 
+                const selectedValuesByField = {};
+
 
                 for (const fieldKey of new Set(permutation)) {
 
@@ -979,7 +994,7 @@ test(
 
                     const dropdown =
                         page.locator(
-                            `#dv_${fieldKey}`
+                            `#dv_${fieldKey}:visible`
                         ).first();
 
 
@@ -1017,6 +1032,10 @@ test(
                             `#cltrl_filter_chips_${fieldKey}`
                         )
                     ).toContainText(selectedValue);
+
+                    selectedValuesByField[fieldKey] = [
+                        selectedValue
+                    ];
                 }
 
 
@@ -1040,11 +1059,71 @@ test(
                 ).not.toHaveText('0');
 
 
+                for (const [fieldKey, selectedValues] of Object.entries(
+                    selectedValuesByField
+                )) {
+                    const header =
+                        page.locator(
+                            `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                        );
+
+                    const columnIndex =
+                        await header.evaluate(
+                            element => element.cellIndex
+                        );
+
+                    const tableValues =
+                        await page.locator(
+                            `#basetable tbody tr td:nth-child(${columnIndex})`
+                        ).allTextContents();
+
+                    const allowedValues =
+                        selectedValues.map(value =>
+                            value.trim().toLowerCase()
+                        );
+
+                    const unmatchedValues =
+                        tableValues
+                            .map(value => value.trim())
+                            .filter(Boolean)
+                            .filter(value =>
+                                !allowedValues.includes(
+                                    value.toLowerCase()
+                                )
+                            );
+
+                    expect(unmatchedValues).toEqual([]);
+
+                    verifiedColumnAssertions++;
+                }
+
+
+                completedPermutations++;
+
+
                 console.log(
                     `[PASS] Filter permutation: ${firstField} -> ${secondField}`
                 );
             }
         }
+
+
+        const sameFieldPermutations =
+            fieldKeys.length;
+
+        const crossFieldPermutations =
+            expectedPermutations - sameFieldPermutations;
+
+        const passPercentage =
+            Math.round(
+                completedPermutations / expectedPermutations * 100
+            );
+
+
+        await test.step(
+            `Permutation summary: ${completedPermutations}/${expectedPermutations} combinations passed (${passPercentage}%) | ${sameFieldPermutations} same-field cases | ${crossFieldPermutations} cross-field cases | ${verifiedColumnAssertions} table-column assertions`,
+            async () => {}
+        );
 
 
         await page.waitForTimeout(3000);
@@ -1054,11 +1133,326 @@ test(
 
 // ============================================================
 // TEST 13
+// DYNAMIC MULTI-SELECT FILTER PERMUTATIONS
+// ============================================================
+
+test(
+    '13 - Multi-Column Filter - Dynamic multi-select permutations return results',
+    async ({ page }) => {
+
+        test.setTimeout(600000);
+
+        await loadEmployeesReport(page);
+
+        await openFilterBar(page);
+
+        await page.locator(
+            "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+        ).click();
+
+        await expect(
+            page.locator('.fieldsfilterbar')
+        ).toBeVisible();
+
+
+        const fieldKeys =
+            await page.locator(
+                '.fieldsfilterbar input[data-multipleselect-autocomplete]'
+            ).evaluateAll(elements =>
+                elements
+                    .map(element =>
+                        element.getAttribute(
+                            'data-multipleselect-autocomplete'
+                        )
+                    )
+                    .filter(Boolean)
+            );
+
+
+        expect(fieldKeys.length)
+            .toBeGreaterThan(0);
+
+
+        const expectedPermutations =
+            fieldKeys.length * fieldKeys.length;
+
+        let completedPermutations = 0;
+        let selectedValueCount = 0;
+        let verifiedColumnAssertions = 0;
+
+
+        await test.step(
+            `Permutation leaderboard: ${fieldKeys.length} fields | ${expectedPermutations} combinations planned | Fields: ${fieldKeys.join(', ')}`,
+            async () => {}
+        );
+
+
+        for (const firstField of fieldKeys) {
+            for (const secondField of fieldKeys) {
+
+                await loadEmployeesReport(page);
+
+                await openFilterBar(page);
+
+                await page.locator(
+                    "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+                ).click();
+
+                await expect(
+                    page.locator('.fieldsfilterbar')
+                ).toBeVisible();
+
+
+                const selectedFields = new Set([
+                    firstField,
+                    secondField
+                ]);
+
+                const selectedValuesByField = {};
+
+
+                const permutationName =
+                    `${firstField} and ${secondField}`;
+
+
+                await test.step(
+                    `Test filter combination: ${permutationName}`,
+                    async () => {}
+                );
+
+
+                for (const fieldKey of selectedFields) {
+
+                    const header =
+                        page.locator(
+                            `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                        );
+
+                    const columnIndex =
+                        await header.evaluate(
+                            element => element.cellIndex
+                        );
+
+                    const columnValues =
+                        await page.locator(
+                            `#basetable tbody tr td:nth-child(${columnIndex})`
+                        ).allTextContents();
+
+                    const searchCharacter =
+                        columnValues
+                            .map(value => value.trim())
+                            .find(value => value.length > 0)
+                            .charAt(0)
+                            .toLowerCase();
+
+                    const filterInput =
+                        page.locator(
+                            `.fieldsfilterbar input[data-multipleselect-autocomplete="${fieldKey}"]`
+                        );
+
+                    const dropdown =
+                        page.locator(
+                            `#dv_${fieldKey}:visible`
+                        ).first();
+
+                    const selectedValues = [];
+
+
+                    for (let selectionIndex = 0; selectionIndex < 2; selectionIndex++) {
+
+                        await test.step(
+                            `${fieldKey}: find a value starting with "${searchCharacter}"`,
+                            async () => {
+                                await Promise.all([
+                                    page.waitForResponse(response =>
+                                        response.url().includes(
+                                            '/api/searchtypegroupby'
+                                        ) &&
+                                        response.status() === 200
+                                    ),
+                                    filterInput.fill(searchCharacter)
+                                ]);
+
+                                await expect(dropdown).toBeVisible();
+                            }
+                        );
+
+
+                        const availableOptions =
+                            dropdown.locator(
+                                'div a.highlightselect'
+                            );
+
+
+                        const optionCount =
+                            await availableOptions.count();
+
+
+                        if (optionCount === 0) {
+                            break;
+                        }
+
+
+                        let selectedValue = '';
+
+                        for (let optionIndex = 0; optionIndex < optionCount; optionIndex++) {
+                            const candidateValue =
+                                (await availableOptions
+                                    .nth(optionIndex)
+                                    .textContent()).trim();
+
+                            if (
+                                candidateValue &&
+                                !selectedValues.includes(candidateValue)
+                            ) {
+                                selectedValue = candidateValue;
+                                break;
+                            }
+                        }
+
+
+                        if (!selectedValue) {
+                            break;
+                        }
+
+
+                        const option =
+                            availableOptions.filter({
+                                hasText: selectedValue
+                            }).first();
+
+
+                        await test.step(
+                            `${fieldKey}: select "${selectedValue}"`,
+                            async () => {
+                                await option.click();
+
+                                selectedValues.push(selectedValue);
+
+                                await expect(
+                                    page.locator(
+                                        `#cltrl_filter_chips_${fieldKey}`
+                                    ).filter({
+                                        hasText: selectedValue
+                                    }).first()
+                                ).toContainText(selectedValue);
+                            }
+                        );
+                    }
+
+
+                    expect(selectedValues.length)
+                        .toBeGreaterThan(0);
+
+                    selectedValueCount += selectedValues.length;
+                    selectedValuesByField[fieldKey] = selectedValues;
+                }
+
+
+                await test.step(
+                    `Apply ${permutationName} filters and verify matching employees`,
+                    async () => {
+                        await Promise.all([
+                            page.waitForResponse(response =>
+                                response.url().includes('/api/searchtype/') &&
+                                response.status() === 200
+                            ),
+                            page.waitForResponse(response =>
+                                response.url().includes('/api/searchtypeCount/') &&
+                                response.status() === 200
+                            ),
+                            page.locator(
+                                "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                            ).click()
+                        ]);
+
+
+                        await expect(
+                            page.locator('#sptotalUsers')
+                        ).not.toHaveText('0');
+
+
+                        for (const [fieldKey, selectedValues] of Object.entries(
+                            selectedValuesByField
+                        )) {
+                            const header =
+                                page.locator(
+                                    `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                                );
+
+                            const columnIndex =
+                                await header.evaluate(
+                                    element => element.cellIndex
+                                );
+
+                            const tableValues =
+                                await page.locator(
+                                    `#basetable tbody tr td:nth-child(${columnIndex})`
+                                ).allTextContents();
+
+                            const allowedValues =
+                                selectedValues.map(value =>
+                                    value.trim().toLowerCase()
+                                );
+
+                            const unmatchedValues =
+                                tableValues
+                                    .map(value => value.trim())
+                                    .filter(Boolean)
+                                    .filter(value =>
+                                        !allowedValues.includes(
+                                            value.toLowerCase()
+                                        )
+                                    );
+
+                            expect(unmatchedValues).toEqual([]);
+
+                            verifiedColumnAssertions++;
+                        }
+                    }
+                );
+
+
+                completedPermutations++;
+
+
+                console.log(
+                    `[PASS] Multi-select permutation: ${firstField} -> ${secondField}`
+                );
+            }
+        }
+
+
+        const sameFieldPermutations =
+            fieldKeys.length;
+
+        const crossFieldPermutations =
+            expectedPermutations - sameFieldPermutations;
+
+        const passPercentage =
+            Math.round(
+                completedPermutations / expectedPermutations * 100
+            );
+
+
+        await test.step(
+            `Permutation leaderboard: ${completedPermutations}/${expectedPermutations} combinations passed (${passPercentage}%) | ${sameFieldPermutations} same-field cases | ${crossFieldPermutations} cross-field cases | ${verifiedColumnAssertions} table-column assertions | ${selectedValueCount} autocomplete values selected`,
+            async () => {}
+        );
+
+
+        await page.waitForTimeout(3000);
+    }
+);
+
+
+// ============================================================
+// TEST 14
 // DYNAMIC COLUMN SORTING
 // ============================================================
 
 test(
-    '13 - Multi-Column Sort - Dynamic fields sort ascending and descending',
+    '14 - Multi-Column Sort - Dynamic fields sort ascending and descending',
     async ({ page }) => {
 
         await loadEmployeesReport(page);
@@ -1131,12 +1525,12 @@ test(
 
 
 // ============================================================
-// TEST 14
+// TEST 15
 // FILTER BAR SCREENSHOT / FINAL UI STATE
 // ============================================================
 
 test(
-    '14 - Employees - Filtered report UI is displayed correctly',
+    '15 - Employees - Filtered report UI is displayed correctly',
     async ({ page }) => {
 
         await loadEmployeesReport(page);
