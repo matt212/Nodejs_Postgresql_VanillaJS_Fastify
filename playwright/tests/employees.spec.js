@@ -448,6 +448,10 @@ test(
         expect(
             wordsContainingAb.length
         ).toBeGreaterThan(0);
+
+
+        await page.waitForTimeout(3000);
+
     }
 );
 
@@ -536,6 +540,7 @@ test(
 
         expect(autocompleteValues.length)
             .toBe(inputIds.length);
+            await page.waitForTimeout(3000);
     }
 );
 
@@ -844,18 +849,98 @@ console.log("firstCharacterToFill"+firstCharacterToFill);
             console.log(
                 `[PASS] All tabular results for column successfully matched: "${chosenName}"`
             );
+            await page.waitForTimeout(2000);
         }
     }
+
 );
 
 
 // ============================================================
 // TEST 12
+// DYNAMIC COLUMN SORTING
+// ============================================================
+
+test(
+    '12 - Multi-Column Sort - Dynamic fields sort ascending and descending',
+    async ({ page }) => {
+
+        await loadEmployeesReport(page);
+
+
+        const headers =
+            page.locator(
+                '#basetable thead tr th[data-field-header]'
+            );
+
+
+        const fieldKeys =
+            await headers.evaluateAll(elements =>
+                elements.map(
+                    element =>
+                        element.getAttribute('data-field-header')
+                )
+            );
+
+
+        expect(fieldKeys.length)
+            .toBeGreaterThan(0);
+
+
+        for (const fieldKey of fieldKeys) {
+
+            const header =
+                page.locator(
+                    `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                );
+
+
+            const assertSortRequest = async (expectedOrder) => {
+                const [request] = await Promise.all([
+                    page.waitForRequest(request =>
+                        request.url().includes('/api/searchtype/') &&
+                        request.method() === 'POST'
+                    ),
+                    page.waitForResponse(response =>
+                        response.url().includes('/api/searchtype/') &&
+                        response.status() === 200
+                    ),
+                    header.click()
+                ]);
+
+                const payload = request.postDataJSON();
+
+                expect(payload.sortcolumn)
+                    .toBe(fieldKey);
+
+                expect(payload.sortcolumnorder.toUpperCase())
+                    .toBe(expectedOrder);
+            };
+
+
+            await assertSortRequest('DESC');
+
+
+            await assertSortRequest('ASC');
+
+            console.log(
+                `[PASS] Dynamic column sorted ascending and descending: ${fieldKey}`
+            );
+        }
+
+
+        await page.waitForTimeout(3000);
+    }
+);
+
+
+// ============================================================
+// TEST 13
 // FILTER BAR SCREENSHOT / FINAL UI STATE
 // ============================================================
 
 test(
-    '12 - Employees - Filtered report UI is displayed correctly',
+    '13 - Employees - Filtered report UI is displayed correctly',
     async ({ page }) => {
 
         await loadEmployeesReport(page);
