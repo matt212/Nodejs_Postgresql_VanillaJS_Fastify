@@ -93,7 +93,7 @@ async function routes(fastify, options) {
       const req = {
         body: request.body
       }
-      const result = await dep.searchtypeOptimizedBaseCountParamterized(req, mod)
+      const result = await dep.searchtypeOptimizedBaseCountParamterizedCached(req, mod)
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
@@ -141,6 +141,7 @@ async function routes(fastify, options) {
     try {
       dep.assignVariables(mod)
       let result = await dep.createRecord(request, mod)
+      dep.clearCountCache()
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
@@ -208,6 +209,7 @@ async function routes(fastify, options) {
     try {
       dep.assignVariables(mod)
       const result = await dep.updateRecord(request, reply)
+      dep.clearCountCache()
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
@@ -252,6 +254,7 @@ async function routes(fastify, options) {
     try {
       dep.assignVariables(mod)
       const result = await dep.deleteHardRecord(request)
+      dep.clearCountCache()
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({

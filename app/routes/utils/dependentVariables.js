@@ -60,6 +60,20 @@ let captureErrorLog = function(appsgenerator) {
     });
   })
 }
+let capturePoolLog = function(appsgenerator) {
+  if (process.env.POOL_DEBUG !== 'true') {
+    return
+  }
+
+  try {
+    fs.appendFileSync(
+      path.join(__dirname, '../../utils/log/pool-debug.log'),
+      JSON.stringify(appsgenerator) + '\n'
+    )
+  } catch (error) {
+    console.error('Unable to write PostgreSQL pool log:', error.message)
+  }
+}
 let searchparampayload = (req, res) => {
   try {
     let SqlString = require("sqlstring");
@@ -1146,9 +1160,9 @@ let searchtypeOptimizedBaseCountParamterized = (req, a) => {
           resolve(args);
         });
       } else {
-        searchtypeOptimizedCount(sqlConstructParams, a, arg).then((args) => {
-          resolve(args);
-        });
+        // searchtypeOptimizedCount(sqlConstructParams, a, arg).then((args) => {
+        //   resolve(args);
+        // });
       }
       //caching only count since delete of records in any b2b apps is meh !
       //searchtypeConventionalCache(res, sqlConstructParams, a, req.body)
@@ -1436,6 +1450,8 @@ let searchtypeOptimizedCountParameterized = (sqlConstructParams, a, arg) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsecondary = sqlConstruct[a.type][a.sqlScriptCount](sqlConstructParams);
     var internset = {};
+   // console.log("sqlstatementsecondary", sqlstatementsecondary);
+   // console.log("sqlConstructParams.arg.parameterValues", sqlConstructParams.arg.parameterValues);
     async ({
         count: (callback) => {
           //let key = mod.Name + "-" + JSON.stringify(arg);
@@ -1496,24 +1512,85 @@ let searchtypeConventional = (res, sqlConstructParams, a) => {
       });
   }));
 };
-let getCountparameterized = (sqlstatementsecondary, sqlConstructParams) => {
-  return new Promise((resolve, reject) => {
-    
-    connections.queryParameterized(sqlstatementsecondary, sqlConstructParams.arg.parameterValues).then((result) => {
-      if (result.rows.length > 0) {
-        resolve(result.rows[0].count);
-      } else {
-        resolve(0);
-      }
-    }).catch((err) => {
-      connections.release();
-      reject(err);
-    });
-  });
-};
+
+const countCache = new Map()
+const countInFlight = new Map()
+
+let searchtypeOptimizedBaseCountParamterizedCached = async (req, mod) => {
+
+  const cacheKey = JSON.stringify(req.body)
+
+  // Cache hit
+  const cached = countCache.get(cacheKey)
+
+  if (cached && cached.expires > Date.now()) {
+    return cached.value
+  }
+
+  // Same COUNT already running
+  if (countInFlight.has(cacheKey)) {
+    return await countInFlight.get(cacheKey)
+  }
+
+  // Execute one COUNT
+  const promise =
+    searchtypeOptimizedBaseCountParamterized(req, mod)
+
+  countInFlight.set(cacheKey, promise)
+
+  try {
+
+    const result = await promise
+
+    countCache.set(cacheKey, {
+      value: result,
+      expires: Date.now() + 5000
+    })
+
+    return result
+
+  } finally {
+
+    countInFlight.delete(cacheKey)
+
+  }
+}
+const clearCountCache = () => {
+  countCache.clear()
+}
+let getCountparameterized = async (sqlstatementsecondary, sqlConstructParams) => {
+  try {
+    const response = await connections.countParameterized(
+      sqlstatementsecondary,
+      sqlConstructParams.arg.parameterValues
+    )
+
+    return response.result.rows.length > 0
+      ? Number(response.result.rows[0].count)
+      : 0
+
+  } catch (err) {
+    throw err
+  }
+}
 let getCount = (sqlstatementsecondary) => {
   return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const poolBefore = process.env.POOL_DEBUG === 'true'
+      ? connections.getPoolStats()
+      : null;
+
     connections.pgQueryStream(sqlstatementsecondary).then((result) => {
+      if (process.env.POOL_DEBUG === 'true') {
+        capturePoolLog({
+          label: 'PostgreSQL count pool',
+          mode: 'stream',
+          durationMs: Date.now() - started,
+          before: poolBefore,
+          after: connections.getPoolStats()
+        })
+      }
+
       resolve(result.rows[0].count);
     }).catch((err) => {
       connections.release();
@@ -2515,5 +2592,7 @@ module.exports = {
   searchtypePerf,
   pageRender,
   pageRenderObj,
-  isPivotCache
+  isPivotCache,
+  searchtypeOptimizedBaseCountParamterizedCached,
+  clearCountCache
 };

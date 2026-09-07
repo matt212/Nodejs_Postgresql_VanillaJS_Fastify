@@ -40,8 +40,8 @@ var connectionpool = {
   //host: config.development.host, // Server hosting the postgres database
   host: config.development.host, // Server hosting the postgres database
   port: config.development.port, //env var: PGPORT
-  max: 10, // max number of clients in the pool
-  idleTimeoutMillis: 1000, // how long a client is allowed to remain idle before being closed
+  max: 20, // max number of clients in the pool
+  idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
   multipleStatementResult: true,
   logging: false
 }
@@ -106,42 +106,49 @@ module.exports.pgQueryStream = function (sql) {
 module.exports.query = function (sql) {
 
   return new Promise((resolve, reject) => {
+
     pool.connect(function (err, client, release) {
+
       if (err) {
-        release(true)
-        reject(err)
+        return reject(err)
       }
+
       client.query(sql, function (err, result) {
+
         if (err) {
           console.log(err)
           release(true)
-          reject(err)
-        } else {
-          release(true)
-          resolve(result)
+          return reject(err)
         }
+
+        release()
+        return resolve(result)
+
       })
     })
   })
 }
-
-module.exports.queryParameterized = function (sql,customvalues) {
+module.exports.queryParameterized = function (sql, customvalues) {
 
   return new Promise((resolve, reject) => {
+
     pool.connect(function (err, client, release) {
+
       if (err) {
-        release(true)
-        reject(err)
+        return reject(err)
       }
-      client.query(sql,customvalues, function (err, result) {
+
+      client.query(sql, customvalues, function (err, result) {
+
         if (err) {
           console.log(err)
           release(true)
-          reject(err)
-        } else {
-          release(true)
-          resolve(result)
+          return reject(err)
         }
+
+        release()
+        return resolve(result)
+
       })
     })
   })
@@ -158,4 +165,132 @@ module.exports.release = function () {
   pool.end()
   pool = new pg.Pool(connectionpool)
   return true
+}
+const COUNT_CONCURRENCY = 20
+
+let activeCountQueries = 0
+const countQueue = []
+const countStats = {
+  requests: 0,
+  errors: 0,
+  activeMax: 0,
+  queueMax: 0,
+  queueWaitTotal: 0,
+  dbExecutionTotal: 0,
+  totalTimeTotal: 0,
+  lastError: null
+}
+function processCountQueue() {
+  while (
+    activeCountQueries < COUNT_CONCURRENCY &&
+    countQueue.length > 0
+  ) {
+    const item = countQueue.shift()
+
+    activeCountQueries++
+
+    countStats.requests++
+
+    countStats.activeMax = Math.max(
+      countStats.activeMax,
+      activeCountQueries
+    )
+
+    countStats.queueMax = Math.max(
+      countStats.queueMax,
+      countQueue.length
+    )
+
+    const startedAt = Date.now()
+
+    pool
+      .query(item.sql, item.values)
+      .then(result => {
+        const finishedAt = Date.now()
+
+        const metrics = {
+          queueWaitMs: startedAt - item.queuedAt,
+          dbExecutionMs: finishedAt - startedAt,
+          totalMs: finishedAt - item.queuedAt
+        }
+
+        countStats.queueWaitTotal += metrics.queueWaitMs
+countStats.dbExecutionTotal += metrics.dbExecutionMs
+countStats.totalTimeTotal += metrics.totalMs
+
+        item.resolve({
+          result,
+          metrics
+        })
+      })
+      .catch(err => {
+        countStats.errors++
+
+        countStats.lastError = {
+          message: err.message,
+          timestamp: new Date().toISOString()
+        }
+
+        item.reject(err)
+      })
+      .finally(() => {
+        activeCountQueries--
+        processCountQueue()
+      })
+  }
+}
+module.exports.getCountStats = function () {
+  return countStats
+}
+module.exports.countParameterized = function (sql, customvalues) {
+  return new Promise((resolve, reject) => {
+
+    const queuedAt = Date.now()
+
+    countQueue.push({
+      sql: sql,
+      values: customvalues,
+      resolve: resolve,
+      reject: reject,
+      queuedAt: queuedAt
+    })
+
+    processCountQueue()
+  })
+}
+module.exports.getPoolStats = function () {
+  return {
+    total: pool.totalCount,
+    idle: pool.idleCount,
+    waiting: pool.waitingCount,
+    activeCounts: activeCountQueries,
+    queuedCounts: countQueue.length
+  }
+}
+
+
+const fs = require('fs')
+
+module.exports.writeCountStats = function () {
+  fs.mkdirSync('performance/reports', { recursive: true })
+  const stats = module.exports.getCountStats()
+
+  const report = {
+    ...stats,
+    avgQueueWaitMs: stats.requests
+      ? Math.round(stats.queueWaitTotal / stats.requests)
+      : 0,
+    avgDbExecutionMs: stats.requests
+      ? Math.round(stats.dbExecutionTotal / stats.requests)
+      : 0,
+    avgTotalTimeMs: stats.requests
+      ? Math.round(stats.totalTimeTotal / stats.requests)
+      : 0
+  }
+
+  fs.writeFileSync(
+    'performance/reports/count-stats.json',
+    JSON.stringify(report, null, 2)
+  )
+  
 }

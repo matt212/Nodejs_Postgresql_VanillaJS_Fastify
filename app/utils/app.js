@@ -1,4 +1,15 @@
 const path = require("path");
+const connections = require("../config/db.js");
+
+process.on("SIGINT", () => {
+  connections.writeCountStats();
+
+  console.log(
+    JSON.stringify(connections.getCountStats(), null, 2)
+  );
+
+  process.exit();
+});
 
 /* Fastify initialization */
 const fastify = require("fastify")({
@@ -216,6 +227,7 @@ const start = async () => {
   }
 
 };
+
 
 
 start();

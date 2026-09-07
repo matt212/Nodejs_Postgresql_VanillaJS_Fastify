@@ -308,7 +308,151 @@ npx playwright test playwright/tests/smoke.spec.js
 ----run- smoke.specs.js
 npx playwright test smoke
 
+HEADED=true \
 npx playwright test employees -g "11 - Multi-Column Filter - Dynamic fields return matching results"
 
-
+HEADED=true \
 npx playwright test employees -g "13 - Multi-Column Filter - Dynamic multi-select permutations return results"
+
+
+
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+k6 run performance/employees.k6.js
+
+HEADED=true \
+SMOKE=true \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+k6 run performance/employees.k6.js
+
+
+
+K6_REPORT_FILE=performance/reports/employees.html \
+K6_JSON_FILE=performance/reports/employees.json \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+k6 run performance/employees.k6.js
+
+For an immediate 100-user load:
+
+
+START_VUS=100 \
+TARGET_VUS=100 \
+RAMP_DURATION=1s \
+HOLD_DURATION=5m \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+K6_REPORT_FILE=performance/reports/employees-100vus.html \
+K6_JSON_FILE=performance/reports/employees-100vus.json \
+k6 run performance/employees.k6.js
+
+POOL_DEBUG=true yarn ap
+
+
+START_VUS=20 \
+TARGET_VUS=20 \
+RAMP_DURATION=10s \
+HOLD_DURATION=2m \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+K6_REPORT_FILE=performance/reports/employees-20vus.html \
+K6_JSON_FILE=performance/reports/employees-20vus.json \
+k6 run performance/employees.k6.js
+
+COUNT_P95_MS=3000 \
+START_VUS=20 \
+TARGET_VUS=20 \
+RAMP_DURATION=10s \
+HOLD_DURATION=2m \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+K6_REPORT_FILE=performance/reports/employees-20vus-pool10_.html \
+K6_JSON_FILE=performance/reports/employees-20vus-pool10_.json \
+k6 run performance/employees.k6.js
+
+
+START_VUS=500 \
+TARGET_VUS=500 \
+RAMP_DURATION=1m \
+HOLD_DURATION=2m \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+K6_REPORT_FILE=performance/reports/employees-50vus-pool20.html \
+K6_JSON_FILE=performance/reports/employees-50vus-pool20.json \
+k6 run performance/employees.k6.js
+
+
+START_VUS=50 \
+TARGET_VUS=500 \
+RAMP_DURATION=5m \
+HOLD_DURATION=2m \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+K6_REPORT_FILE=performance/reports/employees-500vus.html \
+K6_JSON_FILE=performance/reports/employees-500vus.json \
+k6 run performance/employees.k6.js
+
+
+Run the resilience test separately:
+npx playwright test playwright/tests/employees.resilience.spec.js
+
+Run it with the browser visible:
+
+npx playwright test playwright/tests/employees.resilience.spec.js --headed
+Run the concurrency test separately:
+
+npx playwright test playwright/tests/employees.concurrency.spec.js
+Configure concurrent users:
+EMPLOYEES_CONCURRENCY_USERS=10 \
+npx playwright test playwright/tests/employees.concurrency.spec.js 
+
+Configure concurrent users in browser:
+EMPLOYEES_CONCURRENCY_USERS=20 \
+npx playwright test playwright/tests/employees.concurrency.spec.js --headed
+
+Configure the p95 latency limit:
+EMPLOYEES_CONCURRENCY_USERS=10 \
+EMPLOYEES_CONCURRENCY_P95_MS=5000 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+Run both separately in sequence:
+npx playwright test playwright/tests/employees.resilience.spec.js && \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+# Baseline
+EMPLOYEES_CONCURRENCY_USERS=1 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+# Normal load
+EMPLOYEES_CONCURRENCY_USERS=5 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+# Expected peak
+EMPLOYEES_CONCURRENCY_USERS=20 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+# Stress point
+EMPLOYEES_CONCURRENCY_USERS=50 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+# Visible debugging run
+HEADED=true \
+EMPLOYEES_CONCURRENCY_USERS=100 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+Use a 10-minute timeout
+EMPLOYEES_CONCURRENCY_USERS=100 \
+EMPLOYEES_CONCURRENCY_TIMEOUT_MS=600000 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+EMPLOYEES_CONCURRENCY_P95_MS=15000 \
+EMPLOYEES_CONCURRENCY_USERS=100 \
+EMPLOYEES_CONCURRENCY_TIMEOUT_MS=600000 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
+
+
+# Accept up to 10 seconds
+EMPLOYEES_CONCURRENCY_P95_MS=10000 \
+EMPLOYEES_CONCURRENCY_USERS=1000 \
+EMPLOYEES_CONCURRENCY_TIMEOUT_MS=600000 \
+npx playwright test playwright/tests/employees.concurrency.spec.js
