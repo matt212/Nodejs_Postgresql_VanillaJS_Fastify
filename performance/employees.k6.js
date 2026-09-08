@@ -51,7 +51,7 @@ function login() {
       'Set LOGIN_USERNAME and LOGIN_PASSWORD, or provide COOKIE_HEADER'
     );
   }
-
+sleep(Math.random() * 2)
   const response = http.post(
     `${baseUrl}/login`,
     JSON.stringify({ username, password }),

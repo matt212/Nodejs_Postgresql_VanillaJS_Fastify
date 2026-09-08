@@ -394,6 +394,66 @@ K6_JSON_FILE=performance/reports/employees-500vus.json \
 k6 run performance/employees.k6.js
 
 
+
+
+START_VUS=500 \
+TARGET_VUS=1000 \
+RAMP_DURATION=5m \
+HOLD_DURATION=2m \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+K6_REPORT_FILE=performance/reports/employees-1000vus.html \
+K6_JSON_FILE=performance/reports/employees-1000vus.json \
+k6 run performance/employees.k6.js
+
+
+
+START_VUS=500 \
+TARGET_VUS=1000 \
+RAMP_DURATION=5m \
+HOLD_DURATION=2m \
+LOGIN_USERNAME=krennic \
+LOGIN_PASSWORD=orson \
+K6_REPORT_FILE=performance/reports/employees-1000vus.html \
+K6_JSON_FILE=performance/reports/employees-1000vus.json \
+k6 run performance/employees.k6.js 2>&1 | tee /tmp/k6-1000.log
+
+run during tests
+grep -ic "connection reset by peer" /tmp/k6-1000.log
+
+
+
+POOL_DEBUG=true NODE_OPTIONS="--cpu-prof --cpu-prof-dir=/tmp" yarn app 2>&1 | tee /tmp/node-1000.log
+Then run your 1000-VU test normally. When Node exits, you'll get a file like:
+
+/tmp/CPU.20260908....cpuprofile
+upload to chrome and exported it 
+important reading cpuprofile expoted from chrome 
+grep -oE '"functionName":"[^"]*"|"hitCount":[0-9]+' CPU-4pm-20260908T155654.cpuprofile | awk 'NR%2==1 {funcName=$0} NR%2==0 {print $0, funcName}' | sort -t: -k2 -nr | head -n 50
+
+
+grep -oE '"functionName":"[^"]*"|"hitCount":[0-9]+' CPU-4pm-20260908T155654.cpuprofile | awk 'NR%2==1 {funcName=$0} NR%2==0 {print $0, funcName}' | grep -E '(serialize|parseDate|addFields)' | sort -t: -k2 -nr
+
+grep -iE "connection reset by peer|ECONNRESET" /tmp/k6-1200.log | sort | uniq -c
+
+grep -B2 -A2 -i "connection reset by peer" /tmp/k6-1200.log | head -100
+
+ps -p 14445 -o pid,%cpu,%mem,rss
+
+ps -axo pid,%cpu,%mem,rss,command | grep '[n]ode.*app.js'
+
+lsof -nP -p $(pgrep -f 'node.*app.js' | head -1) -a -iTCP:3012
+
+
+
+--pm2 
+POOL_DEBUG=true NODE_OPTIONS="--cpu-prof --cpu-prof-dir=/tmp" pm2 start ./app/utils/app.js -i 4 --name DomainAgnostic
+
+pm2 stop all
+pm2 restart DomainAgnostic
+
+pm2 logs DomainAgnostic --lines 200 | grep -A 20 "COUNT STATS"
+
 Run the resilience test separately:
 npx playwright test playwright/tests/employees.resilience.spec.js
 

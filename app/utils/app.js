@@ -1,19 +1,11 @@
 const path = require("path");
 const connections = require("../config/db.js");
 
-process.on("SIGINT", () => {
-  connections.writeCountStats();
 
-  console.log(
-    JSON.stringify(connections.getCountStats(), null, 2)
-  );
-
-  process.exit();
-});
 
 /* Fastify initialization */
 const fastify = require("fastify")({
-  logger: false,
+  logger: true,
   ajv: {
     customOptions: {
       strict: false
@@ -23,6 +15,12 @@ const fastify = require("fastify")({
     ]
   }
 });
+fastify.get('/count-stats', async () => {
+  connections.writeCountStats()
+  return connections.getCountStats()
+})
+/*for performance monitoring */
+
 
 
 /* Socket.IO decorator placeholder */

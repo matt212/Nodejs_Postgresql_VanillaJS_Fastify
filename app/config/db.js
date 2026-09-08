@@ -40,7 +40,8 @@ var connectionpool = {
   //host: config.development.host, // Server hosting the postgres database
   host: config.development.host, // Server hosting the postgres database
   port: config.development.port, //env var: PGPORT
-  max: 20, // max number of clients in the pool
+  max: 10, ///run in pm2 cluster
+  //max: 20, // max number of clients in the pool
   idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
   multipleStatementResult: true,
   logging: false

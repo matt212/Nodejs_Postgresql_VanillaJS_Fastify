@@ -68,10 +68,15 @@ async function routes(fastify, options) {
   }, async (request, reply) => {
     try {
       dep.assignVariables(mod)
+      
+      const result = await withResponseCache(request, async () => {
       const req = {
         body: request.body
       }
-      const result = await dep.searchtypeOptimizedBaseParameterized(req, mod)
+
+      return await dep.searchtypeOptimizedBaseParameterized(req, mod)
+    })
+     // const result = await dep.searchtypeOptimizedBaseParameterized(req, mod)
       return reply.code(200).send(result)
     } catch (error) {
       
@@ -93,8 +98,15 @@ async function routes(fastify, options) {
       const req = {
         body: request.body
       }
-      const result = await dep.searchtypeOptimizedBaseCountParamterizedCached(req, mod)
-      return reply.code(200).send(result)
+     // const result = await dep.searchtypeOptimizedBaseCountParamterizedCached(req, mod)
+     const result = await withResponseCache(request, async () => {
+      const req = {
+        body: request.body
+      }
+
+      return await dep.searchtypeOptimizedBaseCountParamterizedCached(req, mod)
+    }) 
+     return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
         error: error.stack.toString(),
@@ -293,5 +305,30 @@ async function routes(fastify, options) {
       })
     }
   })
+
+const responseCache = new Map()
+const RESPONSE_CACHE_TTL = 30000
+
+async function withResponseCache(request, callback) {
+  const cacheKey = JSON.stringify({
+    url: request.url,
+    body: request.body
+  })
+
+  const cached = responseCache.get(cacheKey)
+
+  if (cached && cached.expires > Date.now()) {
+    return cached.value
+  }
+
+  const result = await callback()
+
+  responseCache.set(cacheKey, {
+    value: result,
+    expires: Date.now() + RESPONSE_CACHE_TTL
+  })
+
+  return result
+}
 }
 module.exports = routes

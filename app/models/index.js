@@ -14,7 +14,8 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
     host: config.host,
     dialect: config.dialect,
     pool: {
-        max: 5,
+        //max: 20,
+        max: 10, //for pm2 clustering 4 process
         min: 0,
         idle: 10000
     },

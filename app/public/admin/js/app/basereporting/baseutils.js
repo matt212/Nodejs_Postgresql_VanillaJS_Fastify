@@ -93,6 +93,7 @@ let reqops = {
   },
   flpupload: function () {
     $('#uploadfiles').click()
+    initSocket()
   },
   clearControls: function () {
 
@@ -280,6 +281,7 @@ let reqops = {
     }
   },
   exportexcel: function () {
+    initSocket()
     base.datapayload = payloadprepared()
 
     basefunction()
