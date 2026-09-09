@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow Generator</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f5f6f8;color:#222}
+.app{max-width:1100px;margin:30px auto;background:#fff;border:1px solid #ddd;border-radius:10px;overflow:hidden}
+header{padding:18px 22px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center}
+h1{font-size:20px;margin:0}.actions button,.nav button{padding:9px 14px;border:1px solid #bbb;background:#fff;border-radius:6px;cursor:pointer}.primary{background:#222!important;color:#fff;border-color:#222!important}
+.content{padding:22px}.flowname{width:100%;padding:12px;border:1px solid #ccc;border-radius:6px;margin:8px 0 20px}
+.steps{display:flex;border-bottom:1px solid #ddd;margin-bottom:24px}.step{padding:13px 16px;color:#777;cursor:pointer}.step.active{color:#111;font-weight:bold;border-bottom:3px solid #111}
+.panel{display:none}.panel.active{display:block}.search{width:300px;padding:10px;border:1px solid #ccc;border-radius:6px;margin:8px 0 18px}
+.columns{display:grid;grid-template-columns:1fr 1fr;gap:30px}.box{border:1px solid #ddd;border-radius:7px;padding:12px}.box label{display:block;padding:9px}.selected{min-height:150px}
+.row{display:grid;cursor:grab;transition:opacity .15s,background .15s;grid-template-columns:35px 50px 1fr 220px 100px 40px;align-items:center;padding:12px;border-bottom:1px solid #eee;gap:8px}.row:last-child{border:0}.row.dragging{opacity:.45;background:#f0f0f0}.row.dragover{background:#fafafa;border:2px dashed #888}
+table{width:100%;border-collapse:collapse;margin-top:15px}th,td{border:1px solid #ddd;padding:11px;text-align:left}th{background:#f5f5f5}
+select,input{padding:9px;border:1px solid #ccc;border-radius:5px;width:100%}.action-card,.rule{border:1px solid #ddd;border-radius:7px;padding:15px;margin:12px 0}.item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.item-buttons{display:flex;gap:6px}.small-btn{padding:6px 10px!important;font-size:12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.flow{display:flex;flex-direction:column;align-items:center;gap:10px}.stage{width:260px;border:1px solid #bbb;border-radius:8px;padding:14px;text-align:center}.stage h3{margin:0 0 5px}.arrow{font-size:20px;color:#666}.ruletext{font-size:13px;color:#555;margin-top:8px}
+.nav{display:flex;justify-content:space-between;margin-top:25px}.nav-right{display:flex;gap:10px}
+.hidden{display:none}.add{margin-top:12px}
+
+.json-section{margin-top:30px;border-top:1px solid #ddd;padding-top:24px}
+.json-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.json-toolbar h2{margin:0;font-size:18px}
+.json-actions{display:flex;gap:8px}
+.json-viewer{background:#111;color:#eee;border-radius:8px;padding:18px;min-height:260px;max-height:520px;overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.55;white-space:pre}
+.json-hint{font-size:13px;color:#666;margin:0 0 12px}
+.import-box{border:1px solid #ddd;border-radius:8px;padding:16px;margin:0 0 22px;background:#fafafa}.import-box h2{margin:0 0 8px;font-size:18px}.import-box p{margin:5px 0 12px;color:#666;font-size:13px}.import-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.import-actions button,.file-label{padding:9px 14px;border:1px solid #bbb;background:#fff;border-radius:6px;cursor:pointer}.file-label input{display:none}.import-status{margin-top:10px;font-size:13px;color:#555}.sample-note{font-size:12px;color:#777;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+<h1>FLOW GENERATOR</h1>
+<div class="actions"><button>Save Draft</button> <button class="primary" onclick="alert('Application generation started')">Generate</button></div>
+</header>
+
+<div class="content">
+<label>Flow Name</label>
+<input id="flowName" class="flowname" value="Purchase Process">
+
+<div class="import-box">
+  <h2>IMPORT FLOW DEFINITION</h2>
+  <p>Upload a previously prepared end-to-end flow. JSON is the consolidated definition. Excel uses separate sheets for Modules, Stages, Actions, Transitions and Rules. CSV is downloaded as a ZIP containing one CSV file per section.</p>
+  <div class="import-actions">
+    <label class="file-label">📂 Upload JSON / CSV / Excel<input id="flowFile" type="file" accept=".json,.csv,.zip,.xlsx,.xls" onchange="importFlowFile(this.files[0])"></label>
+    <button onclick="downloadSampleJSON()">Sample JSON</button>
+    <button onclick="downloadSampleCSV()">Sample CSV Package</button>
+    <button onclick="downloadSampleXLSX()">Sample Excel</button>
+  </div>
+  <div id="importStatus" class="import-status">No file imported.</div>
+  <div class="sample-note">Tip: configure manually or import a sample, edit anything, then Generate Application → Generate JSON.</div>
+</div>
+
+<div class="steps">
+<div class="step active" onclick="showStep(0)">① MODULES</div>
+<div class="step" onclick="showStep(1)">② STAGES</div>
+<div class="step" onclick="showStep(2)">③ ACTIONS</div>
+<div class="step" onclick="showStep(3)">④ TRANSITIONS</div>
+<div class="step" onclick="showStep(4)">⑤ RULES</div>
+<div class="step" onclick="showStep(5)">✓ PREVIEW</div>
+</div>
+
+<section class="panel active">
+<h2>① SELECT MODULES</h2>
+<input class="search" placeholder="🔍 Search modules..." oninput="filterModules(this.value)">
+<div class="columns">
+<div><h3>Available</h3><div class="box" id="available">
+<label><input type="checkbox" value="Employee"> Employee</label>
+<label><input type="checkbox" value="Customer"> Customer</label>
+<label><input type="checkbox" value="Vendor"> Vendor</label>
+<label><input type="checkbox" value="Purchase" checked> Purchase</label>
+<label><input type="checkbox" value="Approval" checked> Approval</label>
+<label><input type="checkbox" value="Payment" checked> Payment</label>
+</div></div>
+<div><h3>Selected</h3><div class="box selected" id="selected"></div></div>
+</div>
+<div class="nav"><span></span><button class="primary" onclick="showStep(1)">Next: Define Stages →</button></div>
+</section>
+
+<section class="panel">
+<h2>② DEFINE STAGES</h2><p>Drag to change order</p>
+<div class="box" id="stages"></div>
+<button class="add" onclick="addStage()">＋ Add Stage</button>
+<div class="nav"><button onclick="showStep(0)">← Back</button><button class="primary" onclick="showStep(2)">Next: Define Actions →</button></div>
+</section>
+
+<section class="panel">
+<h2>③ DEFINE ACTIONS</h2>
+<label>Stage:</label>
+<select id="actionStage" onchange="renderActions()">
+  <option>Approval</option><option>Request</option><option>Review</option><option>Payment</option>
+</select>
+
+<h3>Actions for selected stage</h3>
+<div id="actionsList"></div>
+<button class="add" onclick="addAction()">＋ Add Action</button>
+
+<div id="actionEditor" class="action-card hidden">
+  <div class="item-header"><b id="actionEditorTitle">Add Action</b></div>
+  <div class="grid">
+    <label>Action name<input id="actionName" placeholder="e.g. Approve"></label>
+    <label>Who can perform?
+      <select id="actionRole"><option>Requester</option><option>Manager</option><option>Finance Manager</option><option>Finance</option><option>Administrator</option></select>
+    </label>
+    <label>Button name<input id="actionButtonName" placeholder="Button label"></label>
+  </div>
+  <div class="item-buttons" style="margin-top:12px">
+    <button onclick="cancelActionEdit()">Cancel</button>
+    <button class="primary" onclick="saveAction()">Save Action</button>
+  </div>
+</div>
+
+<div class="nav"><button onclick="showStep(1)">← Back</button><button class="primary" onclick="showStep(3)">Next: Define Transitions →</button></div>
+</section>
+
+<section class="panel">
+<h2>④ DEFINE TRANSITIONS</h2>
+<p>When this action happens, where should the process go?</p>
+<div id="transitionsList"></div>
+<button class="add" onclick="addTransition()">＋ Add Transition</button>
+
+<div id="transitionEditor" class="action-card hidden">
+  <div class="item-header"><b id="transitionEditorTitle">Add Transition</b></div>
+  <div class="grid">
+    <label>Stage<input id="transitionFrom" placeholder="e.g. Approval"></label>
+    <label>Action<input id="transitionAction" placeholder="e.g. Approve"></label>
+    <label>Go To Stage<input id="transitionTo" placeholder="e.g. Payment"></label>
+    <label>Condition<input id="transitionCondition" placeholder="e.g. Always"></label>
+  </div>
+  <div class="item-buttons" style="margin-top:12px">
+    <button onclick="cancelTransitionEdit()">Cancel</button>
+    <button class="primary" onclick="saveTransition()">Save Transition</button>
+  </div>
+</div>
+
+<div class="nav"><button onclick="showStep(2)">← Back</button><button class="primary" onclick="showStep(4)">Next: Define Rules →</button></div>
+</section>
+
+<section class="panel">
+<h2>⑤ DEFINE RULES</h2>
+<div id="rulesList"></div>
+<button class="add" onclick="addRule()">＋ Add Rule</button>
+
+<div id="ruleEditor" class="action-card hidden">
+  <div class="item-header"><b id="ruleEditorTitle">Add Rule</b></div>
+  <div class="grid">
+    <label>Stage<select id="ruleStage"><option>Approval</option><option>Payment</option><option>Request</option><option>Review</option></select></label>
+    <label>Field<input id="ruleField" value="Purchase.amount"></label>
+    <label>Operator<select id="ruleOperator"><option>></option><option>=</option><option><</option><option>>=</option><option><=</option></select></label>
+    <label>Value<input id="ruleValue" value="100000"></label>
+    <label>Then<input id="ruleThen" value="Require Finance Approval"></label>
+  </div>
+  <div class="item-buttons" style="margin-top:12px">
+    <button onclick="cancelRuleEdit()">Cancel</button>
+    <button class="primary" onclick="saveRule()">Save Rule</button>
+  </div>
+</div>
+
+<div class="nav"><button onclick="showStep(3)">← Back</button><button class="primary" onclick="showStep(5)">Preview Flow →</button></div>
+</section>
+
+<section class="panel">
+<h2 style="text-align:center">PURCHASE PROCESS</h2>
+<div class="flow">
+<div class="stage"><h3>REQUEST</h3><div>Purchase</div><button>Submit</button></div><div class="arrow">↓</div>
+<div class="stage"><h3>REVIEW</h3><div>Purchase</div><button>Review</button></div><div class="arrow">↓</div>
+<div class="stage"><h3>APPROVAL</h3><div>Approval</div><button>Approve</button> <button>Reject</button><div class="ruletext">Rules: &gt;100K Finance<br>&gt;500K Director</div></div><div class="arrow">↓</div>
+<div class="stage"><h3>PAYMENT</h3><div>Payment</div><button>Pay</button><div class="ruletext">Vendor must be active</div></div><div class="arrow">↓</div>
+<div class="stage"><h3>COMPLETE</h3><div>Purchase</div></div>
+</div>
+<div class="nav">
+<button onclick="showStep(4)">← Back</button>
+<div class="nav-right">
+<button>Save Flow</button>
+<button class="primary" onclick="generateApplication()">Generate Application</button>
+<button onclick="showFinalJson()">Generate JSON</button>
+</div>
+</div>
+
+<div id="finalJson" class="json-section hidden">
+  <div class="json-toolbar">
+    <div>
+      <h2 style="cursor:pointer" onclick="toggleFinalJson()">END-TO-END FLOW DEFINITION <span id="jsonToggle">▾</span></h2>
+      <p class="json-hint">Final consolidated configuration captured at the end of the flow.</p>
+    </div>
+    <div class="json-actions">
+      <button onclick="copyFlowJson()">Copy JSON</button>
+      <button onclick="downloadFlowJson()">Download JSON</button>
+    </div>
+  </div>
+  <div id="jsonViewer" class="json-viewer"></div>
+</div>
+</section>
+
+</div>
+</div>
+
+<script>
+const panels=[...document.querySelectorAll('.panel')], steps=[...document.querySelectorAll('.step')];
+function showStep(i){panels.forEach((p,n)=>p.classList.toggle('active',n===i));steps.forEach((s,n)=>s.classList.toggle('active',n===i));window.scrollTo(0,0)}
+function syncModules(){const selected=document.getElementById('selected');selected.innerHTML='';document.querySelectorAll('#available input:checked').forEach(c=>{const d=document.createElement('div');d.textContent='✓ '+c.value;d.style.padding='9px';selected.appendChild(d)});}
+document.querySelectorAll('#available input').forEach(c=>c.addEventListener('change',syncModules));syncModules();
+function filterModules(q){document.querySelectorAll('#available label').forEach(l=>l.style.display=l.textContent.toLowerCase().includes(q.toLowerCase())?'block':'none')}
+let stages=[['Request','Purchase'],['Review','Purchase'],['Approval','Approval'],['Payment','Payment'],['Complete','Purchase']];
+
+function renderStages(){
+  const container=document.getElementById('stages');
+  container.innerHTML=stages.map((s,i)=>`
+    <div class="row"
+         draggable="true"
+         data-index="${i}"
+         ondragstart="dragStart(event)"
+         ondragover="dragOver(event)"
+         ondragleave="dragLeave(event)"
+         ondrop="dropStage(event)"
+         ondragend="dragEnd(event)">
+      <b class="drag-handle" title="Drag to reorder">☰</b>
+      <b>${i+1}</b>
+      <input value="${s[0]}" onchange="stages[${i}][0]=this.value">
+      <select onchange="stages[${i}][1]=this.value">
+        <option ${s[1]=='Purchase'?'selected':''}>Purchase</option>
+        <option ${s[1]=='Approval'?'selected':''}>Approval</option>
+        <option ${s[1]=='Payment'?'selected':''}>Payment</option>
+        <option ${s[1]=='Vendor'?'selected':''}>Vendor</option>
+      </select>
+      <button onclick="alert('Edit stage')">Edit</button>
+      <button onclick="stages.splice(${i},1);renderStages()">×</button>
+    </div>
+  `).join('');
+}
+
+let draggedIndex=null;
+
+function dragStart(event){
+  draggedIndex=Number(event.currentTarget.dataset.index);
+  event.currentTarget.classList.add('dragging');
+  event.dataTransfer.effectAllowed='move';
+  event.dataTransfer.setData('text/plain',String(draggedIndex));
+}
+
+function dragOver(event){
+  event.preventDefault();
+  event.dataTransfer.dropEffect='move';
+  event.currentTarget.classList.add('dragover');
+}
+
+function dragLeave(event){
+  event.currentTarget.classList.remove('dragover');
+}
+
+function dropStage(event){
+  event.preventDefault();
+
+  const targetIndex=Number(event.currentTarget.dataset.index);
+
+  if(draggedIndex===null || draggedIndex===targetIndex){
+    dragEnd(event);
+    return;
+  }
+
+  const moved=stages.splice(draggedIndex,1)[0];
+  stages.splice(targetIndex,0,moved);
+
+  draggedIndex=null;
+  renderStages();
+}
+
+function dragEnd(event){
+  event.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('#stages .row').forEach(row=>{
+    row.classList.remove('dragover','dragging');
+  });
+  draggedIndex=null;
+}
+
+function addStage(){
+  stages.push(['New Stage','Purchase']);
+  renderStages();
+}
+
+renderStages();
+
+
+
+let actionData=[
+  {stage:"Request",name:"Submit",role:"Requester",button:"Submit"},
+  {stage:"Review",name:"Review",role:"Manager",button:"Review"},
+  {stage:"Approval",name:"Approve",role:"Finance Manager",button:"Approve"},
+  {stage:"Approval",name:"Reject",role:"Finance Manager",button:"Reject"},
+  {stage:"Payment",name:"Pay",role:"Finance",button:"Pay"}
+];
+
+let transitionData=[
+  {from:"Request",action:"Submit",to:"Review",condition:"Always"},
+  {from:"Review",action:"Review",to:"Approval",condition:"Always"},
+  {from:"Approval",action:"Approve",to:"Payment",condition:"Approved"},
+  {from:"Approval",action:"Reject",to:"Review",condition:"Always"},
+  {from:"Payment",action:"Pay",to:"Complete",condition:"Vendor Active"}
+];
+
+let ruleData=[
+  {stage:"Approval",field:"Purchase.amount",operator:">",value:"100000",then:"Require Finance Approval"},
+  {stage:"Approval",field:"Purchase.amount",operator:">",value:"500000",then:"Require Director Approval"},
+  {stage:"Payment",field:"Vendor.active",operator:"=",value:"true",then:"Allow Pay Action"}
+];
+
+let editingAction=-1, editingTransition=-1, editingRule=-1;
+
+function renderActions(){
+  const stage=document.getElementById('actionStage').value;
+  const list=document.getElementById('actionsList');
+  const items=actionData.map((a,i)=>({a,i})).filter(x=>x.a.stage===stage);
+  list.innerHTML=items.length ? items.map(x=>`
+    <div class="action-card">
+      <div class="item-header">
+        <b>${x.a.name}</b>
+        <div class="item-buttons">
+          <button class="small-btn" onclick="editAction(${x.i})">Edit</button>
+          <button class="small-btn" onclick="deleteAction(${x.i})">×</button>
+        </div>
+      </div>
+      Who can perform? <b>${x.a.role}</b><br>
+      Button name: <b>${x.a.button}</b>
+    </div>`).join('') : '<p>No actions defined for this stage.</p>';
+}
+
+function addAction(){
+  editingAction=-1;
+  document.getElementById('actionName').value='';
+  document.getElementById('actionButtonName').value='';
+  document.getElementById('actionRole').value='Manager';
+  document.getElementById('actionEditorTitle').textContent='Add Action';
+  document.getElementById('actionEditor').classList.remove('hidden');
+}
+
+function editAction(i){
+  editingAction=i;
+  const a=actionData[i];
+  document.getElementById('actionStage').value=a.stage;
+  document.getElementById('actionName').value=a.name;
+  document.getElementById('actionRole').value=a.role;
+  document.getElementById('actionButtonName').value=a.button;
+  document.getElementById('actionEditorTitle').textContent='Edit Action';
+  document.getElementById('actionEditor').classList.remove('hidden');
+}
+
+function saveAction(){
+  const item={
+    stage:document.getElementById('actionStage').value,
+    name:document.getElementById('actionName').value.trim(),
+    role:document.getElementById('actionRole').value,
+    button:document.getElementById('actionButtonName').value.trim()
+  };
+  if(!item.name){alert('Action name is required');return}
+  if(!item.button)item.button=item.name;
+  if(editingAction===-1) actionData.push(item); else actionData[editingAction]=item;
+  document.getElementById('actionEditor').classList.add('hidden');
+  renderActions();
+}
+
+function cancelActionEdit(){document.getElementById('actionEditor').classList.add('hidden')}
+function deleteAction(i){if(confirm('Delete this action?')){actionData.splice(i,1);renderActions()}}
+
+function renderTransitions(){
+  document.getElementById('transitionsList').innerHTML=transitionData.map((t,i)=>`
+    <div class="action-card">
+      <div class="item-header"><b>${t.from} → ${t.to}</b>
+        <div class="item-buttons"><button class="small-btn" onclick="editTransition(${i})">Edit</button><button class="small-btn" onclick="deleteTransition(${i})">×</button></div>
+      </div>
+      Action: <b>${t.action}</b> &nbsp; Condition: <b>${t.condition}</b>
+    </div>`).join('');
+}
+function addTransition(){
+  editingTransition=-1;
+  ['transitionFrom','transitionAction','transitionTo','transitionCondition'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('transitionCondition').value='Always';
+  document.getElementById('transitionEditorTitle').textContent='Add Transition';
+  document.getElementById('transitionEditor').classList.remove('hidden');
+}
+function editTransition(i){
+  editingTransition=i; const t=transitionData[i];
+  document.getElementById('transitionFrom').value=t.from;
+  document.getElementById('transitionAction').value=t.action;
+  document.getElementById('transitionTo').value=t.to;
+  document.getElementById('transitionCondition').value=t.condition;
+  document.getElementById('transitionEditorTitle').textContent='Edit Transition';
+  document.getElementById('transitionEditor').classList.remove('hidden');
+}
+function saveTransition(){
+  const item={
+    from:document.getElementById('transitionFrom').value.trim(),
+    action:document.getElementById('transitionAction').value.trim(),
+    to:document.getElementById('transitionTo').value.trim(),
+    condition:document.getElementById('transitionCondition').value.trim()||'Always'
+  };
+  if(!item.from||!item.action||!item.to){alert('Stage, Action and Go To Stage are required');return}
+  if(editingTransition===-1)transitionData.push(item);else transitionData[editingTransition]=item;
+  document.getElementById('transitionEditor').classList.add('hidden');renderTransitions();
+}
+function cancelTransitionEdit(){document.getElementById('transitionEditor').classList.add('hidden')}
+function deleteTransition(i){if(confirm('Delete this transition?')){transitionData.splice(i,1);renderTransitions()}}
+
+function renderRules(){
+  document.getElementById('rulesList').innerHTML=ruleData.map((r,i)=>`
+    <div class="rule">
+      <div class="item-header"><b>RULE ${i+1}</b>
+        <div class="item-buttons"><button class="small-btn" onclick="editRule(${i})">Edit</button><button class="small-btn" onclick="deleteRule(${i})">×</button></div>
+      </div>
+      Stage: <b>${r.stage}</b><br>
+      When: <b>${r.field} ${r.operator} ${r.value}</b><br>
+      Then: <b>${r.then}</b>
+    </div>`).join('');
+}
+function addRule(){
+  editingRule=-1;
+  document.getElementById('ruleStage').value='Approval';
+  document.getElementById('ruleField').value='';
+  document.getElementById('ruleOperator').value='>';
+  document.getElementById('ruleValue').value='';
+  document.getElementById('ruleThen').value='';
+  document.getElementById('ruleEditorTitle').textContent='Add Rule';
+  document.getElementById('ruleEditor').classList.remove('hidden');
+}
+function editRule(i){
+  editingRule=i; const r=ruleData[i];
+  document.getElementById('ruleStage').value=r.stage;
+  document.getElementById('ruleField').value=r.field;
+  document.getElementById('ruleOperator').value=r.operator;
+  document.getElementById('ruleValue').value=r.value;
+  document.getElementById('ruleThen').value=r.then;
+  document.getElementById('ruleEditorTitle').textContent='Edit Rule';
+  document.getElementById('ruleEditor').classList.remove('hidden');
+}
+function saveRule(){
+  const item={
+    stage:document.getElementById('ruleStage').value,
+    field:document.getElementById('ruleField').value.trim(),
+    operator:document.getElementById('ruleOperator').value,
+    value:document.getElementById('ruleValue').value.trim(),
+    then:document.getElementById('ruleThen').value.trim()
+  };
+  if(!item.field||!item.value||!item.then){alert('Field, Value and Then are required');return}
+  if(editingRule===-1)ruleData.push(item);else ruleData[editingRule]=item;
+  document.getElementById('ruleEditor').classList.add('hidden');renderRules();
+}
+function cancelRuleEdit(){document.getElementById('ruleEditor').classList.add('hidden')}
+function deleteRule(i){if(confirm('Delete this rule?')){ruleData.splice(i,1);renderRules()}}
+
+renderActions();
+renderTransitions();
+renderRules();
+refreshStageSelectors();
+
+function setImportStatus(message, ok=true){
+  const el=document.getElementById('importStatus');
+  el.textContent=message;
+  el.style.color=ok?'#2b6':'#b33';
+}
+
+const SAMPLE_FLOW={
+  flow:{name:"Purchase Process",version:1,status:"draft"},
+  modules:["Purchase","Vendor","Approval","Payment"],
+  stages:[
+    {id:"request",name:"Request",module:"Purchase",order:1},
+    {id:"review",name:"Review",module:"Purchase",order:2},
+    {id:"approval",name:"Approval",module:"Approval",order:3},
+    {id:"payment",name:"Payment",module:"Payment",order:4},
+    {id:"complete",name:"Complete",module:"Purchase",order:5}
+  ],
+  actions:[
+    {stage:"Request",name:"Submit",role:"Requester",button:"Submit"},
+    {stage:"Review",name:"Review",role:"Manager",button:"Review"},
+    {stage:"Approval",name:"Approve",role:"Finance Manager",button:"Approve"},
+    {stage:"Approval",name:"Reject",role:"Finance Manager",button:"Reject"},
+    {stage:"Payment",name:"Pay",role:"Finance",button:"Pay"}
+  ],
+  transitions:[
+    {from:"Request",action:"Submit",to:"Review",condition:"Always"},
+    {from:"Review",action:"Review",to:"Approval",condition:"Always"},
+    {from:"Approval",action:"Approve",to:"Payment",condition:"Approved"},
+    {from:"Approval",action:"Reject",to:"Review",condition:"Always"},
+    {from:"Payment",action:"Pay",to:"Complete",condition:"Vendor Active"}
+  ],
+  rules:[
+    {stage:"Approval",field:"Purchase.amount",operator:">",value:"100000",then:"Require Finance Approval"},
+    {stage:"Approval",field:"Purchase.amount",operator:">",value:"500000",then:"Require Director Approval"},
+    {stage:"Payment",field:"Vendor.active",operator:"=",value:"true",then:"Allow Pay Action"}
+  ]
+};
+
+function ensureModule(name, checked=true){
+  if(!name) return;
+  const available=document.getElementById('available');
+  let input=[...available.querySelectorAll('input')].find(x=>x.value===name);
+  if(!input){
+    const label=document.createElement('label');
+    label.innerHTML='<input type="checkbox"> '+name;
+    available.appendChild(label);
+    input=label.querySelector('input');
+    input.value=name;
+    input.addEventListener('change',syncModules);
+  }
+  input.checked=checked;
+}
+function refreshStageSelectors(){
+  const names=stages.map(s=>s[0]).filter(Boolean);
+  const actionStage=document.getElementById('actionStage');
+  const current=actionStage.value;
+  actionStage.innerHTML=names.map(n=>`<option>${n}</option>`).join('');
+  if(names.includes(current)) actionStage.value=current;
+  else if(names.length) actionStage.value=names[0];
+  const ruleStage=document.getElementById('ruleStage');
+  const ruleCurrent=ruleStage.value;
+  ruleStage.innerHTML=names.map(n=>`<option>${n}</option>`).join('');
+  if(names.includes(ruleCurrent)) ruleStage.value=ruleCurrent;
+  else if(names.length) ruleStage.value=names[0];
+}
+function loadFlowDefinition(flow){
+  if(!flow || !flow.stages || !Array.isArray(flow.actions) || !Array.isArray(flow.transitions) || !Array.isArray(flow.rules)){
+    throw new Error('Invalid flow definition. Expected flow, stages, actions, transitions and rules.');
+  }
+  document.getElementById('flowName').value=flow.flow?.name || 'Imported Flow';
+  const modules=[...(flow.modules||[])];
+  document.querySelectorAll('#available input').forEach(i=>i.checked=modules.includes(i.value));
+  modules.forEach(m=>ensureModule(m,true));
+  stages=flow.stages.slice().sort((a,b)=>(a.order||0)-(b.order||0)).map(s=>[s.name,s.module||'Purchase']);
+  actionData=flow.actions.map(a=>({...a}));
+  transitionData=flow.transitions.map(t=>({...t}));
+  ruleData=flow.rules.map(r=>({...r}));
+  refreshStageSelectors();
+  syncModules(); renderStages(); renderActions(); renderTransitions(); renderRules();
+  document.getElementById('finalJson').classList.add('hidden');
+  setImportStatus('Imported successfully. You can now edit the flow before generating JSON.');
+}
+function parseNormalizedRows(rows){
+  const flow={flow:{name:'Imported Flow',version:1,status:'draft'},modules:[],stages:[],actions:[],transitions:[],rules:[]};
+  rows.forEach(row=>{
+    const type=String(row.type||'').trim().toLowerCase();
+    if(!type) return;
+    if(type==='flow') flow.flow.name=row.name||row.flow||flow.flow.name;
+    else if(type==='module'){ if(row.name && !flow.modules.includes(row.name)) flow.modules.push(row.name); }
+    else if(type==='stage') flow.stages.push({
+      id:(row.id||row.name||'').toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''),
+      name:row.name||'',module:row.module||'',order:Number(row.order)||flow.stages.length+1
+    });
+    else if(type==='action') flow.actions.push({stage:row.stage,name:row.name,role:row.role||'Manager',button:row.button||row.name});
+    else if(type==='transition') flow.transitions.push({
+      from:row.fromStage||row.stage,action:row.action,to:row.toStage||row.to,condition:row.condition||'Always'
+    });
+    else if(type==='rule') flow.rules.push({
+      stage:row.stage,field:row.field,operator:row.operator||'=',value:String(row.value??''),then:row.then
+    });
+  });
+  if(!flow.stages.length) throw new Error('No stage rows found.');
+  return flow;
+}
+
+function csvToRows(text){
+  const lines=[]; let row=[], cell='', quoted=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i], next=text[i+1];
+    if(ch==='"' && quoted && next==='"'){cell+='"';i++;continue}
+    if(ch==='"'){quoted=!quoted;continue}
+    if(ch===',' && !quoted){row.push(cell);cell='';continue}
+    if((ch==='\n'||ch==='\r') && !quoted){
+      if(ch==='\r'&&next==='\n')i++;
+      row.push(cell);cell='';
+      if(row.some(v=>String(v).trim()!==''))lines.push(row);
+      row=[];continue;
+    }
+    cell+=ch;
+  }
+  if(cell!=='' || row.length){row.push(cell);if(row.some(v=>String(v).trim()!==''))lines.push(row);}
+  const headers=(lines.shift()||[]).map(h=>h.trim());
+  return lines.map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]??''])));
+}
+
+function excelToFlow(buffer){
+  if(typeof XLSX==='undefined') throw new Error('Excel parser is not loaded.');
+  const wb=XLSX.read(buffer,{type:'array'});
+  const flow={flow:{name:'Imported Flow',version:1,status:'draft'},modules:[],stages:[],actions:[],transitions:[],rules:[]};
+
+  const sheet=(...names)=>{
+    const target=wb.SheetNames.find(n=>names.some(x=>x.toLowerCase()===n.toLowerCase()));
+    return target ? XLSX.utils.sheet_to_json(wb.Sheets[target],{defval:''}) : [];
+  };
+
+  sheet('Modules').forEach(r=>{
+    const name=r.name||r.Name||r.module||r.Module;
+    if(name && !flow.modules.includes(name)) flow.modules.push(name);
+  });
+  sheet('Stages').forEach((r,i)=>flow.stages.push({
+    id:r.id||r.Id||('stage_'+(i+1)),name:r.name||r.Name||'',module:r.module||r.Module||'',order:Number(r.order||r.Order)||i+1
+  }));
+  sheet('Actions').forEach(r=>flow.actions.push({
+    stage:r.stage||r.Stage||'',name:r.name||r.Name||'',role:r.role||r.Role||'Manager',button:r.button||r.Button||r.name||r.Name||''
+  }));
+  sheet('Transitions').forEach(r=>flow.transitions.push({
+    from:r.fromStage||r.from||r.stage||r.Stage||'',action:r.action||r.Action||'',to:r.toStage||r.to||r.GoToStage||'',condition:r.condition||r.Condition||'Always'
+  }));
+  sheet('Rules').forEach(r=>flow.rules.push({
+    stage:r.stage||r.Stage||'',field:r.field||r.Field||'',operator:r.operator||r.Operator||'=',value:String(r.value??r.Value??''),then:r.then||r.Then||''
+  }));
+
+  return flow;
+}
+
+async function zipCsvToFlow(buffer){
+  if(typeof JSZip==='undefined') throw new Error('ZIP parser is not loaded.');
+  const zip=await JSZip.loadAsync(buffer);
+  const flow={flow:{name:'Imported Flow',version:1,status:'draft'},modules:[],stages:[],actions:[],transitions:[],rules:[]};
+
+  const findFile=(...names)=>{
+    const wanted=names.map(x=>x.toLowerCase());
+    const key=Object.keys(zip.files).find(k=>{
+      const base=k.split('/').pop().toLowerCase();
+      return wanted.includes(base);
+    });
+    return key;
+  };
+
+  const read=async (...names)=>{
+    const key=findFile(...names);
+    return key ? csvToRows(await zip.files[key].async('text')) : [];
+  };
+
+  const add=async()=>{
+    const modules=await read('modules.csv','module.csv');
+    modules.forEach(r=>{const n=r.name||r.module;if(n&&!flow.modules.includes(n))flow.modules.push(n);});
+
+    const stages=await read('stages.csv','stage.csv');
+    stages.forEach((r,i)=>flow.stages.push({id:r.id||('stage_'+(i+1)),name:r.name||'',module:r.module||'',order:Number(r.order)||i+1}));
+
+    const actions=await read('actions.csv','action.csv');
+    actions.forEach(r=>flow.actions.push({stage:r.stage||'',name:r.name||'',role:r.role||'Manager',button:r.button||r.name||''}));
+
+    const transitions=await read('transitions.csv','transition.csv');
+    transitions.forEach(r=>flow.transitions.push({from:r.fromStage||r.from||r.stage||'',action:r.action||'',to:r.toStage||r.to||'',condition:r.condition||'Always'}));
+
+    const rules=await read('rules.csv','rule.csv');
+    rules.forEach(r=>flow.rules.push({stage:r.stage||'',field:r.field||'',operator:r.operator||'=',value:String(r.value??''),then:r.then||''}));
+  };
+  await add();
+  return flow;
+}
+
+async function importFlowFile(file){
+  if(!file)return;
+  try{
+    const ext=file.name.toLowerCase().split('.').pop();
+    let flow;
+    if(ext==='json') flow=JSON.parse(await file.text());
+    else if(ext==='csv') flow=parseNormalizedRows(csvToRows(await file.text()));
+    else if(ext==='xlsx'||ext==='xls') flow=excelToFlow(await file.arrayBuffer());
+    else if(ext==='zip') flow=await zipCsvToFlow(await file.arrayBuffer());
+    else throw new Error('Supported files: JSON, CSV, ZIP, XLSX, XLS');
+    loadFlowDefinition(flow);
+  }catch(e){
+    setImportStatus('Import failed: '+e.message,false);
+  }
+}
+
+function downloadText(filename,text,type){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type}));
+  a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function downloadSampleJSON(){
+  downloadText('purchase-process-flow.json',JSON.stringify(SAMPLE_FLOW,null,2),'application/json');
+}
+
+function csvEscape(v){
+  v=String(v??'');
+  return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+}
+
+function sectionRows(){
+  return {
+    Modules:SAMPLE_FLOW.modules.map(name=>({name})),
+    Stages:SAMPLE_FLOW.stages.map(s=>({id:s.id,name:s.name,module:s.module,order:s.order})),
+    Actions:SAMPLE_FLOW.actions.map(a=>({stage:a.stage,name:a.name,role:a.role,button:a.button})),
+    Transitions:SAMPLE_FLOW.transitions.map(t=>({fromStage:t.from,action:t.action,toStage:t.to,condition:t.condition})),
+    Rules:SAMPLE_FLOW.rules.map(r=>({stage:r.stage,field:r.field,operator:r.operator,value:r.value,then:r.then}))
+  };
+}
+
+function rowsToCsv(rows){
+  const headers=[...new Set(rows.flatMap(r=>Object.keys(r)))];
+  return [headers.join(','),...rows.map(r=>headers.map(h=>csvEscape(r[h])).join(','))].join('\r\n');
+}
+
+async function downloadSampleCSV(){
+  if(typeof JSZip==='undefined'){
+    alert('CSV package generator could not be loaded. Check internet access and reopen this HTML file.');
+    return;
+  }
+  const zip=new JSZip();
+  const sections=sectionRows();
+  Object.entries(sections).forEach(([name,rows])=>{
+    zip.file(name.toLowerCase()+'.csv',rowsToCsv(rows));
+  });
+  const blob=await zip.generateAsync({type:'blob'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='purchase-process-flow-csv-package.zip';
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+function downloadSampleXLSX(){
+  if(typeof XLSX==='undefined'){
+    alert('Excel generator could not be loaded. Check internet access and reopen this HTML file.');
+    return;
+  }
+  const wb=XLSX.utils.book_new();
+  const sections=sectionRows();
+  Object.entries(sections).forEach(([name,rows])=>{
+    const ws=XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb,ws,name);
+  });
+  XLSX.writeFile(wb,'purchase-process-flow.xlsx');
+}
+
+function buildFlowDefinition(){
+  const flowName=document.getElementById('flowName').value.trim() || 'Untitled Flow';
+  const modules=[...document.querySelectorAll('#available input:checked')].map(c=>c.value);
+
+  const stageObjects=stages.map((s,i)=>({
+    id:s[0].toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,''),
+    name:s[0],
+    module:s[1],
+    order:i+1
+  }));
+
+  return {
+    flow:{name:flowName,version:1,status:"draft"},
+    modules,
+    stages:stageObjects,
+    actions:actionData,
+    transitions:transitionData,
+    rules:ruleData
+  };
+}
+
+function generateApplication(){
+  alert('Application generated successfully');
+}
+
+function showFinalJson(){
+  const finalJson=document.getElementById('finalJson');
+  finalJson.classList.remove('hidden');
+  document.getElementById('jsonViewer').textContent=
+    JSON.stringify(buildFlowDefinition(),null,2);
+  document.getElementById('jsonViewer').classList.remove('hidden');
+  document.getElementById('jsonToggle').textContent='▾';
+  finalJson.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function toggleFinalJson(){
+  const viewer=document.getElementById('jsonViewer');
+  const toggle=document.getElementById('jsonToggle');
+  const hidden=viewer.classList.toggle('hidden');
+  toggle.textContent=hidden?'▸':'▾';
+}
+
+async function copyFlowJson(){
+  const text=JSON.stringify(buildFlowDefinition(),null,2);
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch(e){
+    const area=document.createElement('textarea');
+    area.value=text;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand('copy');
+    area.remove();
+  }
+  alert('Flow JSON copied');
+}
+
+function downloadFlowJson(){
+  const data=JSON.stringify(buildFlowDefinition(),null,2);
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=(document.getElementById('flowName').value.trim() || 'flow-definition')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'-') + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

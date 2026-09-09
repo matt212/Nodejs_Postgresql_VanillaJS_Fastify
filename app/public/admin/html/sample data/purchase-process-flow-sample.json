@@ -1,0 +1,132 @@
+{
+  "flow": {
+    "name": "Purchase Process",
+    "version": 1,
+    "status": "draft"
+  },
+  "modules": [
+    "Purchase",
+    "Vendor",
+    "Approval",
+    "Payment"
+  ],
+  "stages": [
+    {
+      "id": "request",
+      "name": "Request",
+      "module": "Purchase",
+      "order": 1
+    },
+    {
+      "id": "review",
+      "name": "Review",
+      "module": "Purchase",
+      "order": 2
+    },
+    {
+      "id": "approval",
+      "name": "Approval",
+      "module": "Approval",
+      "order": 3
+    },
+    {
+      "id": "payment",
+      "name": "Payment",
+      "module": "Payment",
+      "order": 4
+    },
+    {
+      "id": "complete",
+      "name": "Complete",
+      "module": "Purchase",
+      "order": 5
+    }
+  ],
+  "actions": [
+    {
+      "stage": "Request",
+      "name": "Submit",
+      "role": "Requester",
+      "button": "Submit"
+    },
+    {
+      "stage": "Review",
+      "name": "Review",
+      "role": "Manager",
+      "button": "Review"
+    },
+    {
+      "stage": "Approval",
+      "name": "Approve",
+      "role": "Finance Manager",
+      "button": "Approve"
+    },
+    {
+      "stage": "Approval",
+      "name": "Reject",
+      "role": "Finance Manager",
+      "button": "Reject"
+    },
+    {
+      "stage": "Payment",
+      "name": "Pay",
+      "role": "Finance",
+      "button": "Pay"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "Request",
+      "action": "Submit",
+      "to": "Review",
+      "condition": "Always"
+    },
+    {
+      "from": "Review",
+      "action": "Review",
+      "to": "Approval",
+      "condition": "Always"
+    },
+    {
+      "from": "Approval",
+      "action": "Approve",
+      "to": "Payment",
+      "condition": "Approved"
+    },
+    {
+      "from": "Approval",
+      "action": "Reject",
+      "to": "Review",
+      "condition": "Always"
+    },
+    {
+      "from": "Payment",
+      "action": "Pay",
+      "to": "Complete",
+      "condition": "Vendor Active"
+    }
+  ],
+  "rules": [
+    {
+      "stage": "Approval",
+      "field": "Purchase.amount",
+      "operator": ">",
+      "value": "100000",
+      "then": "Require Finance Approval"
+    },
+    {
+      "stage": "Approval",
+      "field": "Purchase.amount",
+      "operator": ">",
+      "value": "500000",
+      "then": "Require Director Approval"
+    },
+    {
+      "stage": "Payment",
+      "field": "Vendor.active",
+      "operator": "=",
+      "value": "true",
+      "then": "Allow Pay Action"
+    }
+  ]
+}
