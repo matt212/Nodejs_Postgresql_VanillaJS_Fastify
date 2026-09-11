@@ -2,8 +2,12 @@
 
 
 const { test, expect } = require('@playwright/test');
-
-
+let mod =  {
+  Name: 'employees',
+  id: 'employeesid',
+  type: 'base'
+};
+let validationConfig = require('../../app/routes/utils/' + mod.Name + '/validationConfig.js')
 
 
 
@@ -1555,6 +1559,337 @@ test(
         ).toBeVisible();
     }
 );
+
+
+// ============================================================
+// TEST 16
+// CRUD - CREATE EMPLOYEE
+//
+// Driven by validationmap.
+// No employee field names are hardcoded in the control logic.
+// ============================================================
+function generateTestValue(field) {
+
+    const {
+        fieldvalidatename,
+        fieldmaxlength
+    } = field;
+
+    const maxLength =
+        Number(fieldmaxlength) || 45;
+
+    switch (fieldvalidatename.toLowerCase()) {
+
+        case 'string':
+
+            return 'A'.repeat(
+                Math.min(maxLength, 10)
+            );
+
+        case 'alphanumeric':
+
+            return 'A1'.repeat(
+                Math.ceil(
+                    Math.min(maxLength, 10) / 2
+                )
+            ).substring(
+                0,
+                maxLength
+            );
+
+        case 'number':
+
+            return '123';
+
+        case 'integer':
+
+            return '123';
+
+        case 'decimal':
+
+            return '123.45';
+
+        case 'date':
+
+            return '1990-01-15';
+
+        case 'boolean':
+
+            return true;
+
+        default:
+
+            throw new Error(
+                `Unsupported field validation type: ${fieldvalidatename}`
+            );
+    }
+}
+
+test(
+    '16 - CRUD - Create Employee using validationmap',
+    async ({ page }) => {
+
+        // ----------------------------------------------------
+        // Open Employees page
+        // ----------------------------------------------------
+
+        await loadEmployeesReport(page);
+
+
+        // ----------------------------------------------------
+        // Open Create Modal
+        // ----------------------------------------------------
+
+        await page.locator(
+            'xpath=/html/body/div[2]/div[2]/section/div[1]/div[2]/div[1]/div[2]/div[1]/div/a'
+        ).click();
+
+
+        // ----------------------------------------------------
+        // Iterate validationmap
+        // ----------------------------------------------------
+
+        const createdValues = {};
+
+for (const field of validationConfig.validationmap) {
+
+    const {
+        inputname,
+        fieldtypename,
+        fieldvalidatename,
+        fieldmaxlength
+    } = field;
+
+
+    console.log(
+        `[CRUD CREATE] Processing field: ${inputname} | type: ${fieldtypename} | validation: ${fieldvalidatename} | maxlength: ${fieldmaxlength}`
+    );
+
+
+    const control =
+        page.locator(
+            `[data-key-type="${inputname}"]`
+        );
+
+
+    await expect(control)
+        .toBeVisible();
+
+
+    // -----------------------------------------------
+    // Generate value strictly from validation type
+    // -----------------------------------------------
+
+    const value =
+        generateTestValue(field);
+await control.fill(String(value));
+
+    // Trigger the same onchange event used by the application
+    await control.dispatchEvent('change');
+
+    // -----------------------------------------------
+    // Fill control
+    // -----------------------------------------------
+
+    await control.fill(
+        String(value)
+    );
+
+await control.pressSequentially(String(value));
+    createdValues[inputname] =
+        String(value);
+
+
+    console.log(
+        `[CRUD CREATE] ${inputname} = ${value}`
+    );
+}
+
+
+        // ----------------------------------------------------
+        // Record State
+        // ----------------------------------------------------
+
+   const recordStateInput = page.locator('#cltrlrecordstate');
+
+const recordStateControl = page.locator(
+    'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+);
+
+await expect(recordStateControl).toBeVisible();
+
+// Click only if currently unchecked
+if (!(await recordStateInput.isChecked())) {
+    await recordStateControl.click();
+}
+
+await expect(recordStateInput).toBeChecked();
+
+createdValues.recordstate = true;
+
+
+// ----------------------------------------------------
+// Save
+// ----------------------------------------------------
+
+const submitButton = page.locator('#btnmodalsub');
+
+await expect(submitButton).toBeVisible();
+await expect(submitButton).toBeEnabled();
+
+
+        console.log(
+            '[CRUD CREATE] Submit button is enabled'
+        );
+
+
+        // ----------------------------------------------------
+        // CREATE API
+        // ----------------------------------------------------
+
+        const createResponsePromise =
+            page.waitForResponse(response =>
+                response.url().includes(
+                    '/employees/api/create/'
+                ) &&
+                response.status() >= 200 &&
+                response.status() < 300
+            );
+const searchTypeResponsePromise =
+    page.waitForResponse(response =>
+        response.url().includes('/employees/api/searchtype/') &&
+        response.status() >= 200 &&
+        response.status() < 300
+    );
+
+
+        await submitButton.click();
+
+
+        const createResponse =
+            await createResponsePromise;
+const searchTypeResponse = await searchTypeResponsePromise;
+
+        console.log(
+            '[CRUD CREATE] Employee create API completed:',
+            createResponse.status()
+        );
+
+console.log(
+    `[CRUD CREATE] SearchType API completed: ${searchTypeResponse.status()}`
+);
+        // ----------------------------------------------------
+        // Wait for report refresh
+        // ----------------------------------------------------
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible();
+
+
+        // ----------------------------------------------------
+        // Find newly created employee
+        //
+        // Use first_name as the unique anchor.
+        // ----------------------------------------------------
+
+        const createdFirstName =
+            createdValues.first_name;
+
+
+        const createdRow =
+            page.locator(
+                '#basetable tbody tr'
+            ).filter({
+                hasText: createdFirstName
+            }).first();
+
+
+        await expect(
+            createdRow
+        ).toBeVisible();
+
+
+        console.log(
+            `[CRUD VERIFY] Created employee row found: ${createdFirstName}`
+        );
+
+
+        // ----------------------------------------------------
+        // Verify created values dynamically
+        // ----------------------------------------------------
+
+        for (const field of validationConfig.validationmap) {
+
+            const {
+                inputname
+            } = field;
+
+
+            const expectedValue =
+                createdValues[inputname];
+
+
+            // ------------------------------------------------
+            // Find table column dynamically
+            // ------------------------------------------------
+
+            const header =
+                page.locator(
+                    `#basetable thead tr th[data-field-header="${inputname}"]`
+                );
+
+
+            await expect(header)
+                .toBeVisible();
+
+
+            const columnIndex =
+                await header.evaluate(
+                    element => element.cellIndex
+                );
+
+
+            // ------------------------------------------------
+            // Existing table has first non-data TD
+            // ------------------------------------------------
+
+            const cell =
+                createdRow
+                    .locator('td')
+                    .nth(columnIndex + 1);
+
+
+            const actualValue =
+                (await cell.textContent())
+                    .trim();
+
+
+            console.log(
+                `[CRUD VERIFY] ${inputname} | Expected: "${expectedValue}" | Actual: "${actualValue}"`
+            );
+
+
+            // ------------------------------------------------
+            // Verify
+            // ------------------------------------------------
+
+            expect(
+                actualValue
+            ).toBe(
+                expectedValue
+            );
+        }
+
+
+        console.log(
+            '[PASS] CRUD Create - Employee created and verified successfully'
+        );
+    }
+);
+
+
+
 
 
 
