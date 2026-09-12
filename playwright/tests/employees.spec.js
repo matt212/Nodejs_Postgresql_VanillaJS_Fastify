@@ -48,25 +48,48 @@ async function applyDateRange(page) {
         }
 
         picker.setStartDate('1982-08-07');
-        picker.setEndDate('2026-09-06');
+        const today = new Date();
+
+const formattedToday =
+    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        picker.setEndDate(formattedToday);
     });
+console.log(
+    'Date range:',
+    await page.locator('#reservation').inputValue()
+);
+page.on('request', request => {
+    if (request.url().includes('/employees/api/searchtype/')) {
+        console.log('========== PLAYWRIGHT REQUEST ==========');
+        console.log('URL:', request.url());
+        console.log('METHOD:', request.method());
+        console.log('POST DATA:', request.postData());
+        console.log('HEADERS:', request.headers());
+    }
+});
+const responsePromise = page.waitForResponse(response =>
+    response.url().includes('/employees/api/searchtype/') &&
+    response.status() === 200
+);
 
-    console.log(
-        'Date range:',
-        await page.locator('#reservation').inputValue()
-    );
+await page.locator(
+    '.daterangepicker .applyBtn'
+).click();
 
-    await page.locator(
-        '.daterangepicker .applyBtn'
-    ).click();
+const response = await responsePromise;
 
-    await expect(
-        page.locator('#dvreportcontainer')
-    ).not.toHaveClass(/loading-report-container/);
+console.log('[SEARCH URL]', response.url());
+console.log('[SEARCH DATA]', await response.text());
 
-    await expect(
-        page.locator('#divreportcontent').first()
-    ).toBeVisible();
+await expect(
+    page.locator('#dvreportcontainer')
+).not.toHaveClass(/loading-report-container/);
+
+await expect(
+    page.locator('#divreportcontent').first()
+).toBeVisible();
+    
 
     await page.waitForTimeout(2000);
 }
@@ -87,6 +110,7 @@ async function loadEmployeesReport(page) {
     await openControlBar(page);
 
     await applyDateRange(page);
+
 }
 
 
@@ -1567,6 +1591,27 @@ test(
 //
 // Driven by validationmap.
 // No employee field names are hardcoded in the control logic.
+function generateRandomAlphabetic(maxLength) {
+
+    const alphabet =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+    const length = Math.min(
+        maxLength,
+        Math.floor(Math.random() * 6) + 5
+    );
+
+    let value = '';
+
+    for (let i = 0; i < length; i++) {
+        value += alphabet.charAt(
+            Math.floor(Math.random() * alphabet.length)
+        );
+    }
+
+    return value;
+}
+
 // ============================================================
 function generateTestValue(field) {
 
@@ -1582,9 +1627,7 @@ function generateTestValue(field) {
 
         case 'string':
 
-            return 'A'.repeat(
-                Math.min(maxLength, 10)
-            );
+           return generateRandomAlphabetic(maxLength);
 
         case 'alphanumeric':
 
@@ -1611,7 +1654,7 @@ function generateTestValue(field) {
 
         case 'date':
 
-            return '1990-01-15';
+            return '01-11-1990';
 
         case 'boolean':
 
@@ -1625,268 +1668,251 @@ function generateTestValue(field) {
     }
 }
 
-test(
-    '16 - CRUD - Create Employee using validationmap',
-    async ({ page }) => {
 
-        // ----------------------------------------------------
-        // Open Employees page
-        // ----------------------------------------------------
+test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
-        await loadEmployeesReport(page);
+    // ------------------------------------------------------------
+    // Load the Employees report and wait until the page is ready
+    // ------------------------------------------------------------
 
-
-        // ----------------------------------------------------
-        // Open Create Modal
-        // ----------------------------------------------------
-
-        await page.locator(
-            'xpath=/html/body/div[2]/div[2]/section/div[1]/div[2]/div[1]/div[2]/div[1]/div/a'
-        ).click();
+    await loadEmployeesReport(page);
 
 
-        // ----------------------------------------------------
-        // Iterate validationmap
-        // ----------------------------------------------------
+    // ------------------------------------------------------------
+    // Open the Create Employee modal
+    // ------------------------------------------------------------
 
-        const createdValues = {};
-
-for (const field of validationConfig.validationmap) {
-
-    const {
-        inputname,
-        fieldtypename,
-        fieldvalidatename,
-        fieldmaxlength
-    } = field;
+    await page.locator(
+        'xpath=/html/body/div[2]/div[2]/section/div[1]/div[2]/div[1]/div[2]/div[1]/div/a'
+    ).click();
 
 
-    console.log(
-        `[CRUD CREATE] Processing field: ${inputname} | type: ${fieldtypename} | validation: ${fieldvalidatename} | maxlength: ${fieldmaxlength}`
-    );
+    // ------------------------------------------------------------
+    // Generate test data dynamically from validationmap
+    // and fill each configured form control
+    // ------------------------------------------------------------
 
+    const createdValues = {};
 
-    const control =
-        page.locator(
+    for (const field of validationConfig.validationmap) {
+
+        const { inputname } = field;
+
+        const control = page.locator(
             `[data-key-type="${inputname}"]`
         );
 
+        // Ensure the configured control is available in the form
+        await expect(control).toBeVisible();
 
-    await expect(control)
-        .toBeVisible();
-
-
-    // -----------------------------------------------
-    // Generate value strictly from validation type
-    // -----------------------------------------------
-
-    const value =
-        generateTestValue(field);
-await control.fill(String(value));
-
-    // Trigger the same onchange event used by the application
-    await control.dispatchEvent('change');
-
-    // -----------------------------------------------
-    // Fill control
-    // -----------------------------------------------
-
-    await control.fill(
-        String(value)
-    );
-
-await control.pressSequentially(String(value));
-    createdValues[inputname] =
-        String(value);
-
-
-    console.log(
-        `[CRUD CREATE] ${inputname} = ${value}`
-    );
-}
-
-
-        // ----------------------------------------------------
-        // Record State
-        // ----------------------------------------------------
-
-   const recordStateInput = page.locator('#cltrlrecordstate');
-
-const recordStateControl = page.locator(
-    'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
-);
-
-await expect(recordStateControl).toBeVisible();
-
-// Click only if currently unchecked
-if (!(await recordStateInput.isChecked())) {
-    await recordStateControl.click();
-}
-
-await expect(recordStateInput).toBeChecked();
-
-createdValues.recordstate = true;
-
-
-// ----------------------------------------------------
-// Save
-// ----------------------------------------------------
-
-const submitButton = page.locator('#btnmodalsub');
-
-await expect(submitButton).toBeVisible();
-await expect(submitButton).toBeEnabled();
-
-
-        console.log(
-            '[CRUD CREATE] Submit button is enabled'
+        // Generate a value based on the field's validation configuration
+        const value = String(
+            generateTestValue(field)
         );
 
+        // Type the generated value into the control
+        await control.pressSequentially(value);
 
-        // ----------------------------------------------------
-        // CREATE API
-        // ----------------------------------------------------
-
-        const createResponsePromise =
-            page.waitForResponse(response =>
-                response.url().includes(
-                    '/employees/api/create/'
-                ) &&
-                response.status() >= 200 &&
-                response.status() < 300
-            );
-const searchTypeResponsePromise =
-    page.waitForResponse(response =>
-        response.url().includes('/employees/api/searchtype/') &&
-        response.status() >= 200 &&
-        response.status() < 300
-    );
+        // Store the value so it can be verified after creation
+        createdValues[inputname] = value;
+    }
 
 
-        await submitButton.click();
+    // ------------------------------------------------------------
+    // Enable Record State
+    // ------------------------------------------------------------
 
+    const recordStateInput =
+        page.locator('#cltrlrecordstate');
 
-        const createResponse =
-            await createResponsePromise;
-const searchTypeResponse = await searchTypeResponsePromise;
-
-        console.log(
-            '[CRUD CREATE] Employee create API completed:',
-            createResponse.status()
+    // Material UI uses a visible wrapper for the checkbox
+    const recordStateControl =
+        page.locator(
+            'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
         );
 
-console.log(
-    `[CRUD CREATE] SearchType API completed: ${searchTypeResponse.status()}`
-);
-        // ----------------------------------------------------
-        // Wait for report refresh
-        // ----------------------------------------------------
+    await expect(recordStateControl).toBeVisible();
 
-        await expect(
-            page.locator('#basetable')
-        ).toBeVisible();
+    // Enable Record State only when it is currently unchecked
+    if (!(await recordStateInput.isChecked())) {
+        await recordStateControl.click();
+    }
 
+    await expect(recordStateInput).toBeChecked();
 
-        // ----------------------------------------------------
-        // Find newly created employee
-        //
-        // Use first_name as the unique anchor.
-        // ----------------------------------------------------
-
-        const createdFirstName =
-            createdValues.first_name;
+    // Store the value for post-create verification
+    createdValues.recordstate = true;
 
 
-        const createdRow =
-            page.locator(
-                '#basetable tbody tr'
-            ).filter({
-                hasText: createdFirstName
-            }).first();
+    // ------------------------------------------------------------
+    // Submit the Create Employee form
+    // ------------------------------------------------------------
+
+    const submitButton =
+        page.locator('#btnmodalsub');
+
+    await expect(submitButton).toBeEnabled();
 
 
-        await expect(
-            createdRow
-        ).toBeVisible();
+    // ------------------------------------------------------------
+    // Wait for both APIs triggered by the Create operation:
+    //
+    // 1. Create API       → persists the employee
+    // 2. SearchType API   → refreshes the Employees table
+    //
+    // The response listeners are registered before clicking Submit
+    // so neither request can be missed.
+    // ------------------------------------------------------------
+
+    const [
+        createResponse,
+        searchTypeResponse
+    ] = await Promise.all([
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/create/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/searchtype/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        submitButton.click()
+    ]);
 
 
-        console.log(
-            `[CRUD VERIFY] Created employee row found: ${createdFirstName}`
-        );
+    // ------------------------------------------------------------
+    // Wait for the refreshed Employees table
+    // ------------------------------------------------------------
+
+    await expect(
+        page.locator('#basetable')
+    ).toBeVisible();
 
 
-        // ----------------------------------------------------
-        // Verify created values dynamically
-        // ----------------------------------------------------
+    // ------------------------------------------------------------
+    // Locate the newly created employee
+    //
+    // first_name is used as the unique row anchor because the
+    // generated test value is unique for this test execution.
+    // ------------------------------------------------------------
 
-        for (const field of validationConfig.validationmap) {
+    const createdRow =
+        page.locator('#basetable tbody tr')
+            .filter({
+                hasText: createdValues.first_name
+            })
+            .first();
 
-            const {
-                inputname
-            } = field;
+    await expect(createdRow).toBeVisible();
 
 
-            const expectedValue =
-                createdValues[inputname];
+    // ------------------------------------------------------------
+    // Verify every field configured in validationmap
+    // ------------------------------------------------------------
+
+    for (const field of validationConfig.validationmap) {
+
+        const {
+            inputname,
+            fieldtypename
+        } = field;
 
 
-            // ------------------------------------------------
-            // Find table column dynamically
-            // ------------------------------------------------
+        // --------------------------------------------------------
+        // Get the expected value generated during record creation
+        // --------------------------------------------------------
 
-            const header =
-                page.locator(
-                    `#basetable thead tr th[data-field-header="${inputname}"]`
+        let expectedValue =
+            createdValues[inputname];
+
+
+        // --------------------------------------------------------
+        // Convert DATE input value into the format displayed
+        // by the Employees table
+        // --------------------------------------------------------
+
+        if (
+            fieldtypename === 'DATE' &&
+            expectedValue
+        ) {
+
+            const [
+                day,
+                month,
+                year
+            ] = expectedValue.split('-');
+
+            expectedValue =
+                new Date(
+                    year,
+                    month - 1,
+                    day
+                ).toLocaleDateString(
+                    'en-GB',
+                    {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    }
                 );
-
-
-            await expect(header)
-                .toBeVisible();
-
-
-            const columnIndex =
-                await header.evaluate(
-                    element => element.cellIndex
-                );
-
-
-            // ------------------------------------------------
-            // Existing table has first non-data TD
-            // ------------------------------------------------
-
-            const cell =
-                createdRow
-                    .locator('td')
-                    .nth(columnIndex + 1);
-
-
-            const actualValue =
-                (await cell.textContent())
-                    .trim();
-
-
-            console.log(
-                `[CRUD VERIFY] ${inputname} | Expected: "${expectedValue}" | Actual: "${actualValue}"`
-            );
-
-
-            // ------------------------------------------------
-            // Verify
-            // ------------------------------------------------
-
-            expect(
-                actualValue
-            ).toBe(
-                expectedValue
-            );
         }
 
 
-        console.log(
-            '[PASS] CRUD Create - Employee created and verified successfully'
-        );
+        // --------------------------------------------------------
+        // Find the table header corresponding to the field
+        // --------------------------------------------------------
+
+        const header =
+            page.locator(
+                `#basetable thead tr th[data-field-header="${inputname}"]`
+            );
+
+        await expect(header).toBeVisible();
+
+
+        // --------------------------------------------------------
+        // Use the header position to locate the corresponding
+        // cell in the newly created row.
+        //
+        // The -1 accounts for the additional leading cell in
+        // the table body row.
+        // --------------------------------------------------------
+
+        const headerIndex =
+            await header.evaluate(
+                el => el.cellIndex
+            );
+
+        const cell =
+            createdRow
+                .locator('td')
+                .nth(headerIndex - 1);
+
+
+        // --------------------------------------------------------
+        // Read the actual value displayed in the table
+        // --------------------------------------------------------
+
+        const actualValue =
+            (await cell.innerText()).trim();
+
+
+        // --------------------------------------------------------
+        // Verify the database-created value against the value
+        // displayed in the Employees table
+        // --------------------------------------------------------
+
+        expect(actualValue).toBe(expectedValue);
     }
-);
+});
+
 
 
 

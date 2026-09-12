@@ -154,6 +154,7 @@ async function routes(fastify, options) {
       dep.assignVariables(mod)
       let result = await dep.createRecord(request, mod)
       dep.clearCountCache()
+      clearResponseCache();
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
@@ -305,7 +306,9 @@ async function routes(fastify, options) {
       })
     }
   })
-
+function clearResponseCache() {
+    responseCache.clear();
+}
 const responseCache = new Map()
 const RESPONSE_CACHE_TTL = 30000
 
@@ -316,10 +319,17 @@ async function withResponseCache(request, callback) {
   })
 
   const cached = responseCache.get(cacheKey)
-
+console.log(
+    '[CACHE]',
+    'PID:', process.pid,
+    'HIT:', !!cached,
+    'EXPIRED:', cached ? cached.expires <= Date.now() : false
+  )
   if (cached && cached.expires > Date.now()) {
+    console.log('[CACHE] RETURNING CACHED RESULT')
     return cached.value
   }
+  console.log('[CACHE] EXECUTING DATABASE QUERY')
 
   const result = await callback()
 
@@ -327,7 +337,7 @@ async function withResponseCache(request, callback) {
     value: result,
     expires: Date.now() + RESPONSE_CACHE_TTL
   })
-
+console.log(result);
   return result
 }
 }
