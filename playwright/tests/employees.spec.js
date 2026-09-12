@@ -79,8 +79,8 @@ await page.locator(
 
 const response = await responsePromise;
 
-console.log('[SEARCH URL]', response.url());
-console.log('[SEARCH DATA]', await response.text());
+//console.log('[SEARCH URL]', response.url());
+//console.log('[SEARCH DATA]', await response.text());
 
 await expect(
     page.locator('#dvreportcontainer')
@@ -1913,6 +1913,155 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
     }
 });
 
+test(
+    '17 - data Form - dynamic field cartesian product validation using validationmap',
+    async ({ page }) => {
+
+        await loadEmployeesReport(page);
+
+
+        // ------------------------------------------------------------
+        // Open the Create Employee modal
+        // ------------------------------------------------------------
+
+        await page.locator(
+            'xpath=/html/body/div[2]/div[2]/section/div[1]/div[2]/div[1]/div[2]/div[1]/div/a'
+        ).click();
+
+
+        // ------------------------------------------------------------
+        // Get fields dynamically from validationmap
+        // ------------------------------------------------------------
+
+        const fields =
+            validationConfig.validationmap;
+
+
+        // ------------------------------------------------------------
+        // Generate Cartesian product dynamically
+        //
+        // N validation fields = N × N combinations
+        // ------------------------------------------------------------
+
+        const combinations =
+            fields.flatMap(field =>
+                fields.map(otherField => [
+                    field,
+                    otherField
+                ])
+            );
+
+
+        console.log(
+            `[VALIDATION] Fields: ${fields.length}`
+        );
+
+        console.log(
+            `[VALIDATION] Combinations: ${combinations.length}`
+        );
+
+
+        // ------------------------------------------------------------
+        // Execute every validation combination
+        // ------------------------------------------------------------
+
+        for (const combination of combinations) {
+
+            console.log(
+                `[VALIDATION] Combination: ${combination
+                    .map(field => field.inputname)
+                    .join(' + ')}`
+            );
+
+
+            // --------------------------------------------------------
+            // Fill every field participating in this combination
+            // --------------------------------------------------------
+
+            for (const field of combination) {
+
+                const control =
+                    page.locator(
+                        `[data-key-type="${field.inputname}"]`
+                    );
+
+                await expect(control).toBeVisible();
+
+                const value =
+                    String(
+                        generateTestValue(field)
+                    );
+
+                await control.pressSequentially(value);
+            }
+
+
+            // --------------------------------------------------------
+            // Clear every field participating in this combination
+            //
+            // Use Set so the same field is cleared only once when
+            // the Cartesian product contains the same field twice.
+            // --------------------------------------------------------
+
+            const fieldsToValidate =
+                [...new Map(
+                    combination.map(field => [
+                        field.inputname,
+                        field
+                    ])
+                ).values()];
+
+
+            for (const field of fieldsToValidate) {
+
+                const control =
+                    page.locator(
+                        `[data-key-type="${field.inputname}"]`
+                    );
+
+                await control.press('Meta+A');
+                await control.press('Backspace');
+
+
+                // ----------------------------------------------------
+                // Verify validation message for this field
+                // ----------------------------------------------------
+
+                await expect(
+                    page.locator(
+                        `#lblmsg${field.inputname}`
+                    )
+                ).toBeVisible();
+            }
+
+
+            // --------------------------------------------------------
+            // Submit must remain disabled while validation errors
+            // exist for the current combination
+            // --------------------------------------------------------
+
+            await expect(
+                page.locator('#btnmodalsub')
+            ).toBeDisabled();
+
+
+            // --------------------------------------------------------
+            // Reset all fields participating in this combination
+            // before starting the next combination
+            // --------------------------------------------------------
+
+            for (const field of fieldsToValidate) {
+
+                const control =
+                    page.locator(
+                        `[data-key-type="${field.inputname}"]`
+                    );
+
+                await control.fill('');
+            }
+        }
+    }
+);
 
 
 

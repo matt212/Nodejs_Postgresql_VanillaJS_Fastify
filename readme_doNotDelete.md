@@ -320,6 +320,10 @@ HEADED=true \
 npx playwright test employees -g "16 - CRUD - Create Employee using validationmap"
 
 
+HEADED=true \
+npx playwright test employees -g "17 - data Form - validation using validationmap"
+
+
 
 LOGIN_USERNAME=krennic \
 LOGIN_PASSWORD=orson \
