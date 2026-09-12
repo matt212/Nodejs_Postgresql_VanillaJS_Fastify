@@ -1672,7 +1672,7 @@ function generateTestValue(field) {
 test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
     // ------------------------------------------------------------
-    // Load the Employees report and wait until the page is ready
+    // Load the Employees report
     // ------------------------------------------------------------
 
     await loadEmployeesReport(page);
@@ -1688,8 +1688,7 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
     // ------------------------------------------------------------
-    // Generate test data dynamically from validationmap
-    // and fill each configured form control
+    // Generate and fill all fields dynamically from validationmap
     // ------------------------------------------------------------
 
     const createdValues = {};
@@ -1702,18 +1701,14 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
             `[data-key-type="${inputname}"]`
         );
 
-        // Ensure the configured control is available in the form
         await expect(control).toBeVisible();
 
-        // Generate a value based on the field's validation configuration
         const value = String(
             generateTestValue(field)
         );
 
-        // Type the generated value into the control
         await control.pressSequentially(value);
 
-        // Store the value so it can be verified after creation
         createdValues[inputname] = value;
     }
 
@@ -1725,7 +1720,6 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
     const recordStateInput =
         page.locator('#cltrlrecordstate');
 
-    // Material UI uses a visible wrapper for the checkbox
     const recordStateControl =
         page.locator(
             'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
@@ -1733,14 +1727,12 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
     await expect(recordStateControl).toBeVisible();
 
-    // Enable Record State only when it is currently unchecked
     if (!(await recordStateInput.isChecked())) {
         await recordStateControl.click();
     }
 
     await expect(recordStateInput).toBeChecked();
 
-    // Store the value for post-create verification
     createdValues.recordstate = true;
 
 
@@ -1755,13 +1747,7 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
     // ------------------------------------------------------------
-    // Wait for both APIs triggered by the Create operation:
-    //
-    // 1. Create API       → persists the employee
-    // 2. SearchType API   → refreshes the Employees table
-    //
-    // The response listeners are registered before clicking Submit
-    // so neither request can be missed.
+    // Wait for Create and SearchType APIs
     // ------------------------------------------------------------
 
     const [
@@ -1797,16 +1783,25 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
     // ------------------------------------------------------------
-    // Locate the newly created employee
+    // Dynamically identify the newly created row
     //
-    // first_name is used as the unique row anchor because the
-    // generated test value is unique for this test execution.
+    // Use the first configured validationmap field as the
+    // unique anchor. No business field name is hardcoded.
     // ------------------------------------------------------------
+
+    const anchorField =
+        validationConfig.validationmap[0];
+
+    const anchorFieldName =
+        anchorField.inputname;
+
+    const anchorValue =
+        createdValues[anchorFieldName];
 
     const createdRow =
         page.locator('#basetable tbody tr')
             .filter({
-                hasText: createdValues.first_name
+                hasText: anchorValue
             })
             .first();
 
@@ -1826,7 +1821,7 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
         // --------------------------------------------------------
-        // Get the expected value generated during record creation
+        // Get expected value
         // --------------------------------------------------------
 
         let expectedValue =
@@ -1834,8 +1829,7 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
         // --------------------------------------------------------
-        // Convert DATE input value into the format displayed
-        // by the Employees table
+        // Convert DATE input into the table's display format
         // --------------------------------------------------------
 
         if (
@@ -1866,7 +1860,7 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
         // --------------------------------------------------------
-        // Find the table header corresponding to the field
+        // Find the matching table column dynamically
         // --------------------------------------------------------
 
         const header =
@@ -1878,13 +1872,9 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
         // --------------------------------------------------------
-        // Use the header position to locate the corresponding
-        // cell in the newly created row.
-        //
-        // The -1 accounts for the additional leading cell in
-        // the table body row.
+        // Map the header column to the corresponding row cell
         // --------------------------------------------------------
-
+        
         const headerIndex =
             await header.evaluate(
                 el => el.cellIndex
@@ -1897,7 +1887,7 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
         // --------------------------------------------------------
-        // Read the actual value displayed in the table
+        // Read actual table value
         // --------------------------------------------------------
 
         const actualValue =
@@ -1905,12 +1895,20 @@ test('16 - CRUD - Create Employee using validationmap', async ({ page }) => {
 
 
         // --------------------------------------------------------
-        // Verify the database-created value against the value
-        // displayed in the Employees table
+        // Verify expected vs actual
         // --------------------------------------------------------
+
+        console.log(
+            `[CRUD VERIFY] ${inputname} | Expected: "${expectedValue}" | Actual: "${actualValue}"`
+        );
 
         expect(actualValue).toBe(expectedValue);
     }
+
+
+    console.log(
+        '[PASS] CRUD Create - Employee created and verified successfully'
+    );
 });
 
 test(
