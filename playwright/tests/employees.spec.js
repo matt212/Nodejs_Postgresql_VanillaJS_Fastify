@@ -2061,6 +2061,440 @@ test(
     }
 );
 
+test('18 - CRUD - Create and Update Employee using validationmap', async ({ page }) => {
+
+    // ------------------------------------------------------------
+    // Load the Employees report
+    // ------------------------------------------------------------
+
+    await loadEmployeesReport(page);
+
+
+    // ------------------------------------------------------------
+    // Open the Create Employee modal
+    // ------------------------------------------------------------
+
+    await page.locator(
+        'xpath=/html/body/div[2]/div[2]/section/div[1]/div[2]/div[1]/div[2]/div[1]/div/a'
+    ).click();
+
+
+    // ------------------------------------------------------------
+    // CREATE
+    // Generate and fill all fields dynamically
+    // ------------------------------------------------------------
+
+    const createdValues = {};
+
+    for (const field of validationConfig.validationmap) {
+
+        const { inputname } = field;
+
+        const control = page.locator(
+            `[data-key-type="${inputname}"]`
+        );
+
+        await expect(control).toBeVisible();
+
+        const value = String(
+            generateTestValue(field)
+        );
+
+        await control.pressSequentially(value);
+
+        createdValues[inputname] = value;
+    }
+
+
+    // ------------------------------------------------------------
+    // Enable Record State
+    // ------------------------------------------------------------
+
+    const recordStateInput =
+        page.locator('#cltrlrecordstate');
+
+    const recordStateControl =
+        page.locator(
+            'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+        );
+
+    await expect(recordStateControl).toBeVisible();
+
+    if (!(await recordStateInput.isChecked())) {
+        await recordStateControl.click();
+    }
+
+    await expect(recordStateInput).toBeChecked();
+
+    createdValues.recordstate = true;
+
+
+    // ------------------------------------------------------------
+    // Submit CREATE
+    // ------------------------------------------------------------
+
+    const submitButton =
+        page.locator('#btnmodalsub');
+
+    await expect(submitButton).toBeEnabled();
+
+
+    const [
+        createResponse,
+        searchTypeResponse
+    ] = await Promise.all([
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/create/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/searchtype/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        submitButton.click()
+    ]);
+
+
+    // ------------------------------------------------------------
+    // Wait for refreshed table
+    // ------------------------------------------------------------
+
+    await expect(
+        page.locator('#basetable')
+    ).toBeVisible();
+
+
+    // ------------------------------------------------------------
+    // Dynamically identify created row
+    // ------------------------------------------------------------
+
+    const anchorField =
+        validationConfig.validationmap[0];
+
+    const anchorFieldName =
+        anchorField.inputname;
+
+    const anchorValue =
+        createdValues[anchorFieldName];
+
+    let employeeRow =
+        page.locator('#basetable tbody tr')
+            .filter({
+                hasText: anchorValue
+            })
+            .first();
+
+    await expect(employeeRow).toBeVisible();
+
+
+    // ------------------------------------------------------------
+    // VERIFY CREATE
+    // ------------------------------------------------------------
+
+    for (const field of validationConfig.validationmap) {
+
+        const {
+            inputname,
+            fieldtypename
+        } = field;
+
+        let expectedValue =
+            createdValues[inputname];
+
+        if (
+            fieldtypename === 'DATE' &&
+            expectedValue
+        ) {
+
+            const [
+                day,
+                month,
+                year
+            ] = expectedValue.split('-');
+
+            expectedValue =
+                new Date(
+                    year,
+                    month - 1,
+                    day
+                ).toLocaleDateString(
+                    'en-GB',
+                    {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    }
+                );
+        }
+
+        const header =
+            page.locator(
+                `#basetable thead tr th[data-field-header="${inputname}"]`
+            );
+
+        await expect(header).toBeVisible();
+
+        const headerIndex =
+            await header.evaluate(
+                el => el.cellIndex
+            );
+
+        const cell =
+            employeeRow
+                .locator('td')
+                .nth(headerIndex - 1);
+
+        const actualValue =
+            (await cell.innerText()).trim();
+
+        console.log(
+            `[CREATE VERIFY] ${inputname} | Expected: "${expectedValue}" | Actual: "${actualValue}"`
+        );
+
+        expect(actualValue).toBe(expectedValue);
+    }
+
+
+    // ============================================================
+    // UPDATE
+    // ============================================================
+
+    console.log(
+        '[CRUD] Created record verified. Starting UPDATE...'
+    );
+
+
+    // ------------------------------------------------------------
+    // Click EDIT for the created row
+    //
+    // Replace this selector ONLY if your application's edit
+    // control uses a different attribute.
+    // ------------------------------------------------------------
+
+    const editButton =
+        employeeRow.locator(
+            'td[data-tbledit-type] a'
+        ).first();
+
+    await expect(editButton).toBeVisible();
+
+    await editButton.click();
+
+
+    // ------------------------------------------------------------
+    // Verify edit modal is visible
+    // ------------------------------------------------------------
+
+    for (const field of validationConfig.validationmap) {
+
+        const control =
+            page.locator(
+                `[data-key-type="${field.inputname}"]`
+            );
+
+        await expect(control).toBeVisible();
+    }
+
+
+    // ------------------------------------------------------------
+    // Generate NEW values dynamically
+    // ------------------------------------------------------------
+
+    const updatedValues = {};
+
+    for (const field of validationConfig.validationmap) {
+
+        const { inputname } = field;
+
+        const control =
+            page.locator(
+                `[data-key-type="${inputname}"]`
+            );
+
+        const value =
+            String(
+                generateTestValue(field)
+            );
+
+        await control.press('Meta+A');
+        await control.press('Backspace');
+
+        await control.pressSequentially(value);
+
+        updatedValues[inputname] = value;
+    }
+
+
+    // ------------------------------------------------------------
+    // Keep Record State enabled
+    // ------------------------------------------------------------
+
+    if (!(await recordStateInput.isChecked())) {
+        await recordStateControl.click();
+    }
+
+    await expect(recordStateInput).toBeChecked();
+
+    updatedValues.recordstate = true;
+
+
+    // ------------------------------------------------------------
+    // Submit UPDATE
+    // ------------------------------------------------------------
+
+    await expect(submitButton).toBeEnabled();
+
+
+    const [
+        updateResponse,
+        updateSearchTypeResponse
+    ] = await Promise.all([
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/update/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/searchtype/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        submitButton.click()
+    ]);
+
+
+    // ------------------------------------------------------------
+    // Wait for refreshed table
+    // ------------------------------------------------------------
+
+    await expect(
+        page.locator('#basetable')
+    ).toBeVisible();
+
+
+    // ------------------------------------------------------------
+    // Locate UPDATED row dynamically
+    // Uses first validationmap field as anchor
+    // ------------------------------------------------------------
+
+    const updatedAnchorField =
+        validationConfig.validationmap[0];
+
+    const updatedAnchorValue =
+        updatedValues[
+            updatedAnchorField.inputname
+        ];
+await page.waitForSelector('#basetable tbody tr');
+    employeeRow =
+        page.locator('#basetable tbody tr')
+            .filter({
+                hasText: updatedAnchorValue
+            })
+            .first();
+
+    await expect(employeeRow).toBeVisible();
+
+
+    // ------------------------------------------------------------
+    // VERIFY UPDATE
+    // Verify every validationmap field dynamically
+    // ------------------------------------------------------------
+
+    for (const field of validationConfig.validationmap) {
+
+        const {
+            inputname,
+            fieldtypename
+        } = field;
+
+        let expectedValue =
+            updatedValues[inputname];
+
+
+        // --------------------------------------------------------
+        // Convert DATE to table display format
+        // --------------------------------------------------------
+
+        if (
+            fieldtypename === 'DATE' &&
+            expectedValue
+        ) {
+
+            const [
+                day,
+                month,
+                year
+            ] = expectedValue.split('-');
+
+            expectedValue =
+                new Date(
+                    year,
+                    month - 1,
+                    day
+                ).toLocaleDateString(
+                    'en-GB',
+                    {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    }
+                );
+        }
+
+
+        // --------------------------------------------------------
+        // Find table column dynamically
+        // --------------------------------------------------------
+
+        const header =
+            page.locator(
+                `#basetable thead tr th[data-field-header="${inputname}"]`
+            );
+
+        await expect(header).toBeVisible();
+
+
+        const headerIndex =
+            await header.evaluate(
+                el => el.cellIndex
+            );
+
+
+        const cell =
+            employeeRow
+                .locator('td')
+                .nth(headerIndex - 1);
+
+
+        const actualValue =
+            (await cell.innerText()).trim();
+
+
+        console.log(
+            `[UPDATE VERIFY] ${inputname} | Expected: "${expectedValue}" | Actual: "${actualValue}"`
+        );
+
+
+        expect(actualValue).toBe(expectedValue);
+    }
+
+
+    console.log(
+        '[PASS] CRUD Create + Update - Employee created, edited and verified successfully'
+    );
+});
 
 
 

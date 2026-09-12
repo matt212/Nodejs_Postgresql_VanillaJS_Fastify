@@ -223,6 +223,7 @@ async function routes(fastify, options) {
       dep.assignVariables(mod)
       const result = await dep.updateRecord(request, reply)
       dep.clearCountCache()
+      clearResponseCache();
       return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
