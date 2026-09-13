@@ -325,6 +325,15 @@ npx playwright test employees -g "17 - data Form - validation using validationma
 
 
 
+HEADED=true \
+npx playwright test employees -g "18 - CRUD - Create and Update Employee using validationmap"
+
+
+
+HEADED=true \
+npx playwright test employees -g "19 - CRUD - Update each field individually using validationmap"
+
+
 LOGIN_USERNAME=krennic \
 LOGIN_PASSWORD=orson \
 k6 run performance/employees.k6.js

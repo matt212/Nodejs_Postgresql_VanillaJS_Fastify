@@ -2396,7 +2396,7 @@ test('18 - CRUD - Create and Update Employee using validationmap', async ({ page
         updatedValues[
             updatedAnchorField.inputname
         ];
-await page.waitForSelector('#basetable tbody tr');
+ await page.waitForSelector('#basetable tbody tr');
     employeeRow =
         page.locator('#basetable tbody tr')
             .filter({
@@ -2496,7 +2496,390 @@ await page.waitForSelector('#basetable tbody tr');
     );
 });
 
+test('19 - CRUD - Update each field individually using validationmap', async ({ page }) => {
 
+    // ------------------------------------------------------------
+    // Load Employees report
+    // ------------------------------------------------------------
+
+    await loadEmployeesReport(page);
+
+
+    // ------------------------------------------------------------
+    // CREATE baseline record
+    // ------------------------------------------------------------
+
+    await page.locator(
+        'xpath=/html/body/div[2]/div[2]/section/div[1]/div[2]/div[1]/div[2]/div[1]/div/a'
+    ).click();
+
+
+    const originalValues = {};
+
+    for (const field of validationConfig.validationmap) {
+
+        const { inputname } = field;
+
+        const control =
+            page.locator(
+                `[data-key-type="${inputname}"]`
+            );
+
+        await expect(control).toBeVisible();
+
+        const value =
+            String(generateTestValue(field));
+
+        await control.pressSequentially(value);
+
+        originalValues[inputname] = value;
+    }
+
+
+    // ------------------------------------------------------------
+    // Record State
+    // ------------------------------------------------------------
+
+    const recordStateInput =
+        page.locator('#cltrlrecordstate');
+
+    const recordStateControl =
+        page.locator(
+            'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+        );
+
+    if (!(await recordStateInput.isChecked())) {
+        await recordStateControl.click();
+    }
+
+    await expect(recordStateInput).toBeChecked();
+
+
+    // ------------------------------------------------------------
+    // CREATE
+    // ------------------------------------------------------------
+
+    const submitButton =
+        page.locator('#btnmodalsub');
+
+    await Promise.all([
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/create/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        page.waitForResponse(
+            r =>
+                r.url().includes('/employees/api/searchtype/') &&
+                r.status() >= 200 &&
+                r.status() < 300
+        ),
+
+        submitButton.click()
+    ]);
+
+
+    // ------------------------------------------------------------
+    // Locate created row
+    // ------------------------------------------------------------
+
+    await expect(page.locator('#basetable')).toBeVisible();
+
+    const anchorField =
+        validationConfig.validationmap[0];
+
+    const anchorFieldName =
+        anchorField.inputname;
+
+    let anchorValue =
+        originalValues[anchorFieldName];
+
+
+    // ------------------------------------------------------------
+    // Format DATE exactly as displayed in table
+    // ------------------------------------------------------------
+
+    if (
+        anchorField.fieldtypename === 'DATE' &&
+        anchorValue
+    ) {
+
+        const [
+            day,
+            month,
+            year
+        ] = anchorValue.split('-');
+
+        anchorValue =
+            new Date(
+                year,
+                month - 1,
+                day
+            ).toLocaleDateString(
+                'en-GB',
+                {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }
+            );
+    }
+
+
+    let employeeRow =
+        page.locator('#basetable tbody tr')
+            .filter({
+                hasText: anchorValue
+            })
+            .first();
+
+    await expect(employeeRow).toBeVisible();
+
+
+    // ============================================================
+    // UPDATE EACH FIELD INDIVIDUALLY
+    // ============================================================
+
+    for (const field of validationConfig.validationmap) {
+
+        const {
+            inputname
+        } = field;
+
+
+        console.log(
+            `[PARTIAL UPDATE] Updating only: ${inputname}`
+        );
+
+
+        // --------------------------------------------------------
+        // Open Edit
+        // --------------------------------------------------------
+
+        const editButton =
+            employeeRow.locator(
+                'td[data-tbledit-type] a'
+            ).first();
+
+        await expect(editButton).toBeVisible();
+
+        await editButton.click();
+
+
+        // --------------------------------------------------------
+        // Verify edit form
+        // --------------------------------------------------------
+
+        for (const configuredField of validationConfig.validationmap) {
+
+            await expect(
+                page.locator(
+                    `[data-key-type="${configuredField.inputname}"]`
+                )
+            ).toBeVisible();
+        }
+
+
+        // --------------------------------------------------------
+        // Generate new value ONLY for current field
+        // --------------------------------------------------------
+
+        const control =
+            page.locator(
+                `[data-key-type="${inputname}"]`
+            );
+
+        const newValue =
+            String(generateTestValue(field));
+
+
+        await control.press('Meta+A');
+        await control.press('Backspace');
+        await control.pressSequentially(newValue);
+
+
+        // --------------------------------------------------------
+        // UPDATE
+        // --------------------------------------------------------
+
+        await expect(submitButton).toBeEnabled();
+
+        await Promise.all([
+
+            page.waitForResponse(
+                r =>
+                    r.url().includes('/employees/api/update/') &&
+                    r.status() >= 200 &&
+                    r.status() < 300
+            ),
+
+            page.waitForResponse(
+                r =>
+                    r.url().includes('/employees/api/searchtype/') &&
+                    r.status() >= 200 &&
+                    r.status() < 300
+            ),
+
+            submitButton.click()
+        ]);
+
+
+        // --------------------------------------------------------
+        // Update expected state
+        // --------------------------------------------------------
+
+        const expectedValues = {
+            ...originalValues,
+            [inputname]: newValue
+        };
+
+
+        // --------------------------------------------------------
+        // Locate updated row
+        // --------------------------------------------------------
+
+        let updatedAnchorValue =
+            expectedValues[anchorFieldName];
+
+
+        // --------------------------------------------------------
+        // Format anchor DATE exactly as displayed in table
+        // --------------------------------------------------------
+
+        if (
+            anchorField.fieldtypename === 'DATE' &&
+            updatedAnchorValue
+        ) {
+
+            const [
+                day,
+                month,
+                year
+            ] = updatedAnchorValue.split('-');
+
+            updatedAnchorValue =
+                new Date(
+                    year,
+                    month - 1,
+                    day
+                ).toLocaleDateString(
+                    'en-GB',
+                    {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric'
+                    }
+                );
+        }
+
+
+        employeeRow =
+            page.locator('#basetable tbody tr')
+                .filter({
+                    hasText: updatedAnchorValue
+                })
+                .first();
+
+        await expect(employeeRow).toBeVisible();
+
+
+        // --------------------------------------------------------
+        // VERIFY EVERY FIELD
+        //
+        // Current field = NEW value
+        // Other fields  = ORIGINAL value
+        // --------------------------------------------------------
+
+        for (const verifyField of validationConfig.validationmap) {
+
+            const verifyName =
+                verifyField.inputname;
+
+            let expectedValue =
+                expectedValues[verifyName];
+
+
+            // ----------------------------------------------------
+            // Convert DATE for table display
+            // ----------------------------------------------------
+
+            if (
+                verifyField.fieldtypename === 'DATE' &&
+                expectedValue
+            ) {
+
+                const [
+                    day,
+                    month,
+                    year
+                ] = expectedValue.split('-');
+
+                expectedValue =
+                    new Date(
+                        year,
+                        month - 1,
+                        day
+                    ).toLocaleDateString(
+                        'en-GB',
+                        {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                        }
+                    );
+            }
+
+
+            // ----------------------------------------------------
+            // Find table column dynamically
+            // ----------------------------------------------------
+
+            const header =
+                page.locator(
+                    `#basetable thead tr th[data-field-header="${verifyName}"]`
+                );
+
+            await expect(header).toBeVisible();
+
+            const headerIndex =
+                await header.evaluate(
+                    el => el.cellIndex
+                );
+
+
+            const actualValue =
+                (
+                    await employeeRow
+                        .locator('td')
+                        .nth(headerIndex - 1)
+                        .innerText()
+                ).trim();
+
+
+            console.log(
+                `[PARTIAL UPDATE VERIFY] ${verifyName} | Expected: "${expectedValue}" | Actual: "${actualValue}"`
+            );
+
+
+            expect(actualValue).toBe(expectedValue);
+        }
+
+
+        // --------------------------------------------------------
+        // Persist new value for next iteration
+        // --------------------------------------------------------
+
+        originalValues[inputname] = newValue;
+    }
+
+
+    console.log(
+        '[PASS] Test 19 - Every field updated individually and all untouched fields preserved'
+    );
+});
 
 
 
