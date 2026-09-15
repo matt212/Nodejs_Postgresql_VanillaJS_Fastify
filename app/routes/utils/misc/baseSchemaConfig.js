@@ -60,7 +60,11 @@ const searchLoadbodyJsonSchema = {
     pageno: {
       type: 'integer',
       minimum: 0
-    }
+    },
+    recordstate: {
+  type: 'string',
+  enum: ['ACTIVE', 'DELETED']
+},
   },
   allOf: [
     {

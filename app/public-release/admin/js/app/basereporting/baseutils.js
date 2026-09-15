@@ -474,6 +474,7 @@ let tableops = {
 
     filterparam.pageno = base.pageno
     filterparam.pageSize = base.pageSize
+    filterparam.recordstate = "ACTIVE";
     filterparam.ispaginate = true
     base.datapayload = filterparam
 
@@ -523,7 +524,7 @@ function payloadprepared() {
     base.pageno = 0
     //base.pageSize = parseInt($("#sptotalUsers").html());
   }
-
+filterparam.recordstate = "ACTIVE";
   filterparam.pageno = base.pageno
   filterparam.pageSize = base.pageSize
   filterparam.pivotparamXaxis = base.pivotparamXaxis

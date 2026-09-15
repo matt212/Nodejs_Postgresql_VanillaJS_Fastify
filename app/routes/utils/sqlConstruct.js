@@ -13,7 +13,9 @@ let base = {
       tunnel.fieldnames +
       ' from "' +
       tunnel.mod.Name +
-      '" as a where a.recordstate=true ' +
+      '" as a where ' +
+    this.recordStateCondition(tunnel) +
+    '  ' +
       tunnel.arg.daterange +
       '  ' +
       tunnel.arg.selector +
@@ -32,7 +34,9 @@ let base = {
     return (
       ' select COUNT(*) as count   from "' +
       tunnel.mod.Name +
-      '" as a where a.recordstate=true ' +
+      '" as a where ' +
+    this.recordStateCondition(tunnel) +
+    '  ' +
       tunnel.arg.daterange +
       '  ' +
       tunnel.arg.selector +
@@ -210,6 +214,26 @@ let base = {
       ';'
     )
   }
+  ,recordStateCondition: function (tunnel) {
+
+  const status = tunnel.arg.recordstate || 'ACTIVE'
+
+  if (status === 'ACTIVE') {
+    return ' a.recordstate=true '
+  }
+
+  if (status === 'DELETED') {
+    return ' a.recordstate=false '
+  }
+
+  if (status === 'ALL') {
+    return ' 1=1 '
+  }
+
+  throw new Error(
+    `Invalid recordstate: ${status}`
+  )
+},
 }
 let mrole = {
   basesqlscrp: {

@@ -87,6 +87,7 @@ $('body').on('focus',".datepicker", function(){
             base.pageSize = 20;
             filterparam.pageno = base.pageno
             filterparam.pageSize = base.pageSize
+            filterparam.recordstate = "ACTIVE";
             base.datapayload = filterparam;
             console.log(base.datapayload);
             $("#dvreportcontainer").show();

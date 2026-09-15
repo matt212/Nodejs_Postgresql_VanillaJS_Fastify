@@ -24,6 +24,7 @@ let baseloadsegments = {
     base.pageSize = base.pageSize === undefined ? 20 : base.pageSize
     filterparam.pageno = base.pageno
     filterparam.pageSize = base.pageSize
+    filterparam.recordstate = "ACTIVE";
     filterparam.datecolsearch = base.datecolsearch
     base.datapayload = filterparam
     $('#dvreportcontainer').show()

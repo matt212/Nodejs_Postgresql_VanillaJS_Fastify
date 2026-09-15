@@ -521,6 +521,7 @@ let tableops = {
     filterparam.pageno = base.pageno
     filterparam.pageSize = base.pageSize
     filterparam.ispaginate = true
+    filterparam.recordstate = "ACTIVE";
     base.datapayload = filterparam
 
     basefunction()
@@ -544,7 +545,7 @@ let tableops = {
 
       base.interimdatapayload.recordstate = false
     }
-    reqopsValidate.formvalidation(argument)
+    //reqopsValidate.formvalidation(argument)
   }
 }
 
@@ -579,6 +580,7 @@ if(base.consolidatesearchpaginate)
     base.pageno = base.consolidatesearchpaginateno
 
 }
+filterparam.recordstate = "ACTIVE";
   filterparam.pageno = base.pageno
   filterparam.pageSize = base.pageSize
   filterparam.pivotparamXaxis = base.pivotparamXaxis

@@ -39,7 +39,7 @@ multiCheckBoxPopulate: function (elem, currentset) {
                     <label class="lblhide" id="lblmsgrecordstate">
                     <i class="fa fa-bell-o"></i> Please select Active
                     </label>
-   <input type="checkbox" id="cltrlrecordstate" data-attribute="checkbox" data-form-type="true" onclick="javascript:tableops.onchk(this)" value="true"><span class="checkbox-material"><span class="check"></span></span> Remember me
+   <input type="checkbox" id="cltrlrecordstate"  data-attribute="checkbox" onclick="javascript:tableops.onchk(this)" value="true"><span class="checkbox-material"><span class="check"></span></span> Remember me
    <span class="checkbox-material">
    </div>
    </span> 
@@ -49,7 +49,7 @@ multiCheckBoxPopulate: function (elem, currentset) {
   genericCheckboxHtmlPrimary: function () {
     return `<div class="checkbox tablechk">
    <label>
-   <input type="checkbox" id="cltrlrecordstate" data-form-type="true" data-attribute="radio"  onclick="javascript:tableops.onchk(this)" value=true> Remember me
+   <input type="checkbox" id="cltrlrecordstate"  data-attribute="checkbox"  onclick="javascript:tableops.onchk(this)" value=true> Remember me
    <span class="checkbox-material">
    </span> 
    </label>

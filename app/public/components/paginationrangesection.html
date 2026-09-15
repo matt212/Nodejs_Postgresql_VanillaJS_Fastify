@@ -76,6 +76,38 @@
     
             })
     }*/
+   
+function getdeletedrecords() {
+
+        document.getElementById("Oldestdiv").className = "disablepaging pagingsectionchild";
+        document.getElementById("newestdiv").className = '';
+
+
+        base.pageno = 0;
+        filterparam.pageno = base.pageno
+        filterparam.pageSize = base.pageSize
+
+
+        filterparam.sortcolumn = 1;
+        filterparam.sortcolumnorder = "desc";
+        filterparam.recordstate = "DELETED";
+        base.datapayload = filterparam;
+
+
+
+
+        basefunction().getpaginatesearchtype(base).then(function (argument) {
+            console.log(argument);
+            htmlpopulate.htmlpopulatetable(argument);
+            basepagination.bootpagination(argument);
+        })
+
+
+    }
+
+
+
+
     function getoldestrecords() {
 
         document.getElementById("Oldestdiv").className = "disablepaging pagingsectionchild";
@@ -109,7 +141,9 @@
         document.getElementById("Oldestdiv").className = '';
         filterparam.sortcolumn = 1;
         filterparam.sortcolumnorder = "desc";
+        filterparam.recordstate = "ACTIVE";
         base.datapayload = filterparam;
+        
         basefunction().getpaginatesearchtype(base).then(function (argument) {
 
             htmlpopulate.htmlpopulatetable(argument);
@@ -122,6 +156,7 @@
         base.pageSize = parseInt($('#inppagesize').val())
         filterparam.pageSize = base.pageSize
         filterparam.pageno = 0;
+        filterparam.recordstate = "ACTIVE";
         base.datapayload = filterparam;
 
         basefunction().getpaginatesearchtype(base).then(function (argument) {
@@ -155,6 +190,9 @@
                 </div>
                 <div>
                     <div id="Oldestdiv" onclick="getoldestrecords(true)">Oldest</div>
+                </div>
+                <div>
+                    <div id="Deletediv" onclick="getdeletedrecords(true)">Deleted</div>
                 </div>
             </div>
         </div>

@@ -42,12 +42,17 @@ fastify.register(helmet, {
         "'unsafe-inline'",
         "'unsafe-hashes'",
         "'unsafe-eval'",
+        "https://cdnjs.cloudflare.com",
         "*.cloudflare.com",
         "*.highcharts.com"
       ],
+      connectSrc: [
+        "'self'",
+        "https://cdnjs.cloudflare.com"
+      ],
       styleSrc: [
         "'self'",
-        "fonts.googleapis.com",
+        "https://fonts.googleapis.com",
         "'unsafe-inline'"
       ],
       scriptSrcAttr: [
@@ -58,7 +63,8 @@ fastify.register(helmet, {
       ],
       fontSrc: [
         "'self'",
-        "data:"
+        "data:",
+        "https://fonts.gstatic.com"
       ]
     }
   }

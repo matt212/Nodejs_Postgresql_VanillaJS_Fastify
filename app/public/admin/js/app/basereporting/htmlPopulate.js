@@ -43,6 +43,7 @@ $("#sptotalUsers").html(arg.count)
         element.inputname.replace('_', ' ').capitalize() +
         '">' +
         '</div></div>'
+        
     })
     var chkcontent =
       ' <input type="hidden" name="' +
@@ -58,12 +59,21 @@ $("#sptotalUsers").html(arg.count)
     '</label>' + '</div>' + '</div>' + '</div>'
 
     $('#overlaycontent').html(htmlcontent + chkcontent)
+    const control =
+          document.querySelector('#cltrlrecordstate');
+
+          if (control) {
+             tableops.onchk(control);
+           }
   },
   baseCheckbox: `<div class="checkbox tablechk">
      <label>
-     <input type="checkbox" id="cltrlrecordstate" data-form-type="true"  data-attribute="checkbox" onclick="javascript:tableops.onchk(this)" value=true> Remember me
+     <input type="checkbox" id="cltrlrecordstate"   data-attribute="checkbox" onclick="javascript:tableops.onchk(this)" value=true>
+      Remember me
      <span class="checkbox-material">
-     </span> 
+            <span class="check"></span>
+        </span>
+
      </label>
      </div>`,
   htmlpopulatetableheader: function () {

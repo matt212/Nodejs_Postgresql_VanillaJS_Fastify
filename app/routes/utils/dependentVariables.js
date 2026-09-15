@@ -228,9 +228,14 @@ let searchparampayloadParameterized = (req, a) => {
         let j = searchparampayloadSQLSanitize(reqcontent.searchparam)
       }
       var searchparam = reqcontent.searchparam;
+      var recordstate =
+  reqcontent.recordstate !== undefined
+    ? reqcontent.recordstate
+    : true;
       var columns = reqcontent.colsearch;
       var number_of_items = reqcontent.pageno;
       var pageSize = reqcontent.pageSize;
+      
       var ispaginate = reqcontent.ispaginate;
       var datecolsearch = reqcontent.datecolsearch;
       var consolidatesearchparam = reqcontent.basesearcharconsolidated;
@@ -331,6 +336,7 @@ let searchparampayloadParameterized = (req, a) => {
       base.ispaginate = ispaginate;
       base.searchtype = searchtype;
       base.consolidatesearch = consolidatesearch;
+      base.recordstate = recordstate;
       resolve(base);
     });
     return promise.catch(function(error) {
@@ -1371,7 +1377,7 @@ let searchtypeOptimizedParameterized = (sqlConstructParams, a) => {
   return (promise = new Promise((resolve, reject) => {
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](sqlConstructParams);
     sqlConstructParams.arg.parameterValues = sqlConstructParams.arg.parameterValues.filter(Boolean);
-    
+    console.log(sqlstatementsprimary);
     var internset = {};
     async ({
         rows: (callback) => {
