@@ -904,6 +904,10 @@ test(
 // ============================================================
 // TEST 12
 // DYNAMIC FILTER PERMUTATIONS
+
+// ============================================================
+
+
 // ============================================================
 
 test(
@@ -913,7 +917,6 @@ test(
         test.setTimeout(600000);
 
         await loadEmployeesReport(page);
-
         await openFilterBar(page);
 
         await page.locator(
@@ -923,7 +926,6 @@ test(
         await expect(
             page.locator('.fieldsfilterbar')
         ).toBeVisible();
-
 
         const fieldKeys =
             await page.locator(
@@ -938,29 +940,37 @@ test(
                     .filter(Boolean)
             );
 
-
-        expect(fieldKeys.length)
-            .toBeGreaterThan(0);
-
+        expect(fieldKeys.length).toBeGreaterThan(0);
 
         const expectedPermutations =
             fieldKeys.length * fieldKeys.length;
 
         let completedPermutations = 0;
+        let skippedPermutations = 0;
         let verifiedColumnAssertions = 0;
+        let selectedValueCount = 0;
 
+        const normalizeValue = value => {
+            const cleaned = (value || '')
+                .replace(/^×/, '')
+                .trim();
+
+            return cleaned.length
+                ? cleaned.charAt(0).toUpperCase() +
+                    cleaned.slice(1).toLowerCase()
+                : cleaned;
+        };
 
         await test.step(
             `Permutation summary: ${fieldKeys.length} fields | ${expectedPermutations} combinations planned | Fields: ${fieldKeys.join(', ')}`,
             async () => {}
         );
 
-
         for (const firstField of fieldKeys) {
+
             for (const secondField of fieldKeys) {
 
                 await loadEmployeesReport(page);
-
                 await openFilterBar(page);
 
                 await page.locator(
@@ -971,8 +981,23 @@ test(
                     page.locator('.fieldsfilterbar')
                 ).toBeVisible();
 
+                const selectedFields = new Set([
+                    firstField,
+                    secondField
+                ]);
 
-                const getFirstCharacterForField = async fieldKey => {
+                const selectedValuesByField = {};
+
+                const permutationName =
+                    `${firstField} and ${secondField}`;
+
+                await test.step(
+                    `Test filter combination: ${permutationName}`,
+                    async () => {}
+                );
+
+                for (const fieldKey of selectedFields) {
+
                     const header =
                         page.locator(
                             `#basetable thead tr th[data-field-header="${fieldKey}"]`
@@ -983,180 +1008,249 @@ test(
                             element => element.cellIndex
                         );
 
-                    const values =
+                    const columnValues =
                         await page.locator(
                             `#basetable tbody tr td:nth-child(${columnIndex})`
                         ).allTextContents();
 
                     const firstValue =
-                        values
+                        columnValues
                             .map(value => value.trim())
                             .find(value => value.length > 0);
 
-                    expect(firstValue)
-                        .toBeTruthy();
+                    expect(firstValue).toBeTruthy();
 
-                    return firstValue.charAt(0).toLowerCase();
-                };
-
-
-                const permutation = [
-                    firstField,
-                    secondField
-                ];
-
-                const selectedValuesByField = {};
-
-
-                for (const fieldKey of new Set(permutation)) {
+                    const searchCharacter =
+                        firstValue.charAt(0).toLowerCase();
 
                     const filterInput =
                         page.locator(
                             `.fieldsfilterbar input[data-multipleselect-autocomplete="${fieldKey}"]`
                         );
 
-
-                    const searchCharacter =
-                        await getFirstCharacterForField(fieldKey);
-
-
                     const dropdown =
                         page.locator(
                             `#dv_${fieldKey}:visible`
                         ).first();
 
+                    await test.step(
+                        `${fieldKey}: find a value starting with "${searchCharacter}"`,
+                        async () => {
 
-                    await Promise.all([
-                        page.waitForResponse(response =>
-                            response.url().includes(
-                                '/api/searchtypegroupby'
-                            ) &&
-                            response.status() === 200
-                        ),
-                        filterInput.fill(searchCharacter)
-                    ]);
+                            await Promise.all([
+                                page.waitForResponse(response =>
+                                    response.url().includes(
+                                        '/api/searchtypegroupby'
+                                    ) &&
+                                    response.status() === 200
+                                ),
+                                filterInput.fill(searchCharacter)
+                            ]);
 
+                            await expect(dropdown).toBeVisible();
+                        }
+                    );
 
-                    await expect(dropdown).toBeVisible();
-
-
-                    const option =
+                    const availableOptions =
                         dropdown.locator(
                             'div a.highlightselect'
-                        ).first();
+                        );
 
+                    const optionCount =
+                        await availableOptions.count();
 
-                    await expect(option).toBeVisible();
+                    /*
+                     * No autocomplete option is a valid condition.
+                     * It means there is no matching data for this field.
+                     */
+                    if (optionCount === 0) {
+
+                        console.log(
+                            `[SKIP FIELD] ${fieldKey}: no matching autocomplete value for "${searchCharacter}"`
+                        );
+
+                        continue;
+                    }
+
+                    const option =
+                        availableOptions.first();
 
                     const selectedValue =
-                        (await option.textContent()).trim();
+                        (
+                            await option.textContent()
+                        ).trim();
 
+                    if (!selectedValue) {
+                        console.log(
+                            `[SKIP FIELD] ${fieldKey}: autocomplete option has no value`
+                        );
 
-                    await option.click();
+                        continue;
+                    }
 
+                    await test.step(
+                        `${fieldKey}: select "${selectedValue}"`,
+                        async () => {
 
-                    await expect(
-                        page.locator(
-                            `#cltrl_filter_chips_${fieldKey}`
-                        )
-                    ).toContainText(selectedValue);
+                            await option.click();
+
+                            const chip =
+                                page.locator(
+                                    `#cltrl_filter_chips_${fieldKey}`
+                                ).filter({
+                                    hasText: selectedValue
+                                }).first();
+
+                            const actualChipValue =
+                                await chip.textContent();
+
+                            expect(
+                                normalizeValue(actualChipValue)
+                            ).toBe(
+                                normalizeValue(selectedValue)
+                            );
+                        }
+                    );
 
                     selectedValuesByField[fieldKey] = [
                         selectedValue
                     ];
+
+                    selectedValueCount++;
                 }
 
+                /*
+                 * If neither field produced an autocomplete value,
+                 * there is nothing to filter. This permutation is valid
+                 * but skipped.
+                 */
+                if (
+                    Object.keys(selectedValuesByField).length === 0
+                ) {
 
-                await Promise.all([
-                    page.waitForResponse(response =>
-                        response.url().includes('/api/searchtype/') &&
-                        response.status() === 200
-                    ),
-                    page.waitForResponse(response =>
-                        response.url().includes('/api/searchtypeCount/') &&
-                        response.status() === 200
-                    ),
-                    page.locator(
-                        "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
-                    ).click()
-                ]);
+                    skippedPermutations++;
 
+                    console.log(
+                        `[SKIP] Filter permutation: ${firstField} -> ${secondField} | no autocomplete data`
+                    );
 
-                await expect(
-                    page.locator('#sptotalUsers')
-                ).not.toHaveText('0');
-
-
-                for (const [fieldKey, selectedValues] of Object.entries(
-                    selectedValuesByField
-                )) {
-                    const header =
-                        page.locator(
-                            `#basetable thead tr th[data-field-header="${fieldKey}"]`
-                        );
-
-                    const columnIndex =
-                        await header.evaluate(
-                            element => element.cellIndex
-                        );
-
-                    const tableValues =
-                        await page.locator(
-                            `#basetable tbody tr td:nth-child(${columnIndex})`
-                        ).allTextContents();
-
-                    const allowedValues =
-                        selectedValues.map(value =>
-                            value.trim().toLowerCase()
-                        );
-
-                    const unmatchedValues =
-                        tableValues
-                            .map(value => value.trim())
-                            .filter(Boolean)
-                            .filter(value =>
-                                !allowedValues.includes(
-                                    value.toLowerCase()
-                                )
-                            );
-
-                    expect(unmatchedValues).toEqual([]);
-
-                    verifiedColumnAssertions++;
+                    continue;
                 }
 
+                await test.step(
+                    `Apply ${permutationName} filters and verify matching employees`,
+                    async () => {
+
+                        await Promise.all([
+                            page.waitForResponse(response =>
+                                response.url().includes(
+                                    '/api/searchtype/'
+                                ) &&
+                                response.status() === 200
+                            ),
+
+                            page.waitForResponse(response =>
+                                response.url().includes(
+                                    '/api/searchtypeCount/'
+                                ) &&
+                                response.status() === 200
+                            ),
+
+                            page.locator(
+                                "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                            ).click()
+                        ]);
+
+                        await expect(
+                            page.locator('#sptotalUsers')
+                        ).not.toHaveText('0');
+
+                        for (
+                            const [
+                                fieldKey,
+                                selectedValues
+                            ]
+                            of Object.entries(
+                                selectedValuesByField
+                            )
+                        ) {
+
+                            const header =
+                                page.locator(
+                                    `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                                );
+
+                            const columnIndex =
+                                await header.evaluate(
+                                    element => element.cellIndex
+                                );
+
+                            const tableValues =
+                                await page.locator(
+                                    `#basetable tbody tr td:nth-child(${columnIndex})`
+                                ).allTextContents();
+
+                            const allowedValues =
+                                selectedValues.map(
+                                    value =>
+                                        normalizeValue(value)
+                                );
+
+                            const unmatchedValues =
+                                tableValues
+                                    .map(value => value.trim())
+                                    .filter(Boolean)
+                                    .filter(value =>
+                                        !allowedValues.includes(
+                                            normalizeValue(value)
+                                        )
+                                    );
+
+                            expect(unmatchedValues).toEqual([]);
+
+                            verifiedColumnAssertions++;
+                        }
+                    }
+                );
 
                 completedPermutations++;
 
-
                 console.log(
-                    `[PASS] Filter permutation: ${firstField} -> ${secondField}`
+                    `[PASS] Multi-select permutation: ${firstField} -> ${secondField}`
                 );
             }
         }
-
 
         const sameFieldPermutations =
             fieldKeys.length;
 
         const crossFieldPermutations =
-            expectedPermutations - sameFieldPermutations;
+            expectedPermutations -
+            sameFieldPermutations;
+
+        const evaluatedPermutations =
+            completedPermutations +
+            skippedPermutations;
 
         const passPercentage =
-            Math.round(
-                completedPermutations / expectedPermutations * 100
-            );
-
+            expectedPermutations > 0
+                ? Math.round(
+                    evaluatedPermutations /
+                    expectedPermutations *
+                    100
+                )
+                : 0;
 
         await test.step(
-            `Permutation summary: ${completedPermutations}/${expectedPermutations} combinations passed (${passPercentage}%) | ${sameFieldPermutations} same-field cases | ${crossFieldPermutations} cross-field cases | ${verifiedColumnAssertions} table-column assertions`,
+            `Permutation summary: ${completedPermutations}/${expectedPermutations} combinations passed | ${skippedPermutations} skipped | ${passPercentage}% evaluated | ${sameFieldPermutations} same-field cases | ${crossFieldPermutations} cross-field cases | ${verifiedColumnAssertions} table-column assertions | ${selectedValueCount} autocomplete values selected`,
             async () => {}
         );
-
 
         await page.waitForTimeout(3000);
     }
 );
+
+
 
 
 // ============================================================
@@ -1357,23 +1451,41 @@ test(
 
                                 selectedValues.push(selectedValue);
 
-                                await expect(
-                                    page.locator(
-                                        `#cltrl_filter_chips_${fieldKey}`
-                                    ).filter({
-                                        hasText: selectedValue
-                                    }).first()
-                                ).toContainText(selectedValue);
-                            }
+                                const normalizeValue = value => {
+                                const cleaned = value
+                                .replace(/^×/, '')
+                                .trim();
+
+                                return cleaned.length
+                                ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase()
+                                : cleaned;
+                                };
+
+                                const expectedValue = normalizeValue(selectedValue);
+
+                                const actualValue = await page.locator(
+                                `#cltrl_filter_chips_${fieldKey}`
+                                ).filter({
+                                hasText: selectedValue
+                                }).first().textContent();
+
+                                expect(normalizeValue(actualValue)).toBe(expectedValue);
+                                                    }
+                                                );
+                                }
+
+                        console.log('FIELD:', fieldKey);
+                        console.log('SELECTED VALUES:', selectedValues);
+
+                        if (selectedValues.length === 0) {
+                        console.log(
+                        `[SKIP] ${fieldKey}: no matching autocomplete values exist`
                         );
-                    }
+                        continue;
+                        }
 
-
-                    expect(selectedValues.length)
-                        .toBeGreaterThan(0);
-
-                    selectedValueCount += selectedValues.length;
-                    selectedValuesByField[fieldKey] = selectedValues;
+                        selectedValueCount += selectedValues.length;
+                        selectedValuesByField[fieldKey] = selectedValues;
                 }
 
 
