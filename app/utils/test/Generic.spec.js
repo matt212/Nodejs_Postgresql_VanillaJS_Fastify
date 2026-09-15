@@ -947,6 +947,7 @@ let consolidatedPayload = function() {
       // o1.disableDate = true
       o1.searchtype = 'Columnwise'
     }
+    o1.recordstate = "ACTIVE";
     testbase.payload = o1
     return testbase
   }),
@@ -960,6 +961,7 @@ let consolidatedPayload = function() {
       enddate: new Date().toLocaleDateString()
     }
     o1.datecolsearch = 'created_date';
+    o1.recordstate = "ACTIVE";
     o1.disableDate = false
     if (fieldtype.fieldtypename == 'DATE') {
       o1.daterange = {
@@ -997,6 +999,7 @@ let consolidatedPayload = function() {
       }]
       // o1.disableDate = true
       o1.searchtype = 'Columnwise'
+      o1.recordstate = "ACTIVE";
     }
     testbase.payload = o1
     return testbase
@@ -1025,6 +1028,7 @@ let consolidatedPayload = function() {
       o1.datecolsearch = 'created_date';
       o1.disableDate = false
       o1.searchtype = 'Columnwise'
+      o1.recordstate = "ACTIVE";
     }
     testbase.payload = o1
     return testbase
@@ -1054,6 +1058,7 @@ let consolidatedPayload = function() {
     o1.datecolsearch = 'created_date';
     o1.disableDate = false
     o1.searchtype = 'consolidatesearch'
+    o1.recordstate = "ACTIVE";
     testbase.payload = o1
     return testbase
   })
@@ -1064,7 +1069,9 @@ let consolidatedPayload = function() {
     o1.basesearcharconsolidated = undefined
     o1.disableDate = true
     o1.searchtype = 'consolidatesearch'
+    o1.recordstate = "ACTIVE";
     testbase.payload = o1
+    
     return testbase
   }
   o.payload22 = function(testbase, entry, evalModulename, validationConfig) {
@@ -1086,6 +1093,7 @@ let consolidatedPayload = function() {
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
     }
+    o1.recordstate = "ACTIVE";
     testbase.payload = o1
     return testbase
   }
@@ -1108,6 +1116,7 @@ let consolidatedPayload = function() {
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
     }
+    o1.recordstate = "ACTIVE";
     testbase.payload = o1
     return testbase
   }
@@ -1115,6 +1124,7 @@ let consolidatedPayload = function() {
     testbase.apiUrl = '/' + evalModulename + dep.searchtype[1]
     var o1 = JSON.parse(JSON.stringify(loadModulePayLoad))
     o1.sortcolumn = NaN
+    
     testbase.payload = o1
     testbase.responseCode = 400
     return testbase
@@ -1135,6 +1145,8 @@ let consolidatedPayload = function() {
     o1.sortcolumn = entry
     o1.disableDate = false
     o1.datecolsearch = 'created_date';
+    o1.recordstate = "ACTIVE";
+    o1.recordstate = "ACTIVE";
     o1.daterange = {
       startdate: new Date().toLocaleDateString(),
       enddate: new Date().toLocaleDateString()
@@ -1150,6 +1162,7 @@ let consolidatedPayload = function() {
     o1.sortcolumn = entry
     o1.disableDate = false
     o1.datecolsearch = 'created_date';
+    o1.recordstate = "ACTIVE";
     o1.daterange = {
       startdate: new Date().toLocaleDateString(),
       enddate: new Date().toLocaleDateString()
@@ -1201,12 +1214,14 @@ let consolidatedPayload = function() {
       }
       o1.datecolsearch = entry
       o1.disableDate = false
+      o1.recordstate = "ACTIVE";
     } else if (fieldtype == 'boolean') {
       /*there cannot be multi boolean Filter */
     } else {
       o1.searchparam = multicolumngenAr(schemaBaseValidatorPayloadAr1[0], entry)
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
+      o1.recordstate = "ACTIVE";
     }
     testbase.payload = o1
     return testbase
@@ -1230,6 +1245,7 @@ let consolidatedPayload = function() {
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
     }
+    o1.recordstate = "ACTIVE";
     testbase.payload = o1
     return testbase
   }
@@ -1252,6 +1268,7 @@ let consolidatedPayload = function() {
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
     }
+    o1.recordstate = "ACTIVE";
     testbase.payload = o1
     return testbase
   }
@@ -1286,6 +1303,7 @@ let consolidatedPayload = function() {
         [entry]: [interimval]
       }]
       o1.disableDate = true
+      o1.recordstate = "ACTIVE";
       o1.searchtype = 'Columnwise'
     }
     testbase.payload = o1
@@ -1304,6 +1322,7 @@ let consolidatedPayload = function() {
       }
       o1.datecolsearch = entry
       o1.disableDate = false
+      o1.recordstate = "ACTIVE";
     } else if (fieldtype.fieldtypename == 'boolean' || fieldtype.fieldtypename == 'BIGINT' || fieldtype.fieldtypename == 'INTEGER') {
       o1.searchparam = [{
         [entry]: [
@@ -1332,6 +1351,7 @@ let consolidatedPayload = function() {
       }]
       o1.disableDate = true
       o1.searchtype = 'Columnwise'
+      o1.recordstate = "ACTIVE";
     }
     testbase.payload = o1
     return testbase
