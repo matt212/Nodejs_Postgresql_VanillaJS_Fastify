@@ -4188,7 +4188,361 @@ test(
     }
 );
 
+// ============================================================
+// TEST 22 - Soft Delete - Random active row and verify in Deleted records
+// Uses complete values from a random table row.
 
+// ============================================================
+
+// ============================================================
+// TEST 22
+// SOFT DELETE - RANDOM ACTIVE EMPLOYEE
+// ============================================================
+
+test(
+    '22 - Soft Delete - Random active employee and verify in Deleted records',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        // ============================================================
+        // 1. LOAD EMPLOYEES REPORT
+        // ============================================================
+
+        await loadEmployeesReport(page);
+
+
+        // ============================================================
+        // 2. GET ALL CURRENT ACTIVE ROWS
+        // ============================================================
+
+        const rows =
+            page.locator('#basetable tbody tr');
+
+        const rowCount =
+            await rows.count();
+
+        expect(
+            rowCount,
+            'Employees report should contain at least one row'
+        ).toBeGreaterThan(0);
+
+
+        // ============================================================
+        // 3. SELECT RANDOM ROW
+        // ============================================================
+
+        const randomIndex =
+            Math.floor(Math.random() * rowCount);
+
+        const selectedRow =
+            rows.nth(randomIndex);
+
+        console.log(
+            `Test 22 - Selected random row: ${randomIndex + 1} of ${rowCount}`
+        );
+
+
+        // ============================================================
+        // 4. CAPTURE STABLE EMPLOYEE ID
+        //
+        // Example:
+        // <td data-tbledit-type="20669165">
+        // ============================================================
+
+        const editCell =
+            selectedRow
+                .locator('td[data-tbledit-type]')
+                .first();
+
+        await expect(
+            editCell
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        const employeeId =
+            await editCell.getAttribute(
+                'data-tbledit-type'
+            );
+
+
+        expect(
+            employeeId,
+            'Selected employee must have a data-tbledit-type ID'
+        ).not.toBeNull();
+
+
+        expect(
+            employeeId,
+            'Selected employee ID must not be empty'
+        ).not.toBe('');
+
+
+        console.log(
+            `Test 22 - Selected employee ID: ${employeeId}`
+        );
+
+
+        // ============================================================
+        // 5. OPEN EDIT
+        // ============================================================
+
+        await editCell.click();
+
+
+        // ============================================================
+        // 6. LOCATE RECORD STATE CHECKBOX
+        // ============================================================
+
+        const recordStateInput =
+            page.locator('#cltrlrecordstate');
+
+        const recordStateControl =
+            page.locator(
+                'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+            );
+
+
+        await expect(
+            recordStateInput
+        ).toBeAttached({
+            timeout: 30000
+        });
+
+
+        // ============================================================
+        // 7. VERIFY EMPLOYEE IS CURRENTLY ACTIVE
+        // ============================================================
+
+        await expect(
+            recordStateInput
+        ).toBeChecked();
+
+
+        console.log(
+            `Test 22 - Employee ${employeeId} is currently ACTIVE`
+        );
+
+
+        // ============================================================
+        // 8. UNCHECK RECORD STATE = SOFT DELETE
+        // ============================================================
+
+        await recordStateControl.click();
+
+
+        await expect(
+            recordStateInput
+        ).not.toBeChecked();
+
+
+        console.log(
+            `Test 22 - Employee ${employeeId} record state unchecked`
+        );
+
+
+        // ============================================================
+        // 9. SUBMIT SOFT DELETE
+        // ============================================================
+
+        const searchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+
+        await page.locator(
+            '#btnmodalsub'
+        ).click();
+
+
+        await searchResponsePromise;
+
+
+        console.log(
+            `Test 22 - Soft delete submitted for employee ${employeeId}`
+        );
+
+
+        // ============================================================
+        // 10. WAIT FOR REPORT REFRESH
+        // ============================================================
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        // ============================================================
+        // 11. OPEN PAGING MENU
+        //
+        // IMPORTANT:
+        // #overlaypaging itself is display:none initially.
+        // The clickable element is .pagingsectionparent.
+        // ============================================================
+
+        const pagingParent =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
+
+
+        await expect(
+            pagingParent
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        await pagingParent.click();
+
+
+        // ============================================================
+        // 12. VERIFY PAGING MENU IS OPEN
+        // ============================================================
+
+        const pagingMenu =
+            page.locator('#overlaypaging');
+
+
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+
+        // ============================================================
+        // 13. SELECT DELETED
+        // ============================================================
+
+        const deletedOption =
+            page.locator('#Deletediv');
+
+
+        await expect(
+            deletedOption
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+
+        const deletedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+
+        await deletedOption.click();
+
+
+        await deletedSearchResponsePromise;
+
+
+        // ============================================================
+        // 14. WAIT FOR DELETED REPORT
+        // ============================================================
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        // ============================================================
+        // 15. VERIFY DELETED EMPLOYEE EXISTS
+        //
+        // The same employee ID appears as:
+        //
+        // ACTIVE TABLE:
+        // td[data-tbledit-type="20669165"]
+        //
+        // DELETED TABLE:
+        // input[data-chk-type="20669165"]
+        // ============================================================
+
+        const deletedEmployee =
+            page.locator(
+                `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
+            );
+
+
+        await expect(
+            deletedEmployee,
+            `Soft-deleted employee ${employeeId} should appear in Deleted records`
+        ).toHaveCount(1);
+
+
+        // ============================================================
+        // 16. VERIFY THE DELETED ROW ITSELF
+        // ============================================================
+
+        const deletedRow =
+            deletedEmployee.locator(
+                'xpath=ancestor::tr'
+            );
+
+
+        await expect(
+            deletedRow
+        ).toHaveCount(1);
+
+
+        const deletedEditCell =
+            deletedRow.locator(
+                `td[data-tbledit-type="${employeeId}"]`
+            );
+
+
+        await expect(
+            deletedEditCell
+        ).toHaveCount(1);
+
+
+        console.log(
+            `Test 22 PASS - Employee ${employeeId} successfully soft-deleted and verified in Deleted records`
+        );
+    }
+);
 
 
 

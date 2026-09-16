@@ -219,7 +219,7 @@ let reqops = {
       $('#cltrlrecordstate').prop('checked', false)
       base.interimdatapayload.recordstate = false
     }
-
+$('#btnmodalsub').prop('disabled', false)
     $('#btnbutton').click()
   },
 
