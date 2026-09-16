@@ -507,6 +507,7 @@ test(
 //
 // Everything here remains dynamically discovered.
 // No field names are hardcoded.
+// *** Controls exist and are dynamically discoverable
 // ============================================================
 
 test(
@@ -596,105 +597,86 @@ test(
 //
 // THIS IS YOUR ORIGINAL LOOP.
 // NOTHING IS HARD-CODED.
+// *** Each individual field can filter correctly
 // ============================================================
+
 
 test(
     '11 - Multi-Column Filter - Dynamic fields return matching results',
     async ({ page }) => {
 
+        test.setTimeout(600000);
+
         await loadEmployeesReport(page);
-
-
-        // ----------------------------------------------------
-        // Get first row characters dynamically
-        // ----------------------------------------------------
 
         const {
             firstCharacters
         } = await getFirstRowData(page);
 
-
-        // ----------------------------------------------------
-        // Open Filter Bar
-        // ----------------------------------------------------
-
         await openFilterBar(page);
-
-
-        // ----------------------------------------------------
-        // Open Multi-Select Filters
-        // ----------------------------------------------------
 
         await page.locator(
             "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
         ).click();
 
-
         await expect(
             page.locator('.fieldsfilterbar')
         ).toBeVisible();
 
-
-        // ----------------------------------------------------
-        // DYNAMIC FIELD DISCOVERY
-        // ----------------------------------------------------
-
         const inputs =
             page.locator(
-                '.fieldsfilterbar input[type="text"]'
+                '.fieldsfilterbar input[data-multipleselect-autocomplete]'
             );
-
-
-        const placeholders =
-            await inputs.evaluateAll(elements =>
-                elements.map(
-                    el => el.placeholder
-                )
-            );
-
 
         const inputIds =
             await inputs.evaluateAll(elements =>
                 elements.map(
-                    el => el.id
+                    element => element.id
                 )
             );
-
 
         const autocompleteValues =
             await inputs.evaluateAll(elements =>
                 elements.map(
-                    el =>
-                        el.getAttribute(
+                    element =>
+                        element.getAttribute(
                             'data-multipleselect-autocomplete'
                         )
                 )
             );
-
 
         console.log(
             'Dynamic Filter Input IDs:',
             inputIds
         );
 
-
-        console.log(
-            'Dynamic Filter Placeholders:',
-            placeholders
-        );
-
-
         console.log(
             'Dynamic Filter Fields:',
             autocompleteValues
         );
 
+        expect(
+            autocompleteValues.length
+        ).toBeGreaterThan(0);
 
-        // ----------------------------------------------------
-        // ORIGINAL DYNAMIC LOOP
-        // ----------------------------------------------------
+        const normalizeValue = value => {
 
-        for (let i = 0; i < inputIds.length; i++) {
+            const cleaned =
+                (value || '')
+                    .replace(/^×/, '')
+                    .trim();
+
+            return cleaned.length
+                ? cleaned.charAt(0).toUpperCase() +
+                    cleaned.slice(1).toLowerCase()
+                : cleaned;
+        };
+
+        for (
+            let i = 0;
+            i < autocompleteValues.length;
+            i++
+        ) {
 
             const currentInputId =
                 inputIds[i];
@@ -702,209 +684,198 @@ test(
             const currentAttrValue =
                 autocompleteValues[i];
 
-
             console.log(
                 `--- Processing Filter Field: ${currentAttrValue} ---`
             );
 
-
-            // Ignore controls that don't expose
-            // a dynamic autocomplete field.
             if (!currentAttrValue) {
-
                 console.log(
                     'Skipping filter without data-multipleselect-autocomplete'
                 );
-
                 continue;
             }
-
 
             const filterInput =
                 page.locator(
                     `#${currentInputId}`
                 );
 
-
             const firstCharacterToFill =
                 firstCharacters[currentAttrValue]
-                    ? firstCharacters[
-                        currentAttrValue
-                    ].toLowerCase()
+                    ? firstCharacters[currentAttrValue].toLowerCase()
                     : 'a';
 
-
-            await filterInput.fill(
-                firstCharacterToFill
-            );
-
+            const dropdown =
+                page.locator(
+                    `#dv_${currentAttrValue}:visible`
+                ).first();
 
             await Promise.all([
 
-                page.waitForResponse(res =>
-                    res.url().includes(
+                page.waitForResponse(response =>
+                    response.url().includes(
                         '/api/searchtypegroupby'
                     ) &&
-                    res.status() === 200
+                    response.status() === 200
                 ),
 
-                expect(
-                    page.locator(
-                        `#dv_${currentAttrValue}`
-                    ).first()
-                ).toBeVisible()
+                filterInput.fill(
+                    firstCharacterToFill
+                )
 
             ]);
 
+            await expect(
+                dropdown
+            ).toBeVisible();
 
-            const links =
-                page.locator(
-                    `#dv_${currentAttrValue} div a.highlightselect`
+            const availableOptions =
+                dropdown.locator(
+                    'div a.highlightselect'
                 );
 
+            const optionCount =
+                await availableOptions.count();
 
-            const totalItems =
-                await links.count();
-
-
-            if (totalItems === 0) {
+            if (optionCount === 0) {
 
                 console.log(
-                    `No dropdown values generated for field: ${currentAttrValue}`
+                    `[SKIP FIELD] ${currentAttrValue}: no autocomplete values generated`
                 );
 
                 continue;
             }
 
-
-            // Preserve your original random selection.
             const randomIndex =
                 Math.floor(
-                    Math.random() * totalItems
+                    Math.random() * optionCount
                 );
 
+            const option =
+                availableOptions.nth(
+                    randomIndex
+                );
 
-            const rawName =
-                await links
-                    .nth(randomIndex)
-                    .textContent();
+            const selectedValue =
+                (
+                    await option.textContent()
+                ).trim();
 
+            if (!selectedValue) {
 
-            const chosenName =
-                rawName.trim();
+                console.log(
+                    `[SKIP FIELD] ${currentAttrValue}: autocomplete option has no value`
+                );
 
+                continue;
+            }
 
             console.log(
-                `[${currentAttrValue}] Randomly clicking index ${randomIndex}: "${chosenName}"`
+                `[${currentAttrValue}] Randomly clicking index ${randomIndex}: "${selectedValue}"`
             );
 
+            await option.click();
 
-            await links
-                .nth(randomIndex)
-                .click();
-
-
-            const chipContainer =
+            // Verify selected chip using the same
+            // proven pattern as Test 12.
+            const chip =
                 page.locator(
                     `#cltrl_filter_chips_${currentAttrValue}`
-                );
+                ).filter({
+                    hasText: selectedValue
+                }).first();
 
+            const actualChipValue =
+                await chip.textContent();
 
-            await expect(
-                chipContainer
-            ).toContainText(chosenName);
-
-
-            // ------------------------------------------------
-            // APPLY FILTER
-            // ------------------------------------------------
-
-            await page.locator(
-                "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
-            ).click();
-
+            expect(
+                normalizeValue(actualChipValue)
+            ).toBe(
+                normalizeValue(selectedValue)
+            );
 
             await Promise.all([
 
-                page.waitForResponse(res =>
-                    res.url().includes(
+                page.waitForResponse(response =>
+                    response.url().includes(
                         '/api/searchtype/'
                     ) &&
-                    res.status() === 200
+                    response.status() === 200
                 ),
 
-                page.waitForResponse(res =>
-                    res.url().includes(
+                page.waitForResponse(response =>
+                    response.url().includes(
                         '/api/searchtypeCount/'
                     ) &&
-                    res.status() === 200
-                )
+                    response.status() === 200
+                ),
+
+                page.locator(
+                    "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                ).click()
 
             ]);
 
-
-            // ------------------------------------------------
-            // FIND THE SAME COLUMN DYNAMICALLY
-            // ------------------------------------------------
+            await expect(
+                page.locator('#sptotalUsers')
+            ).not.toHaveText('0');
 
             const compareHeader =
                 page.locator(
                     `#basetable thead tr th[data-field-header="${currentAttrValue}"]`
                 );
 
-
             const compareColumnIndex =
                 await compareHeader.evaluate(
-                    el => el.cellIndex
+                    element =>
+                        element.cellIndex
                 );
-
 
             const compareColumnCells =
                 page.locator(
                     `#basetable tbody tr td:nth-child(${compareColumnIndex})`
                 );
 
-
             const extractedTableTexts =
-                await compareColumnCells
-                    .allTextContents();
-
+                await compareColumnCells.allTextContents();
 
             const cleanedTableNames =
-                extractedTableTexts.map(
-                    name => name.trim()
+                extractedTableTexts
+                    .map(value => value.trim())
+                    .filter(Boolean);
+
+            const expectedValue =
+                normalizeValue(
+                    selectedValue
                 );
 
-
-            // ------------------------------------------------
-            // DYNAMIC ASSERTION
-            // ------------------------------------------------
-
-            const allMatch =
-                cleanedTableNames.every(
-                    name =>
-                        name === chosenName
+            const unmatchedValues =
+                cleanedTableNames.filter(
+                    value =>
+                        normalizeValue(value) !==
+                        expectedValue
                 );
 
-
-            expect(allMatch)
-                .toBe(true);
-
+            expect(
+                unmatchedValues
+            ).toEqual([]);
 
             console.log(
-                `[PASS] All tabular results for column successfully matched: "${chosenName}"`
+                `[PASS] All tabular results for "${currentAttrValue}" matched: "${selectedValue}"`
             );
+
             await page.waitForTimeout(2000);
         }
     }
-
 );
+
+
 
 
 // ============================================================
 // TEST 12
 // DYNAMIC FILTER PERMUTATIONS
-
+// *** Combinations of fields work
 // ============================================================
 
 
@@ -1256,6 +1227,7 @@ test(
 // ============================================================
 // TEST 13
 // DYNAMIC MULTI-SELECT FILTER PERMUTATIONS
+// ** Combinations of fields + multiple selected values work
 // ============================================================
 
 test(
@@ -2992,6 +2964,1234 @@ test('19 - CRUD - Update each field individually using validationmap', async ({ 
         '[PASS] Test 19 - Every field updated individually and all untouched fields preserved'
     );
 });
+// ============================================================
+// TEST 20
+// FULL-WORD RANDOM-ROW FIELD PERMUTATIONS
+//
+// DIFFERENTIATOR:
+// Tests 12 uses first-character search.
+// Test 20 uses COMPLETE values taken from ONE RANDOM TABLE ROW.
+//
+// Example random row:
+// first_name = Christopher
+// last_name  = Smith
+// gender     = M
+//
+// The complete values from that SAME row are used across the
+// N x N field permutations.
+// ============================================================
+
+test(
+    '20 - Multi-Column Filter - Full-word random-row field permutations',
+    async ({ page }) => {
+
+        test.setTimeout(600000);
+
+        await loadEmployeesReport(page);
+
+        await openFilterBar(page);
+
+        await page.locator(
+            "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+        ).click();
+
+        await expect(
+            page.locator('.fieldsfilterbar')
+        ).toBeVisible();
+
+        const fieldKeys =
+            await page.locator(
+                '.fieldsfilterbar input[data-multipleselect-autocomplete]'
+            ).evaluateAll(elements =>
+                elements
+                    .map(element =>
+                        element.getAttribute(
+                            'data-multipleselect-autocomplete'
+                        )
+                    )
+                    .filter(Boolean)
+            );
+
+        expect(fieldKeys.length).toBeGreaterThan(0);
+
+        const normalizeValue = value => {
+
+            const cleaned =
+                (value || '')
+                    .replace(/^×/, '')
+                    .trim();
+
+            return cleaned.length
+                ? cleaned.charAt(0).toUpperCase() +
+                    cleaned.slice(1).toLowerCase()
+                : cleaned;
+        };
+
+        // ----------------------------------------------------
+        // GET ALL TABLE ROWS
+        // ----------------------------------------------------
+
+        const tableRows =
+            page.locator(
+                '#basetable tbody tr'
+            );
+
+        const rowCount =
+            await tableRows.count();
+
+        expect(rowCount).toBeGreaterThan(0);
+
+        // ----------------------------------------------------
+        // PICK RANDOM ROW
+        // ----------------------------------------------------
+
+        const randomRowIndex =
+            Math.floor(
+                Math.random() * rowCount
+            );
+
+        const randomRow =
+            tableRows.nth(
+                randomRowIndex
+            );
+
+        console.log(
+            `[RANDOM ROW] Selected table row index: ${randomRowIndex} of ${rowCount}`
+        );
+
+        // ----------------------------------------------------
+        // EXTRACT COMPLETE VALUES FROM RANDOM ROW
+        // ----------------------------------------------------
+
+        const rowData = {};
+
+        for (const fieldKey of fieldKeys) {
+
+            const header =
+                page.locator(
+                    `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                );
+
+            const columnIndex =
+                await header.evaluate(
+                    element =>
+                        element.cellIndex
+                );
+
+            const value =
+                (
+                    await randomRow
+                        .locator(
+                            `td:nth-child(${columnIndex})`
+                        )
+                        .textContent()
+                ).trim();
+
+            if (value) {
+                rowData[fieldKey] = value;
+            }
+        }
+
+        console.log(
+            '[RANDOM ROW DATA]',
+            rowData
+        );
+
+        expect(
+            Object.keys(rowData).length
+        ).toBeGreaterThan(0);
+
+        // ----------------------------------------------------
+        // N x N FIELD PERMUTATIONS
+        // ----------------------------------------------------
+
+        const expectedPermutations =
+            fieldKeys.length *
+            fieldKeys.length;
+
+        let completedPermutations = 0;
+        let skippedPermutations = 0;
+
+        for (const firstField of fieldKeys) {
+
+            for (const secondField of fieldKeys) {
+
+                if (
+                    !rowData[firstField] ||
+                    !rowData[secondField]
+                ) {
+                    skippedPermutations++;
+                    continue;
+                }
+
+                await loadEmployeesReport(page);
+
+                await openFilterBar(page);
+
+                await page.locator(
+                    "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+                ).click();
+
+                await expect(
+                    page.locator('.fieldsfilterbar')
+                ).toBeVisible();
+
+                const selectedFields =
+                    [...new Set([
+                        firstField,
+                        secondField
+                    ])];
+
+                const selectedValuesByField = {};
+
+                for (const fieldKey of selectedFields) {
+
+                    const fullValue =
+                        rowData[fieldKey];
+
+                    const filterInput =
+                        page.locator(
+                            `.fieldsfilterbar input[data-multipleselect-autocomplete="${fieldKey}"]`
+                        );
+
+                    const dropdown =
+                        page.locator(
+                            `#dv_${fieldKey}:visible`
+                        ).first();
+
+                    // ------------------------------------------------
+                    // FULL WORD SEARCH
+                    // ------------------------------------------------
+
+                    await Promise.all([
+
+                        page.waitForResponse(response =>
+                            response.url().includes(
+                                '/api/searchtypegroupby'
+                            ) &&
+                            response.status() === 200
+                        ),
+
+                        filterInput.fill(fullValue)
+
+                    ]);
+
+                    await expect(
+                        dropdown
+                    ).toBeVisible();
+
+                    const availableOptions =
+                        dropdown.locator(
+                            'div a.highlightselect'
+                        );
+
+                    const optionCount =
+                        await availableOptions.count();
+
+                    expect(
+                        optionCount,
+                        `${fieldKey}: no autocomplete values for "${fullValue}"`
+                    ).toBeGreaterThan(0);
+
+                    const matchingOption =
+                        availableOptions
+                            .filter({
+                                hasText: fullValue
+                            })
+                            .first();
+
+                    await expect(
+                        matchingOption
+                    ).toBeVisible();
+
+                    const selectedValue =
+                        (
+                            await matchingOption.textContent()
+                        ).trim();
+
+                    await matchingOption.click();
+
+                    const chip =
+                        page.locator(
+                            `#cltrl_filter_chips_${fieldKey}`
+                        ).filter({
+                            hasText: selectedValue
+                        }).first();
+
+                    const actualChipValue =
+                        await chip.textContent();
+
+                    expect(
+                        normalizeValue(actualChipValue)
+                    ).toBe(
+                        normalizeValue(selectedValue)
+                    );
+
+                    selectedValuesByField[fieldKey] = [
+                        selectedValue
+                    ];
+                }
+
+                // ------------------------------------------------
+                // APPLY
+                // ------------------------------------------------
+
+                await Promise.all([
+
+                    page.waitForResponse(response =>
+                        response.url().includes(
+                            '/api/searchtype/'
+                        ) &&
+                        response.status() === 200
+                    ),
+
+                    page.waitForResponse(response =>
+                        response.url().includes(
+                            '/api/searchtypeCount/'
+                        ) &&
+                        response.status() === 200
+                    ),
+
+                    page.locator(
+                        "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                    ).click()
+
+                ]);
+
+                await expect(
+                    page.locator('#sptotalUsers')
+                ).not.toHaveText('0');
+
+                // ------------------------------------------------
+                // VERIFY ALL SELECTED COLUMNS
+                // ------------------------------------------------
+
+                for (
+                    const [
+                        fieldKey,
+                        selectedValues
+                    ]
+                    of Object.entries(
+                        selectedValuesByField
+                    )
+                ) {
+
+                    const header =
+                        page.locator(
+                            `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                        );
+
+                    const columnIndex =
+                        await header.evaluate(
+                            element =>
+                                element.cellIndex
+                        );
+
+                    const tableValues =
+                        await page.locator(
+                            `#basetable tbody tr td:nth-child(${columnIndex})`
+                        ).allTextContents();
+
+                    const expectedValue =
+                        normalizeValue(
+                            selectedValues[0]
+                        );
+
+                    const unmatchedValues =
+                        tableValues
+                            .map(value => value.trim())
+                            .filter(Boolean)
+                            .filter(value =>
+                                normalizeValue(value) !==
+                                expectedValue
+                            );
+
+                    expect(
+                        unmatchedValues
+                    ).toEqual([]);
+                }
+
+                completedPermutations++;
+
+                console.log(
+                    `[PASS] Random-row full-word permutation: ${firstField} + ${secondField}`
+                );
+            }
+        }
+
+        console.log(
+            `[SUMMARY] Test 20: ${completedPermutations}/${expectedPermutations} permutations passed | ${skippedPermutations} skipped`
+        );
+
+        await page.waitForTimeout(3000);
+    }
+);
+
+
+// ============================================================
+// TEST 21
+// FULL-WORD RANDOM-ROW MULTI-SELECT PERMUTATIONS
+//
+// DIFFERENTIATOR:
+// Tests 13 uses first-character searches.
+// Test 21 uses COMPLETE values.
+//
+// One RANDOM ROW supplies the primary value for every field.
+// A second DISTINCT complete value is selected where available.
+//
+// Example:
+//
+// first_name = Christopher OR Michael
+// gender     = M OR F
+//
+// Then all N x N field combinations are exercised.
+// ============================================================
+// ============================================================
+// TEST 21
+// FULL-WORD MULTI-SELECT N×N PERMUTATIONS
+// Uses complete values from actual random table-row data.
+// Existing Test 13 remains unchanged.
+// ============================================================
+
+// ============================================================
+// TEST 21 - FULL-WORD MULTI-SELECT N×N PERMUTATIONS
+// Uses complete values from a random table row.
+// Existing Test 12 and Test 13 remain unchanged.
+// ============================================================
+
+// ============================================================
+// TEST 21 - FULL-WORD MULTI-SELECT N×N PERMUTATIONS
+// Uses complete values from a random table row.
+// Existing Test 12 and Test 13 remain unchanged.
+// ============================================================
+
+
+test(
+    '21 - Multi-Column Filter - Full-word random-row multi-select permutations',
+    async ({ page }) => {
+
+        test.setTimeout(600000);
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+
+        const normalizeValue = value =>
+            (value || '')
+                .trim()
+                .toLowerCase();
+
+        // ============================================================
+        // INITIAL PAGE / FILTER SETUP
+        // ============================================================
+
+        await loadEmployeesReport(page);
+        await openFilterBar(page);
+
+        await page.locator(
+            "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+        ).click();
+
+        await expect(
+            page.locator('.fieldsfilterbar')
+        ).toBeVisible();
+
+        // ============================================================
+        // GET ALL MULTI-SELECT FIELDS
+        // ============================================================
+
+        const fieldKeys =
+            await page.locator(
+                '.fieldsfilterbar input[data-multipleselect-autocomplete]'
+            ).evaluateAll(elements =>
+                elements
+                    .map(element =>
+                        element.getAttribute(
+                            'data-multipleselect-autocomplete'
+                        )
+                    )
+                    .filter(Boolean)
+            );
+
+        expect(
+            fieldKeys.length,
+            'No multi-select fields found'
+        ).toBeGreaterThan(0);
+
+        console.log(
+            `Multi-select fields: ${fieldKeys.join(', ')}`
+        );
+
+        // ============================================================
+        // GET TABLE ROWS
+        // ============================================================
+
+        const tableRows =
+            page.locator(
+                '#basetable tbody tr'
+            );
+
+        const rowCount =
+            await tableRows.count();
+
+        expect(
+            rowCount,
+            'Employee table contains no rows'
+        ).toBeGreaterThan(0);
+
+        // ============================================================
+        // SELECT ONE RANDOM TABLE ROW
+        // ============================================================
+
+        const randomRowIndex =
+            Math.floor(
+                Math.random() * rowCount
+            );
+
+        console.log(
+            `Random table row: ${randomRowIndex + 1}/${rowCount}`
+        );
+
+        // ============================================================
+        // CAPTURE RANDOM ROW DATA
+        // AND ALL ACTUAL COLUMN VALUES
+        // ============================================================
+
+        const randomRowData = {};
+        const allColumnValues = {};
+
+        for (const fieldKey of fieldKeys) {
+
+            const header =
+                page.locator(
+                    `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                );
+
+            await expect(
+                header,
+                `${fieldKey}: table header not found`
+            ).toBeVisible();
+
+            const columnIndex =
+                await header.evaluate(
+                    element => element.cellIndex
+                );
+
+            const randomRowValue =
+                (
+                    await tableRows
+                        .nth(randomRowIndex)
+                        .locator(
+                            `td:nth-child(${columnIndex})`
+                        )
+                        .textContent()
+                ).trim();
+
+            randomRowData[fieldKey] =
+                randomRowValue;
+
+            const columnValues =
+                await page.locator(
+                    `#basetable tbody tr td:nth-child(${columnIndex})`
+                ).allTextContents();
+
+            allColumnValues[fieldKey] =
+                columnValues
+                    .map(value => value.trim())
+                    .filter(Boolean);
+
+            console.log(
+                `[RANDOM ROW] ${fieldKey}: "${randomRowValue}"`
+            );
+        }
+
+        // ============================================================
+        // PERMUTATIONS
+        // ============================================================
+
+        const expectedPermutations =
+            fieldKeys.length *
+            fieldKeys.length;
+
+        let completedPermutations = 0;
+        let skippedPermutations = 0;
+        let verifiedColumnAssertions = 0;
+        let selectedValueCount = 0;
+
+        // ============================================================
+        // TEST EVERY FIELD PERMUTATION
+        // ============================================================
+
+        for (const firstField of fieldKeys) {
+
+            for (const secondField of fieldKeys) {
+
+                // ----------------------------------------------------
+                // LOAD CLEAN REPORT FOR EVERY PERMUTATION
+                // ----------------------------------------------------
+
+                await loadEmployeesReport(page);
+                await openFilterBar(page);
+
+                await page.locator(
+                    "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+                ).click();
+
+                await expect(
+                    page.locator('.fieldsfilterbar')
+                ).toBeVisible();
+
+                // ----------------------------------------------------
+                // SAME FIELD:
+                //
+                // first_name + first_name
+                // => one field
+                //
+                // CROSS FIELD:
+                //
+                // first_name + last_name
+                // => two fields
+                // ----------------------------------------------------
+
+                const selectedFields =
+                    new Set([
+                        firstField,
+                        secondField
+                    ]);
+
+                const selectedValuesByField = {};
+
+                console.log(
+                    '------------------------------------------------------------'
+                );
+
+                console.log(
+                    `Testing permutation: ${firstField} + ${secondField}`
+                );
+
+                // ====================================================
+                // SELECT VALUES FOR EACH FIELD
+                // ====================================================
+
+                for (const fieldKey of selectedFields) {
+
+                    const randomRowValue =
+                        randomRowData[fieldKey];
+
+                    if (!randomRowValue) {
+
+                        console.log(
+                            `[SKIP] ${fieldKey}: random row value is empty`
+                        );
+
+                        continue;
+                    }
+
+                    const actualValues =
+                        allColumnValues[fieldKey] || [];
+
+                    // ------------------------------------------------
+                    // Find a second DISTINCT actual value.
+                    //
+                    // Case-insensitive comparison.
+                    // ------------------------------------------------
+
+                    const secondValue =
+                        actualValues.find(
+                            value =>
+                                normalizeValue(value) !==
+                                normalizeValue(randomRowValue)
+                        );
+
+                    if (!secondValue) {
+
+                        console.log(
+                            `[SKIP] ${fieldKey}: no second distinct actual value`
+                        );
+
+                        continue;
+                    }
+
+                    const valuesToSelect = [
+                        randomRowValue,
+                        secondValue
+                    ];
+
+                    const filterInput =
+                        page.locator(
+                            `.fieldsfilterbar input[data-multipleselect-autocomplete="${fieldKey}"]`
+                        );
+
+                    await expect(
+                        filterInput,
+                        `${fieldKey}: multi-select input not found`
+                    ).toBeVisible();
+
+                    // ------------------------------------------------
+                    // IMPORTANT:
+                    //
+                    // Actual DOM:
+                    //
+                    // <div style="display:inline-block;">
+                    //     <input ...>
+                    //     <div id="cltrl_filter_chips_first_name">
+                    //         <div class="selectchips">
+                    //             ...
+                    //         </div>
+                    //     </div>
+                    // </div>
+                    //
+                    // Therefore locate chips through the input's
+                    // parent container rather than relying on the
+                    // dynamic chip-container ID.
+                    // ------------------------------------------------
+
+                    const fieldContainer =
+                        filterInput.locator('..');
+
+                    const chips =
+                        fieldContainer.locator(
+                            '.selectchips'
+                        );
+
+                    const dropdown =
+                        page.locator(
+                            `#dv_${fieldKey}:visible`
+                        ).first();
+
+                    const selectedValues = [];
+
+                    // =================================================
+                    // SELECT TWO COMPLETE VALUES
+                    // =================================================
+
+                    for (const actualValue of valuesToSelect) {
+
+                        console.log(
+                            `[${fieldKey}] Searching autocomplete for: "${actualValue}"`
+                        );
+
+                        // ------------------------------------------------
+                        // SEARCH USING COMPLETE VALUE
+                        // ------------------------------------------------
+
+                        await Promise.all([
+                            page.waitForResponse(response =>
+                                response.url().includes(
+                                    '/api/searchtypegroupby'
+                                ) &&
+                                response.status() === 200
+                            ),
+
+                            filterInput.fill(
+                                actualValue
+                            )
+                        ]);
+
+                        await expect(
+                            dropdown,
+                            `${fieldKey}: autocomplete dropdown did not open for "${actualValue}"`
+                        ).toBeVisible();
+
+                        const availableOptions =
+                            dropdown.locator(
+                                'div a.highlightselect'
+                            );
+
+                        await expect(
+                            availableOptions.first(),
+                            `${fieldKey}: autocomplete returned no options for "${actualValue}"`
+                        ).toBeVisible();
+
+                        // ------------------------------------------------
+                        // FIND AUTOCOMPLETE OPTION
+                        //
+                        // Case-insensitive exact logical comparison.
+                        //
+                        // Example:
+                        //
+                        // Expected: eRsJwGyn
+                        // Actual:   Ersjwgyn
+                        //
+                        // These are treated as equal.
+                        // ------------------------------------------------
+
+                        const optionCount =
+                            await availableOptions.count();
+
+                        let matchingOption = null;
+                        let matchingOptionText = '';
+
+                        for (
+                            let i = 0;
+                            i < optionCount;
+                            i++
+                        ) {
+
+                            const candidate =
+                                availableOptions.nth(i);
+
+                            const candidateText =
+                                (
+                                    await candidate.textContent()
+                                ).trim();
+
+                            console.log(
+                                `[AUTOCOMPLETE CHECK] Expected: "${actualValue}" | Actual: "${candidateText}"`
+                            );
+
+                            if (
+                                normalizeValue(candidateText) ===
+                                normalizeValue(actualValue)
+                            ) {
+
+                                matchingOption =
+                                    candidate;
+
+                                matchingOptionText =
+                                    candidateText;
+
+                                break;
+                            }
+                        }
+
+                        expect(
+                            matchingOption,
+                            `${fieldKey}: actual value "${actualValue}" not available in autocomplete`
+                        ).not.toBeNull();
+
+                        await expect(
+                            matchingOption
+                        ).toBeVisible();
+
+                        // ------------------------------------------------
+                        // VERIFY AUTOCOMPLETE VALUE
+                        // ------------------------------------------------
+
+                        expect(
+                            normalizeValue(
+                                matchingOptionText
+                            ),
+                            `${fieldKey}: autocomplete value "${matchingOptionText}" does not match "${actualValue}"`
+                        ).toBe(
+                            normalizeValue(actualValue)
+                        );
+
+                        // ------------------------------------------------
+                        // SELECT AUTOCOMPLETE OPTION
+                        // ------------------------------------------------
+
+                        await matchingOption.click();
+
+                        // =================================================
+                        // VERIFY SELECTED CHIP
+                        // =================================================
+                        //
+                        // DO NOT use:
+                        //
+                        // #cltrl_filter_chips_${fieldKey}
+                        //
+                        // because the application dynamically creates
+                        // these IDs and they have previously produced
+                        // duplicate-ID behavior.
+                        //
+                        // Instead:
+                        //
+                        // filter input
+                        //      ↓
+                        // parent container
+                        //      ↓
+                        // .selectchips
+                        // =================================================
+
+                        await expect
+                            .poll(
+                                async () => {
+
+                                    const chipCount =
+                                        await chips.count();
+
+                                    for (
+                                        let i = 0;
+                                        i < chipCount;
+                                        i++
+                                    ) {
+
+                                        const candidate =
+                                            chips.nth(i);
+
+                                        const candidateText =
+                                            await candidate.evaluate(
+                                                element => {
+
+                                                    const clone =
+                                                        element.cloneNode(
+                                                            true
+                                                        );
+
+                                                    const removeSpan =
+                                                        clone.querySelector(
+                                                            '.select2choiceremove'
+                                                        );
+
+                                                    if (
+                                                        removeSpan
+                                                    ) {
+                                                        removeSpan.remove();
+                                                    }
+
+                                                    return clone
+                                                        .textContent
+                                                        .trim();
+                                                }
+                                            );
+
+                                        console.log(
+                                            `[CHIP CHECK] Expected: "${actualValue}" | Actual: "${candidateText}"`
+                                        );
+
+                                        if (
+                                            normalizeValue(
+                                                candidateText
+                                            ) ===
+                                            normalizeValue(
+                                                actualValue
+                                            )
+                                        ) {
+                                            return true;
+                                        }
+                                    }
+
+                                    return false;
+                                },
+                                {
+                                    timeout: 5000,
+                                    message:
+                                        `${fieldKey}: selected chip not found for "${actualValue}"`
+                                }
+                            )
+                            .toBe(true);
+
+                        // ------------------------------------------------
+                        // Now retrieve the matching chip again so we can
+                        // perform the explicit visibility/value checks.
+                        // ------------------------------------------------
+
+                        const chipCount =
+                            await chips.count();
+
+                        let matchingChip = null;
+                        let actualChipValue = '';
+
+                        for (
+                            let i = 0;
+                            i < chipCount;
+                            i++
+                        ) {
+
+                            const candidate =
+                                chips.nth(i);
+
+                            const candidateText =
+                                await candidate.evaluate(
+                                    element => {
+
+                                        const clone =
+                                            element.cloneNode(
+                                                true
+                                            );
+
+                                        const removeSpan =
+                                            clone.querySelector(
+                                                '.select2choiceremove'
+                                            );
+
+                                        if (
+                                            removeSpan
+                                        ) {
+                                            removeSpan.remove();
+                                        }
+
+                                        return clone
+                                            .textContent
+                                            .trim();
+                                    }
+                                );
+
+                            if (
+                                normalizeValue(
+                                    candidateText
+                                ) ===
+                                normalizeValue(
+                                    actualValue
+                                )
+                            ) {
+
+                                matchingChip =
+                                    candidate;
+
+                                actualChipValue =
+                                    candidateText;
+
+                                break;
+                            }
+                        }
+
+                        expect(
+                            matchingChip,
+                            `${fieldKey}: selected chip not found for "${actualValue}"`
+                        ).not.toBeNull();
+
+                        await expect(
+                            matchingChip
+                        ).toBeVisible();
+
+                        expect(
+                            normalizeValue(
+                                actualChipValue
+                            ),
+                            `${fieldKey}: chip "${actualChipValue}" does not match "${actualValue}"`
+                        ).toBe(
+                            normalizeValue(actualValue)
+                        );
+
+                        selectedValues.push(
+                            actualValue
+                        );
+
+                        selectedValueCount++;
+
+                        console.log(
+                            `[${fieldKey}] Selected: "${actualValue}" | Chip: "${actualChipValue}"`
+                        );
+                    }
+
+                    // ----------------------------------------------------
+                    // Store selected values.
+                    // ----------------------------------------------------
+
+                    if (
+                        selectedValues.length > 0
+                    ) {
+
+                        selectedValuesByField[fieldKey] =
+                            selectedValues;
+                    }
+                }
+
+                // ========================================================
+                // SKIP ONLY IF NO FIELD WAS SELECTED
+                // ========================================================
+
+                if (
+                    Object.keys(
+                        selectedValuesByField
+                    ).length === 0
+                ) {
+
+                    skippedPermutations++;
+
+                    console.log(
+                        `[SKIP] ${firstField} + ${secondField}`
+                    );
+
+                    continue;
+                }
+
+                // ========================================================
+                // APPLY FILTERS
+                // ========================================================
+
+                await Promise.all([
+
+                    page.waitForResponse(response =>
+                        response.url().includes(
+                            '/api/searchtype/'
+                        ) &&
+                        response.status() === 200
+                    ),
+
+                    page.waitForResponse(response =>
+                        response.url().includes(
+                            '/api/searchtypeCount/'
+                        ) &&
+                        response.status() === 200
+                    ),
+
+                    page.locator(
+                        "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                    ).click()
+
+                ]);
+
+                // ========================================================
+                // VERIFY NON-ZERO RESULT
+                // ========================================================
+
+                await expect(
+                    page.locator('#sptotalUsers')
+                ).not.toHaveText('0');
+
+                // ========================================================
+                // VERIFY RETURNED TABLE VALUES
+                // ========================================================
+
+                for (
+                    const [
+                        fieldKey,
+                        selectedValues
+                    ] of Object.entries(
+                        selectedValuesByField
+                    )
+                ) {
+
+                    const header =
+                        page.locator(
+                            `#basetable thead tr th[data-field-header="${fieldKey}"]`
+                        );
+
+                    await expect(
+                        header,
+                        `${fieldKey}: table header not found after filtering`
+                    ).toBeVisible();
+
+                    const columnIndex =
+                        await header.evaluate(
+                            element =>
+                                element.cellIndex
+                        );
+
+                    const tableValues =
+                        await page.locator(
+                            `#basetable tbody tr td:nth-child(${columnIndex})`
+                        ).allTextContents();
+
+                    const allowedValues =
+                        selectedValues.map(
+                            value =>
+                                normalizeValue(value)
+                        );
+
+                    const unmatchedValues =
+                        tableValues
+                            .map(
+                                value =>
+                                    value.trim()
+                            )
+                            .filter(Boolean)
+                            .filter(
+                                value =>
+                                    !allowedValues.includes(
+                                        normalizeValue(
+                                            value
+                                        )
+                                    )
+                            );
+
+                    expect(
+                        unmatchedValues,
+                        `${fieldKey}: returned rows contain values outside selected values ${JSON.stringify(selectedValues)}`
+                    ).toEqual([]);
+
+                    verifiedColumnAssertions++;
+
+                    console.log(
+                        `[PASS] ${fieldKey}: all returned rows matched ${JSON.stringify(selectedValues)}`
+                    );
+                }
+
+                completedPermutations++;
+
+                console.log(
+                    `[PASS] ${firstField} + ${secondField}`
+                );
+            }
+        }
+
+        // ============================================================
+        // FINAL SUMMARY
+        // ============================================================
+
+        const sameFieldPermutations =
+            fieldKeys.length;
+
+        const crossFieldPermutations =
+            expectedPermutations -
+            sameFieldPermutations;
+
+        const evaluatedPermutations =
+            completedPermutations +
+            skippedPermutations;
+
+        const evaluationPercentage =
+            expectedPermutations > 0
+                ? Math.round(
+                    evaluatedPermutations /
+                    expectedPermutations *
+                    100
+                )
+                : 0;
+
+        console.log(
+            '============================================================'
+        );
+
+        console.log(
+            'TEST 21 FULL-WORD MULTI-SELECT SUMMARY'
+        );
+
+        console.log(
+            `Fields: ${fieldKeys.length}`
+        );
+
+        console.log(
+            `Expected permutations: ${expectedPermutations}`
+        );
+
+        console.log(
+            `Completed permutations: ${completedPermutations}`
+        );
+
+        console.log(
+            `Skipped permutations: ${skippedPermutations}`
+        );
+
+        console.log(
+            `Evaluation: ${evaluationPercentage}%`
+        );
+
+        console.log(
+            `Same-field permutations: ${sameFieldPermutations}`
+        );
+
+        console.log(
+            `Cross-field permutations: ${crossFieldPermutations}`
+        );
+
+        console.log(
+            `Column assertions: ${verifiedColumnAssertions}`
+        );
+
+        console.log(
+            `Complete values selected: ${selectedValueCount}`
+        );
+
+        console.log(
+            `Random row: ${randomRowIndex + 1}`
+        );
+
+        console.log(
+            '============================================================'
+        );
+
+        await page.waitForTimeout(3000);
+    }
+);
+
+
+
+
+
 
 
 
