@@ -337,7 +337,7 @@ npx playwright test employees -g "21 - Multi-Column Filter - Full-word random-ro
 HEADED=true npx playwright test playwright/tests/employees.resilience.spec.js
 
 HEADED=true \
-npx playwright test employees -g "27 - Clear and remove dynamic filter returns report to unfiltered state"
+npx playwright test employees -g "28 - Dynamic filter and column sorting work together"
 
 
 
