@@ -100,6 +100,7 @@ function getdeletedrecords() {
             console.log(argument);
             htmlpopulate.htmlpopulatetable(argument);
             basepagination.bootpagination(argument);
+            functionppagesize()
         })
 
 
@@ -130,6 +131,7 @@ function getdeletedrecords() {
             console.log(argument);
             htmlpopulate.htmlpopulatetable(argument);
             basepagination.bootpagination(argument);
+            functionppagesize()
         })
 
 
@@ -148,6 +150,7 @@ function getdeletedrecords() {
 
             htmlpopulate.htmlpopulatetable(argument);
             basepagination.bootpagination(argument);
+            functionppagesize()
         })
     }
 
@@ -156,7 +159,10 @@ function getdeletedrecords() {
         base.pageSize = parseInt($('#inppagesize').val())
         filterparam.pageSize = base.pageSize
         filterparam.pageno = 0;
-        filterparam.recordstate = "ACTIVE";
+        if (Object.prototype.hasOwnProperty.call(base, "recordstate")) {
+    filterparam.recordstate =
+        base.recordstate === "ACTIVE" ? "ACTIVE" : "DELETED";
+}
         base.datapayload = filterparam;
 
         basefunction().getpaginatesearchtype(base).then(function (argument) {
