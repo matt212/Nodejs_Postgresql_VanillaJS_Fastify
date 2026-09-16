@@ -337,7 +337,7 @@ npx playwright test employees -g "21 - Multi-Column Filter - Full-word random-ro
 HEADED=true npx playwright test playwright/tests/employees.resilience.spec.js
 
 HEADED=true \
-npx playwright test employees -g "22 - Soft Delete - Random active employee and verify in Deleted records"
+npx playwright test employees -g "23 - Restore - Random deleted employee and verify in Active records"
 
 LOGIN_USERNAME=krennic \
 LOGIN_PASSWORD=orson \
