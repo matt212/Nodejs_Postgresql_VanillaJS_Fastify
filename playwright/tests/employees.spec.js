@@ -4545,6 +4545,450 @@ test(
 );
 
 
+// ============================================================
+// TEST 23
+// 23 - Restore - Random deleted employee and verify in Active records
+// ============================================================
+
+test(
+    '23 - Restore - Random deleted employee and verify in Active records',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        // ============================================================
+        // 1. LOAD EMPLOYEES REPORT
+        // ============================================================
+
+        await loadEmployeesReport(page);
+
+
+        // ============================================================
+        // 2. OPEN PAGING MENU
+        // ============================================================
+
+        const pagingParent =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
+
+        await expect(
+            pagingParent
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await pagingParent.click();
+
+
+        // ============================================================
+        // 3. VERIFY PAGING MENU IS OPEN
+        // ============================================================
+
+        const pagingMenu =
+            page.locator('#overlaypaging');
+
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+
+        // ============================================================
+        // 4. SELECT DELETED
+        // ============================================================
+
+        const deletedOption =
+            page.locator('#Deletediv');
+
+        await expect(
+            deletedOption
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+
+        const deletedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+
+        await deletedOption.click();
+
+        await deletedSearchResponsePromise;
+
+
+        // ============================================================
+        // 5. WAIT FOR DELETED REPORT
+        // ============================================================
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        // ============================================================
+        // 6. VERIFY DELETED TABLE HAS RECORDS
+        // ============================================================
+
+        const deletedRows =
+            page.locator('#basetable tbody tr');
+
+        const deletedRowCount =
+            await deletedRows.count();
+
+        expect(
+            deletedRowCount,
+            'Deleted records should contain at least one employee'
+        ).toBeGreaterThan(0);
+
+
+        console.log(
+            `Test 23 - Deleted records found: ${deletedRowCount}`
+        );
+
+
+        // ============================================================
+        // 7. SELECT RANDOM DELETED ROW
+        // ============================================================
+
+        const randomIndex =
+            Math.floor(
+                Math.random() * deletedRowCount
+            );
+
+        const selectedDeletedRow =
+            deletedRows.nth(randomIndex);
+
+
+        // ============================================================
+        // 8. CAPTURE STABLE EMPLOYEE ID
+        //
+        // The deleted row contains:
+        //
+        // <td data-tbledit-type="20669165">
+        //
+        // ============================================================
+
+        const editCell =
+            selectedDeletedRow
+                .locator('td[data-tbledit-type]')
+                .first();
+
+
+        await expect(
+            editCell
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        const employeeId =
+            await editCell.getAttribute(
+                'data-tbledit-type'
+            );
+
+
+        expect(
+            employeeId,
+            'Selected deleted employee must have a data-tbledit-type ID'
+        ).not.toBeNull();
+
+
+        expect(
+            employeeId,
+            'Selected deleted employee ID must not be empty'
+        ).not.toBe('');
+
+
+        console.log(
+            `Test 23 - Selected deleted employee ID: ${employeeId}`
+        );
+
+
+        // ============================================================
+        // 9. VERIFY THE SELECTED ROW CONTAINS THE EMPLOYEE ID
+        // ============================================================
+
+        const selectedDeletedId =
+            selectedDeletedRow.locator(
+                `input.tblkchk[data-chk-type="${employeeId}"]`
+            );
+
+
+        await expect(
+            selectedDeletedId
+        ).toHaveCount(1);
+
+
+        // ============================================================
+        // 10. CLICK EDIT CELL
+        // ============================================================
+
+        await editCell.click();
+
+
+        // ============================================================
+        // 11. WAIT FOR EDIT MODAL RECORD STATE CHECKBOX
+        // ============================================================
+
+        const recordStateInput =
+            page.locator('#cltrlrecordstate');
+
+        const recordStateControl =
+            page.locator(
+                'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+            );
+
+
+        await expect(
+            recordStateInput
+        ).toBeAttached({
+            timeout: 30000
+        });
+
+
+        // ============================================================
+        // 12. DELETED RECORD MUST INITIALLY BE UNCHECKED
+        // ============================================================
+
+        await expect(
+            recordStateInput
+        ).not.toBeChecked();
+
+
+        console.log(
+            `Test 23 - Employee ${employeeId} confirmed as DELETED`
+        );
+
+
+        // ============================================================
+        // 13. CHECK RECORD STATE = RESTORE
+        // ============================================================
+
+        await recordStateControl.click();
+
+
+        await expect(
+            recordStateInput
+        ).toBeChecked();
+
+
+        console.log(
+            `Test 23 - Employee ${employeeId} record state checked for restore`
+        );
+
+
+        // ============================================================
+        // 14. SUBMIT RESTORE
+        // ============================================================
+
+        const restoreSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+
+        await page.locator(
+            '#btnmodalsub'
+        ).click();
+
+
+        await restoreSearchResponsePromise;
+
+
+        console.log(
+            `Test 23 - Restore submitted for employee ${employeeId}`
+        );
+
+
+        // ============================================================
+        // 15. WAIT FOR REPORT REFRESH
+        // ============================================================
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        // ============================================================
+        // 16. OPEN PAGING MENU
+        // ============================================================
+
+        const pagingParentAfterRestore =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
+
+
+        await expect(
+            pagingParentAfterRestore
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        await pagingParentAfterRestore.click();
+
+
+        // ============================================================
+        // 17. VERIFY PAGING MENU IS OPEN
+        // ============================================================
+
+        const pagingMenuAfterRestore =
+            page.locator('#overlaypaging');
+
+
+        await expect(
+            pagingMenuAfterRestore
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+
+        // ============================================================
+        // 18. SELECT NEWEST / ACTIVE RECORDS
+        // ============================================================
+
+        const newestOption =
+            page.locator('#newestdiv');
+
+
+        await expect(
+            newestOption
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+
+        const newestSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+
+        await newestOption.click();
+
+
+        await newestSearchResponsePromise;
+
+
+        // ============================================================
+        // 19. WAIT FOR ACTIVE REPORT
+        // ============================================================
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+
+        // ============================================================
+        // 20. VERIFY RESTORED EMPLOYEE IS IN ACTIVE TABLE
+        // ============================================================
+
+        const restoredEmployee =
+            page.locator(
+                `#basetable tbody tr td[data-tbledit-type="${employeeId}"]`
+            );
+
+
+        await expect(
+            restoredEmployee,
+            `Restored employee ${employeeId} should appear in Active records`
+        ).toHaveCount(1);
+
+
+        // ============================================================
+        // 21. VERIFY RESTORED ROW
+        // ============================================================
+
+        const restoredRow =
+            restoredEmployee.locator(
+                'xpath=ancestor::tr'
+            );
+
+
+        await expect(
+            restoredRow
+        ).toHaveCount(1);
+
+
+        const restoredCheckbox =
+            restoredRow.locator(
+                `input.tblkchk[data-chk-type="${employeeId}"]`
+            );
+
+
+        await expect(
+            restoredCheckbox
+        ).toHaveCount(1);
+
+
+        console.log(
+            `Test 23 PASS - Employee ${employeeId} successfully restored and verified in Active records`
+        );
+    }
+);
+
 
 
 
