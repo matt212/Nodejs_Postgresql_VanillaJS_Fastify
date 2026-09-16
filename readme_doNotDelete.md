@@ -334,7 +334,7 @@ HEADED=true \
 npx playwright test employees -g "21 - Multi-Column Filter - Full-word random-row multi-select permutations"
 
 
-
+HEADED=true npx playwright test playwright/tests/employees.resilience.spec.js
 
 LOGIN_USERNAME=krennic \
 LOGIN_PASSWORD=orson \
