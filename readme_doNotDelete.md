@@ -337,7 +337,9 @@ npx playwright test employees -g "21 - Multi-Column Filter - Full-word random-ro
 HEADED=true npx playwright test playwright/tests/employees.resilience.spec.js
 
 HEADED=true \
-npx playwright test employees -g "23 - Restore - Random deleted employee and verify in Active records"
+npx playwright test employees -g "24 - Pagination and page-size behavior works correctly"
+
+
 
 LOGIN_USERNAME=krennic \
 LOGIN_PASSWORD=orson \

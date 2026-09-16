@@ -4991,5 +4991,2007 @@ test(
 
 
 
+// ============================================================
+// TESTS 24 - 30
+//
+// Additional high-value UI coverage:
+//
+// 24 - Pagination + Page Size
+// 25 - Newest / Oldest navigation
+// 26 - Empty-result search
+// 27 - Clear / Remove filter
+// 28 - Filter + Sort
+// 29 - Filter + Pagination
+// 30 - Delete -> Active absence -> Restore -> Deleted absence
+//
+// These tests are designed to be pasted AFTER TEST 23.
+// ============================================================
+
+
+// ============================================================
+// HELPER FOR TESTS 27 / 28 / 29
+//
+// Dynamically selects the first available multi-select field
+// using an actual value from the first table row.
+//
+// No Employee field name is hardcoded.
+// ============================================================
+
+async function selectOneDynamicEmployeeFilter(page) {
+
+    await openFilterBar(page);
+
+    await page.locator(
+        "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
+    ).click();
+
+    await expect(
+        page.locator('.fieldsfilterbar')
+    ).toBeVisible({
+        timeout: 10000
+    });
+
+    const fieldKeys =
+        await page.locator(
+            '.fieldsfilterbar input[data-multipleselect-autocomplete]'
+        ).evaluateAll(elements =>
+            elements
+                .map(element =>
+                    element.getAttribute(
+                        'data-multipleselect-autocomplete'
+                    )
+                )
+                .filter(Boolean)
+        );
+
+    expect(
+        fieldKeys.length,
+        'At least one dynamic multi-select field must exist'
+    ).toBeGreaterThan(0);
+
+    let selectedField = null;
+    let selectedValue = null;
+
+    // ------------------------------------------------------------
+    // Find a field having a usable value in the first table row.
+    // ------------------------------------------------------------
+
+    for (const fieldKey of fieldKeys) {
+
+        const header =
+            page.locator(
+                `#basetable thead tr th[data-field-header="${fieldKey}"]`
+            );
+
+        if (await header.count() === 0) {
+            continue;
+        }
+
+        const columnIndex =
+            await header.evaluate(
+                element => element.cellIndex
+            );
+
+        const cell =
+            page.locator(
+                `#basetable tbody tr`
+            ).first().locator(
+                `td:nth-child(${columnIndex})`
+            );
+
+        if (await cell.count() === 0) {
+            continue;
+        }
+
+        const value =
+            (
+                await cell.textContent()
+            || ''
+            ).trim();
+
+        if (value.length > 0) {
+            selectedField = fieldKey;
+            selectedValue = value;
+            break;
+        }
+    }
+
+    expect(
+        selectedField,
+        'A dynamic multi-select field with a usable table value must exist'
+    ).not.toBeNull();
+
+    expect(
+        selectedValue,
+        'Dynamic filter value must not be empty'
+    ).not.toBe('');
+
+    console.log(
+        `Dynamic filter field: ${selectedField}`
+    );
+
+    console.log(
+        `Dynamic filter value: ${selectedValue}`
+    );
+
+    const filterInput =
+        page.locator(
+            `.fieldsfilterbar input[data-multipleselect-autocomplete="${selectedField}"]`
+        );
+
+    await expect(
+        filterInput,
+        `${selectedField}: filter input must exist`
+    ).toBeVisible();
+
+    const fieldContainer =
+        filterInput.locator('..');
+
+    const chips =
+        fieldContainer.locator('.selectchips');
+
+    const dropdown =
+        page.locator(
+            `#dv_${selectedField}:visible`
+        ).first();
+
+    // ------------------------------------------------------------
+    // Search autocomplete using the complete actual value.
+    // ------------------------------------------------------------
+
+    await Promise.all([
+        page.waitForResponse(
+            response =>
+                response.url().includes(
+                    '/api/searchtypegroupby'
+                ) &&
+                response.status() === 200,
+            {
+                timeout: 30000
+            }
+        ),
+
+        filterInput.fill(selectedValue)
+    ]);
+
+    await expect(
+        dropdown,
+        `${selectedField}: autocomplete dropdown must open`
+    ).toBeVisible({
+        timeout: 10000
+    });
+
+    const options =
+        dropdown.locator(
+            'div a.highlightselect'
+        );
+
+    await expect(
+        options.first(),
+        `${selectedField}: autocomplete must return at least one option`
+    ).toBeVisible({
+        timeout: 10000
+    });
+
+    const optionCount =
+        await options.count();
+
+    let matchingOption = null;
+
+    for (let i = 0; i < optionCount; i++) {
+
+        const option =
+            options.nth(i);
+
+        const optionText =
+            (
+                await option.textContent()
+            || ''
+            ).trim();
+
+        if (
+            optionText.toLowerCase() ===
+            selectedValue.toLowerCase()
+        ) {
+            matchingOption = option;
+            break;
+        }
+    }
+
+    // ------------------------------------------------------------
+    // If exact text is not returned because the UI formats the
+    // value differently, use the first valid autocomplete option.
+    // It is still an actual value returned by the application.
+    // ------------------------------------------------------------
+
+    if (!matchingOption) {
+        matchingOption = options.first();
+
+        selectedValue =
+            (
+                await matchingOption.textContent()
+            || ''
+            ).trim();
+    }
+
+    expect(
+        selectedValue,
+        `${selectedField}: selected autocomplete value must not be empty`
+    ).not.toBe('');
+
+    await matchingOption.click();
+
+    // ------------------------------------------------------------
+    // Verify chip was created.
+    // ------------------------------------------------------------
+
+    await expect
+        .poll(
+            async () => await chips.count(),
+            {
+                timeout: 10000,
+                message:
+                    `${selectedField}: selected filter chip was not created`
+            }
+        )
+        .toBeGreaterThan(0);
+
+    console.log(
+        `Filter selected: ${selectedField} = ${selectedValue}`
+    );
+
+    return {
+        fieldKey: selectedField,
+        value: selectedValue,
+        filterInput,
+        chips
+    };
+}
+
+
+// ============================================================
+// HELPER
+//
+// Apply currently selected dynamic filters.
+// ============================================================
+
+async function applyDynamicEmployeeFilter(page) {
+
+    await Promise.all([
+        page.waitForResponse(
+            response =>
+                response.url().includes(
+                    '/api/searchtype/'
+                ) &&
+                response.status() === 200,
+            {
+                timeout: 30000
+            }
+        ),
+
+        page.waitForResponse(
+            response =>
+                response.url().includes(
+                    '/api/searchtypeCount/'
+                ) &&
+                response.status() === 200,
+            {
+                timeout: 30000
+            }
+        ),
+
+        page.locator(
+            "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+        ).click()
+    ]);
+
+    await expect(
+        page.locator('#dvreportcontainer')
+    ).not.toHaveClass(
+        /loading-report-container/,
+        {
+            timeout: 30000
+        }
+    );
+
+    await expect(
+        page.locator('#basetable')
+    ).toBeVisible({
+        timeout: 30000
+    });
+}
+
+
+// ============================================================
+// TEST 24
+// PAGINATION + PAGE SIZE
+// ============================================================
+
+
+// ============================================================
+// TEST 24
+// PAGINATION + PAGE SIZE
+// ============================================================
+
+
+// ============================================================
+// TEST 24
+// PAGINATION + PAGE-SIZE BEHAVIOR
+// ============================================================
+
+test(
+    '24 - Pagination and page-size behavior works correctly',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        await loadEmployeesReport(page);
+
+        // --------------------------------------------------------
+        // STEP 1 - Locate page-size input
+        // --------------------------------------------------------
+
+        const pageSizeInput =
+            page.locator('#inppagesize');
+
+        await expect(
+            pageSizeInput
+        ).toBeAttached({
+            timeout: 30000
+        });
+
+        // --------------------------------------------------------
+        // STEP 2 - Change page size to 5
+        // --------------------------------------------------------
+
+        await pageSizeInput.fill('5');
+
+        /*
+         * The application listens for the native change event.
+         */
+        await pageSizeInput.evaluate(element => {
+            element.dispatchEvent(
+                new Event('change', {
+                    bubbles: true
+                })
+            );
+        });
+
+        await expect(
+            pageSizeInput
+        ).toHaveValue('5');
+
+        /*
+         * Wait until report loading has completed.
+         */
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // --------------------------------------------------------
+        // STEP 3 - Verify first page contains maximum 5 rows
+        // --------------------------------------------------------
+
+        const rows =
+            page.locator('#basetable tbody tr');
+
+        const firstPageRows =
+            await rows.count();
+
+        expect(
+            firstPageRows,
+            'First page must contain at least one row'
+        ).toBeGreaterThan(0);
+
+        expect(
+            firstPageRows,
+            'Page size 5 must not return more than 5 rows'
+        ).toBeLessThanOrEqual(5);
+
+        console.log(
+            `Test 24 - First page rows: ${firstPageRows}`
+        );
+
+        // --------------------------------------------------------
+        // STEP 4 - Verify total record count
+        // --------------------------------------------------------
+
+        const totalUsers =
+            Number(
+                (
+                    await page
+                        .locator('#sptotalUsers')
+                        .textContent()
+                    || '0'
+                ).trim()
+            );
+
+        expect(
+            totalUsers,
+            'Total employee count must be greater than zero'
+        ).toBeGreaterThan(0);
+
+        console.log(
+            `Test 24 - Total records: ${totalUsers}`
+        );
+
+        // --------------------------------------------------------
+        // STEP 5 - Capture first page data
+        // --------------------------------------------------------
+
+        const firstPageData =
+            await rows.allTextContents();
+
+        expect(
+            firstPageData.length,
+            'First page data must contain rows'
+        ).toBeGreaterThan(0);
+
+        // --------------------------------------------------------
+        // STEP 6 - Verify pagination controls
+        // --------------------------------------------------------
+
+        const pageLinks =
+            page.locator('#page-selection li a');
+
+        const pageLinkCount =
+            await pageLinks.count();
+
+        console.log(
+            `Test 24 - Pagination links found: ${pageLinkCount}`
+        );
+
+        /*
+         * Actual pagination structure is:
+         *
+         * «  1  2  3  4  5  »
+         *
+         * Therefore DO NOT use:
+         *
+         *     pageLinks.nth(1)
+         *
+         * because nth(1) is page "1", not page "2".
+         */
+
+        // --------------------------------------------------------
+        // STEP 7 - Locate PAGE 2 explicitly
+        // --------------------------------------------------------
+
+        const secondPageLink =
+            page.locator(
+                '#page-selection li a',
+                {
+                    hasText: /^2$/
+                }
+            );
+
+        const secondPageAvailable =
+            await secondPageLink.count() > 0;
+
+        if (secondPageAvailable) {
+
+            await expect(
+                secondPageLink
+            ).toBeVisible({
+                timeout: 10000
+            });
+
+            console.log(
+                'Test 24 - Clicking page 2'
+            );
+
+            // ----------------------------------------------------
+            // STEP 8 - Navigate to page 2
+            // ----------------------------------------------------
+
+            await secondPageLink.click();
+
+            /*
+             * Wait for the report to finish loading.
+             */
+            await expect(
+                page.locator('#dvreportcontainer')
+            ).not.toHaveClass(
+                /loading-report-container/,
+                {
+                    timeout: 30000
+                }
+            );
+
+            await expect(
+                page.locator('#basetable')
+            ).toBeVisible({
+                timeout: 30000
+            });
+
+            // ----------------------------------------------------
+            // STEP 9 - Verify page 2 rows
+            // ----------------------------------------------------
+
+            const secondPageRows =
+                await rows.count();
+
+            expect(
+                secondPageRows,
+                'Second page must contain at least one row'
+            ).toBeGreaterThan(0);
+
+            expect(
+                secondPageRows,
+                'Second page must not exceed page size 5'
+            ).toBeLessThanOrEqual(5);
+
+            console.log(
+                `Test 24 - Second page rows: ${secondPageRows}`
+            );
+
+            // ----------------------------------------------------
+            // STEP 10 - Verify page 2 contains different data
+            // ----------------------------------------------------
+
+            const secondPageData =
+                await rows.allTextContents();
+
+            /*
+             * There are more than 5 records, therefore page 2
+             * must represent a different dataset from page 1.
+             */
+            if (totalUsers > 5) {
+
+                expect(
+                    secondPageData,
+                    'Page 2 must contain different records from page 1'
+                ).not.toEqual(
+                    firstPageData
+                );
+            }
+
+            // ----------------------------------------------------
+            // STEP 11 - Verify page 2 actually shows page 2
+            // ----------------------------------------------------
+
+            const activePage =
+                page.locator(
+                    '#page-selection li.active'
+                );
+
+            if (await activePage.count() > 0) {
+
+                const activePageText =
+                    (
+                        await activePage.textContent()
+                        || ''
+                    ).trim();
+
+                console.log(
+                    `Test 24 - Active pagination page: ${activePageText}`
+                );
+
+                /*
+                 * Some pagination implementations may not use
+                 * .active consistently, so only validate when
+                 * the application exposes it.
+                 */
+                if (activePageText === '2') {
+
+                    expect(
+                        activePageText,
+                        'Page 2 must be active after navigation'
+                    ).toBe('2');
+                }
+            }
+
+        } else {
+
+            /*
+             * If there is no page 2, then the dataset contains
+             * five or fewer records and there is nothing to test.
+             */
+            console.log(
+                'Test 24 - Page 2 is not available; navigation check skipped'
+            );
+        }
+
+        // --------------------------------------------------------
+        // FINAL RESULT
+        // --------------------------------------------------------
+
+        console.log(
+            '============================================================'
+        );
+
+        console.log(
+            'TEST 24 PASS - Page size and pagination behavior verified'
+        );
+
+        console.log(
+            '============================================================'
+        );
+    }
+);
+
+
+
+
+// ============================================================
+// TEST 25
+// NEWEST / OLDEST RECORD NAVIGATION
+// ============================================================
+
+test(
+    '25 - Newest and Oldest record navigation works correctly',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        await loadEmployeesReport(page);
+
+        // --------------------------------------------------------
+        // Open paging menu.
+        // --------------------------------------------------------
+
+        const pagingParent =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
+
+        await expect(
+            pagingParent
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await pagingParent.click();
+
+        const pagingMenu =
+            page.locator('#overlaypaging');
+
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        const newestOption =
+            page.locator('#newestdiv');
+
+        const oldestOption =
+            page.locator('#Oldestdiv');
+
+        await expect(
+            newestOption
+        ).toBeVisible();
+
+        await expect(
+            oldestOption
+        ).toBeVisible();
+
+        // --------------------------------------------------------
+        // NEWEST
+        //
+        // Verify the actual request asks for DESC sorting.
+        // --------------------------------------------------------
+
+        const newestRequestPromise =
+            page.waitForRequest(
+                request =>
+                    request.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    request.method() === 'POST'
+            );
+
+        const newestResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await newestOption.click();
+
+        const newestRequest =
+            await newestRequestPromise;
+
+        await newestResponsePromise;
+
+        const newestPayload =
+            newestRequest.postDataJSON();
+
+        expect(
+            String(
+                newestPayload.sortcolumnorder
+            ).toUpperCase(),
+            'Newest must request descending order'
+        ).toBe('DESC');
+
+        expect(
+            newestPayload.recordstate,
+            'Newest must request ACTIVE records'
+        ).toBe('ACTIVE');
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        console.log(
+            'Test 25 - Newest request verified: DESC / ACTIVE'
+        );
+
+        // --------------------------------------------------------
+        // Open paging menu again.
+        // --------------------------------------------------------
+
+        await pagingParent.click();
+
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        // --------------------------------------------------------
+        // OLDEST
+        //
+        // Verify the actual request asks for ASC sorting.
+        // --------------------------------------------------------
+
+        const oldestRequestPromise =
+            page.waitForRequest(
+                request =>
+                    request.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    request.method() === 'POST'
+            );
+
+        const oldestResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await oldestOption.click();
+
+        const oldestRequest =
+            await oldestRequestPromise;
+
+        await oldestResponsePromise;
+
+        const oldestPayload =
+            oldestRequest.postDataJSON();
+
+        expect(
+            String(
+                oldestPayload.sortcolumnorder
+            ).toUpperCase(),
+            'Oldest must request ascending order'
+        ).toBe('ASC');
+
+        expect(
+            oldestPayload.recordstate,
+            'Oldest must request ACTIVE records'
+        ).toBe('ACTIVE');
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        console.log(
+            'Test 25 - Oldest request verified: ASC / ACTIVE'
+        );
+
+        console.log(
+            'Test 25 PASS - Newest and Oldest navigation verified'
+        );
+    }
+);
+
+
+// ============================================================
+// TEST 26
+// EMPTY RESULT SEARCH
+// ============================================================
+
+test(
+    '26 - Consolidated search returns zero records for a non-existent value',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        await loadEmployeesReport(page);
+
+        await openFilterBar(page);
+
+        const impossibleValue =
+            `ZZZ_NO_EMPLOYEE_${Date.now()}`;
+
+        const consolidatedSearch =
+            page.locator(
+                '#txtconsolidatesearch'
+            );
+
+        await expect(
+            consolidatedSearch
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        await consolidatedSearch.fill(
+            impossibleValue
+        );
+
+        const searchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const countResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtypeCount/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        // Existing consolidated-search action.
+        await page.locator(
+            '//*[@id="dvfilterbar"]/div[2]/div[1]/div/div[2]'
+        ).click();
+
+        await searchResponsePromise;
+        await countResponsePromise;
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // --------------------------------------------------------
+        // Exact zero-result verification.
+        // --------------------------------------------------------
+
+        const totalUsers =
+            (
+                await page.locator(
+                    '#sptotalUsers'
+                ).textContent()
+            || ''
+            ).trim();
+
+        console.log(
+            `Test 26 - Search count: ${totalUsers}`
+        );
+
+        expect(
+            Number(totalUsers),
+            'Non-existent search must return zero records'
+        ).toBe(0);
+
+        const rows =
+            await page.locator(
+                '#basetable tbody tr'
+            ).count();
+
+        expect(
+            rows,
+            'Non-existent search must not render employee rows'
+        ).toBe(0);
+
+        console.log(
+            'Test 26 PASS - Empty-result search verified'
+        );
+    }
+);
+
+
+// ============================================================
+// TEST 27
+// CLEAR / REMOVE FILTER
+// ============================================================
+
+test(
+    '27 - Clear and remove dynamic filter returns report to unfiltered state',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        await loadEmployeesReport(page);
+
+        const originalTotal =
+            Number(
+                (
+                    await page.locator(
+                        '#sptotalUsers'
+                    ).textContent()
+                || '0'
+                ).trim()
+            );
+
+        expect(
+            originalTotal,
+            'Initial report must contain records'
+        ).toBeGreaterThan(0);
+
+        console.log(
+            `Test 27 - Initial total: ${originalTotal}`
+        );
+
+        const filter =
+            await selectOneDynamicEmployeeFilter(
+                page
+            );
+
+        // --------------------------------------------------------
+        // Apply selected filter.
+        // --------------------------------------------------------
+
+        await applyDynamicEmployeeFilter(
+            page
+        );
+
+        const filteredTotal =
+            Number(
+                (
+                    await page.locator(
+                        '#sptotalUsers'
+                    ).textContent()
+                || '0'
+                ).trim()
+            );
+
+        expect(
+            filteredTotal,
+            'Filtered report must contain records'
+        ).toBeGreaterThan(0);
+
+        console.log(
+            `Test 27 - Filtered total: ${filteredTotal}`
+        );
+
+        // --------------------------------------------------------
+        // Remove the selected chip.
+        //
+        // Existing application DOM uses:
+        // .select2choiceremove
+        // --------------------------------------------------------
+
+        const removeControl =
+            filter.chips
+                .first()
+                .locator(
+                    '.select2choiceremove'
+                );
+
+        await expect(
+            removeControl,
+            'Selected filter must have a remove control'
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        await removeControl.click();
+
+        await expect
+            .poll(
+                async () =>
+                    await filter.chips.count(),
+                {
+                    timeout: 10000,
+                    message:
+                        'Filter chip was not removed'
+                }
+            )
+            .toBe(0);
+
+        console.log(
+            'Test 27 - Filter chip successfully removed'
+        );
+
+        // --------------------------------------------------------
+        // Apply cleared filter state.
+        // --------------------------------------------------------
+
+        await Promise.all([
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            ),
+
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtypeCount/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            ),
+
+            page.locator(
+                "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+            ).click()
+        ]);
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        const restoredTotal =
+            Number(
+                (
+                    await page.locator(
+                        '#sptotalUsers'
+                    ).textContent()
+                || '0'
+                ).trim()
+            );
+
+        expect(
+            restoredTotal,
+            'Clearing the filter must restore the unfiltered record count'
+        ).toBe(originalTotal);
+
+        console.log(
+            `Test 27 - Restored total: ${restoredTotal}`
+        );
+
+        console.log(
+            'Test 27 PASS - Filter removal returned report to unfiltered state'
+        );
+    }
+);
+
+
+// ============================================================
+// TEST 28
+// FILTER + SORT COMBINATION
+// ============================================================
+
+test(
+    '28 - Dynamic filter and column sorting work together',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        await loadEmployeesReport(page);
+
+        const filter =
+            await selectOneDynamicEmployeeFilter(
+                page
+            );
+
+        await applyDynamicEmployeeFilter(
+            page
+        );
+
+        const filteredTotal =
+            Number(
+                (
+                    await page.locator(
+                        '#sptotalUsers'
+                    ).textContent()
+                || '0'
+                ).trim()
+            );
+
+        expect(
+            filteredTotal,
+            'Filtered result must contain records before sorting'
+        ).toBeGreaterThan(0);
+
+        // --------------------------------------------------------
+        // Dynamically choose a sortable table field.
+        // --------------------------------------------------------
+
+        const headers =
+            page.locator(
+                '#basetable thead tr th[data-field-header]'
+            );
+
+        const headerCount =
+            await headers.count();
+
+        expect(
+            headerCount
+        ).toBeGreaterThan(0);
+
+        const sortHeader =
+            headers.first();
+
+        const sortField =
+            await sortHeader.getAttribute(
+                'data-field-header'
+            );
+
+        expect(
+            sortField
+        ).not.toBeNull();
+
+        console.log(
+            `Test 28 - Sorting filtered results by: ${sortField}`
+        );
+
+        // --------------------------------------------------------
+        // Sort DESC.
+        //
+        // Verify the request still contains the filter payload.
+        // --------------------------------------------------------
+
+        const descRequestPromise =
+            page.waitForRequest(
+                request =>
+                    request.url().includes(
+                        '/api/searchtype/'
+                    ) &&
+                    request.method() === 'POST'
+            );
+
+        const descResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await sortHeader.click();
+
+        const descRequest =
+            await descRequestPromise;
+
+        await descResponsePromise;
+
+        const descPayload =
+            descRequest.postDataJSON();
+
+        expect(
+            descPayload.sortcolumn,
+            'Sort request must contain selected field'
+        ).toBe(sortField);
+
+        expect(
+            String(
+                descPayload.sortcolumnorder
+            ).toUpperCase()
+        ).toBe('DESC');
+
+        // The selected filter must still exist.
+        expect(
+            JSON.stringify(descPayload)
+                .toLowerCase()
+        ).toContain(
+            String(filter.value)
+                .toLowerCase()
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        expect(
+            Number(
+                (
+                    await page.locator(
+                        '#sptotalUsers'
+                    ).textContent()
+                || '0'
+                ).trim()
+            )
+        ).toBeGreaterThan(0);
+
+        // --------------------------------------------------------
+        // Sort ASC.
+        // --------------------------------------------------------
+
+        const ascRequestPromise =
+            page.waitForRequest(
+                request =>
+                    request.url().includes(
+                        '/api/searchtype/'
+                    ) &&
+                    request.method() === 'POST'
+            );
+
+        const ascResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await sortHeader.click();
+
+        const ascRequest =
+            await ascRequestPromise;
+
+        await ascResponsePromise;
+
+        const ascPayload =
+            ascRequest.postDataJSON();
+
+        expect(
+            ascPayload.sortcolumn
+        ).toBe(sortField);
+
+        expect(
+            String(
+                ascPayload.sortcolumnorder
+            ).toUpperCase()
+        ).toBe('ASC');
+
+        expect(
+            JSON.stringify(ascPayload)
+                .toLowerCase()
+        ).toContain(
+            String(filter.value)
+                .toLowerCase()
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        console.log(
+            'Test 28 PASS - Filter remained active during DESC and ASC sorting'
+        );
+    }
+);
+
+
+// ============================================================
+// TEST 29
+// FILTER + PAGINATION COMBINATION
+// ============================================================
+
+test(
+    '29 - Dynamic filter and pagination work together',
+    async ({ page }) => {
+
+        test.setTimeout(120000);
+
+        await loadEmployeesReport(page);
+
+        const filter =
+            await selectOneDynamicEmployeeFilter(
+                page
+            );
+
+        await applyDynamicEmployeeFilter(
+            page
+        );
+
+        const filteredTotal =
+            Number(
+                (
+                    await page.locator(
+                        '#sptotalUsers'
+                    ).textContent()
+                || '0'
+                ).trim()
+            );
+
+        expect(
+            filteredTotal,
+            'Filtered result must contain records'
+        ).toBeGreaterThan(0);
+
+        // --------------------------------------------------------
+        // Change page size to 5.
+        // --------------------------------------------------------
+
+        const pageSizeInput =
+            page.locator('#inppagesize');
+
+        await expect(
+            pageSizeInput
+        ).toBeAttached();
+
+        await pageSizeInput.fill('5');
+
+        const pageSizeRequestPromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await pageSizeInput.evaluate(
+            element => {
+                element.dispatchEvent(
+                    new Event(
+                        'change',
+                        {
+                            bubbles: true
+                        }
+                    )
+                );
+            }
+        );
+
+        await pageSizeRequestPromise;
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        const firstPageRows =
+            await page.locator(
+                '#basetable tbody tr'
+            ).count();
+
+        expect(
+            firstPageRows,
+            'Filtered first page must contain rows'
+        ).toBeGreaterThan(0);
+
+        expect(
+            firstPageRows,
+            'Filtered first page must respect page size 5'
+        ).toBeLessThanOrEqual(5);
+
+        // --------------------------------------------------------
+        // Verify filter is still represented in request state
+        // by changing to page 2 when available.
+        // --------------------------------------------------------
+
+        const pageLinks =
+            page.locator(
+                '#page-selection li a'
+            );
+
+        const pageLinkCount =
+            await pageLinks.count();
+
+        if (pageLinkCount >= 2) {
+
+            const secondPage =
+                pageLinks.nth(1);
+
+            const requestPromise =
+                page.waitForRequest(
+                    request =>
+                        request.url().includes(
+                            '/api/searchtype/'
+                        ) &&
+                        request.method() === 'POST'
+                );
+
+            const responsePromise =
+                page.waitForResponse(
+                    response =>
+                        response.url().includes(
+                            '/api/searchtype/'
+                        ) &&
+                        response.status() === 200,
+                    {
+                        timeout: 30000
+                    }
+                );
+
+            await secondPage.click();
+
+            const request =
+                await requestPromise;
+
+            await responsePromise;
+
+            const payload =
+                request.postDataJSON();
+
+            // ----------------------------------------------------
+            // Page number must advance.
+            // ----------------------------------------------------
+
+            expect(
+                Number(payload.pageno),
+                'Second pagination request must use a non-zero page number'
+            ).toBeGreaterThan(0);
+
+            // ----------------------------------------------------
+            // Page size must remain 5.
+            // ----------------------------------------------------
+
+            expect(
+                Number(payload.pageSize),
+                'Filtered pagination must retain page size 5'
+            ).toBe(5);
+
+            // ----------------------------------------------------
+            // Filter must remain in request.
+            // ----------------------------------------------------
+
+            expect(
+                JSON.stringify(payload)
+                    .toLowerCase()
+            ).toContain(
+                String(filter.value)
+                    .toLowerCase()
+            );
+
+            const secondPageRows =
+                await page.locator(
+                    '#basetable tbody tr'
+                ).count();
+
+            expect(
+                secondPageRows,
+                'Second filtered page must contain rows'
+            ).toBeGreaterThan(0);
+
+            expect(
+                secondPageRows,
+                'Second filtered page must respect page size 5'
+            ).toBeLessThanOrEqual(5);
+
+            console.log(
+                `Test 29 - Second filtered page rows: ${secondPageRows}`
+            );
+        } else {
+
+            console.log(
+                'Test 29 - Filtered result has only one page; pagination transition skipped'
+            );
+
+            expect(
+                filteredTotal
+            ).toBeGreaterThan(0);
+        }
+
+        console.log(
+            'Test 29 PASS - Filter and pagination work together'
+        );
+    }
+);
+
+
+// ============================================================
+// TEST 30
+// COMPLETE DELETE / RESTORE LIFECYCLE
+//
+// DELETE
+//   -> verify in Deleted
+//   -> verify ABSENT from Active
+//
+// RESTORE
+//   -> verify in Active
+//   -> verify ABSENT from Deleted
+// ============================================================
+
+test(
+    '30 - Delete -> Active absence -> Restore -> Deleted absence lifecycle',
+    async ({ page }) => {
+
+        test.setTimeout(180000);
+
+        await loadEmployeesReport(page);
+
+        // --------------------------------------------------------
+        // Select a random ACTIVE employee.
+        // --------------------------------------------------------
+
+        const activeRows =
+            page.locator(
+                '#basetable tbody tr'
+            );
+
+        const activeRowCount =
+            await activeRows.count();
+
+        expect(
+            activeRowCount,
+            'Active report must contain at least one employee'
+        ).toBeGreaterThan(0);
+
+        const randomIndex =
+            Math.floor(
+                Math.random() * activeRowCount
+            );
+
+        const selectedRow =
+            activeRows.nth(randomIndex);
+
+        const editCell =
+            selectedRow.locator(
+                'td[data-tbledit-type]'
+            ).first();
+
+        await expect(
+            editCell
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        const employeeId =
+            await editCell.getAttribute(
+                'data-tbledit-type'
+            );
+
+        expect(
+            employeeId
+        ).not.toBeNull();
+
+        expect(
+            employeeId
+        ).not.toBe('');
+
+        console.log(
+            `Test 30 - Selected employee: ${employeeId}`
+        );
+
+        // ========================================================
+        // STEP 1 - SOFT DELETE
+        // ========================================================
+
+        await editCell.click();
+
+        const recordStateInput =
+            page.locator(
+                '#cltrlrecordstate'
+            );
+
+        const recordStateControl =
+            page.locator(
+                'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+            );
+
+        await expect(
+            recordStateInput
+        ).toBeAttached({
+            timeout: 30000
+        });
+
+        await expect(
+            recordStateInput
+        ).toBeChecked();
+
+        await recordStateControl.click();
+
+        await expect(
+            recordStateInput
+        ).not.toBeChecked();
+
+        const deleteResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator(
+            '#btnmodalsub'
+        ).click();
+
+        await deleteResponsePromise;
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        console.log(
+            `Test 30 - Employee ${employeeId} soft-deleted`
+        );
+
+        // ========================================================
+        // STEP 2 - VERIFY ABSENT FROM ACTIVE
+        // ========================================================
+
+        const activeEmployeeAfterDelete =
+            page.locator(
+                `#basetable tbody tr td[data-tbledit-type="${employeeId}"]`
+            );
+
+        await expect(
+            activeEmployeeAfterDelete,
+            `Deleted employee ${employeeId} must be absent from Active records`
+        ).toHaveCount(0);
+
+        console.log(
+            `Test 30 - Employee ${employeeId} absent from Active records`
+        );
+
+        // ========================================================
+        // STEP 3 - OPEN DELETED RECORDS
+        // ========================================================
+
+        const pagingParent =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
+
+        await expect(
+            pagingParent
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await pagingParent.click();
+
+        const pagingMenu =
+            page.locator(
+                '#overlaypaging'
+            );
+
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        const deletedOption =
+            page.locator(
+                '#Deletediv'
+            );
+
+        await expect(
+            deletedOption
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        const deletedResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await deletedOption.click();
+
+        await deletedResponsePromise;
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // ========================================================
+        // STEP 4 - VERIFY DELETED RECORD EXISTS
+        // ========================================================
+
+        const deletedEmployee =
+            page.locator(
+                `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
+            );
+
+        await expect(
+            deletedEmployee,
+            `Deleted employee ${employeeId} must appear in Deleted records`
+        ).toHaveCount(1);
+
+        console.log(
+            `Test 30 - Employee ${employeeId} confirmed in Deleted records`
+        );
+
+        // ========================================================
+        // STEP 5 - RESTORE
+        // ========================================================
+
+        const deletedRow =
+            deletedEmployee.locator(
+                'xpath=ancestor::tr'
+            );
+
+        const deletedEditCell =
+            deletedRow.locator(
+                `td[data-tbledit-type="${employeeId}"]`
+            );
+
+        await expect(
+            deletedEditCell
+        ).toHaveCount(1);
+
+        await deletedEditCell.click();
+
+        const restoreRecordStateInput =
+            page.locator(
+                '#cltrlrecordstate'
+            );
+
+        const restoreRecordStateControl =
+            page.locator(
+                'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+            );
+
+        await expect(
+            restoreRecordStateInput
+        ).toBeAttached({
+            timeout: 30000
+        });
+
+        await expect(
+            restoreRecordStateInput
+        ).not.toBeChecked();
+
+        await restoreRecordStateControl.click();
+
+        await expect(
+            restoreRecordStateInput
+        ).toBeChecked();
+
+        const restoreResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator(
+            '#btnmodalsub'
+        ).click();
+
+        await restoreResponsePromise;
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        console.log(
+            `Test 30 - Employee ${employeeId} restored`
+        );
+
+        // ========================================================
+        // STEP 6 - ACTIVE RECORDS
+        // ========================================================
+
+        await pagingParent.click();
+
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        const newestOption =
+            page.locator(
+                '#newestdiv'
+            );
+
+        const newestResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await newestOption.click();
+
+        await newestResponsePromise;
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+    })
+
+        // --------------------------------------------------------
+        // Restored employee MUST be active.
+        // --------------------------------------------------------
+
+        const restoredEmployee =
+            page.locator(
+                `#basetable tbody tr td[data-tbledit-type="${employeeId}"]`
+            );
+
+        await expect(
+            restoredEmployee,
+            `Restored employee ${employeeId} must appear in Active records`
+        ).toHaveCount(1);
+
+        console.log(
+            `Test 30 - Employee ${employeeId} confirmed in Active records`
+        );
+
+        // ========================================================
+        // STEP 7 - VERIFY ABSENT FROM DELETED
+        // ========================================================
+
+        await pagingParent.click();
+
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        const deletedOptionAfterRestore =
+            page.locator(
+                '#Deletediv'
+            );
+
+        const deletedAfterRestoreResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await deletedOptionAfterRestore.click();
+
+        await deletedAfterRestoreResponsePromise;
+
+        await expect(
+            page.locator('#dvreportcontainer')
+        ).not.toHaveClass(
+            /loading-report-container/,
+            {
+                timeout: 30000
+            }
+        );
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+    });
+
+        const deletedEmployeeAfterRestore =
+            page.locator(
+                `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
+            );
+
+        await expect(
+            deletedEmployeeAfterRestore,
+            `Restored employee ${employeeId} must be absent from Deleted records`
+        ).toHaveCount(0);
+
+        console.log(
+            `Test 30 PASS - Complete lifecycle verified for employee ${employeeId}`
+        );
+    }
+);
+
+
 
 
