@@ -338,7 +338,7 @@ console.log(
     value: result,
     expires: Date.now() + RESPONSE_CACHE_TTL
   })
-console.log(result);
+
   return result
 }
 }
