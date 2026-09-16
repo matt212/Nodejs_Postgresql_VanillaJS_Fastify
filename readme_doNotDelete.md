@@ -337,7 +337,7 @@ npx playwright test employees -g "21 - Multi-Column Filter - Full-word random-ro
 HEADED=true npx playwright test playwright/tests/employees.resilience.spec.js
 
 HEADED=true \
-npx playwright test employees -g "29 - Dynamic filter and pagination work together"
+npx playwright test employees -g "30 - Delete -> Active absence -> Restore -> Deleted absence lifecycle"
 
 
 
