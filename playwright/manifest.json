@@ -1,0 +1,30 @@
+{
+  "source_lines": 4995,
+  "source_tests": 23,
+  "source_test_names": [
+    "01 - Login - User can access Employees",
+    "02 - Control Bar - User can open Control Bar",
+    "03 - Date Range - User can change Employees report date",
+    "04 - Employees - Report table loads successfully",
+    "05 - Employees - Table columns are generated correctly",
+    "06 - Employees - Table contains employee data",
+    "07 - Employees - Total employee count is displayed",
+    "08 - Filter Bar - User can open Filter Bar",
+    "09 - Consolidated Search - Search returns matching Employees",
+    "10 - Multi-Select - Dynamic filter controls are available",
+    "11 - Multi-Column Filter - Dynamic fields return matching results",
+    "12 - Multi-Column Filter - Dynamic field permutations return results",
+    "13 - Multi-Column Filter - Dynamic multi-select permutations return results",
+    "14 - Multi-Column Sort - Dynamic fields sort ascending and descending",
+    "15 - Employees - Filtered report UI is displayed correctly",
+    "16 - CRUD - Create Employee using validationmap",
+    "17 - data Form - dynamic field cartesian product validation using validationmap",
+    "18 - CRUD - Create and Update Employee using validationmap",
+    "19 - CRUD - Update each field individually using validationmap",
+    "20 - Multi-Column Filter - Full-word random-row field permutations",
+    "21 - Multi-Column Filter - Full-word random-row multi-select permutations",
+    "22 - Soft Delete - Random active employee and verify in Deleted records",
+    "23 - Restore - Random deleted employee and verify in Active records"
+  ],
+  "refactor_note": "No tests were invented; source snapshot preserved."
+}
