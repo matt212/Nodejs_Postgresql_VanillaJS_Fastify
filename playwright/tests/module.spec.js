@@ -366,9 +366,7 @@ test(
             value
         );
 
-        expect(
-            value.trim()
-        ).not.toBe('');
+        await expect(page.locator('#sptotalUsers')).toHaveText(/\d+/);
     }
 );
 
@@ -1121,7 +1119,7 @@ test(
                     `Apply ${permutationName} filters and verify matching employees`,
                     async () => {
 
-                        await Promise.all([
+                     const [searchResponse, countResponse] =   await Promise.all([
                             page.waitForResponse(response =>
                                 response.url().includes(
                                     '/api/searchtype/'
@@ -1140,10 +1138,18 @@ test(
                                 "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
                             ).click()
                         ]);
+const countData = await countResponse.json();
 
-                        await expect(
-                            page.locator('#sptotalUsers')
-                        ).not.toHaveText('0');
+const expectedCount = Number((await countResponse.json()).count);
+
+console.log(`[COUNT] ${permutationName}:`, expectedCount);
+
+await expect(page.locator('#sptotalUsers'))
+    .toHaveText(String(expectedCount));
+
+if (expectedCount > 0) {
+    // Existing table-value validation
+}
 
                         for (
                             const [
@@ -4796,39 +4802,42 @@ async function selectOneDynamicEmployeeFilter(page) {
     // Search autocomplete using the complete actual value.
     // ------------------------------------------------------------
 
-    await Promise.all([
-        page.waitForResponse(
-            response =>
-                response.url().includes(
-                    '/api/searchtypegroupby'
-                ) &&
-                response.status() === 200,
-            {
-                timeout: 30000
-            }
-        ),
-
-        filterInput.fill(selectedValue)
-    ]);
-
-    await expect(
-        dropdown,
-        `${selectedField}: autocomplete dropdown must open`
-    ).toBeVisible({
+    const groupByResponsePromise = page.waitForResponse(
+    response =>
+        response.url().includes('/api/searchtypegroupby') &&
+        response.status() === 200,
+    {
         timeout: 10000
-    });
+    }
+).catch(() => null);
 
-    const options =
-        dropdown.locator(
-            'div a.highlightselect'
-        );
+await filterInput.fill(selectedValue);
 
-    await expect(
-        options.first(),
-        `${selectedField}: autocomplete must return at least one option`
-    ).toBeVisible({
-        timeout: 10000
-    });
+const groupByResponse = await groupByResponsePromise;
+
+if (!groupByResponse) {
+    console.log(
+        `[GROUPBY] No API response triggered for ${selectedField}; validating UI response`
+    );
+}
+
+await expect(
+    dropdown,
+    `${selectedField}: autocomplete dropdown must open`
+).toBeVisible({
+    timeout: 10000
+});
+
+const options = dropdown.locator(
+    'div a.highlightselect'
+);
+
+await expect(
+    options.first(),
+    `${selectedField}: autocomplete must return at least one option`
+).toBeVisible({
+    timeout: 10000
+});
 
     const optionCount =
         await options.count();

@@ -16,7 +16,7 @@ module.exports = defineConfig({
 
     fullyParallel: true,
 
-    workers: 4,
+    workers: 8,
 
     reporter: [['html', { outputFolder: `playwright-report/report_${timestamp}` }]],
 
