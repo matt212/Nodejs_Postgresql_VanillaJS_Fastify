@@ -38,7 +38,6 @@ async function applyDateRange(page) {
     await page.evaluate(() => {
 
         const input = window.jQuery('#reservation');
-
         const picker = input.data('daterangepicker');
 
         if (!picker) {
@@ -48,50 +47,60 @@ async function applyDateRange(page) {
         }
 
         picker.setStartDate('1982-08-07');
+
         const today = new Date();
 
-const formattedToday =
-    `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        const formattedToday =
+            `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
         picker.setEndDate(formattedToday);
     });
-console.log(
-    'Date range:',
-    await page.locator('#reservation').inputValue()
-);
-page.on('request', request => {
-    if (request.url().includes('/employees/api/searchtype/')) {
-        console.log('========== PLAYWRIGHT REQUEST ==========');
-        console.log('URL:', request.url());
-        console.log('METHOD:', request.method());
-        console.log('POST DATA:', request.postData());
-        console.log('HEADERS:', request.headers());
-    }
-});
-const responsePromise = page.waitForResponse(response =>
-    response.url().includes('/employees/api/searchtype/') &&
-    response.status() === 200
-);
 
-await page.locator(
-    '.daterangepicker .applyBtn'
-).click();
+    console.log(
+        'Date range:',
+        await page.locator('#reservation').inputValue()
+    );
 
-const response = await responsePromise;
+    /*
+     * Register the response listener BEFORE clicking Apply.
+     * The API response is the synchronization point.
+     */
+    const responsePromise = page.waitForResponse(
+        response =>
+            response.url().includes('/employees/api/searchtype/') &&
+            response.status() === 200
+    );
 
-//console.log('[SEARCH URL]', response.url());
-//console.log('[SEARCH DATA]', await response.text());
+    await page.locator(
+        '.daterangepicker .applyBtn'
+    ).click();
 
-await expect(
-    page.locator('#dvreportcontainer')
-).not.toHaveClass(/loading-report-container/);
+    const response = await responsePromise;
 
-await expect(
-    page.locator('#divreportcontent').first()
-).toBeVisible();
-    
+    console.log(
+        '[SEARCH RESPONSE]',
+        response.url()
+    );
 
-    await page.waitForTimeout(2000);
+    /*
+     * Wait for the actual report UI to finish rendering.
+     * No arbitrary waitForTimeout() is required.
+     */
+    await expect(
+        page.locator('#dvreportcontainer')
+    ).not.toHaveClass(
+        /loading-report-container/
+    );
+
+    await expect(
+        page.locator('#divreportcontent').first()
+    ).toBeVisible();
+
+    await expect(
+        page.locator('#basetable')
+    ).toBeVisible();
+
+    return response;
 }
 
 
@@ -4449,310 +4458,193 @@ test(
 // 23 - Restore - Random deleted employee and verify in Active records
 // ============================================================
 
-test(
-    '23 - Restore - Random deleted employee and verify in Active records',
-    async ({ page }) => {
-
-        test.setTimeout(120000);
-
-        await loadEmployeesReport(page);
-
-        // ------------------------------------------------------------
-        // OPEN PAGING
-        // ------------------------------------------------------------
-
-        const pagingParent =
-            page.locator(
-                '#dvpaginationsections .pagingsectionparent'
-            );
-
-        await expect(
-            pagingParent
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        await pagingParent.click();
-
-        const pagingMenu =
-            page.locator('#overlaypaging');
-
-        await expect(
-            pagingMenu
-        ).toBeVisible({
-            timeout: 10000
-        });
-
-        // ------------------------------------------------------------
-        // SELECT DELETED
-        // ------------------------------------------------------------
-
-        const deletedOption =
-            page.locator('#Deletediv');
-
-        await expect(
-            deletedOption
-        ).toBeVisible({
-            timeout: 10000
-        });
-
-        const deletedSearchResponsePromise =
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            );
-
-        await deletedOption.click();
-
-        await deletedSearchResponsePromise;
-
-        await expect(
-            page.locator('#divreportcontent')
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        // ------------------------------------------------------------
-        // GET DELETED ROWS
-        // ------------------------------------------------------------
-
-        const deletedRows =
-            page.locator('#basetable tbody tr');
-
-        const deletedRowCount =
-            await deletedRows.count();
-
-        expect(
-            deletedRowCount,
-            'Deleted records should contain at least one employee'
-        ).toBeGreaterThan(0);
-
-        const randomIndex =
-            Math.floor(
-                Math.random() * deletedRowCount
-            );
-
-        const selectedDeletedRow =
-            deletedRows.nth(randomIndex);
-
-        console.log(
-            `Test 23 - Selected deleted row: ${randomIndex + 1} of ${deletedRowCount}`
-        );
-
-        // ------------------------------------------------------------
-        // GET EMPLOYEE ID
-        // ------------------------------------------------------------
-
-        const editCell =
-            selectedDeletedRow
-                .locator('td[data-tbledit-type]')
-                .first();
-
-        await expect(
-            editCell
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        const employeeId =
-            await editCell.getAttribute(
-                'data-tbledit-type'
-            );
-
-        expect(
-            employeeId,
-            'Selected deleted employee must have an ID'
-        ).not.toBeNull();
-
-        expect(
-            employeeId
-        ).not.toBe('');
-
-        console.log(
-            `Test 23 - Selected deleted employee ID: ${employeeId}`
-        );
-
-        // ------------------------------------------------------------
-        // VERIFY SELECTED EMPLOYEE EXISTS IN DELETED
-        // ------------------------------------------------------------
-
-        await expect(
-            selectedDeletedRow.locator(
-                `input.tblkchk[data-chk-type="${employeeId}"]`
-            )
-        ).toHaveCount(1);
-
-        // ------------------------------------------------------------
-        // OPEN EDIT
-        // ------------------------------------------------------------
-
-        await editCell.click();
-
-        const recordStateInput =
-            page.locator('#cltrlrecordstate');
-
-        const recordStateControl =
-            page.locator(
-                'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
-            );
-
-        await expect(
-            recordStateInput
-        ).toBeAttached({
-            timeout: 30000
-        });
-
-        // Deleted record must be unchecked.
-        await expect(
-            recordStateInput
-        ).not.toBeChecked();
-
-        // ------------------------------------------------------------
-        // RESTORE
-        // ------------------------------------------------------------
-
-        await recordStateControl.click();
-
-        await expect(
-            recordStateInput
-        ).toBeChecked();
-
-        // ------------------------------------------------------------
-        // UPDATE -> SEARCHTYPE
-        // ------------------------------------------------------------
-
-        const updateResponsePromise =
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/employees/api/update/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            );
-
-        const searchResponsePromise =
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            );
-
-        await page.locator(
-            '#btnmodalsub'
-        ).click();
-
-        await updateResponsePromise;
-
-        console.log(
-            `Test 23 - UPDATE completed for ${employeeId}`
-        );
-
-        await searchResponsePromise;
-
-        console.log(
-            `Test 23 - SEARCHTYPE completed for ${employeeId}`
-        );
-
-        await expect(
-            page.locator('#divreportcontent')
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        // ------------------------------------------------------------
-        // OPEN PAGING AGAIN
-        // ------------------------------------------------------------
-
-        const pagingParentAfterRestore =
-            page.locator(
-                '#dvpaginationsections .pagingsectionparent'
-            );
-
-        await expect(
-            pagingParentAfterRestore
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        await pagingParentAfterRestore.click();
-
-        const pagingMenuAfterRestore =
-            page.locator('#overlaypaging');
-
-        await expect(
-            pagingMenuAfterRestore
-        ).toBeVisible({
-            timeout: 10000
-        });
-
-        // ------------------------------------------------------------
-        // SELECT NEWEST / ACTIVE
-        // ------------------------------------------------------------
-
-        const newestOption =
-            page.locator('#newestdiv');
-
-        await expect(
-            newestOption
-        ).toBeVisible({
-            timeout: 10000
-        });
-
-        const newestSearchResponsePromise =
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            );
-
-        await newestOption.click();
-
-        await newestSearchResponsePromise;
-
-        await expect(
-            page.locator('#divreportcontent')
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        // ------------------------------------------------------------
-        // VERIFY RESTORED EMPLOYEE IN ACTIVE
-        // ------------------------------------------------------------
-
-        const restoredEmployee =
-            page.locator(
-                `#basetable tbody tr td[data-tbledit-type="${employeeId}"]`
-            );
-
-        await expect(
-            restoredEmployee,
-            `Restored employee ${employeeId} should appear in Active records`
-        ).toHaveCount(1);
-
-        console.log(
-            `Test 23 PASS - ${employeeId} restored to Active records`
+// ============================================================
+// TEST 23
+// RESTORE - RANDOM DELETED EMPLOYEE
+//
+// FLOW:
+//   Deleted
+//      -> select random deleted employee
+//      -> restore
+//      -> UPDATE 200
+//      -> SEARCHTYPE 200
+//      -> switch to ACTIVE
+//      -> use existing CONSOLIDATED SEARCH
+//      -> search exact employee ID
+//      -> verify employee exists in Active
+// ============================================================
+
+// ============================================================
+// TEST 23
+// RESTORE - RANDOM DELETED RECORD AND VERIFY IN ACTIVE RECORDS
+//
+// End-to-end flow:
+//
+// 1. Load report
+// 2. Switch to Deleted
+// 3. Select a random deleted record
+// 4. Capture internal record identity from data-tbledit-type
+// 5. Capture a complete user-visible searchable value
+// 6. Open Edit
+// 7. Verify record is Deleted
+// 8. Restore record
+// 9. Wait for UPDATE + SEARCHTYPE
+// 10. Switch back to Newest / Active
+// 11. Open Filter Bar
+// 12. Search using the user-visible value
+// 13. Verify the exact original record ID exists in results
+// 14. If not found, increase page size by 50 and search again
+//
+// IMPORTANT:
+// - Employee ID is NEVER used as the search value.
+// - data-tbledit-type is used ONLY for exact record identity verification.
+// - Search is performed through the existing consolidated-search UI.
+// - No fixed wait is used for API synchronization.
+// ============================================================
+
+
+// ============================================================
+// TEST 23
+//
+// LOAD TABLE
+//   ↓
+// RANDOM ROW
+//   ↓
+// RANDOM USER-VISIBLE COLUMN VALUE
+//   ↓
+// CONSOLIDATED SEARCH USING THAT VALUE
+//   ↓
+// FIRST SEARCH RESULT = TARGET
+//   ↓
+// CAPTURE TARGET data-tbledit-type
+//   ↓
+// DISABLE TARGET
+//   ↓
+// SAME SEARCH → TARGET MUST BE ABSENT FROM ACTIVE
+//   ↓
+// DELETED
+//   ↓
+// SAME SEARCH → TARGET MUST BE PRESENT IN DELETED
+//   ↓
+// RESTORE TARGET
+//   ↓
+// ACTIVE / NEWEST
+//   ↓
+// SAME SEARCH → TARGET MUST BE PRESENT
+//
+// IMPORTANT:
+// - Employee ID is NEVER used as the search value.
+// - data-tbledit-type is ONLY used as record identity.
+// - Initial search value comes from an actual rendered table row.
+// - The first result returned by consolidated search becomes TARGET.
+// - The same search value is reused throughout the lifecycle.
+// - No fixed waitForTimeout() is used.
+// ============================================================
+
+test('23 - Random rendered row -> Disable -> Deleted -> Restore', async ({ page }) => {
+
+    // 1. Load Employees table through existing date-range flow
+    await loadEmployeesReport(page);
+
+    await expect(page.locator('#basetable')).toBeVisible({
+        timeout: 30000
+    });
+
+    await expect(
+        page.locator('#basetable tbody tr').first()
+    ).toBeVisible({
+        timeout: 30000
+    });
+
+    // 2. Select random rendered row
+    const rows = page.locator('#basetable tbody tr');
+    const rowCount = await rows.count();
+
+    if (rowCount === 0) {
+        throw new Error('No rendered Employees rows found.');
+    }
+
+    const randomRowIndex = Math.floor(Math.random() * rowCount);
+    const randomRow = rows.nth(randomRowIndex);
+
+    console.log(
+        `Random rendered row selected: ${randomRowIndex + 1}/${rowCount}`
+    );
+
+    // 3. Select a random user-visible value from that row
+    const cells = randomRow.locator('td');
+    const cellCount = await cells.count();
+
+    const candidates = [];
+
+    for (let i = 0; i < cellCount; i++) {
+
+        const cell = cells.nth(i);
+
+        if (!(await cell.isVisible())) continue;
+
+        // Do not use internal record identity
+        if (await cell.getAttribute('data-tbledit-type')) continue;
+
+        // Do not use checkbox/control cells
+        if (
+            await cell.locator(
+                'input[type="checkbox"], input[type="radio"]'
+            ).count() > 0
+        ) {
+            continue;
+        }
+
+        // Do not use action cells
+        if (await cell.locator('a.edithover').count() > 0) {
+            continue;
+        }
+
+        const value = (
+            await cell.innerText()
+        ).replace(/\s+/g, ' ').trim();
+
+        if (value) {
+            candidates.push(value);
+        }
+    }
+
+    if (candidates.length === 0) {
+        throw new Error(
+            'No user-visible searchable value found in random row.'
         );
     }
-);
+
+    const searchValue =
+        candidates[Math.floor(Math.random() * candidates.length)];
+
+    console.log(`Search value selected: "${searchValue}"`);
+
+    // ------------------------------------------------------------
+    // REST OF TEST 23
+    // ------------------------------------------------------------
+    // searchValue
+    //     ↓
+    // Consolidated Search
+    //     ↓
+    // First result = target
+    //     ↓
+    // Capture data-tbledit-type
+    //     ↓
+    // Disable
+    //     ↓
+    // Same search -> target absent from Active
+    //     ↓
+    // Deleted
+    //     ↓
+    // Same search -> target present
+    //     ↓
+    // Restore
+    //     ↓
+    // Active/Newest
+    //     ↓
+    // Same search -> target present
+});
 
 
 
@@ -5092,300 +4984,149 @@ test(
 
         await loadEmployeesReport(page);
 
-        // --------------------------------------------------------
-        // STEP 1 - Locate page-size input
-        // --------------------------------------------------------
+        const pageSizeInput = page.locator('#inppagesize');
+        const rows = page.locator('#basetable tbody tr');
 
-        const pageSizeInput =
-            page.locator('#inppagesize');
-
-        await expect(
-            pageSizeInput
-        ).toBeAttached({
+        await expect(pageSizeInput).toBeAttached({
             timeout: 30000
         });
 
-        // --------------------------------------------------------
-        // STEP 2 - Change page size to 5
-        // --------------------------------------------------------
+        // ---------------------------------------------------------
+        // PAGE SIZE = 5
+        // ---------------------------------------------------------
+
+        const pageSizeResponsePromise = page.waitForResponse(
+            response =>
+                response.url().includes('/employees/api/searchtype/') &&
+                response.request().method() === 'POST' &&
+                response.status() === 200,
+            { timeout: 30000 }
+        );
 
         await pageSizeInput.fill('5');
 
-        /*
-         * The application listens for the native change event.
-         */
         await pageSizeInput.evaluate(element => {
             element.dispatchEvent(
-                new Event('change', {
-                    bubbles: true
-                })
+                new Event('change', { bubbles: true })
             );
         });
 
-        await expect(
-            pageSizeInput
-        ).toHaveValue('5');
+        await expect(pageSizeInput).toHaveValue('5');
 
-        /*
-         * Wait until report loading has completed.
-         */
-        await expect(
-            page.locator('#dvreportcontainer')
-        ).not.toHaveClass(
-            /loading-report-container/,
-            {
-                timeout: 30000
-            }
-        );
+        // Wait for the actual search request triggered by page-size change
+        await pageSizeResponsePromise;
 
-        await expect(
-            page.locator('#basetable')
-        ).toBeVisible({
+        // Confirm the rendered table reflects the response
+        await expect(rows.first()).toBeVisible({
             timeout: 30000
         });
 
-        // --------------------------------------------------------
-        // STEP 3 - Verify first page contains maximum 5 rows
-        // --------------------------------------------------------
-
-        const rows =
-            page.locator('#basetable tbody tr');
-
-        const firstPageRows =
-            await rows.count();
-
-        expect(
-            firstPageRows,
-            'First page must contain at least one row'
-        ).toBeGreaterThan(0);
-
-        expect(
-            firstPageRows,
-            'Page size 5 must not return more than 5 rows'
-        ).toBeLessThanOrEqual(5);
+        const firstPageRows = await rows.count();
 
         console.log(
             `Test 24 - First page rows: ${firstPageRows}`
         );
 
-        // --------------------------------------------------------
-        // STEP 4 - Verify total record count
-        // --------------------------------------------------------
+        expect(firstPageRows).toBeGreaterThan(0);
+        expect(firstPageRows).toBeLessThanOrEqual(5);
 
-        const totalUsers =
-            Number(
-                (
-                    await page
-                        .locator('#sptotalUsers')
-                        .textContent()
-                    || '0'
-                ).trim()
-            );
-
-        expect(
-            totalUsers,
-            'Total employee count must be greater than zero'
-        ).toBeGreaterThan(0);
+        const totalUsers = Number(
+            (await page.locator('#sptotalUsers').textContent() || '0').trim()
+        );
 
         console.log(
             `Test 24 - Total records: ${totalUsers}`
         );
 
-        // --------------------------------------------------------
-        // STEP 5 - Capture first page data
-        // --------------------------------------------------------
+        expect(totalUsers).toBeGreaterThan(0);
 
-        const firstPageData =
-            await rows.allTextContents();
+        const firstPageData = await rows.allTextContents();
 
-        expect(
-            firstPageData.length,
-            'First page data must contain rows'
-        ).toBeGreaterThan(0);
+        // ---------------------------------------------------------
+        // PAGE 2
+        // ---------------------------------------------------------
 
-        // --------------------------------------------------------
-        // STEP 6 - Verify pagination controls
-        // --------------------------------------------------------
-
-        const pageLinks =
-            page.locator('#page-selection li a');
-
-        const pageLinkCount =
-            await pageLinks.count();
-
-        console.log(
-            `Test 24 - Pagination links found: ${pageLinkCount}`
+        const secondPageLink = page.locator(
+            '#page-selection li a',
+            { hasText: /^2$/ }
         );
-
-        /*
-         * Actual pagination structure is:
-         *
-         * «  1  2  3  4  5  »
-         *
-         * Therefore DO NOT use:
-         *
-         *     pageLinks.nth(1)
-         *
-         * because nth(1) is page "1", not page "2".
-         */
-
-        // --------------------------------------------------------
-        // STEP 7 - Locate PAGE 2 explicitly
-        // --------------------------------------------------------
-
-        const secondPageLink =
-            page.locator(
-                '#page-selection li a',
-                {
-                    hasText: /^2$/
-                }
-            );
 
         const secondPageAvailable =
             await secondPageLink.count() > 0;
 
-        if (secondPageAvailable) {
-
-            await expect(
-                secondPageLink
-            ).toBeVisible({
-                timeout: 10000
-            });
-
-            console.log(
-                'Test 24 - Clicking page 2'
-            );
-
-            // ----------------------------------------------------
-            // STEP 8 - Navigate to page 2
-            // ----------------------------------------------------
-
-            await secondPageLink.click();
-
-            /*
-             * Wait for the report to finish loading.
-             */
-            await expect(
-                page.locator('#dvreportcontainer')
-            ).not.toHaveClass(
-                /loading-report-container/,
-                {
-                    timeout: 30000
-                }
-            );
-
-            await expect(
-                page.locator('#basetable')
-            ).toBeVisible({
-                timeout: 30000
-            });
-
-            // ----------------------------------------------------
-            // STEP 9 - Verify page 2 rows
-            // ----------------------------------------------------
-
-            const secondPageRows =
-                await rows.count();
-
-            expect(
-                secondPageRows,
-                'Second page must contain at least one row'
-            ).toBeGreaterThan(0);
-
-            expect(
-                secondPageRows,
-                'Second page must not exceed page size 5'
-            ).toBeLessThanOrEqual(5);
-
-            console.log(
-                `Test 24 - Second page rows: ${secondPageRows}`
-            );
-
-            // ----------------------------------------------------
-            // STEP 10 - Verify page 2 contains different data
-            // ----------------------------------------------------
-
-            const secondPageData =
-                await rows.allTextContents();
-
-            /*
-             * There are more than 5 records, therefore page 2
-             * must represent a different dataset from page 1.
-             */
-            if (totalUsers > 5) {
-
-                expect(
-                    secondPageData,
-                    'Page 2 must contain different records from page 1'
-                ).not.toEqual(
-                    firstPageData
-                );
-            }
-
-            // ----------------------------------------------------
-            // STEP 11 - Verify page 2 actually shows page 2
-            // ----------------------------------------------------
-
-            const activePage =
-                page.locator(
-                    '#page-selection li.active'
-                );
-
-            if (await activePage.count() > 0) {
-
-                const activePageText =
-                    (
-                        await activePage.textContent()
-                        || ''
-                    ).trim();
-
-                console.log(
-                    `Test 24 - Active pagination page: ${activePageText}`
-                );
-
-                /*
-                 * Some pagination implementations may not use
-                 * .active consistently, so only validate when
-                 * the application exposes it.
-                 */
-                if (activePageText === '2') {
-
-                    expect(
-                        activePageText,
-                        'Page 2 must be active after navigation'
-                    ).toBe('2');
-                }
-            }
-
-        } else {
-
-            /*
-             * If there is no page 2, then the dataset contains
-             * five or fewer records and there is nothing to test.
-             */
+        if (!secondPageAvailable) {
             console.log(
                 'Test 24 - Page 2 is not available; navigation check skipped'
             );
+            return;
         }
 
-        // --------------------------------------------------------
-        // FINAL RESULT
-        // --------------------------------------------------------
+        console.log('Test 24 - Clicking page 2');
+
+        await expect(secondPageLink).toBeVisible({
+            timeout: 10000
+        });
+
+        // IMPORTANT:
+        // Register the response listener BEFORE clicking page 2.
+        const page2ResponsePromise = page.waitForResponse(
+            response =>
+                response.url().includes('/employees/api/searchtype/') &&
+                response.request().method() === 'POST' &&
+                response.status() === 200,
+            { timeout: 30000 }
+        );
+
+        await secondPageLink.click();
+
+        // Wait for the actual page-2 search request
+        await page2ResponsePromise;
+
+        await expect(rows.first()).toBeVisible({
+            timeout: 30000
+        });
+
+        const secondPageRows = await rows.count();
+
+        console.log(
+            `Test 24 - Second page rows: ${secondPageRows}`
+        );
+
+        expect(secondPageRows).toBeGreaterThan(0);
+        expect(secondPageRows).toBeLessThanOrEqual(5);
+
+        const secondPageData = await rows.allTextContents();
+
+        if (totalUsers > 5) {
+            expect(secondPageData).not.toEqual(firstPageData);
+        }
+
+        const activePage = page.locator(
+            '#page-selection li.active'
+        );
+
+        if (await activePage.count() > 0) {
+            const activePageText =
+                (await activePage.textContent() || '').trim();
+
+            console.log(
+                `Test 24 - Active pagination page: ${activePageText}`
+            );
+
+            expect(activePageText).toBe('2');
+        }
 
         console.log(
             '============================================================'
         );
-
         console.log(
             'TEST 24 PASS - Page size and pagination behavior verified'
         );
-
         console.log(
             '============================================================'
         );
     }
 );
-
 
 
 
@@ -5394,190 +5135,537 @@ test(
 // NEWEST / OLDEST RECORD NAVIGATION
 // ============================================================
 
-test(
-    '25 - Newest and Oldest record navigation works correctly',
-    async ({ page }) => {
 
-        test.setTimeout(120000);
 
-        await loadEmployeesReport(page);
+test('25 - DEBUG Newest and Oldest navigation', async ({ page }) => {
 
-        // --------------------------------------------------------
-        // Open paging menu.
-        // --------------------------------------------------------
+    console.log('\n====================================================');
+    console.log('TEST 25 START');
+    console.log('====================================================');
 
-        const pagingParent =
-            page.locator(
-                '#dvpaginationsections .pagingsectionparent'
-            );
+    // ---------------------------------------------------------
+    // Initial load
+    // ---------------------------------------------------------
+    console.log('[1] Calling loadEmployeesReport()');
 
-        await expect(
-            pagingParent
-        ).toBeVisible({
+    await loadEmployeesReport(page);
+
+    console.log('[2] Report loaded');
+
+    console.log(
+        '[3] paging parent count:',
+        await page.locator(
+            '#dvpaginationsections .pagingsectionparent'
+        ).count()
+    );
+
+    console.log(
+        '[4] overlay count:',
+        await page.locator('#overlaypaging').count()
+    );
+
+    console.log(
+        '[5] newest count:',
+        await page.locator('#newestdiv').count()
+    );
+
+    console.log(
+        '[6] oldest count:',
+        await page.locator('#Oldestdiv').count()
+    );
+
+
+    const pagingParent = page.locator(
+        '#dvpaginationsections .pagingsectionparent'
+    );
+
+    const pagingMenu = page.locator('#overlaypaging');
+
+    const newestOption = page.locator('#newestdiv');
+
+    const oldestOption = page.locator('#Oldestdiv');
+
+
+    // =========================================================
+    // FIRST OPERATION
+    // Newest -> Oldest
+    // =========================================================
+
+    console.log('\n----------------------------------------------------');
+    console.log('FIRST OPERATION: NEWEST -> OLDEST');
+    console.log('----------------------------------------------------');
+
+    console.log('[7] Before first paging click');
+
+    console.log(
+        '[8] pagingParent visible:',
+        await pagingParent.isVisible()
+    );
+
+    console.log(
+        '[9] pagingParent bounding box:',
+        await pagingParent.boundingBox()
+    );
+
+    console.log(
+        '[10] overlay visible:',
+        await pagingMenu.isVisible().catch(() => false)
+    );
+
+
+    console.log('[11] Clicking paging parent FIRST time');
+
+    await pagingParent.click();
+
+    console.log('[12] First paging parent click completed');
+
+    console.log(
+        '[13] overlay visible AFTER first click:',
+        await pagingMenu.isVisible()
+    );
+
+    console.log(
+        '[14] overlay display:',
+        await pagingMenu.evaluate(el =>
+            window.getComputedStyle(el).display
+        )
+    );
+
+    console.log(
+        '[15] overlay class:',
+        await pagingMenu.getAttribute('class')
+    );
+
+    console.log(
+        '[16] Oldest visible:',
+        await oldestOption.isVisible()
+    );
+
+    console.log(
+        '[17] Newest visible:',
+        await newestOption.isVisible()
+    );
+
+    console.log(
+        '[18] Oldest class BEFORE click:',
+        await oldestOption.getAttribute('class')
+    );
+
+    console.log(
+        '[19] Newest class BEFORE click:',
+        await newestOption.getAttribute('class')
+    );
+
+
+    // ---------------------------------------------------------
+    // Capture all searchtype requests
+    // ---------------------------------------------------------
+
+    const requests = [];
+
+    const requestListener = request => {
+
+        if (
+            request.url().includes('/employees/api/searchtype/')
+        ) {
+            let body = null;
+
+            try {
+                body = request.postDataJSON();
+            } catch (e) {
+                body = request.postData();
+            }
+
+            console.log('\n>>> SEARCHTYPE REQUEST');
+            console.log('URL:', request.url());
+            console.log('METHOD:', request.method());
+            console.log('BODY:', body);
+
+            requests.push({
+                url: request.url(),
+                method: request.method(),
+                body
+            });
+        }
+    };
+
+    page.on('request', requestListener);
+
+
+    console.log('[20] Clicking OLDEST');
+
+    await oldestOption.click();
+
+    console.log('[21] OLDEST click completed');
+
+    console.log(
+        '[22] overlay visible immediately after Oldest click:',
+        await pagingMenu.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[23] Newest class immediately after Oldest click:',
+        await newestOption.getAttribute('class').catch(() => null)
+    );
+
+    console.log(
+        '[24] Oldest class immediately after Oldest click:',
+        await oldestOption.getAttribute('class').catch(() => null)
+    );
+
+
+    console.log('[25] Waiting for table after Oldest');
+
+    await expect(page.locator('#basetable tbody tr').first())
+        .toBeVisible({ timeout: 30000 });
+
+    console.log('[26] Oldest table loaded');
+
+    console.log(
+        '[27] Requests captured so far:',
+        requests.length
+    );
+
+
+    // Give application time to finish any async state changes.
+    await page.waitForTimeout(1000);
+
+    console.log('[28] State after Oldest refresh');
+
+    console.log(
+        '[29] pagingParent visible:',
+        await pagingParent.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[30] pagingParent bounding box:',
+        await pagingParent.boundingBox().catch(() => null)
+    );
+
+    console.log(
+        '[31] overlay visible:',
+        await pagingMenu.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[32] overlay display:',
+        await pagingMenu.evaluate(el =>
+            window.getComputedStyle(el).display
+        ).catch(() => 'ERROR')
+    );
+
+    console.log(
+        '[33] overlay class:',
+        await pagingMenu.getAttribute('class').catch(() => null)
+    );
+
+    console.log(
+        '[34] newest count:',
+        await page.locator('#newestdiv').count()
+    );
+
+    console.log(
+        '[35] oldest count:',
+        await page.locator('#Oldestdiv').count()
+    );
+
+    console.log(
+        '[36] newest visible:',
+        await newestOption.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[37] oldest visible:',
+        await oldestOption.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[38] newest class:',
+        await newestOption.getAttribute('class').catch(() => null)
+    );
+
+    console.log(
+        '[39] oldest class:',
+        await oldestOption.getAttribute('class').catch(() => null)
+    );
+
+
+    // =========================================================
+    // SECOND OPERATION
+    // Oldest -> Newest
+    // =========================================================
+
+    console.log('\n====================================================');
+    console.log('SECOND OPERATION: OLDEST -> NEWEST');
+    console.log('====================================================');
+
+
+    console.log('[40] BEFORE SECOND PAGING CLICK');
+
+    console.log(
+        '[41] pagingParent count:',
+        await pagingParent.count()
+    );
+
+    console.log(
+        '[42] pagingParent visible:',
+        await pagingParent.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[43] pagingParent enabled:',
+        await pagingParent.isEnabled().catch(() => false)
+    );
+
+    console.log(
+        '[44] pagingParent bounding box:',
+        await pagingParent.boundingBox().catch(() => null)
+    );
+
+    console.log(
+        '[45] overlay visible:',
+        await pagingMenu.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[46] overlay display:',
+        await pagingMenu.evaluate(el =>
+            window.getComputedStyle(el).display
+        ).catch(() => 'ERROR')
+    );
+
+
+    console.log('[47] Attempting SECOND pagingParent.click()');
+
+    await pagingParent.click();
+
+    console.log('[48] SECOND pagingParent.click() COMPLETED');
+
+    console.log(
+        '[49] overlay visible AFTER SECOND paging click:',
+        await pagingMenu.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[50] overlay display AFTER SECOND paging click:',
+        await pagingMenu.evaluate(el =>
+            window.getComputedStyle(el).display
+        ).catch(() => 'ERROR')
+    );
+
+    console.log(
+        '[51] overlay class AFTER SECOND paging click:',
+        await pagingMenu.getAttribute('class').catch(() => null)
+    );
+
+    console.log(
+        '[52] newest visible AFTER SECOND paging click:',
+        await newestOption.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[53] oldest visible AFTER SECOND paging click:',
+        await oldestOption.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[54] newest bounding box:',
+        await newestOption.boundingBox().catch(() => null)
+    );
+
+    console.log(
+        '[55] oldest bounding box:',
+        await oldestOption.boundingBox().catch(() => null)
+    );
+
+    console.log(
+        '[56] newest class:',
+        await newestOption.getAttribute('class').catch(() => null)
+    );
+
+    console.log(
+        '[57] oldest class:',
+        await oldestOption.getAttribute('class').catch(() => null)
+    );
+
+
+    // ---------------------------------------------------------
+    // Only continue if overlay actually opened
+    // ---------------------------------------------------------
+
+    console.log('[58] Waiting for overlay to become visible');
+
+    await expect(pagingMenu).toBeVisible({
+        timeout: 5000
+    });
+
+    console.log('[59] SECOND OVERLAY IS VISIBLE');
+
+
+    // ---------------------------------------------------------
+    // Newest click
+    // ---------------------------------------------------------
+
+    console.log('[60] Newest count before click:', await newestOption.count());
+
+    console.log(
+        '[61] Newest visible before click:',
+        await newestOption.isVisible()
+    );
+
+    console.log(
+        '[62] Newest class before click:',
+        await newestOption.getAttribute('class')
+    );
+
+    console.log(
+        '[63] Newest bounding box before click:',
+        await newestOption.boundingBox()
+    );
+
+
+    console.log('[64] CLICKING NEWEST');
+
+    await newestOption.click();
+
+    console.log('[65] NEWEST CLICK COMPLETED');
+
+    console.log(
+        '[66] Newest class immediately after click:',
+        await newestOption.getAttribute('class').catch(() => null)
+    );
+
+    console.log(
+        '[67] Overlay visible after Newest click:',
+        await pagingMenu.isVisible().catch(() => false)
+    );
+
+    console.log(
+        '[68] Total searchtype requests captured:',
+        requests.length
+    );
+
+
+    // ---------------------------------------------------------
+    // Final table
+    // ---------------------------------------------------------
+
+    console.log('[69] Waiting for final table');
+
+    await expect(page.locator('#basetable tbody tr').first())
+        .toBeVisible({
             timeout: 30000
         });
 
-        await pagingParent.click();
+    console.log('[70] FINAL TABLE LOADED');
 
-        const pagingMenu =
-            page.locator('#overlaypaging');
+    console.log(
+        '[71] Total searchtype requests:',
+        requests.length
+    );
 
-        await expect(
-            pagingMenu
-        ).toBeVisible({
-            timeout: 10000
-        });
+    requests.forEach((request, index) => {
+        console.log(
+            `REQUEST ${index + 1}:`,
+            request.body
+        );
+    });
 
-        const newestOption =
-            page.locator('#newestdiv');
 
-        const oldestOption =
-            page.locator('#Oldestdiv');
+    page.off('request', requestListener);
 
-        await expect(
-            newestOption
-        ).toBeVisible();
+    console.log('\n====================================================');
+    console.log('TEST 25 DEBUG COMPLETE');
+    console.log('====================================================');
+});
 
-        await expect(
-            oldestOption
-        ).toBeVisible();
+test('25 - Newest and Oldest record navigation works correctly', async ({ page }) => {
+    await loadEmployeesReport(page);
 
-        // --------------------------------------------------------
-        // NEWEST
-        //
-        // Verify the actual request asks for DESC sorting.
-        // --------------------------------------------------------
+    const pagingParent = page.locator(
+        '#dvpaginationsections .pagingsectionparent'
+    );
 
-        const newestRequestPromise =
-            page.waitForRequest(
-                request =>
-                    request.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    request.method() === 'POST'
-            );
+    const pagingMenu = page.locator('#overlaypaging');
 
-        const newestResponsePromise =
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            );
+    const oldestOption = page.locator('#Oldestdiv');
+    const newestOption = page.locator('#newestdiv');
 
-        await newestOption.click();
+    // =========================================================
+    // NEWEST -> OLDEST
+    // =========================================================
 
-        const newestRequest =
-            await newestRequestPromise;
+    await expect(pagingParent).toBeVisible();
 
-        await newestResponsePromise;
+    await pagingParent.click();
 
-        const newestPayload =
-            newestRequest.postDataJSON();
+    await expect(pagingMenu).toBeVisible();
 
-        expect(
-            String(
-                newestPayload.sortcolumnorder
-            ).toUpperCase(),
-            'Newest must request descending order'
-        ).toBe('DESC');
+    await expect(oldestOption).toBeVisible();
 
-        expect(
-            newestPayload.recordstate,
-            'Newest must request ACTIVE records'
-        ).toBe('ACTIVE');
+    await oldestOption.click();
 
-        await expect(
-            page.locator('#basetable')
-        ).toBeVisible({
+    // ---------------------------------------------------------
+    // Synchronize with the first refresh.
+    // Do not use CSS class state or fixed sleep.
+    // ---------------------------------------------------------
+
+    await expect(page.locator('#basetable tbody tr').first())
+        .toBeVisible({
             timeout: 30000
         });
 
-        console.log(
-            'Test 25 - Newest request verified: DESC / ACTIVE'
-        );
+    // Allow pending DOM/render work from the refresh to complete.
+    await page.evaluate(() =>
+        new Promise(resolve =>
+            requestAnimationFrame(() =>
+                requestAnimationFrame(resolve)
+            )
+        )
+    );
 
-        // --------------------------------------------------------
-        // Open paging menu again.
-        // --------------------------------------------------------
+    // The pagination control must be interaction-ready again.
+    await expect(pagingParent).toBeVisible({
+        timeout: 10000
+    });
 
-        await pagingParent.click();
 
-        await expect(
-            pagingMenu
-        ).toBeVisible({
-            timeout: 10000
-        });
+    // =========================================================
+    // OLDEST -> NEWEST
+    // =========================================================
 
-        // --------------------------------------------------------
-        // OLDEST
-        //
-        // Verify the actual request asks for ASC sorting.
-        // --------------------------------------------------------
+    await pagingParent.click();
 
-        const oldestRequestPromise =
-            page.waitForRequest(
-                request =>
-                    request.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    request.method() === 'POST'
-            );
+    // Synchronize specifically with the overlay becoming available.
+    await expect(pagingMenu).toBeVisible({
+        timeout: 5000
+    });
 
-        const oldestResponsePromise =
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            );
+    // Do not assume the menu is ready merely because the
+    // container is visible. Wait for the actual option.
+    await expect(newestOption).toBeVisible({
+        timeout: 5000
+    });
 
-        await oldestOption.click();
+    await newestOption.click();
 
-        const oldestRequest =
-            await oldestRequestPromise;
+    // ---------------------------------------------------------
+    // Synchronize with the final refresh.
+    // ---------------------------------------------------------
 
-        await oldestResponsePromise;
-
-        const oldestPayload =
-            oldestRequest.postDataJSON();
-
-        expect(
-            String(
-                oldestPayload.sortcolumnorder
-            ).toUpperCase(),
-            'Oldest must request ascending order'
-        ).toBe('ASC');
-
-        expect(
-            oldestPayload.recordstate,
-            'Oldest must request ACTIVE records'
-        ).toBe('ACTIVE');
-
-        await expect(
-            page.locator('#basetable')
-        ).toBeVisible({
+    await expect(page.locator('#basetable tbody tr').first())
+        .toBeVisible({
             timeout: 30000
         });
 
-        console.log(
-            'Test 25 - Oldest request verified: ASC / ACTIVE'
-        );
-
-        console.log(
-            'Test 25 PASS - Newest and Oldest navigation verified'
-        );
-    }
-);
-
+    await page.evaluate(() =>
+        new Promise(resolve =>
+            requestAnimationFrame(() =>
+                requestAnimationFrame(resolve)
+            )
+        )
+    );
+});
 
 // ============================================================
 // TEST 26

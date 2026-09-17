@@ -126,13 +126,13 @@ function getdeletedrecords() {
 
 
 
-
-        basefunction().getpaginatesearchtype(base).then(function (argument) {
-            console.log(argument);
-            htmlpopulate.htmlpopulatetable(argument);
-            basepagination.bootpagination(argument);
-            functionppagesize()
-        })
+functionppagesize()
+        // basefunction().getpaginatesearchtype(base).then(function (argument) {
+        //     console.log(argument);
+        //     htmlpopulate.htmlpopulatetable(argument);
+        //     basepagination.bootpagination(argument);
+        //     functionppagesize()
+        // })
 
 
     }
@@ -145,13 +145,13 @@ function getdeletedrecords() {
         filterparam.sortcolumnorder = "desc";
         filterparam.recordstate = "ACTIVE";
         base.datapayload = filterparam;
-        
-        basefunction().getpaginatesearchtype(base).then(function (argument) {
+        functionppagesize();
+        // basefunction().getpaginatesearchtype(base).then(function (argument) {
 
-            htmlpopulate.htmlpopulatetable(argument);
-            basepagination.bootpagination(argument);
-            functionppagesize()
-        })
+        //     htmlpopulate.htmlpopulatetable(argument);
+        //     basepagination.bootpagination(argument);
+        //     //functionppagesize()
+        // })
     }
 
     function functionppagesize() {
