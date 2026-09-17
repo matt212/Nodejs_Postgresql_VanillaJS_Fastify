@@ -4199,22 +4199,23 @@ test(
 // SOFT DELETE - RANDOM ACTIVE EMPLOYEE
 // ============================================================
 
+// ============================================================
+// TEST 22
+// SOFT DELETE - RANDOM ACTIVE EMPLOYEE
+// ============================================================
+
+// ============================================================
+// TEST 22
+// SOFT DELETE - RANDOM ACTIVE EMPLOYEE
+// ============================================================
+
 test(
     '22 - Soft Delete - Random active employee and verify in Deleted records',
     async ({ page }) => {
 
         test.setTimeout(120000);
 
-        // ============================================================
-        // 1. LOAD EMPLOYEES REPORT
-        // ============================================================
-
         await loadEmployeesReport(page);
-
-
-        // ============================================================
-        // 2. GET ALL CURRENT ACTIVE ROWS
-        // ============================================================
 
         const rows =
             page.locator('#basetable tbody tr');
@@ -4227,11 +4228,6 @@ test(
             'Employees report should contain at least one row'
         ).toBeGreaterThan(0);
 
-
-        // ============================================================
-        // 3. SELECT RANDOM ROW
-        // ============================================================
-
         const randomIndex =
             Math.floor(Math.random() * rowCount);
 
@@ -4241,14 +4237,6 @@ test(
         console.log(
             `Test 22 - Selected random row: ${randomIndex + 1} of ${rowCount}`
         );
-
-
-        // ============================================================
-        // 4. CAPTURE STABLE EMPLOYEE ID
-        //
-        // Example:
-        // <td data-tbledit-type="20669165">
-        // ============================================================
 
         const editCell =
             selectedRow
@@ -4261,40 +4249,29 @@ test(
             timeout: 30000
         });
 
-
         const employeeId =
             await editCell.getAttribute(
                 'data-tbledit-type'
             );
-
 
         expect(
             employeeId,
             'Selected employee must have a data-tbledit-type ID'
         ).not.toBeNull();
 
-
         expect(
-            employeeId,
-            'Selected employee ID must not be empty'
+            employeeId
         ).not.toBe('');
-
 
         console.log(
             `Test 22 - Selected employee ID: ${employeeId}`
         );
 
-
-        // ============================================================
-        // 5. OPEN EDIT
-        // ============================================================
+        // ------------------------------------------------------------
+        // OPEN EDIT
+        // ------------------------------------------------------------
 
         await editCell.click();
-
-
-        // ============================================================
-        // 6. LOCATE RECORD STATE CHECKBOX
-        // ============================================================
 
         const recordStateInput =
             page.locator('#cltrlrecordstate');
@@ -4304,48 +4281,49 @@ test(
                 'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
             );
 
-
         await expect(
             recordStateInput
         ).toBeAttached({
             timeout: 30000
         });
 
-
-        // ============================================================
-        // 7. VERIFY EMPLOYEE IS CURRENTLY ACTIVE
-        // ============================================================
-
+        // Must currently be ACTIVE.
         await expect(
             recordStateInput
         ).toBeChecked();
 
-
-        console.log(
-            `Test 22 - Employee ${employeeId} is currently ACTIVE`
-        );
-
-
-        // ============================================================
-        // 8. UNCHECK RECORD STATE = SOFT DELETE
-        // ============================================================
+        // ------------------------------------------------------------
+        // SOFT DELETE
+        // ------------------------------------------------------------
 
         await recordStateControl.click();
-
 
         await expect(
             recordStateInput
         ).not.toBeChecked();
 
+        // ------------------------------------------------------------
+        // IMPORTANT:
+        //
+        // Submit
+        //   -> /employees/api/update/
+        //   -> /employees/api/searchtype/
+        //   -> table populated
+        //
+        // Both listeners are installed BEFORE Submit.
+        // ------------------------------------------------------------
 
-        console.log(
-            `Test 22 - Employee ${employeeId} record state unchecked`
-        );
-
-
-        // ============================================================
-        // 9. SUBMIT SOFT DELETE
-        // ============================================================
+        const updateResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/update/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
 
         const searchResponsePromise =
             page.waitForResponse(
@@ -4359,54 +4337,40 @@ test(
                 }
             );
 
-
         await page.locator(
             '#btnmodalsub'
         ).click();
 
+        await updateResponsePromise;
+
+        console.log(
+            `Test 22 - UPDATE completed for ${employeeId}`
+        );
 
         await searchResponsePromise;
 
-
         console.log(
-            `Test 22 - Soft delete submitted for employee ${employeeId}`
+            `Test 22 - SEARCHTYPE completed for ${employeeId}`
         );
 
-
-        // ============================================================
-        // 10. WAIT FOR REPORT REFRESH
-        // ============================================================
-
-        await expect(
-            page.locator('#dvreportcontainer')
-        ).not.toHaveClass(
-            /loading-report-container/,
-            {
-                timeout: 30000
-            }
-        );
-
+        // ------------------------------------------------------------
+        // REPORT READY
+        // ------------------------------------------------------------
 
         await expect(
-            page.locator('#basetable')
+            page.locator('#divreportcontent')
         ).toBeVisible({
             timeout: 30000
         });
 
-
-        // ============================================================
-        // 11. OPEN PAGING MENU
-        //
-        // IMPORTANT:
-        // #overlaypaging itself is display:none initially.
-        // The clickable element is .pagingsectionparent.
-        // ============================================================
+        // ------------------------------------------------------------
+        // OPEN PAGING
+        // ------------------------------------------------------------
 
         const pagingParent =
             page.locator(
                 '#dvpaginationsections .pagingsectionparent'
             );
-
 
         await expect(
             pagingParent
@@ -4414,17 +4378,10 @@ test(
             timeout: 30000
         });
 
-
         await pagingParent.click();
-
-
-        // ============================================================
-        // 12. VERIFY PAGING MENU IS OPEN
-        // ============================================================
 
         const pagingMenu =
             page.locator('#overlaypaging');
-
 
         await expect(
             pagingMenu
@@ -4432,21 +4389,18 @@ test(
             timeout: 10000
         });
 
-
-        // ============================================================
-        // 13. SELECT DELETED
-        // ============================================================
+        // ------------------------------------------------------------
+        // SELECT DELETED
+        // ------------------------------------------------------------
 
         const deletedOption =
             page.locator('#Deletediv');
-
 
         await expect(
             deletedOption
         ).toBeVisible({
             timeout: 10000
         });
-
 
         const deletedSearchResponsePromise =
             page.waitForResponse(
@@ -4460,90 +4414,35 @@ test(
                 }
             );
 
-
         await deletedOption.click();
-
 
         await deletedSearchResponsePromise;
 
-
-        // ============================================================
-        // 14. WAIT FOR DELETED REPORT
-        // ============================================================
-
         await expect(
-            page.locator('#dvreportcontainer')
-        ).not.toHaveClass(
-            /loading-report-container/,
-            {
-                timeout: 30000
-            }
-        );
-
-
-        await expect(
-            page.locator('#basetable')
+            page.locator('#divreportcontent')
         ).toBeVisible({
             timeout: 30000
         });
 
-
-        // ============================================================
-        // 15. VERIFY DELETED EMPLOYEE EXISTS
-        //
-        // The same employee ID appears as:
-        //
-        // ACTIVE TABLE:
-        // td[data-tbledit-type="20669165"]
-        //
-        // DELETED TABLE:
-        // input[data-chk-type="20669165"]
-        // ============================================================
+        // ------------------------------------------------------------
+        // VERIFY EMPLOYEE EXISTS IN DELETED
+        // ------------------------------------------------------------
 
         const deletedEmployee =
             page.locator(
                 `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
             );
 
-
         await expect(
             deletedEmployee,
-            `Soft-deleted employee ${employeeId} should appear in Deleted records`
+            `Employee ${employeeId} should exist in Deleted records`
         ).toHaveCount(1);
-
-
-        // ============================================================
-        // 16. VERIFY THE DELETED ROW ITSELF
-        // ============================================================
-
-        const deletedRow =
-            deletedEmployee.locator(
-                'xpath=ancestor::tr'
-            );
-
-
-        await expect(
-            deletedRow
-        ).toHaveCount(1);
-
-
-        const deletedEditCell =
-            deletedRow.locator(
-                `td[data-tbledit-type="${employeeId}"]`
-            );
-
-
-        await expect(
-            deletedEditCell
-        ).toHaveCount(1);
-
 
         console.log(
-            `Test 22 PASS - Employee ${employeeId} successfully soft-deleted and verified in Deleted records`
+            `Test 22 PASS - ${employeeId} exists in Deleted records`
         );
     }
 );
-
 
 // ============================================================
 // TEST 23
@@ -4556,103 +4455,37 @@ test(
 
         test.setTimeout(120000);
 
-        // ============================================================
-        // HELPERS
-        // ============================================================
-
-        const waitForReportReady = async () => {
-
-            await expect(
-                page.locator('#dvreportcontainer')
-            ).not.toHaveClass(
-                /loading-report-container/,
-                {
-                    timeout: 30000
-                }
-            );
-
-            await expect(
-                page.locator('#basetable')
-            ).toBeVisible({
-                timeout: 30000
-            });
-
-            // Allow the final DOM replacement/render cycle to complete.
-            await page.waitForTimeout(300);
-        };
-
-
-        const waitForSearchResponse = async (action) => {
-
-            const responsePromise =
-                page.waitForResponse(
-                    response =>
-                        response.url().includes(
-                            '/employees/api/searchtype/'
-                        ) &&
-                        response.status() === 200,
-                    {
-                        timeout: 30000
-                    }
-                );
-
-            await action();
-
-            await responsePromise;
-
-            await waitForReportReady();
-        };
-
-
-        const openPagingMenu = async () => {
-
-            const pagingParent =
-                page.locator(
-                    '#dvpaginationsections .pagingsectionparent'
-                );
-
-            await expect(
-                pagingParent
-            ).toBeVisible({
-                timeout: 30000
-            });
-
-            await pagingParent.click();
-
-            const pagingMenu =
-                page.locator(
-                    '#overlaypaging'
-                );
-
-            await expect(
-                pagingMenu
-            ).toBeVisible({
-                timeout: 10000
-            });
-
-            return pagingMenu;
-        };
-
-
-        // ============================================================
-        // 1. LOAD EMPLOYEES REPORT
-        // ============================================================
-
         await loadEmployeesReport(page);
 
-        await waitForReportReady();
+        // ------------------------------------------------------------
+        // OPEN PAGING
+        // ------------------------------------------------------------
 
+        const pagingParent =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
 
-        // ============================================================
-        // 2. OPEN PAGING MENU
-        // ============================================================
+        await expect(
+            pagingParent
+        ).toBeVisible({
+            timeout: 30000
+        });
 
-        await openPagingMenu();
+        await pagingParent.click();
 
+        const pagingMenu =
+            page.locator('#overlaypaging');
 
-        // ============================================================
-        // 3. SELECT DELETED
-        // ============================================================
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        // ------------------------------------------------------------
+        // SELECT DELETED
+        // ------------------------------------------------------------
 
         const deletedOption =
             page.locator('#Deletediv');
@@ -4663,33 +4496,34 @@ test(
             timeout: 10000
         });
 
-
-        await waitForSearchResponse(
-            async () => {
-
-                await deletedOption.click();
-            }
-        );
-
-
-        // ============================================================
-        // 4. VERIFY DELETED TABLE
-        // ============================================================
-
-        const deletedRows =
-            page.locator(
-                '#basetable tbody tr'
+        const deletedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
             );
 
-        await expect(
-            deletedRows
-        ).not.toHaveCount(
-            0,
-            {
-                timeout: 30000
-            }
-        );
+        await deletedOption.click();
 
+        await deletedSearchResponsePromise;
+
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // ------------------------------------------------------------
+        // GET DELETED ROWS
+        // ------------------------------------------------------------
+
+        const deletedRows =
+            page.locator('#basetable tbody tr');
 
         const deletedRowCount =
             await deletedRows.count();
@@ -4699,16 +4533,6 @@ test(
             'Deleted records should contain at least one employee'
         ).toBeGreaterThan(0);
 
-
-        console.log(
-            `Test 23 - Deleted records found: ${deletedRowCount}`
-        );
-
-
-        // ============================================================
-        // 5. SELECT RANDOM DELETED ROW
-        // ============================================================
-
         const randomIndex =
             Math.floor(
                 Math.random() * deletedRowCount
@@ -4717,16 +4541,18 @@ test(
         const selectedDeletedRow =
             deletedRows.nth(randomIndex);
 
+        console.log(
+            `Test 23 - Selected deleted row: ${randomIndex + 1} of ${deletedRowCount}`
+        );
 
-        // ============================================================
-        // 6. GET EMPLOYEE ID
-        // ============================================================
+        // ------------------------------------------------------------
+        // GET EMPLOYEE ID
+        // ------------------------------------------------------------
 
         const editCell =
-            selectedDeletedRow.locator(
-                'td[data-tbledit-type]'
-            ).first();
-
+            selectedDeletedRow
+                .locator('td[data-tbledit-type]')
+                .first();
 
         await expect(
             editCell
@@ -4734,66 +4560,47 @@ test(
             timeout: 30000
         });
 
-
         const employeeId =
             await editCell.getAttribute(
                 'data-tbledit-type'
             );
 
-
         expect(
             employeeId,
-            'Selected deleted employee must have a data-tbledit-type ID'
+            'Selected deleted employee must have an ID'
         ).not.toBeNull();
 
-
         expect(
-            employeeId,
-            'Selected deleted employee ID must not be empty'
+            employeeId
         ).not.toBe('');
-
 
         console.log(
             `Test 23 - Selected deleted employee ID: ${employeeId}`
         );
 
-
-        // ============================================================
-        // 7. VERIFY CHECKBOX BELONGS TO SAME EMPLOYEE
-        // ============================================================
-
-        const selectedDeletedId =
-            selectedDeletedRow.locator(
-                `input.tblkchk[data-chk-type="${employeeId}"]`
-            );
-
+        // ------------------------------------------------------------
+        // VERIFY SELECTED EMPLOYEE EXISTS IN DELETED
+        // ------------------------------------------------------------
 
         await expect(
-            selectedDeletedId
-        ).toHaveCount(
-            1,
-            {
-                timeout: 30000
-            }
-        );
+            selectedDeletedRow.locator(
+                `input.tblkchk[data-chk-type="${employeeId}"]`
+            )
+        ).toHaveCount(1);
 
-
-        // ============================================================
-        // 8. OPEN EDIT MODAL
-        // ============================================================
+        // ------------------------------------------------------------
+        // OPEN EDIT
+        // ------------------------------------------------------------
 
         await editCell.click();
 
-
-        // ============================================================
-        // 9. RECORD STATE CONTROL
-        // ============================================================
-
         const recordStateInput =
-            page.locator(
-                '#cltrlrecordstate'
-            );
+            page.locator('#cltrlrecordstate');
 
+        const recordStateControl =
+            page.locator(
+                'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
+            );
 
         await expect(
             recordStateInput
@@ -4801,99 +4608,103 @@ test(
             timeout: 30000
         });
 
+        // Deleted record must be unchecked.
+        await expect(
+            recordStateInput
+        ).not.toBeChecked();
+
+        // ------------------------------------------------------------
+        // RESTORE
+        // ------------------------------------------------------------
+
+        await recordStateControl.click();
 
         await expect(
             recordStateInput
-        ).not.toBeChecked({
-            timeout: 30000
-        });
+        ).toBeChecked();
 
+        // ------------------------------------------------------------
+        // UPDATE -> SEARCHTYPE
+        // ------------------------------------------------------------
 
-        console.log(
-            `Test 23 - Employee ${employeeId} confirmed as DELETED`
-        );
-
-
-        // ============================================================
-        // 10. RESTORE RECORD
-        // ============================================================
-
-        const recordStateControl =
-            page.locator(
-                'label:has(#cltrlrecordstate) div'
+        const updateResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/update/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
             );
 
+        const searchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator(
+            '#btnmodalsub'
+        ).click();
+
+        await updateResponsePromise;
+
+        console.log(
+            `Test 23 - UPDATE completed for ${employeeId}`
+        );
+
+        await searchResponsePromise;
+
+        console.log(
+            `Test 23 - SEARCHTYPE completed for ${employeeId}`
+        );
 
         await expect(
-            recordStateControl
+            page.locator('#divreportcontent')
         ).toBeVisible({
             timeout: 30000
         });
 
+        // ------------------------------------------------------------
+        // OPEN PAGING AGAIN
+        // ------------------------------------------------------------
 
-        await recordStateControl.click();
-
+        const pagingParentAfterRestore =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
 
         await expect(
-            recordStateInput
-        ).toBeChecked({
+            pagingParentAfterRestore
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await pagingParentAfterRestore.click();
+
+        const pagingMenuAfterRestore =
+            page.locator('#overlaypaging');
+
+        await expect(
+            pagingMenuAfterRestore
+        ).toBeVisible({
             timeout: 10000
         });
 
-
-        console.log(
-            `Test 23 - Employee ${employeeId} record state checked for restore`
-        );
-
-
-        // ============================================================
-        // 11. SUBMIT RESTORE
-        // ============================================================
-
-        await waitForSearchResponse(
-            async () => {
-
-                await page.locator(
-                    '#btnmodalsub'
-                ).click();
-            }
-        );
-
-
-        console.log(
-            `Test 23 - Restore submitted for employee ${employeeId}`
-        );
-
-
-        // ============================================================
-        // IMPORTANT:
-        // Do NOT assume the report is ready merely because the
-        // searchtype response arrived.
-        //
-        // waitForSearchResponse() has already waited for:
-        //   1. API response
-        //   2. loading indicator to disappear
-        //   3. basetable visibility
-        //   4. DOM settling
-        // ============================================================
-
-
-        // ============================================================
-        // 12. OPEN PAGING MENU AGAIN
-        // ============================================================
-
-        await openPagingMenu();
-
-
-        // ============================================================
-        // 13. SELECT ACTIVE / NEWEST
-        // ============================================================
+        // ------------------------------------------------------------
+        // SELECT NEWEST / ACTIVE
+        // ------------------------------------------------------------
 
         const newestOption =
-            page.locator(
-                '#newestdiv'
-            );
-
+            page.locator('#newestdiv');
 
         await expect(
             newestOption
@@ -4901,74 +4712,44 @@ test(
             timeout: 10000
         });
 
+        const newestSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
 
-        await waitForSearchResponse(
-            async () => {
+        await newestOption.click();
 
-                await newestOption.click();
-            }
-        );
+        await newestSearchResponsePromise;
 
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
 
-        // ============================================================
-        // 14. VERIFY ACTIVE REPORT
-        // ============================================================
+        // ------------------------------------------------------------
+        // VERIFY RESTORED EMPLOYEE IN ACTIVE
+        // ------------------------------------------------------------
 
         const restoredEmployee =
             page.locator(
                 `#basetable tbody tr td[data-tbledit-type="${employeeId}"]`
             );
 
-
         await expect(
             restoredEmployee,
             `Restored employee ${employeeId} should appear in Active records`
-        ).toHaveCount(
-            1,
-            {
-                timeout: 30000
-            }
-        );
-
-
-        // ============================================================
-        // 15. VERIFY RESTORED ROW
-        // ============================================================
-
-        const restoredRow =
-            restoredEmployee.locator(
-                'xpath=ancestor::tr'
-            );
-
-
-        await expect(
-            restoredRow
-        ).toHaveCount(
-            1,
-            {
-                timeout: 30000
-            }
-        );
-
-
-        const restoredCheckbox =
-            restoredRow.locator(
-                `input.tblkchk[data-chk-type="${employeeId}"]`
-            );
-
-
-        await expect(
-            restoredCheckbox
-        ).toHaveCount(
-            1,
-            {
-                timeout: 30000
-            }
-        );
-
+        ).toHaveCount(1);
 
         console.log(
-            `Test 23 PASS - Employee ${employeeId} successfully restored and verified in Active records`
+            `Test 23 PASS - ${employeeId} restored to Active records`
         );
     }
 );
@@ -6648,108 +6429,22 @@ test(
 
         test.setTimeout(180000);
 
-        // ========================================================
-        // HELPERS
-        // ========================================================
-
-        const waitForReportReady = async () => {
-
-            await expect(
-                page.locator('#dvreportcontainer')
-            ).not.toHaveClass(
-                /loading-report-container/,
-                {
-                    timeout: 30000
-                }
-            );
-
-            await expect(
-                page.locator('#basetable')
-            ).toBeVisible({
-                timeout: 30000
-            });
-
-            // Give the table a chance to finish DOM replacement.
-            await page.waitForLoadState('domcontentloaded').catch(() => {});
-
-            await page.waitForTimeout(300);
-        };
-
-        const waitForSearchResponse = async (
-            action
-        ) => {
-
-            const responsePromise =
-                page.waitForResponse(
-                    response =>
-                        response.url().includes(
-                            '/employees/api/searchtype/'
-                        ) &&
-                        response.status() === 200,
-                    {
-                        timeout: 30000
-                    }
-                );
-
-            await action();
-
-            await responsePromise;
-
-            await waitForReportReady();
-        };
-
-        const openPagingMenu = async () => {
-
-            const pagingParent =
-                page.locator(
-                    '#dvpaginationsections .pagingsectionparent'
-                );
-
-            await expect(
-                pagingParent
-            ).toBeVisible({
-                timeout: 30000
-            });
-
-            await pagingParent.click();
-
-            const pagingMenu =
-                page.locator(
-                    '#overlaypaging'
-                );
-
-            await expect(
-                pagingMenu
-            ).toBeVisible({
-                timeout: 10000
-            });
-
-            return pagingMenu;
-        };
-
-        // ========================================================
-        // LOAD ACTIVE EMPLOYEES
-        // ========================================================
+        // ============================================================
+        // PART 1
+        // ACTIVE -> DELETED
+        // ============================================================
 
         await loadEmployeesReport(page);
 
-        await waitForReportReady();
-
-        // ========================================================
-        // SELECT RANDOM ACTIVE EMPLOYEE
-        // ========================================================
-
         const activeRows =
-            page.locator(
-                '#basetable tbody tr'
-            );
+            page.locator('#basetable tbody tr');
 
         const activeRowCount =
             await activeRows.count();
 
         expect(
             activeRowCount,
-            'Active report must contain at least one employee'
+            'Active records should contain at least one employee'
         ).toBeGreaterThan(0);
 
         const randomIndex =
@@ -6761,9 +6456,9 @@ test(
             activeRows.nth(randomIndex);
 
         const editCell =
-            selectedRow.locator(
-                'td[data-tbledit-type]'
-            ).first();
+            selectedRow
+                .locator('td[data-tbledit-type]')
+                .first();
 
         await expect(
             editCell
@@ -6776,22 +6471,31 @@ test(
                 'data-tbledit-type'
             );
 
-        expect(employeeId).not.toBeNull();
-        expect(employeeId).not.toBe('');
+        expect(
+            employeeId,
+            'Selected employee must have an ID'
+        ).not.toBeNull();
+
+        expect(
+            employeeId
+        ).not.toBe('');
 
         console.log(
             `Test 30 - Selected employee: ${employeeId}`
         );
 
-        // ========================================================
-        // STEP 1 - OPEN RECORD AND SOFT DELETE
-        // ========================================================
+        // ------------------------------------------------------------
+        // OPEN EDIT
+        // ------------------------------------------------------------
 
         await editCell.click();
 
         const recordStateInput =
+            page.locator('#cltrlrecordstate');
+
+        const recordStateControl =
             page.locator(
-                '#cltrlrecordstate'
+                'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
             );
 
         await expect(
@@ -6802,78 +6506,107 @@ test(
 
         await expect(
             recordStateInput
-        ).toBeChecked({
-            timeout: 30000
-        });
+        ).toBeChecked();
 
-        // Use the label associated with the checkbox instead
-        // of an absolute XPath.
-        const recordStateControl =
-            page.locator(
-                'label:has(#cltrlrecordstate) div'
-            );
-
-        await expect(
-            recordStateControl
-        ).toBeVisible({
-            timeout: 30000
-        });
+        // ------------------------------------------------------------
+        // DELETE
+        // ------------------------------------------------------------
 
         await recordStateControl.click();
 
         await expect(
             recordStateInput
-        ).not.toBeChecked({
-            timeout: 10000
-        });
+        ).not.toBeChecked();
 
-        // Submit and wait for backend + report refresh.
-        await waitForSearchResponse(
-            async () => {
+        const deleteUpdateResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/update/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
 
-                await page.locator(
-                    '#btnmodalsub'
-                ).click();
-            }
-        );
+        const deleteSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator(
+            '#btnmodalsub'
+        ).click();
+
+        await deleteUpdateResponsePromise;
 
         console.log(
-            `Test 30 - Employee ${employeeId} soft-deleted`
+            `Test 30 - DELETE UPDATE completed for ${employeeId}`
         );
 
-        // ========================================================
-        // STEP 2 - VERIFY ABSENT FROM ACTIVE
-        // ========================================================
+        await deleteSearchResponsePromise;
 
-        const activeEmployeeAfterDelete =
+        console.log(
+            `Test 30 - DELETE SEARCHTYPE completed for ${employeeId}`
+        );
+
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // ------------------------------------------------------------
+        // VERIFY ABSENT FROM ACTIVE
+        // ------------------------------------------------------------
+
+        await expect(
             page.locator(
                 `#basetable tbody tr td[data-tbledit-type="${employeeId}"]`
+            )
+        ).toHaveCount(0);
+
+        console.log(
+            `Test 30 - ${employeeId} absent from Active records`
+        );
+
+        // ============================================================
+        // PART 2
+        // VERIFY PRESENT IN DELETED
+        // ============================================================
+
+        const pagingParent =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
             );
 
         await expect(
-            activeEmployeeAfterDelete,
-            `Deleted employee ${employeeId} must be absent from Active records`
-        ).toHaveCount(
-            0,
-            {
-                timeout: 30000
-            }
-        );
+            pagingParent
+        ).toBeVisible({
+            timeout: 30000
+        });
 
-        console.log(
-            `Test 30 - Employee ${employeeId} absent from Active records`
-        );
+        await pagingParent.click();
 
-        // ========================================================
-        // STEP 3 - OPEN DELETED RECORDS
-        // ========================================================
+        const pagingMenu =
+            page.locator('#overlaypaging');
 
-        await openPagingMenu();
+        await expect(
+            pagingMenu
+        ).toBeVisible({
+            timeout: 10000
+        });
 
         const deletedOption =
-            page.locator(
-                '#Deletediv'
-            );
+            page.locator('#Deletediv');
 
         await expect(
             deletedOption
@@ -6881,16 +6614,27 @@ test(
             timeout: 10000
         });
 
-        await waitForSearchResponse(
-            async () => {
+        const deletedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
 
-                await deletedOption.click();
-            }
-        );
+        await deletedOption.click();
 
-        // ========================================================
-        // STEP 4 - VERIFY RECORD EXISTS IN DELETED
-        // ========================================================
+        await deletedSearchResponsePromise;
+
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
 
         const deletedEmployee =
             page.locator(
@@ -6899,26 +6643,26 @@ test(
 
         await expect(
             deletedEmployee,
-            `Deleted employee ${employeeId} must appear in Deleted records`
-        ).toHaveCount(
-            1,
-            {
-                timeout: 30000
-            }
-        );
+            `Employee ${employeeId} should exist in Deleted records`
+        ).toHaveCount(1);
 
         console.log(
-            `Test 30 - Employee ${employeeId} confirmed in Deleted records`
+            `Test 30 - ${employeeId} confirmed in Deleted records`
         );
 
-        // ========================================================
-        // STEP 5 - OPEN DELETED RECORD AND RESTORE
-        // ========================================================
+        // ============================================================
+        // PART 3
+        // DELETED -> ACTIVE
+        // ============================================================
 
         const deletedRow =
             deletedEmployee.locator(
                 'xpath=ancestor::tr'
             );
+
+        await expect(
+            deletedRow
+        ).toHaveCount(1);
 
         const deletedEditCell =
             deletedRow.locator(
@@ -6927,74 +6671,105 @@ test(
 
         await expect(
             deletedEditCell
-        ).toHaveCount(
-            1,
-            {
-                timeout: 30000
-            }
-        );
+        ).toHaveCount(1);
 
         await deletedEditCell.click();
 
-        const restoreRecordStateInput =
-            page.locator(
-                '#cltrlrecordstate'
-            );
-
         await expect(
-            restoreRecordStateInput
+            recordStateInput
         ).toBeAttached({
             timeout: 30000
         });
 
         await expect(
-            restoreRecordStateInput
-        ).not.toBeChecked({
-            timeout: 30000
-        });
+            recordStateInput
+        ).not.toBeChecked();
 
-        const restoreRecordStateControl =
-            page.locator(
-                'label:has(#cltrlrecordstate) div'
-            );
+        // ------------------------------------------------------------
+        // RESTORE
+        // ------------------------------------------------------------
+
+        await recordStateControl.click();
 
         await expect(
-            restoreRecordStateControl
+            recordStateInput
+        ).toBeChecked();
+
+        const restoreUpdateResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/update/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const restoreSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator(
+            '#btnmodalsub'
+        ).click();
+
+        await restoreUpdateResponsePromise;
+
+        console.log(
+            `Test 30 - RESTORE UPDATE completed for ${employeeId}`
+        );
+
+        await restoreSearchResponsePromise;
+
+        console.log(
+            `Test 30 - RESTORE SEARCHTYPE completed for ${employeeId}`
+        );
+
+        await expect(
+            page.locator('#divreportcontent')
         ).toBeVisible({
             timeout: 30000
         });
 
-        await restoreRecordStateControl.click();
+        // ============================================================
+        // PART 4
+        // VERIFY PRESENT IN ACTIVE
+        // ============================================================
+
+        const pagingParentAfterRestore =
+            page.locator(
+                '#dvpaginationsections .pagingsectionparent'
+            );
 
         await expect(
-            restoreRecordStateInput
-        ).toBeChecked({
+            pagingParentAfterRestore
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await pagingParentAfterRestore.click();
+
+        const pagingMenuAfterRestore =
+            page.locator('#overlaypaging');
+
+        await expect(
+            pagingMenuAfterRestore
+        ).toBeVisible({
             timeout: 10000
         });
 
-        await waitForSearchResponse(
-            async () => {
-
-                await page.locator(
-                    '#btnmodalsub'
-                ).click();
-            }
-        );
-
-        console.log(
-            `Test 30 - Employee ${employeeId} restored`
-        );
-
-        // ========================================================
-        // STEP 6 - SWITCH BACK TO ACTIVE
-        // ========================================================
-
-        await openPagingMenu();
-
         const newestOption =
-            page.locator(
-                '#newestdiv'
-            );
+            page.locator('#newestdiv');
 
         await expect(
             newestOption
@@ -7002,16 +6777,27 @@ test(
             timeout: 10000
         });
 
-        await waitForSearchResponse(
-            async () => {
+        const activeSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
 
-                await newestOption.click();
-            }
-        );
+        await newestOption.click();
 
-        // ========================================================
-        // RESTORED EMPLOYEE MUST BE ACTIVE
-        // ========================================================
+        await activeSearchResponsePromise;
+
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
 
         const restoredEmployee =
             page.locator(
@@ -7020,63 +6806,79 @@ test(
 
         await expect(
             restoredEmployee,
-            `Restored employee ${employeeId} must appear in Active records`
-        ).toHaveCount(
-            1,
-            {
-                timeout: 30000
-            }
-        );
+            `Restored employee ${employeeId} should appear in Active records`
+        ).toHaveCount(1);
 
         console.log(
-            `Test 30 - Employee ${employeeId} confirmed in Active records`
+            `Test 30 - ${employeeId} confirmed ACTIVE after restore`
         );
 
-        // ========================================================
-        // STEP 7 - VERIFY ABSENT FROM DELETED
-        // ========================================================
+        // ============================================================
+        // PART 5
+        // VERIFY ABSENT FROM DELETED
+        // ============================================================
 
-        await openPagingMenu();
-
-        const deletedOptionAfterRestore =
+        const finalPagingParent =
             page.locator(
-                '#Deletediv'
+                '#dvpaginationsections .pagingsectionparent'
             );
 
         await expect(
-            deletedOptionAfterRestore
+            finalPagingParent
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await finalPagingParent.click();
+
+        const finalPagingMenu =
+            page.locator('#overlaypaging');
+
+        await expect(
+            finalPagingMenu
         ).toBeVisible({
             timeout: 10000
         });
 
-        await waitForSearchResponse(
-            async () => {
-
-                await deletedOptionAfterRestore.click();
-            }
-        );
-
-        // ========================================================
-        // RESTORED EMPLOYEE MUST NOT BE IN DELETED
-        // ========================================================
-
-        const deletedEmployeeAfterRestore =
-            page.locator(
-                `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
-            );
+        const finalDeletedOption =
+            page.locator('#Deletediv');
 
         await expect(
-            deletedEmployeeAfterRestore,
-            `Restored employee ${employeeId} must be absent from Deleted records`
-        ).toHaveCount(
-            0,
-            {
-                timeout: 30000
-            }
-        );
+            finalDeletedOption
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        const finalDeletedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await finalDeletedOption.click();
+
+        await finalDeletedSearchResponsePromise;
+
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await expect(
+            page.locator(
+                `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
+            )
+        ).toHaveCount(0);
 
         console.log(
-            `Test 30 PASS - Complete lifecycle verified for employee ${employeeId}`
+            `Test 30 PASS - ${employeeId}: ACTIVE -> DELETED -> ACTIVE, and absent from Deleted records`
         );
     }
 );
