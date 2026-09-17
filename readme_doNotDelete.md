@@ -340,6 +340,10 @@ HEADED=true \
 npx playwright test employees -g "30 - Delete -> Active absence -> Restore -> Deleted absence lifecycle"
 
 
+npx playwright test module -g "25 - Newest and Oldest record navigation works correctly"
+
+npx playwright test module -g "30 - Delete -> Active absence -> Restore -> Deleted absence lifecycle"
+
 
 LOGIN_USERNAME=krennic \
 LOGIN_PASSWORD=orson \

@@ -1,48 +1,28 @@
-# Generic Playwright Module Test Refactor
+# Playwright Module Refactor - 30 Test Operational Baseline
 
-This package refactors the supplied Employees Playwright suite into a reusable module-oriented structure without introducing `EmployeesPage.js`, `CustomerPage.js`, etc.
+This package is a compatibility-first structured package.
 
-## Structure
+IMPORTANT:
+`tests/module.spec.js` is the exact operational 30-test Employees suite supplied by the user. It has NOT been rewritten to introduce new DOM/API mappings.
 
-```text
-Playwright_Module_Refactor/
-├── config/
-│   └── module.config.js
-├── selectors/
-│   └── module.selectors.js
-├── helpers/
-│   ├── module.lifecycle.js
-│   ├── module.validation.js
-│   ├── module.table.js
-│   └── module.assertions.js
-├── data/
-│   └── module.testdata.js
-├── tests/
-│   └── module.spec.js
-└── source/
-    └── employees.spec.original.js
-```
+This is intentional. The earlier refactor introduced a regression in Test 25 by assuming API `sortcolumn` values directly mapped to `data-field-header` DOM attributes. This package does not make that assumption.
 
-## Important
+The same principle applies to Tests 14, 28 and 29: their known-working request/response and selector behavior is preserved from the supplied Employees suite.
 
-The source artifact available in the conversation/library is the 4,995-line `employees.spec.js` snapshot and contains **23 tests (01–23)**. It does not contain the later 24–30 tests discussed separately. Those seven tests are intentionally not fabricated or silently added. The original snapshot is preserved under `source/`.
+The helper/config directories are separated so extraction can be performed incrementally after the baseline is confirmed in the user's real application. They are not used to rewrite the operational suite yet.
 
-The refactored test file is generic at the module/configuration level: route and API prefix are supplied by `config/module.config.js`. For the next generated module, change the configuration and keep the generic helpers/test contract rather than creating a new Page Object class.
+Run from the project root after placing the package under `playwright/`:
 
-## Run
+    npx playwright test playwright/tests/module.spec.js
 
-Run from the repository root because the generated suite imports the module's existing validation configuration:
+Or, when `playwright/tests` is configured as testDir:
 
-```bash
-npx playwright test playwright/tests/module.spec.js
-```
+    npx playwright test module
 
-If this package is copied into the existing repo's `playwright/` directory, adjust the relative path to `validationConfig.js` only if the repo layout differs.
-
-## Selector strategy
-
-The selector layer centralizes stable IDs, CSS selectors and dynamic selector factories. The recommended next generator enhancement is to emit `data-testid` attributes such as `module-data-table`, `module-filter-first_name`, `module-save`, and `module-page-size`; these can replace brittle XPath/CSS selectors progressively without changing test intent.
-
-## Coverage preserved
-
-The supplied 23-test contract covers module access, control/date/report loading, table mapping/data/count, consolidated search, dynamic multi-select controls, single-field filtering, field permutations, multi-select permutations, sorting, UI/screenshot validation, validationmap-driven CRUD, update flows, full-word filtering, soft delete and restore.
+Verification performed on the package:
+- 30 test declarations
+- JavaScript syntax check passes
+- Test 14 preserved from supplied baseline
+- Test 28 preserved from supplied baseline
+- Test 29 preserved from supplied baseline
+- Original source retained under source/

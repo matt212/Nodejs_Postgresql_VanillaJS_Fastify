@@ -1,4 +1,8 @@
 const { defineConfig } = require('@playwright/test');
+const timestamp = new Date().toISOString()
+  .replace(/T/, '_')
+  .replace(/\..+/, '')
+  .replace(/:/g, '-');
 
 module.exports = defineConfig({
 
@@ -10,11 +14,11 @@ module.exports = defineConfig({
         timeout: 10000
     },
 
-    fullyParallel: false,
+    fullyParallel: true,
 
-    workers: 1,
+    workers: 4,
 
-    reporter: 'html',
+    reporter: [['html', { outputFolder: `playwright-report/report_${timestamp}` }]],
 
     // Common settings for ALL projects
     use: {

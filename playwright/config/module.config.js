@@ -1,11 +1,13 @@
-/**
- * Domain/module configuration. Keep generated test logic generic; change this file per generated module.
- */
+// Compatibility configuration for the current Employees module.
+// The operational test suite intentionally uses the same module/API behavior
+// as the known-passing employees.spec.js baseline.
 module.exports = {
-  Name: 'employees',
+  name: 'employees',
   id: 'employeesid',
   type: 'base',
   route: '/employees',
-  apiPrefix: '/employees',
-  displayName: 'Employees'
+  api: {
+    search: '/employees/api/searchtype/',
+    searchCount: '/employees/api/searchtypeCount/'
+  }
 };
