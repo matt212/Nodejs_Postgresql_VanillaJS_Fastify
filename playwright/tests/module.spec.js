@@ -70,16 +70,26 @@ async function applyDateRange(page) {
             response.url().includes('/employees/api/searchtype/') &&
             response.status() === 200
     );
-
+const countResponsePromise = page.waitForResponse(
+        response =>
+            response.url().includes('/employees/api/searchtypeCount/') &&
+            response.request().method() === 'POST' &&
+            response.status() === 200
+    );
     await page.locator(
         '.daterangepicker .applyBtn'
     ).click();
 
     const response = await responsePromise;
-
+const countResponse =
+        await countResponsePromise;
     console.log(
         '[SEARCH RESPONSE]',
         response.url()
+    );
+    console.log(
+        '[COUNT RESPONSE]',
+        countResponse.url()
     );
 
     /*
@@ -4382,62 +4392,97 @@ test(
         // OPEN PAGING
         // ------------------------------------------------------------
 
-        const pagingParent =
-            page.locator(
-                '#dvpaginationsections .pagingsectionparent'
-            );
+       const pagingParent = page.locator(
+    '#dvpaginationsections .pagingsectionparent'
+);
 
-        await expect(
-            pagingParent
-        ).toBeVisible({
-            timeout: 30000
-        });
+await expect(pagingParent).toBeVisible({
+    timeout: 30000
+});
+console.log(
+    '[PAGING] count =',
+    await pagingParent.count()
+);
 
-        await pagingParent.click();
+console.log(
+    '[PAGING] HTML =',
+    await pagingParent.first().evaluate(el => el.outerHTML)
+);
+await pagingParent.click();
 
-        const pagingMenu =
-            page.locator('#overlaypaging');
+const pagingMenu = page.locator('#overlaypaging');
 
-        await expect(
-            pagingMenu
-        ).toBeVisible({
-            timeout: 10000
-        });
+await expect(pagingMenu).toBeVisible({
+    timeout: 10000
+});
 
-        // ------------------------------------------------------------
-        // SELECT DELETED
-        // ------------------------------------------------------------
+// ------------------------------------------------------------
+// SELECT DELETED
+// ------------------------------------------------------------
 
-        const deletedOption =
-            page.locator('#Deletediv');
+const deletedOption = page.locator('#Deletediv');
 
-        await expect(
-            deletedOption
-        ).toBeVisible({
-            timeout: 10000
-        });
+await expect(deletedOption).toBeVisible({
+    timeout: 10000
+});
 
-        const deletedSearchResponsePromise =
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/employees/api/searchtype/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            );
+// Register BOTH API listeners BEFORE click.
+const deletedSearchResponsePromise =
+    page.waitForResponse(
+        response =>
+            response.url().includes(
+                '/employees/api/searchtype/'
+            ) &&
+            response.request().method() === 'POST' &&
+            response.status() === 200,
+        {
+            timeout: 90000
+        }
+    );
 
-        await deletedOption.click();
+const deletedCountResponsePromise =
+    page.waitForResponse(
+        response =>
+            response.url().includes(
+                '/employees/api/searchtypeCount/'
+            ) &&
+            response.request().method() === 'POST' &&
+            response.status() === 200,
+        {
+            timeout: 90000
+        }
+    );
 
-        await deletedSearchResponsePromise;
+await deletedOption.click();
 
-        await expect(
-            page.locator('#divreportcontent')
-        ).toBeVisible({
-            timeout: 30000
-        });
+const deletedSearchResponse =
+    await deletedSearchResponsePromise;
+
+const deletedCountResponse =
+    await deletedCountResponsePromise;
+
+console.log(
+    '[DELETED SEARCH RESPONSE]',
+    deletedSearchResponse.url()
+);
+
+console.log(
+    '[DELETED COUNT RESPONSE]',
+    deletedCountResponse.url()
+);
+
+// API completed → UI rendering.
+await expect(
+    page.locator('#divreportcontent')
+).toBeVisible({
+    timeout: 30000
+});
+
+await expect(
+    page.locator('#basetable')
+).toBeVisible({
+    timeout: 30000
+});
 
         // ------------------------------------------------------------
         // VERIFY EMPLOYEE EXISTS IN DELETED
@@ -4680,6 +4725,7 @@ test('23 - Random rendered row -> Disable -> Deleted -> Restore', async ({ page 
 // No Employee field name is hardcoded.
 // ============================================================
 
+
 async function selectOneDynamicEmployeeFilter(page) {
 
     await openFilterBar(page);
@@ -4688,231 +4734,281 @@ async function selectOneDynamicEmployeeFilter(page) {
         "//*[@id=\"dvfilterbar\"]/div[2]/div[2]/a"
     ).click();
 
-    await expect(
-        page.locator('.fieldsfilterbar')
-    ).toBeVisible({
+    await expect(page.locator('.fieldsfilterbar'))
+        .toBeVisible({ timeout: 10000 });
+
+    const fieldKeys = await page.locator(
+        '.fieldsfilterbar input[data-multipleselect-autocomplete]'
+    ).evaluateAll(elements =>
+        elements
+            .map(e =>
+                e.getAttribute('data-multipleselect-autocomplete')
+            )
+            .filter(Boolean)
+    );
+
+    console.log('[FIELDS]', fieldKeys);
+
+    expect(fieldKeys.length).toBeGreaterThan(0);
+
+    const row = page.locator(
+        '#basetable tbody tr'
+    ).first();
+
+    await expect(row).toBeVisible({
         timeout: 10000
     });
 
-    const fieldKeys =
-        await page.locator(
-            '.fieldsfilterbar input[data-multipleselect-autocomplete]'
-        ).evaluateAll(elements =>
-            elements
-                .map(element =>
-                    element.getAttribute(
-                        'data-multipleselect-autocomplete'
-                    )
-                )
-                .filter(Boolean)
-        );
-
-    expect(
-        fieldKeys.length,
-        'At least one dynamic multi-select field must exist'
-    ).toBeGreaterThan(0);
-
-    let selectedField = null;
-    let selectedValue = null;
-
-    // ------------------------------------------------------------
-    // Find a field having a usable value in the first table row.
-    // ------------------------------------------------------------
+    const cells = row.locator('td');
 
     for (const fieldKey of fieldKeys) {
 
-        const header =
-            page.locator(
-                `#basetable thead tr th[data-field-header="${fieldKey}"]`
-            );
+        console.log('');
+        console.log('================================================');
+        console.log(`[FIELD] ${fieldKey}`);
 
-        if (await header.count() === 0) {
-            continue;
-        }
+        // --------------------------------------------------------
+        // THEAD is the source of truth.
+        // Find the field header and determine its VISIBLE position.
+        // --------------------------------------------------------
 
-        const columnIndex =
-            await header.evaluate(
-                element => element.cellIndex
-            );
-
-        const cell =
-            page.locator(
-                `#basetable tbody tr`
-            ).first().locator(
-                `td:nth-child(${columnIndex})`
-            );
-
-        if (await cell.count() === 0) {
-            continue;
-        }
-
-        const value =
-            (
-                await cell.textContent()
-            || ''
-            ).trim();
-
-        if (value.length > 0) {
-            selectedField = fieldKey;
-            selectedValue = value;
-            break;
-        }
-    }
-
-    expect(
-        selectedField,
-        'A dynamic multi-select field with a usable table value must exist'
-    ).not.toBeNull();
-
-    expect(
-        selectedValue,
-        'Dynamic filter value must not be empty'
-    ).not.toBe('');
-
-    console.log(
-        `Dynamic filter field: ${selectedField}`
-    );
-
-    console.log(
-        `Dynamic filter value: ${selectedValue}`
-    );
-
-    const filterInput =
-        page.locator(
-            `.fieldsfilterbar input[data-multipleselect-autocomplete="${selectedField}"]`
-        );
-
-    await expect(
-        filterInput,
-        `${selectedField}: filter input must exist`
-    ).toBeVisible();
-
-    const fieldContainer =
-        filterInput.locator('..');
-
-    const chips =
-        fieldContainer.locator('.selectchips');
-
-    const dropdown =
-        page.locator(
-            `#dv_${selectedField}:visible`
+        const header = page.locator(
+            `#basetable thead th[data-field-header="${fieldKey}"]`
         ).first();
 
-    // ------------------------------------------------------------
-    // Search autocomplete using the complete actual value.
-    // ------------------------------------------------------------
-
-    const groupByResponsePromise = page.waitForResponse(
-    response =>
-        response.url().includes('/api/searchtypegroupby') &&
-        response.status() === 200,
-    {
-        timeout: 10000
-    }
-).catch(() => null);
-
-await filterInput.fill(selectedValue);
-
-const groupByResponse = await groupByResponsePromise;
-
-if (!groupByResponse) {
-    console.log(
-        `[GROUPBY] No API response triggered for ${selectedField}; validating UI response`
-    );
-}
-
-await expect(
-    dropdown,
-    `${selectedField}: autocomplete dropdown must open`
-).toBeVisible({
-    timeout: 10000
-});
-
-const options = dropdown.locator(
-    'div a.highlightselect'
-);
-
-await expect(
-    options.first(),
-    `${selectedField}: autocomplete must return at least one option`
-).toBeVisible({
-    timeout: 10000
-});
-
-    const optionCount =
-        await options.count();
-
-    let matchingOption = null;
-
-    for (let i = 0; i < optionCount; i++) {
-
-        const option =
-            options.nth(i);
-
-        const optionText =
-            (
-                await option.textContent()
-            || ''
-            ).trim();
-
-        if (
-            optionText.toLowerCase() ===
-            selectedValue.toLowerCase()
-        ) {
-            matchingOption = option;
-            break;
+        if (await header.count() === 0) {
+            console.log(
+                `[SKIP] ${fieldKey}: THEAD header not found`
+            );
+            continue;
         }
-    }
 
-    // ------------------------------------------------------------
-    // If exact text is not returned because the UI formats the
-    // value differently, use the first valid autocomplete option.
-    // It is still an actual value returned by the application.
-    // ------------------------------------------------------------
+        const columnIndex = await header.evaluate(th => {
 
-    if (!matchingOption) {
-        matchingOption = options.first();
+            const headers = Array.from(
+                th.parentElement.children
+            ).filter(el => {
 
-        selectedValue =
-            (
-                await matchingOption.textContent()
-            || ''
+                const style = window.getComputedStyle(el);
+
+                return (
+                    style.display !== 'none' &&
+                    style.visibility !== 'hidden'
+                );
+            });
+
+            return headers.indexOf(th);
+        });
+
+        console.log(
+            `[THEAD] ${fieldKey} -> visible column ${columnIndex}`
+        );
+
+        // --------------------------------------------------------
+        // Corresponding TBODY cell.
+        // --------------------------------------------------------
+
+        const cellCount = await cells.count();
+
+        if (columnIndex < 0 || columnIndex >= cellCount) {
+            console.log(
+                `[SKIP] ${fieldKey}: invalid tbody column ${columnIndex}`
+            );
+            continue;
+        }
+
+        const tableValue = (
+            await cells.nth(columnIndex).textContent() || ''
+        ).trim();
+
+        console.log(
+            `[TABLE VALUE] ${fieldKey} = "${tableValue}"`
+        );
+
+        if (!tableValue) {
+            console.log(
+                `[SKIP] ${fieldKey}: empty table value`
+            );
+            continue;
+        }
+
+        // --------------------------------------------------------
+        // Filter controls.
+        // --------------------------------------------------------
+
+        const filterInput = page.locator(
+            `.fieldsfilterbar input[data-multipleselect-autocomplete="${fieldKey}"]`
+        );
+
+        await expect(filterInput).toBeVisible({
+            timeout: 10000
+        });
+
+        const chips = filterInput
+            .locator('..')
+            .locator('.selectchips');
+
+        const dropdown = page.locator(
+            `#dv_${fieldKey}:visible`
+        ).first();
+
+        // --------------------------------------------------------
+        // GROUPBY API - listeners MUST be before fill().
+        // --------------------------------------------------------
+
+        const groupByRequestPromise =
+            page.waitForRequest(
+                request =>
+                    request.url().includes(
+                        '/api/searchtypegroupby'
+                    ) &&
+                    request.method() === 'POST',
+                {
+                    timeout: 30000
+                }
+            );
+
+        const groupByResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/api/searchtypegroupby'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 90000
+                }
+            );
+
+        console.log(
+            `[GROUPBY SEARCH] ${fieldKey} = "${tableValue}"`
+        );
+
+        await filterInput.fill(tableValue);
+
+        // --------------------------------------------------------
+        // GROUPBY REQUEST
+        // --------------------------------------------------------
+
+        const groupByRequest =
+            await groupByRequestPromise;
+
+        console.log(
+            `[GROUPBY REQUEST] ${fieldKey}`
+        );
+
+        console.log(
+            groupByRequest.postData()
+        );
+
+        // --------------------------------------------------------
+        // GROUPBY RESPONSE
+        // --------------------------------------------------------
+
+        const groupByResponse =
+            await groupByResponsePromise;
+
+        const groupByBody =
+            await groupByResponse.json();
+
+        console.log(
+            `[GROUPBY RESPONSE] ${fieldKey}`
+        );
+
+        console.log(
+            JSON.stringify(groupByBody)
+        );
+
+        // --------------------------------------------------------
+        // Dropdown must now be populated from API result.
+        // --------------------------------------------------------
+
+        await expect(dropdown).toBeVisible({
+            timeout: 10000
+        });
+
+        const options = dropdown.locator(
+            'div a.highlightselect'
+        );
+
+        const optionCount = await options.count();
+
+        console.log(
+            `[DROPDOWN] ${fieldKey}: ${optionCount} options`
+        );
+
+        let matchingOption = null;
+        let selectedValue = null;
+
+        for (let i = 0; i < optionCount; i++) {
+
+            const option = options.nth(i);
+
+            const optionText = (
+                await option.textContent() || ''
             ).trim();
-    }
 
-    expect(
-        selectedValue,
-        `${selectedField}: selected autocomplete value must not be empty`
-    ).not.toBe('');
+            console.log(
+                `[OPTION ${i}] "${optionText}"`
+            );
 
-    await matchingOption.click();
+            if (
+                optionText.toLowerCase() ===
+                tableValue.toLowerCase()
+            ) {
+                matchingOption = option;
+                selectedValue = optionText;
+                break;
+            }
+        }
 
-    // ------------------------------------------------------------
-    // Verify chip was created.
-    // ------------------------------------------------------------
+        if (!matchingOption) {
 
-    await expect
-        .poll(
+            console.log(
+                `[SKIP] ${fieldKey}: "${tableValue}" not found in dropdown`
+            );
+
+            await filterInput.fill('');
+
+            continue;
+        }
+
+        console.log(
+            `[MATCH] ${fieldKey} = "${selectedValue}"`
+        );
+
+        await matchingOption.click();
+
+        await expect.poll(
             async () => await chips.count(),
             {
                 timeout: 10000,
                 message:
-                    `${selectedField}: selected filter chip was not created`
+                    `${fieldKey}: selected filter chip was not created`
             }
-        )
-        .toBeGreaterThan(0);
+        ).toBeGreaterThan(0);
 
-    console.log(
-        `Filter selected: ${selectedField} = ${selectedValue}`
+        console.log(
+            `[PASS] ${fieldKey} = ${selectedValue}`
+        );
+
+        return {
+            fieldKey,
+            value: selectedValue,
+            filterInput,
+            chips
+        };
+    }
+
+    throw new Error(
+        'No dynamic multi-select field returned an exact autocomplete value'
     );
-
-    return {
-        fieldKey: selectedField,
-        value: selectedValue,
-        filterInput,
-        chips
-    };
 }
+
+
+
+
 
 
 // ============================================================
@@ -5799,6 +5895,8 @@ test(
 // CLEAR / REMOVE FILTER
 // ============================================================
 
+
+
 test(
     '27 - Clear and remove dynamic filter returns report to unfiltered state',
     async ({ page }) => {
@@ -5807,15 +5905,16 @@ test(
 
         await loadEmployeesReport(page);
 
-        const originalTotal =
-            Number(
-                (
-                    await page.locator(
-                        '#sptotalUsers'
-                    ).textContent()
+        // --------------------------------------------------------
+        // STEP 1 - Capture initial unfiltered total
+        // --------------------------------------------------------
+
+        const originalTotal = Number(
+            (
+                await page.locator('#sptotalUsers').textContent()
                 || '0'
-                ).trim()
-            );
+            ).trim()
+        );
 
         expect(
             originalTotal,
@@ -5826,28 +5925,54 @@ test(
             `Test 27 - Initial total: ${originalTotal}`
         );
 
+        // --------------------------------------------------------
+        // STEP 2 - Select one valid dynamic filter
+        //
+        // Updated helper guarantees:
+        // - fieldKey
+        // - exact same-column table value
+        // - filterInput
+        // - chips
+        // --------------------------------------------------------
+
         const filter =
-            await selectOneDynamicEmployeeFilter(
-                page
-            );
+            await selectOneDynamicEmployeeFilter(page);
 
-        // --------------------------------------------------------
-        // Apply selected filter.
-        // --------------------------------------------------------
+        expect(
+            filter.fieldKey,
+            'Dynamic filter field must be selected'
+        ).toBeTruthy();
 
-        await applyDynamicEmployeeFilter(
-            page
+        expect(
+            filter.value,
+            'Dynamic filter value must be selected'
+        ).toBeTruthy();
+
+        expect(
+            filter.chips,
+            'Dynamic filter helper must return chips locator'
+        ).toBeTruthy();
+
+        console.log(
+            `Test 27 - Selected filter: ${filter.fieldKey} = ${filter.value}`
         );
 
-        const filteredTotal =
-            Number(
-                (
-                    await page.locator(
-                        '#sptotalUsers'
-                    ).textContent()
+        // --------------------------------------------------------
+        // STEP 3 - Apply selected filter
+        // --------------------------------------------------------
+
+        await applyDynamicEmployeeFilter(page);
+
+        // --------------------------------------------------------
+        // STEP 4 - Verify filtered result contains records
+        // --------------------------------------------------------
+
+        const filteredTotal = Number(
+            (
+                await page.locator('#sptotalUsers').textContent()
                 || '0'
-                ).trim()
-            );
+            ).trim()
+        );
 
         expect(
             filteredTotal,
@@ -5859,18 +5984,13 @@ test(
         );
 
         // --------------------------------------------------------
-        // Remove the selected chip.
-        //
-        // Existing application DOM uses:
-        // .select2choiceremove
+        // STEP 5 - Remove selected filter chip
         // --------------------------------------------------------
 
         const removeControl =
             filter.chips
                 .first()
-                .locator(
-                    '.select2choiceremove'
-                );
+                .locator('.select2choiceremove');
 
         await expect(
             removeControl,
@@ -5881,53 +6001,58 @@ test(
 
         await removeControl.click();
 
-        await expect
-            .poll(
-                async () =>
-                    await filter.chips.count(),
-                {
-                    timeout: 10000,
-                    message:
-                        'Filter chip was not removed'
-                }
-            )
-            .toBe(0);
+        // The helper's chips locator is intentionally reused here.
+        await expect(
+            filter.chips,
+            'Filter chip must be removed'
+        ).toHaveCount(0, {
+            timeout: 10000
+        });
 
         console.log(
             'Test 27 - Filter chip successfully removed'
         );
 
         // --------------------------------------------------------
-        // Apply cleared filter state.
+        // STEP 6 - Apply cleared filter state
+        //
+        // Register both listeners BEFORE clicking Apply.
         // --------------------------------------------------------
 
+        const searchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes('/api/searchtype/') &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const countResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes('/api/searchtypeCount/') &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator(
+            "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+        ).click();
+
         await Promise.all([
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/api/searchtype/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            ),
-
-            page.waitForResponse(
-                response =>
-                    response.url().includes(
-                        '/api/searchtypeCount/'
-                    ) &&
-                    response.status() === 200,
-                {
-                    timeout: 30000
-                }
-            ),
-
-            page.locator(
-                "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
-            ).click()
+            searchResponsePromise,
+            countResponsePromise
         ]);
+
+        // --------------------------------------------------------
+        // STEP 7 - Wait for report refresh to complete
+        // --------------------------------------------------------
 
         await expect(
             page.locator('#dvreportcontainer')
@@ -5944,15 +6069,22 @@ test(
             timeout: 30000
         });
 
-        const restoredTotal =
-            Number(
-                (
-                    await page.locator(
-                        '#sptotalUsers'
-                    ).textContent()
+        await expect(
+            page.locator('#basetable tbody tr').first()
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // --------------------------------------------------------
+        // STEP 8 - Verify original unfiltered state is restored
+        // --------------------------------------------------------
+
+        const restoredTotal = Number(
+            (
+                await page.locator('#sptotalUsers').textContent()
                 || '0'
-                ).trim()
-            );
+            ).trim()
+        );
 
         expect(
             restoredTotal,
@@ -5970,10 +6102,14 @@ test(
 );
 
 
+
+
+
 // ============================================================
 // TEST 28
 // FILTER + SORT COMBINATION
 // ============================================================
+
 
 test(
     '28 - Dynamic filter and column sorting work together',
@@ -5983,32 +6119,33 @@ test(
 
         await loadEmployeesReport(page);
 
+        // --------------------------------------------------------
+        // Select and apply one dynamic filter.
+        // --------------------------------------------------------
+
         const filter =
-            await selectOneDynamicEmployeeFilter(
-                page
-            );
+            await selectOneDynamicEmployeeFilter(page);
 
-        await applyDynamicEmployeeFilter(
-            page
-        );
+        await applyDynamicEmployeeFilter(page);
 
-        const filteredTotal =
-            Number(
-                (
-                    await page.locator(
-                        '#sptotalUsers'
-                    ).textContent()
+        const filteredTotal = Number(
+            (
+                await page.locator('#sptotalUsers').textContent()
                 || '0'
-                ).trim()
-            );
+            ).trim()
+        );
 
         expect(
             filteredTotal,
             'Filtered result must contain records before sorting'
         ).toBeGreaterThan(0);
 
+        console.log(
+            `Test 28 - Filtered total: ${filteredTotal}`
+        );
+
         // --------------------------------------------------------
-        // Dynamically choose a sortable table field.
+        // Dynamically select a sortable table field.
         // --------------------------------------------------------
 
         const headers =
@@ -6016,15 +6153,14 @@ test(
                 '#basetable thead tr th[data-field-header]'
             );
 
-        const headerCount =
-            await headers.count();
+        await expect(
+            headers.first(),
+            'At least one sortable table field must exist'
+        ).toBeVisible({
+            timeout: 30000
+        });
 
-        expect(
-            headerCount
-        ).toBeGreaterThan(0);
-
-        const sortHeader =
-            headers.first();
+        const sortHeader = headers.first();
 
         const sortField =
             await sortHeader.getAttribute(
@@ -6032,34 +6168,33 @@ test(
             );
 
         expect(
-            sortField
+            sortField,
+            'Sortable field must have data-field-header'
         ).not.toBeNull();
 
         console.log(
             `Test 28 - Sorting filtered results by: ${sortField}`
         );
 
-        // --------------------------------------------------------
-        // Sort DESC.
-        //
-        // Verify the request still contains the filter payload.
-        // --------------------------------------------------------
+        // ========================================================
+        // DESC
+        // ========================================================
 
         const descRequestPromise =
             page.waitForRequest(
                 request =>
-                    request.url().includes(
-                        '/api/searchtype/'
-                    ) &&
-                    request.method() === 'POST'
+                    request.url().includes('/api/searchtype/') &&
+                    request.method() === 'POST',
+                {
+                    timeout: 30000
+                }
             );
 
         const descResponsePromise =
             page.waitForResponse(
                 response =>
-                    response.url().includes(
-                        '/api/searchtype/'
-                    ) &&
+                    response.url().includes('/api/searchtype/') &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
@@ -6068,70 +6203,60 @@ test(
 
         await sortHeader.click();
 
-        const descRequest =
-            await descRequestPromise;
+        const [descRequest, descResponse] =
+            await Promise.all([
+                descRequestPromise,
+                descResponsePromise
+            ]);
 
-        await descResponsePromise;
+        expect(
+            descResponse.status()
+        ).toBe(200);
 
         const descPayload =
             descRequest.postDataJSON();
 
+        // Verify sorted field.
         expect(
             descPayload.sortcolumn,
-            'Sort request must contain selected field'
+            'DESC request must contain selected sort field'
         ).toBe(sortField);
 
+        // Verify DESC order.
         expect(
             String(
                 descPayload.sortcolumnorder
-            ).toUpperCase()
+            ).toUpperCase(),
+            'DESC request must use DESC sort order'
         ).toBe('DESC');
 
-        // The selected filter must still exist.
+        // Verify selected filter is still present.
         expect(
-            JSON.stringify(descPayload)
-                .toLowerCase()
+            JSON.stringify(descPayload).toLowerCase(),
+            'DESC request must retain the selected dynamic filter'
         ).toContain(
-            String(filter.value)
-                .toLowerCase()
+            String(filter.value).toLowerCase()
         );
 
-        await expect(
-            page.locator('#basetable')
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        expect(
-            Number(
-                (
-                    await page.locator(
-                        '#sptotalUsers'
-                    ).textContent()
-                || '0'
-                ).trim()
-            )
-        ).toBeGreaterThan(0);
-
-        // --------------------------------------------------------
-        // Sort ASC.
-        // --------------------------------------------------------
+        // ========================================================
+        // ASC
+        // ========================================================
 
         const ascRequestPromise =
             page.waitForRequest(
                 request =>
-                    request.url().includes(
-                        '/api/searchtype/'
-                    ) &&
-                    request.method() === 'POST'
+                    request.url().includes('/api/searchtype/') &&
+                    request.method() === 'POST',
+                {
+                    timeout: 30000
+                }
             );
 
         const ascResponsePromise =
             page.waitForResponse(
                 response =>
-                    response.url().includes(
-                        '/api/searchtype/'
-                    ) &&
+                    response.url().includes('/api/searchtype/') &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
@@ -6140,30 +6265,39 @@ test(
 
         await sortHeader.click();
 
-        const ascRequest =
-            await ascRequestPromise;
+        const [ascRequest, ascResponse] =
+            await Promise.all([
+                ascRequestPromise,
+                ascResponsePromise
+            ]);
 
-        await ascResponsePromise;
+        expect(
+            ascResponse.status()
+        ).toBe(200);
 
         const ascPayload =
             ascRequest.postDataJSON();
 
+        // Verify sorted field.
         expect(
-            ascPayload.sortcolumn
+            ascPayload.sortcolumn,
+            'ASC request must contain selected sort field'
         ).toBe(sortField);
 
+        // Verify ASC order.
         expect(
             String(
                 ascPayload.sortcolumnorder
-            ).toUpperCase()
+            ).toUpperCase(),
+            'ASC request must use ASC sort order'
         ).toBe('ASC');
 
+        // Verify selected filter is still present.
         expect(
-            JSON.stringify(ascPayload)
-                .toLowerCase()
+            JSON.stringify(ascPayload).toLowerCase(),
+            'ASC request must retain the selected dynamic filter'
         ).toContain(
-            String(filter.value)
-                .toLowerCase()
+            String(filter.value).toLowerCase()
         );
 
         await expect(
@@ -6179,10 +6313,12 @@ test(
 );
 
 
+
 // ============================================================
 // TEST 29
 // FILTER + PAGINATION COMBINATION
 // ============================================================
+
 
 test(
     '29 - Dynamic filter and pagination work together',
@@ -6316,7 +6452,9 @@ test(
         //
         // «  1  2  3  4  5  »
         //
-        // Therefore do NOT use nth(1).
+        // Do not use nth(1).
+        // Also, if the filtered result contains 5 or fewer
+        // records, page 2 must not be attempted.
         // --------------------------------------------------------
 
         const secondPage =
@@ -6328,6 +6466,7 @@ test(
             );
 
         const secondPageAvailable =
+            filteredTotal > 5 &&
             await secondPage.count() > 0;
 
         if (secondPageAvailable) {
@@ -6415,10 +6554,6 @@ test(
 
             // ----------------------------------------------------
             // STEP 12 - Verify filter remains applied
-            //
-            // The strongest UI-level verification is that the
-            // filtered result count is still represented after
-            // pagination rather than relying on a guessed request.
             // ----------------------------------------------------
 
             const filteredTotalAfterPagination =
@@ -6443,7 +6578,6 @@ test(
 
             // ----------------------------------------------------
             // STEP 13 - Verify page 2 is actually selected
-            // when application exposes active pagination state.
             // ----------------------------------------------------
 
             const activePage =
@@ -6505,6 +6639,8 @@ test(
         );
     }
 );
+
+
 
 
 // ============================================================

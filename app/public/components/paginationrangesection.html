@@ -37,17 +37,23 @@
 
     function toggleadd(i) {
 
-
-        if (i === true && t === true) {
-            document.getElementById("overlaypaging").style.display = 'block';
-            t = false;
-        } else {
-            document.getElementById("overlaypaging").style.display = 'none';
-            t = true;
-        }
-
-
+    if (i !== true) {
+        return;
     }
+
+    const overlay =
+        document.getElementById("overlaypaging");
+
+    if (!overlay) {
+        return;
+    }
+
+    const isHidden =
+        window.getComputedStyle(overlay).display === 'none';
+
+    overlay.style.display =
+        isHidden ? 'block' : 'none';
+}
 
 
     /*$(document).ready(function() {
