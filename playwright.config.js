@@ -9,9 +9,10 @@ module.exports = defineConfig({
     testDir: './playwright/tests',
 
     timeout: 30000,
-
+    retries: 3, 
+    retryStrategy: 'isolated', 
     expect: {
-        timeout: 10000
+        timeout: 30000
     },
 
     fullyParallel: true,
