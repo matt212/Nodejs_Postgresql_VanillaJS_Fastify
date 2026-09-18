@@ -580,7 +580,7 @@ if(base.consolidatesearchpaginate)
     base.pageno = base.consolidatesearchpaginateno
 
 }
-filterparam.recordstate = "ACTIVE";
+  if (base.recordstate) filterparam.recordstate = base.recordstate === "ACTIVE" ? "ACTIVE" : "DELETED";
   filterparam.pageno = base.pageno
   filterparam.pageSize = base.pageSize
   filterparam.pivotparamXaxis = base.pivotparamXaxis

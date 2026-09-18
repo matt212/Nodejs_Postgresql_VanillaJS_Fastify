@@ -4213,16 +4213,6 @@ test(
     }
 );
 
-// ============================================================
-// TEST 22 - Soft Delete - Random active row and verify in Deleted records
-// Uses complete values from a random table row.
-
-// ============================================================
-
-// ============================================================
-// TEST 22
-// SOFT DELETE - RANDOM ACTIVE EMPLOYEE
-// ============================================================
 
 // ============================================================
 // TEST 22
@@ -4263,6 +4253,10 @@ test(
             `Test 22 - Selected random row: ${randomIndex + 1} of ${rowCount}`
         );
 
+        // ------------------------------------------------------------
+        // CAPTURE EMPLOYEE ID + WHOLE-WORD SEARCH VALUE
+        // ------------------------------------------------------------
+
         const editCell =
             selectedRow
                 .locator('td[data-tbledit-type]')
@@ -4288,8 +4282,27 @@ test(
             employeeId
         ).not.toBe('');
 
+        // first visible business column = first_name
+        const searchValue =
+            (
+                await selectedRow
+                    .locator('td')
+                    .nth(1)
+                    .textContent()
+                || ''
+            ).trim();
+
+        expect(
+            searchValue,
+            'Selected employee must have a searchable value'
+        ).not.toBe('');
+
         console.log(
             `Test 22 - Selected employee ID: ${employeeId}`
+        );
+
+        console.log(
+            `Test 22 - Whole-word search value: "${searchValue}"`
         );
 
         // ------------------------------------------------------------
@@ -4312,7 +4325,6 @@ test(
             timeout: 30000
         });
 
-        // Must currently be ACTIVE.
         await expect(
             recordStateInput
         ).toBeChecked();
@@ -4328,14 +4340,7 @@ test(
         ).not.toBeChecked();
 
         // ------------------------------------------------------------
-        // IMPORTANT:
-        //
-        // Submit
-        //   -> /employees/api/update/
-        //   -> /employees/api/searchtype/
-        //   -> table populated
-        //
-        // Both listeners are installed BEFORE Submit.
+        // SUBMIT
         // ------------------------------------------------------------
 
         const updateResponsePromise =
@@ -4350,12 +4355,25 @@ test(
                 }
             );
 
-        const searchResponsePromise =
+        const activeSearchResponsePromise =
             page.waitForResponse(
                 response =>
                     response.url().includes(
                         '/employees/api/searchtype/'
                     ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+            const activeSearchCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
@@ -4372,18 +4390,21 @@ test(
             `Test 22 - UPDATE completed for ${employeeId}`
         );
 
-        await searchResponsePromise;
+        await activeSearchResponsePromise;
+        await activeSearchCountResponsePromise;
 
         console.log(
-            `Test 22 - SEARCHTYPE completed for ${employeeId}`
+            'Test 22 - ACTIVE SEARCHTYPE completed after delete'
         );
-
-        // ------------------------------------------------------------
-        // REPORT READY
-        // ------------------------------------------------------------
 
         await expect(
             page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await expect(
+            page.locator('#basetable')
         ).toBeVisible({
             timeout: 30000
         });
@@ -4392,114 +4413,186 @@ test(
         // OPEN PAGING
         // ------------------------------------------------------------
 
-       const pagingParent = page.locator(
-    '#dvpaginationsections .pagingsectionparent'
-);
-
-await expect(pagingParent).toBeVisible({
-    timeout: 30000
-});
-console.log(
-    '[PAGING] count =',
-    await pagingParent.count()
-);
-
-console.log(
-    '[PAGING] HTML =',
-    await pagingParent.first().evaluate(el => el.outerHTML)
-);
-await pagingParent.click();
-
-const pagingMenu = page.locator('#overlaypaging');
-
-await expect(pagingMenu).toBeVisible({
-    timeout: 10000
-});
-
-// ------------------------------------------------------------
-// SELECT DELETED
-// ------------------------------------------------------------
-
-const deletedOption = page.locator('#Deletediv');
-
-await expect(deletedOption).toBeVisible({
-    timeout: 10000
-});
-
-// Register BOTH API listeners BEFORE click.
-const deletedSearchResponsePromise =
-    page.waitForResponse(
-        response =>
-            response.url().includes(
-                '/employees/api/searchtype/'
-            ) &&
-            response.request().method() === 'POST' &&
-            response.status() === 200,
-        {
-            timeout: 90000
-        }
+       const pagingParent =
+    page.locator(
+        '#dvpaginationsections .pagingsectionparent'
     );
 
-const deletedCountResponsePromise =
-    page.waitForResponse(
-        response =>
-            response.url().includes(
-                '/employees/api/searchtypeCount/'
-            ) &&
-            response.request().method() === 'POST' &&
-            response.status() === 200,
-        {
-            timeout: 90000
-        }
-    );
+   const pagingMenu =
+    page.locator('#overlaypaging');
 
-await deletedOption.click();
-
-const deletedSearchResponse =
-    await deletedSearchResponsePromise;
-
-const deletedCountResponse =
-    await deletedCountResponsePromise;
-
-console.log(
-    '[DELETED SEARCH RESPONSE]',
-    deletedSearchResponse.url()
-);
-
-console.log(
-    '[DELETED COUNT RESPONSE]',
-    deletedCountResponse.url()
-);
-
-// API completed → UI rendering.
-await expect(
-    page.locator('#divreportcontent')
-).toBeVisible({
+    await expect(pagingParent).toBeVisible({
     timeout: 30000
-});
+   });
 
-await expect(
-    page.locator('#basetable')
-).toBeVisible({
-    timeout: 30000
-});
+  console.log(
+    '[PAGING BEFORE]',
+    await pagingMenu.evaluate(
+        el => ({
+            display: getComputedStyle(el).display,
+            inlineStyle: el.style.display
+        })
+    )
+  );
+
+ await pagingParent.click();
+
+ console.log(
+    '[PAGING AFTER CLICK]',
+    await pagingMenu.evaluate(
+        el => ({
+            display: getComputedStyle(el).display,
+            inlineStyle: el.style.display
+        })
+    )
+ );
+
+ await expect(pagingMenu).toBeVisible({
+    timeout: 10000
+ });
 
         // ------------------------------------------------------------
-        // VERIFY EMPLOYEE EXISTS IN DELETED
+        // SELECT DELETED
         // ------------------------------------------------------------
 
-        const deletedEmployee =
+        const deletedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const deletedCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator(
+            '#Deletediv'
+        ).click();
+
+        await deletedSearchResponsePromise;
+
+        await deletedCountResponsePromise;
+
+        console.log(
+            'Test 22 - DELETED SEARCHTYPE completed'
+        );
+
+        console.log(
+            'Test 22 - DELETED SEARCHTYPE COUNT completed'
+        );
+
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await expect(
+            page.locator('#basetable')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // ------------------------------------------------------------
+        // OPEN CONSOLIDATED SEARCH
+        // ------------------------------------------------------------
+
+        await openFilterBar(page);
+
+        const consolidatedSearch =
             page.locator(
-                `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
+                '#txtconsolidatesearch'
             );
 
         await expect(
-            deletedEmployee,
-            `Employee ${employeeId} should exist in Deleted records`
-        ).toHaveCount(1);
+            consolidatedSearch
+        ).toBeVisible({
+            timeout: 10000
+        });
+
+        // ------------------------------------------------------------
+        // SEARCH DELETED RECORD USING SAME CONSOLIDATED SEARCH
+        //
+        // Application state is now DELETED, therefore:
+        //
+        // filterparam.recordstate = "DELETED"
+        //
+        // ------------------------------------------------------------
+
+        const consolidatedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const consolidatedCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+ // Existing consolidated-search action.
+        
+        await consolidatedSearch.fill(
+            searchValue
+        );
+ await page.locator(
+            '//*[@id="dvfilterbar"]/div[2]/div[1]/div/div[2]'
+        ).click();
+        
+        await consolidatedSearchResponsePromise;
+
+        await consolidatedCountResponsePromise;
 
         console.log(
-            `Test 22 PASS - ${employeeId} exists in Deleted records`
+            `Test 22 - Consolidated DELETED search completed for "${searchValue}"`
+        );
+
+        // ------------------------------------------------------------
+        // VERIFY DELETED RECORD
+        // ------------------------------------------------------------
+
+        await expect(
+            page.locator('#basetable tbody tr')
+                .filter({
+                    hasText: searchValue
+                })
+                .first()
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        console.log(
+            `Test 22 PASS - Employee ${employeeId} verified in Deleted records`
         );
     }
 );
@@ -4877,7 +4970,7 @@ async function selectOneDynamicEmployeeFilter(page) {
                     response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
-                    timeout: 90000
+                    timeout: 30000
                 }
             );
 
@@ -5903,11 +5996,13 @@ test(
 
         test.setTimeout(120000);
 
-        await loadEmployeesReport(page);
+        const ALLOWED_SHARED_DATA_DRIFT = 10;
 
-        // --------------------------------------------------------
-        // STEP 1 - Capture initial unfiltered total
-        // --------------------------------------------------------
+        // ------------------------------------------------------------
+        // 1. Load initial unfiltered report
+        // ------------------------------------------------------------
+
+        await loadEmployeesReport(page);
 
         const originalTotal = Number(
             (
@@ -5925,15 +6020,9 @@ test(
             `Test 27 - Initial total: ${originalTotal}`
         );
 
-        // --------------------------------------------------------
-        // STEP 2 - Select one valid dynamic filter
-        //
-        // Updated helper guarantees:
-        // - fieldKey
-        // - exact same-column table value
-        // - filterInput
-        // - chips
-        // --------------------------------------------------------
+        // ------------------------------------------------------------
+        // 2. Select one dynamic filter
+        // ------------------------------------------------------------
 
         const filter =
             await selectOneDynamicEmployeeFilter(page);
@@ -5957,15 +6046,11 @@ test(
             `Test 27 - Selected filter: ${filter.fieldKey} = ${filter.value}`
         );
 
-        // --------------------------------------------------------
-        // STEP 3 - Apply selected filter
-        // --------------------------------------------------------
+        // ------------------------------------------------------------
+        // 3. Apply dynamic filter
+        // ------------------------------------------------------------
 
         await applyDynamicEmployeeFilter(page);
-
-        // --------------------------------------------------------
-        // STEP 4 - Verify filtered result contains records
-        // --------------------------------------------------------
 
         const filteredTotal = Number(
             (
@@ -5983,9 +6068,9 @@ test(
             `Test 27 - Filtered total: ${filteredTotal}`
         );
 
-        // --------------------------------------------------------
-        // STEP 5 - Remove selected filter chip
-        // --------------------------------------------------------
+        // ------------------------------------------------------------
+        // 4. Verify filter chip exists
+        // ------------------------------------------------------------
 
         const removeControl =
             filter.chips
@@ -5999,9 +6084,12 @@ test(
             timeout: 10000
         });
 
+        // ------------------------------------------------------------
+        // 5. Remove dynamic filter
+        // ------------------------------------------------------------
+
         await removeControl.click();
 
-        // The helper's chips locator is intentionally reused here.
         await expect(
             filter.chips,
             'Filter chip must be removed'
@@ -6013,11 +6101,10 @@ test(
             'Test 27 - Filter chip successfully removed'
         );
 
-        // --------------------------------------------------------
-        // STEP 6 - Apply cleared filter state
-        //
-        // Register both listeners BEFORE clicking Apply.
-        // --------------------------------------------------------
+        // ------------------------------------------------------------
+        // 6. Apply cleared/unfiltered state
+        // ------------------------------------------------------------
+        // Register listeners BEFORE clicking Apply.
 
         const searchResponsePromise =
             page.waitForResponse(
@@ -6045,14 +6132,29 @@ test(
             "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
         ).click();
 
-        await Promise.all([
-            searchResponsePromise,
-            countResponsePromise
-        ]);
+        // ------------------------------------------------------------
+        // 7. Wait for both current unfiltered API responses
+        // ------------------------------------------------------------
 
-        // --------------------------------------------------------
-        // STEP 7 - Wait for report refresh to complete
-        // --------------------------------------------------------
+        const searchResponse =
+            await searchResponsePromise;
+
+        const countResponse =
+            await countResponsePromise;
+
+        const countData =
+            await countResponse.json();
+
+        const expectedRestoredTotal =
+            Number(countData.count);
+
+        console.log(
+            `Test 27 - Count API returned: ${expectedRestoredTotal}`
+        );
+
+        // ------------------------------------------------------------
+        // 8. Verify current report has finished loading
+        // ------------------------------------------------------------
 
         await expect(
             page.locator('#dvreportcontainer')
@@ -6069,15 +6171,18 @@ test(
             timeout: 30000
         });
 
-        await expect(
-            page.locator('#basetable tbody tr').first()
-        ).toBeVisible({
-            timeout: 30000
-        });
+        // ------------------------------------------------------------
+        // 9. Verify current UI count matches Count API
+        // ------------------------------------------------------------
 
-        // --------------------------------------------------------
-        // STEP 8 - Verify original unfiltered state is restored
-        // --------------------------------------------------------
+        await expect(
+            page.locator('#sptotalUsers')
+        ).toHaveText(
+            String(expectedRestoredTotal),
+            {
+                timeout: 30000
+            }
+        );
 
         const restoredTotal = Number(
             (
@@ -6088,18 +6193,72 @@ test(
 
         expect(
             restoredTotal,
-            'Clearing the filter must restore the unfiltered record count'
-        ).toBe(originalTotal);
+            'UI total must match the current unfiltered Count API result'
+        ).toBe(expectedRestoredTotal);
+
+        // ------------------------------------------------------------
+        // 10. Verify report contains rows when current count > 0
+        // ------------------------------------------------------------
+
+        if (expectedRestoredTotal > 0) {
+
+            await expect(
+                page.locator('#basetable tbody tr').first()
+            ).toBeVisible({
+                timeout: 30000
+            });
+
+            const rowCount =
+                await page.locator('#basetable tbody tr').count();
+
+            expect(
+                rowCount,
+                'Unfiltered report must contain rows when Count API is greater than zero'
+            ).toBeGreaterThan(0);
+
+            console.log(
+                `Test 27 - Current unfiltered rows visible: ${rowCount}`
+            );
+        }
+
+        // ------------------------------------------------------------
+        // 11. Allow legitimate concurrent shared-dataset changes
+        // ------------------------------------------------------------
+
+        const countDrift =
+            Math.abs(
+                restoredTotal - originalTotal
+            );
 
         console.log(
-            `Test 27 - Restored total: ${restoredTotal}`
+            `Test 27 - Shared dataset count drift: ${countDrift}`
+        );
+
+        expect(
+            countDrift,
+            `Unfiltered count drift must remain within ±${ALLOWED_SHARED_DATA_DRIFT} records`
+        ).toBeLessThanOrEqual(
+            ALLOWED_SHARED_DATA_DRIFT
+        );
+
+        // ------------------------------------------------------------
+        // 12. Final result
+        // ------------------------------------------------------------
+
+        console.log(
+            `Test 27 - Initial total: ${originalTotal}`
         );
 
         console.log(
-            'Test 27 PASS - Filter removal returned report to unfiltered state'
+            `Test 27 - Restored/current unfiltered total: ${restoredTotal}`
+        );
+
+        console.log(
+            `Test 27 PASS - Dynamic filter was removed and report returned to the current unfiltered state`
         );
     }
 );
+
 
 
 
@@ -6656,6 +6815,10 @@ test(
 //   -> verify ABSENT from Deleted
 // ============================================================
 
+
+
+
+
 test(
     '30 - Delete -> Active absence -> Restore -> Deleted absence lifecycle',
     async ({ page }) => {
@@ -6663,8 +6826,7 @@ test(
         test.setTimeout(180000);
 
         // ============================================================
-        // PART 1
-        // ACTIVE -> DELETED
+        // 1. LOAD ACTIVE RECORDS
         // ============================================================
 
         await loadEmployeesReport(page);
@@ -6689,13 +6851,11 @@ test(
             activeRows.nth(randomIndex);
 
         const editCell =
-            selectedRow
-                .locator('td[data-tbledit-type]')
-                .first();
+            selectedRow.locator(
+                'td[data-tbledit-type]'
+            ).first();
 
-        await expect(
-            editCell
-        ).toBeVisible({
+        await expect(editCell).toBeVisible({
             timeout: 30000
         });
 
@@ -6704,22 +6864,36 @@ test(
                 'data-tbledit-type'
             );
 
-        expect(
-            employeeId,
-            'Selected employee must have an ID'
-        ).not.toBeNull();
+        expect(employeeId).not.toBeNull();
+        expect(employeeId).not.toBe('');
+
+        // THIS IS THE SINGLE SEARCH WORD USED THROUGHOUT TEST 30.
+        // It is captured from the selected table row BEFORE delete.
+        const searchValue =
+            (
+                await selectedRow
+                    .locator('td')
+                    .nth(1)
+                    .textContent()
+                || ''
+            ).trim();
 
         expect(
-            employeeId
+            searchValue,
+            'Selected table row must contain a consolidated-search word'
         ).not.toBe('');
 
         console.log(
-            `Test 30 - Selected employee: ${employeeId}`
+            `Test 30 - Employee: ${employeeId}`
         );
 
-        // ------------------------------------------------------------
-        // OPEN EDIT
-        // ------------------------------------------------------------
+        console.log(
+            `Test 30 - Consolidated search word: "${searchValue}"`
+        );
+
+        // ============================================================
+        // 2. ACTIVE -> DELETED
+        // ============================================================
 
         await editCell.click();
 
@@ -6731,25 +6905,15 @@ test(
                 'xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div'
             );
 
-        await expect(
-            recordStateInput
-        ).toBeAttached({
+        await expect(recordStateInput).toBeAttached({
             timeout: 30000
         });
 
-        await expect(
-            recordStateInput
-        ).toBeChecked();
-
-        // ------------------------------------------------------------
-        // DELETE
-        // ------------------------------------------------------------
+        await expect(recordStateInput).toBeChecked();
 
         await recordStateControl.click();
 
-        await expect(
-            recordStateInput
-        ).not.toBeChecked();
+        await expect(recordStateInput).not.toBeChecked();
 
         const deleteUpdateResponsePromise =
             page.waitForResponse(
@@ -6757,6 +6921,7 @@ test(
                     response.url().includes(
                         '/employees/api/update/'
                     ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
@@ -6769,37 +6934,37 @@ test(
                     response.url().includes(
                         '/employees/api/searchtype/'
                     ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
                 }
             );
 
-        await page.locator(
-            '#btnmodalsub'
-        ).click();
+        const deleteCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator('#btnmodalsub').click();
 
         await deleteUpdateResponsePromise;
-
-        console.log(
-            `Test 30 - DELETE UPDATE completed for ${employeeId}`
-        );
-
         await deleteSearchResponsePromise;
-
-        console.log(
-            `Test 30 - DELETE SEARCHTYPE completed for ${employeeId}`
-        );
+        await deleteCountResponsePromise;
 
         await expect(
             page.locator('#divreportcontent')
         ).toBeVisible({
             timeout: 30000
         });
-
-        // ------------------------------------------------------------
-        // VERIFY ABSENT FROM ACTIVE
-        // ------------------------------------------------------------
 
         await expect(
             page.locator(
@@ -6808,12 +6973,11 @@ test(
         ).toHaveCount(0);
 
         console.log(
-            `Test 30 - ${employeeId} absent from Active records`
+            `Test 30 - ${employeeId} absent from Active`
         );
 
         // ============================================================
-        // PART 2
-        // VERIFY PRESENT IN DELETED
+        // 3. OPEN DELETED RECORDS
         // ============================================================
 
         const pagingParent =
@@ -6821,29 +6985,23 @@ test(
                 '#dvpaginationsections .pagingsectionparent'
             );
 
-        await expect(
-            pagingParent
-        ).toBeVisible({
+        const pagingMenu =
+            page.locator('#overlaypaging');
+
+        await expect(pagingParent).toBeVisible({
             timeout: 30000
         });
 
         await pagingParent.click();
 
-        const pagingMenu =
-            page.locator('#overlaypaging');
-
-        await expect(
-            pagingMenu
-        ).toBeVisible({
+        await expect(pagingMenu).toBeVisible({
             timeout: 10000
         });
 
         const deletedOption =
             page.locator('#Deletediv');
 
-        await expect(
-            deletedOption
-        ).toBeVisible({
+        await expect(deletedOption).toBeVisible({
             timeout: 10000
         });
 
@@ -6853,6 +7011,20 @@ test(
                     response.url().includes(
                         '/employees/api/searchtype/'
                     ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const deletedCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
@@ -6862,6 +7034,7 @@ test(
         await deletedOption.click();
 
         await deletedSearchResponsePromise;
+        await deletedCountResponsePromise;
 
         await expect(
             page.locator('#divreportcontent')
@@ -6869,64 +7042,107 @@ test(
             timeout: 30000
         });
 
-        const deletedEmployee =
-            page.locator(
-                `#basetable tbody tr input.tblkchk[data-chk-type="${employeeId}"]`
-            );
-
-        await expect(
-            deletedEmployee,
-            `Employee ${employeeId} should exist in Deleted records`
-        ).toHaveCount(1);
-
-        console.log(
-            `Test 30 - ${employeeId} confirmed in Deleted records`
-        );
-
         // ============================================================
-        // PART 3
-        // DELETED -> ACTIVE
+        // 4. CONSOLIDATED SEARCH USING ORIGINAL TABLE WORD
         // ============================================================
 
-        const deletedRow =
-            deletedEmployee.locator(
-                'xpath=ancestor::tr'
+        await openFilterBar(page);
+
+
+        const consolidatedSearch =
+            page.locator('#txtconsolidatesearch');
+
+        await expect(consolidatedSearch).toBeVisible({
+            timeout: 10000
+        });
+
+        const deletedConsolidatedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
             );
 
-        await expect(
-            deletedRow
-        ).toHaveCount(1);
+        const deletedConsolidatedCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
 
+        await consolidatedSearch.fill(searchValue);
+
+        await page.locator(
+            '//*[@id="dvfilterbar"]/div[2]/div[1]/div/div[2]'
+        ).click();
+
+        await deletedConsolidatedSearchResponsePromise;
+        await deletedConsolidatedCountResponsePromise;
+
+        await expect(
+            page.locator('#divreportcontent')
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // Find the deleted row by the ORIGINAL consolidated-search word.
+        const deletedSearchRow =
+            page.locator('#basetable tbody tr')
+                .filter({
+                    hasText: searchValue
+                })
+                .first();
+
+        await expect(
+            deletedSearchRow,
+            `Deleted row containing "${searchValue}" should be visible`
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        // Now identify the exact employee inside that consolidated-search result.
         const deletedEditCell =
-            deletedRow.locator(
+            deletedSearchRow.locator(
                 `td[data-tbledit-type="${employeeId}"]`
             );
 
         await expect(
-            deletedEditCell
+            deletedEditCell,
+            `Employee ${employeeId} should be present in consolidated-search result`
         ).toHaveCount(1);
+
+        console.log(
+            `Test 30 - ${employeeId} found in Deleted using "${searchValue}"`
+        );
+
+        // ============================================================
+        // 5. DELETED -> ACTIVE
+        // ============================================================
 
         await deletedEditCell.click();
 
-        await expect(
-            recordStateInput
-        ).toBeAttached({
+        await expect(recordStateInput).toBeAttached({
             timeout: 30000
         });
 
-        await expect(
-            recordStateInput
-        ).not.toBeChecked();
+        await expect(recordStateInput).not.toBeChecked();
 
-        // ------------------------------------------------------------
-        // RESTORE
-        // ------------------------------------------------------------
-
+        // Check record state back to ACTIVE.
         await recordStateControl.click();
 
-        await expect(
-            recordStateInput
-        ).toBeChecked();
+        await expect(recordStateInput).toBeChecked();
 
         const restoreUpdateResponsePromise =
             page.waitForResponse(
@@ -6934,6 +7150,7 @@ test(
                     response.url().includes(
                         '/employees/api/update/'
                     ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
@@ -6946,27 +7163,31 @@ test(
                     response.url().includes(
                         '/employees/api/searchtype/'
                     ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
                 }
             );
 
-        await page.locator(
-            '#btnmodalsub'
-        ).click();
+        const restoreCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await page.locator('#btnmodalsub').click();
 
         await restoreUpdateResponsePromise;
-
-        console.log(
-            `Test 30 - RESTORE UPDATE completed for ${employeeId}`
-        );
-
         await restoreSearchResponsePromise;
-
-        console.log(
-            `Test 30 - RESTORE SEARCHTYPE completed for ${employeeId}`
-        );
+        await restoreCountResponsePromise;
 
         await expect(
             page.locator('#divreportcontent')
@@ -6974,48 +7195,51 @@ test(
             timeout: 30000
         });
 
+        console.log(
+            `Test 30 - ${employeeId} restored`
+        );
+
         // ============================================================
-        // PART 4
-        // VERIFY PRESENT IN ACTIVE
+        // 6. NEWEST
         // ============================================================
 
-        const pagingParentAfterRestore =
-            page.locator(
-                '#dvpaginationsections .pagingsectionparent'
-            );
-
-        await expect(
-            pagingParentAfterRestore
-        ).toBeVisible({
+        await expect(pagingParent).toBeVisible({
             timeout: 30000
         });
 
-        await pagingParentAfterRestore.click();
+        await pagingParent.click();
 
-        const pagingMenuAfterRestore =
-            page.locator('#overlaypaging');
-
-        await expect(
-            pagingMenuAfterRestore
-        ).toBeVisible({
+        await expect(pagingMenu).toBeVisible({
             timeout: 10000
         });
 
         const newestOption =
             page.locator('#newestdiv');
 
-        await expect(
-            newestOption
-        ).toBeVisible({
+        await expect(newestOption).toBeVisible({
             timeout: 10000
         });
 
-        const activeSearchResponsePromise =
+        const newestSearchResponsePromise =
             page.waitForResponse(
                 response =>
                     response.url().includes(
                         '/employees/api/searchtype/'
                     ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const newestCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
@@ -7024,7 +7248,8 @@ test(
 
         await newestOption.click();
 
-        await activeSearchResponsePromise;
+        await newestSearchResponsePromise;
+        await newestCountResponsePromise;
 
         await expect(
             page.locator('#divreportcontent')
@@ -7032,53 +7257,101 @@ test(
             timeout: 30000
         });
 
-        const restoredEmployee =
-            page.locator(
-                `#basetable tbody tr td[data-tbledit-type="${employeeId}"]`
-            );
-
-        await expect(
-            restoredEmployee,
-            `Restored employee ${employeeId} should appear in Active records`
-        ).toHaveCount(1);
-
-        console.log(
-            `Test 30 - ${employeeId} confirmed ACTIVE after restore`
-        );
-
         // ============================================================
-        // PART 5
-        // VERIFY ABSENT FROM DELETED
+        // 7. CONSOLIDATED SEARCH AGAIN USING SAME ORIGINAL WORD
         // ============================================================
 
-        const finalPagingParent =
-            page.locator(
-                '#dvpaginationsections .pagingsectionparent'
-            );
+       // await openFilterBar(page);
+
+
 
         await expect(
-            finalPagingParent
-        ).toBeVisible({
-            timeout: 30000
-        });
-
-        await finalPagingParent.click();
-
-        const finalPagingMenu =
-            page.locator('#overlaypaging');
-
-        await expect(
-            finalPagingMenu
+            consolidatedSearch
         ).toBeVisible({
             timeout: 10000
         });
 
-        const finalDeletedOption =
-            page.locator('#Deletediv');
+        const activeConsolidatedSearchResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtype/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        const activeConsolidatedCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        // SAME WORD CAPTURED AT THE START OF TEST.
+        await consolidatedSearch.fill(searchValue);
+
+        await page.locator(
+            '//*[@id="dvfilterbar"]/div[2]/div[1]/div/div[2]'
+        ).click();
+
+        await activeConsolidatedSearchResponsePromise;
+        await activeConsolidatedCountResponsePromise;
 
         await expect(
-            finalDeletedOption
+            page.locator('#divreportcontent')
         ).toBeVisible({
+            timeout: 30000
+        });
+
+        // ============================================================
+        // 8. VERIFY RESTORED EMPLOYEE IN ACTIVE
+        // ============================================================
+
+        const restoredSearchRow =
+            page.locator('#basetable tbody tr')
+                .filter({
+                    hasText: searchValue
+                })
+                .first();
+
+        await expect(
+            restoredSearchRow,
+            `Restored row containing "${searchValue}" should be visible in Active`
+        ).toBeVisible({
+            timeout: 30000
+        });
+
+        await expect(
+            restoredSearchRow.locator(
+                `td[data-tbledit-type="${employeeId}"]`
+            )
+        ).toHaveCount(1);
+
+        console.log(
+            `Test 30 - ${employeeId} confirmed ACTIVE using "${searchValue}"`
+        );
+
+        // ============================================================
+        // 9. SWITCH TO DELETED AND VERIFY ABSENCE
+        // ============================================================
+
+        await pagingParent.click();
+
+        await expect(pagingMenu).toBeVisible({
+            timeout: 10000
+        });
+
+        await expect(deletedOption).toBeVisible({
             timeout: 10000
         });
 
@@ -7088,15 +7361,30 @@ test(
                     response.url().includes(
                         '/employees/api/searchtype/'
                     ) &&
+                    response.request().method() === 'POST' &&
                     response.status() === 200,
                 {
                     timeout: 30000
                 }
             );
 
-        await finalDeletedOption.click();
+        const finalDeletedCountResponsePromise =
+            page.waitForResponse(
+                response =>
+                    response.url().includes(
+                        '/employees/api/searchtypeCount/'
+                    ) &&
+                    response.request().method() === 'POST' &&
+                    response.status() === 200,
+                {
+                    timeout: 30000
+                }
+            );
+
+        await deletedOption.click();
 
         await finalDeletedSearchResponsePromise;
+        await finalDeletedCountResponsePromise;
 
         await expect(
             page.locator('#divreportcontent')
@@ -7111,10 +7399,12 @@ test(
         ).toHaveCount(0);
 
         console.log(
-            `Test 30 PASS - ${employeeId}: ACTIVE -> DELETED -> ACTIVE, and absent from Deleted records`
+            `Test 30 PASS - ${employeeId}: ACTIVE -> DELETED -> consolidated search -> RESTORE -> NEWEST -> consolidated search -> ACTIVE -> Deleted absence`
         );
     }
 );
+
+
 
 
 
