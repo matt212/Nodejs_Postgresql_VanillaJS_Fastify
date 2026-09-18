@@ -338,7 +338,11 @@ HEADED=true npx playwright test playwright/tests/employees.resilience.spec.js
 
 HEADED=true \
 npx playwright test employees -g "30 - Delete -> Active absence -> Restore -> Deleted absence lifecycle"
-ß
+
+
+----18 Sept
+npx playwright test playwright/tests/module.spec.js
+
 
 npx playwright test module -g "25 - Newest and Oldest record navigation works correctly"
 
