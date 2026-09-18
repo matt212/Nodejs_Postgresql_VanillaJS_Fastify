@@ -1253,18 +1253,18 @@ test(
                                 "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
                             ).click()
                         ]);
-const countData = await countResponse.json();
+            const countData = await countResponse.json();
 
-const expectedCount = Number((await countResponse.json()).count);
+            const expectedCount = Number((await countResponse.json()).count);
 
-console.log(`[COUNT] ${permutationName}:`, expectedCount);
+            console.log(`[COUNT] ${permutationName}:`, expectedCount);
 
-await expect(page.locator(EMPLOYEES.locators.totalUsers))
-    .toHaveText(String(expectedCount));
+            await expect(page.locator(EMPLOYEES.locators.totalUsers))
+            .toHaveText(String(expectedCount));
 
-if (expectedCount > 0) {
-    // Existing table-value validation
-}
+            if (expectedCount > 0) {
+            // Existing table-value validation
+            }
 
                         for (
                             const [
@@ -5250,17 +5250,105 @@ test(
 
 
 
+// test('25 - Newest and Oldest record navigation works correctly', async ({ page }) => {
+//     await loadEmployeesReport(page);
+
+//     const pagingParent = page.locator(
+//         EMPLOYEES.locators.pagingParent
+//     );
+
+//     const pagingMenu = page.locator(EMPLOYEES.locators.pagingMenu);
+
+//     const oldestOption = page.locator(EMPLOYEES.locators.oldest);
+//     const newestOption = page.locator(EMPLOYEES.locators.newest);
+
+//     // =========================================================
+//     // NEWEST -> OLDEST
+//     // =========================================================
+
+//     await expect(pagingParent).toBeVisible();
+
+//     await pagingParent.click();
+
+//     await expect(pagingMenu).toBeVisible();
+
+//     await expect(oldestOption).toBeVisible();
+
+//     await oldestOption.click();
+
+//     // ---------------------------------------------------------
+//     // Synchronize with the first refresh.
+//     // Do not use CSS class state or fixed sleep.
+//     // ---------------------------------------------------------
+
+//     await expect(page.locator(EMPLOYEES.locators.tableRows).first())
+//         .toBeVisible({
+//             timeout: 30000
+//         });
+
+//     // Allow pending DOM/render work from the refresh to complete.
+//     await page.evaluate(() =>
+//         new Promise(resolve =>
+//             requestAnimationFrame(() =>
+//                 requestAnimationFrame(resolve)
+//             )
+//         )
+//     );
+
+//     // The pagination control must be interaction-ready again.
+//     await expect(pagingParent).toBeVisible({
+//         timeout: 10000
+//     });
+
+
+//     // =========================================================
+//     // OLDEST -> NEWEST
+//     // =========================================================
+
+//     await pagingParent.click();
+
+//     // Synchronize specifically with the overlay becoming available.
+//     await expect(pagingMenu).toBeVisible({
+//         timeout: 5000
+//     });
+
+//     // Do not assume the menu is ready merely because the
+//     // container is visible. Wait for the actual option.
+//     await expect(newestOption).toBeVisible({
+//         timeout: 5000
+//     });
+
+//     await newestOption.click();
+
+//     // ---------------------------------------------------------
+//     // Synchronize with the final refresh.
+//     // ---------------------------------------------------------
+
+//     await expect(page.locator(EMPLOYEES.locators.tableRows).first())
+//         .toBeVisible({
+//             timeout: 30000
+//         });
+
+//     await page.evaluate(() =>
+//         new Promise(resolve =>
+//             requestAnimationFrame(() =>
+//                 requestAnimationFrame(resolve)
+//             )
+//         )
+//     );
+// });
+
 test('25 - Newest and Oldest record navigation works correctly', async ({ page }) => {
     await loadEmployeesReport(page);
 
     const pagingParent = page.locator(
-        EMPLOYEES.locators.pagingParent
+        '#dvpaginationsections .pagingsectionparent'
     );
 
-    const pagingMenu = page.locator(EMPLOYEES.locators.pagingMenu);
+    const pagingMenu = page.locator('#overlaypaging');
 
-    const oldestOption = page.locator(EMPLOYEES.locators.oldest);
-    const newestOption = page.locator(EMPLOYEES.locators.newest);
+    const oldestOption = page.locator('#Oldestdiv');
+    const newestOption = page.locator('#newestdiv');
 
     // =========================================================
     // NEWEST -> OLDEST
@@ -5281,7 +5369,7 @@ test('25 - Newest and Oldest record navigation works correctly', async ({ page }
     // Do not use CSS class state or fixed sleep.
     // ---------------------------------------------------------
 
-    await expect(page.locator(EMPLOYEES.locators.tableRows).first())
+    await expect(page.locator('#basetable tbody tr').first())
         .toBeVisible({
             timeout: 30000
         });
@@ -5324,7 +5412,7 @@ test('25 - Newest and Oldest record navigation works correctly', async ({ page }
     // Synchronize with the final refresh.
     // ---------------------------------------------------------
 
-    await expect(page.locator(EMPLOYEES.locators.tableRows).first())
+    await expect(page.locator('#basetable tbody tr').first())
         .toBeVisible({
             timeout: 30000
         });
