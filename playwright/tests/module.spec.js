@@ -33,84 +33,84 @@ async function openControlBar(page) {
 
 async function applyDateRange(page) {
 
-    await page.locator('#reservation').click();
+                    await page.locator('#reservation').click();
 
-    await page.evaluate(() => {
+                    await page.evaluate(() => {
 
-        const input = window.jQuery('#reservation');
-        const picker = input.data('daterangepicker');
+                    const input = window.jQuery('#reservation');
+                    const picker = input.data('daterangepicker');
 
-        if (!picker) {
-            throw new Error(
-                'daterangepicker instance not found on #reservation'
-            );
-        }
+                    if (!picker) {
+                        throw new Error(
+                            'daterangepicker instance not found on #reservation'
+                        );
+                    }
 
-        picker.setStartDate('1982-08-07');
+                    picker.setStartDate('1982-08-07');
 
-        const today = new Date();
+                    const today = new Date();
 
-        const formattedToday =
-            `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+                    const formattedToday =
+                        `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-        picker.setEndDate(formattedToday);
-    });
+                    picker.setEndDate(formattedToday);
+                    });
 
-    console.log(
-        'Date range:',
-        await page.locator('#reservation').inputValue()
-    );
+                    console.log(
+                        'Date range:',
+                        await page.locator('#reservation').inputValue()
+                    );
 
-    /*
-     * Register the response listener BEFORE clicking Apply.
-     * The API response is the synchronization point.
-     */
-    const responsePromise = page.waitForResponse(
-        response =>
-            response.url().includes('/employees/api/searchtype/') &&
-            response.status() === 200
-    );
-const countResponsePromise = page.waitForResponse(
-        response =>
-            response.url().includes('/employees/api/searchtypeCount/') &&
-            response.request().method() === 'POST' &&
-            response.status() === 200
-    );
-    await page.locator(
-        '.daterangepicker .applyBtn'
-    ).click();
+                    /*
+                        * Register the response listener BEFORE clicking Apply.
+                        * The API response is the synchronization point.
+                        */
+                    const responsePromise = page.waitForResponse(
+                        response =>
+                            response.url().includes('/employees/api/searchtype/') &&
+                            response.status() === 200
+                    );
+                    const countResponsePromise = page.waitForResponse(
+                        response =>
+                            response.url().includes('/employees/api/searchtypeCount/') &&
+                            response.request().method() === 'POST' &&
+                            response.status() === 200
+                    );
+                    await page.locator(
+                        '.daterangepicker .applyBtn'
+                    ).click();
 
-    const response = await responsePromise;
-const countResponse =
-        await countResponsePromise;
-    console.log(
-        '[SEARCH RESPONSE]',
-        response.url()
-    );
-    console.log(
-        '[COUNT RESPONSE]',
-        countResponse.url()
-    );
+                    const response = await responsePromise;
+                    const countResponse =
+                        await countResponsePromise;
+                    console.log(
+                        '[SEARCH RESPONSE]',
+                        response.url()
+                    );
+                    console.log(
+                        '[COUNT RESPONSE]',
+                        countResponse.url()
+                    );
 
-    /*
-     * Wait for the actual report UI to finish rendering.
-     * No arbitrary waitForTimeout() is required.
-     */
-    await expect(
-        page.locator('#dvreportcontainer')
-    ).not.toHaveClass(
-        /loading-report-container/
-    );
+                    /*
+                        * Wait for the actual report UI to finish rendering.
+                        * No arbitrary waitForTimeout() is required.
+                        */
+                    await expect(
+                        page.locator('#dvreportcontainer')
+                    ).not.toHaveClass(
+                        /loading-report-container/
+                    );
 
-    await expect(
-        page.locator('#divreportcontent').first()
-    ).toBeVisible();
+                    await expect(
+                        page.locator('#divreportcontent').first()
+                    ).toBeVisible();
 
-    await expect(
-        page.locator('#basetable')
-    ).toBeVisible();
+                    await expect(
+                        page.locator('#basetable')
+                    ).toBeVisible();
 
-    return response;
+                    return response;
 }
 
 
@@ -139,13 +139,13 @@ async function loadEmployeesReport(page) {
 
 async function openFilterBar(page) {
 
-    await page.locator(
-        "//*[@id=\"dvparentfilterbar\"]/div[1]/div/button"
-    ).click();
+            await page.locator(
+                "//*[@id=\"dvparentfilterbar\"]/div[1]/div/button"
+            ).click();
 
-    await expect(
-        page.locator('#dvfilterbar').first()
-    ).toBeVisible();
+            await expect(
+                page.locator('#dvfilterbar').first()
+            ).toBeVisible();
 }
 
 
@@ -157,54 +157,54 @@ async function openFilterBar(page) {
 
 async function getFirstRowData(page) {
 
-    const headers = page.locator(
-        '#basetable thead tr th[data-field-header]'
-    );
+            const headers = page.locator(
+                '#basetable thead tr th[data-field-header]'
+            );
 
-    const fieldKeys = await headers.evaluateAll(elements =>
-        elements.map(el =>
-            el.getAttribute('data-field-header')
-        )
-    );
+            const fieldKeys = await headers.evaluateAll(elements =>
+                elements.map(el =>
+                    el.getAttribute('data-field-header')
+                )
+            );
 
-    const firstRowCells = page.locator(
-        '#basetable tbody tr'
-    ).first().locator('td');
+            const firstRowCells = page.locator(
+                '#basetable tbody tr'
+            ).first().locator('td');
 
-    const firstRowData = {};
-    const firstCharacters = {};
+            const firstRowData = {};
+            const firstCharacters = {};
 
-    for (let i = 0; i < fieldKeys.length; i++) {
+            for (let i = 0; i < fieldKeys.length; i++) {
 
-        const key = fieldKeys[i];
+                const key = fieldKeys[i];
 
-        const cellText =
-            await firstRowCells.nth(i + 1).textContent();
+                const cellText =
+                    await firstRowCells.nth(i + 1).textContent();
 
-        const cleanValue =
-            cellText.trim();
+                const cleanValue =
+                    cellText.trim();
 
-        firstRowData[key] = cleanValue;
+                firstRowData[key] = cleanValue;
 
-        firstCharacters[key] =
-            cleanValue.charAt(0);
-    }
+                firstCharacters[key] =
+                    cleanValue.charAt(0);
+            }
 
-    console.log(
-        'First Row Data Mapping:',
-        firstRowData
-    );
+            console.log(
+                'First Row Data Mapping:',
+                firstRowData
+            );
 
-    console.log(
-        'First Characters For Your Filter Bar Loop:',
-        firstCharacters
-    );
+            console.log(
+                'First Characters For Your Filter Bar Loop:',
+                firstCharacters
+            );
 
-    return {
-        fieldKeys,
-        firstRowData,
-        firstCharacters
-    };
+            return {
+                fieldKeys,
+                firstRowData,
+                firstCharacters
+            };
 }
 
 
