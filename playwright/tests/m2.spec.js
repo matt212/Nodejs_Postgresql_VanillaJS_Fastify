@@ -5250,172 +5250,193 @@ test(
 
 
 
-// test('25 - Newest and Oldest record navigation works correctly', async ({ page }) => {
-//     await loadEmployeesReport(page);
-
-//     const pagingParent = page.locator(
-//         EMPLOYEES.locators.pagingParent
-//     );
-
-//     const pagingMenu = page.locator(EMPLOYEES.locators.pagingMenu);
-
-//     const oldestOption = page.locator(EMPLOYEES.locators.oldest);
-//     const newestOption = page.locator(EMPLOYEES.locators.newest);
-
-//     // =========================================================
-//     // NEWEST -> OLDEST
-//     // =========================================================
-
-//     await expect(pagingParent).toBeVisible();
-
-//     await pagingParent.click();
-
-//     await expect(pagingMenu).toBeVisible();
-
-//     await expect(oldestOption).toBeVisible();
-
-//     await oldestOption.click();
-
-//     // ---------------------------------------------------------
-//     // Synchronize with the first refresh.
-//     // Do not use CSS class state or fixed sleep.
-//     // ---------------------------------------------------------
-
-//     await expect(page.locator(EMPLOYEES.locators.tableRows).first())
-//         .toBeVisible({
-//             timeout: 30000
-//         });
-
-//     // Allow pending DOM/render work from the refresh to complete.
-//     await page.evaluate(() =>
-//         new Promise(resolve =>
-//             requestAnimationFrame(() =>
-//                 requestAnimationFrame(resolve)
-//             )
-//         )
-//     );
-
-//     // The pagination control must be interaction-ready again.
-//     await expect(pagingParent).toBeVisible({
-//         timeout: 10000
-//     });
-
-
-//     // =========================================================
-//     // OLDEST -> NEWEST
-//     // =========================================================
-
-//     await pagingParent.click();
-
-//     // Synchronize specifically with the overlay becoming available.
-//     await expect(pagingMenu).toBeVisible({
-//         timeout: 5000
-//     });
-
-//     // Do not assume the menu is ready merely because the
-//     // container is visible. Wait for the actual option.
-//     await expect(newestOption).toBeVisible({
-//         timeout: 5000
-//     });
-
-//     await newestOption.click();
-
-//     // ---------------------------------------------------------
-//     // Synchronize with the final refresh.
-//     // ---------------------------------------------------------
-
-//     await expect(page.locator(EMPLOYEES.locators.tableRows).first())
-//         .toBeVisible({
-//             timeout: 30000
-//         });
-
-//     await page.evaluate(() =>
-//         new Promise(resolve =>
-//             requestAnimationFrame(() =>
-//                 requestAnimationFrame(resolve)
-//             )
-//         )
-//     );
-// });
-
 test('25 - Newest and Oldest record navigation works correctly', async ({ page }) => {
+
     await loadEmployeesReport(page);
 
     const pagingParent = page.locator(
-        '#dvpaginationsections .pagingsectionparent'
+        EMPLOYEES.locators.pagingParent
     );
 
-    const pagingMenu = page.locator('#overlaypaging');
+    const pagingMenu = page.locator(
+        EMPLOYEES.locators.pagingMenu
+    );
 
-    const oldestOption = page.locator('#Oldestdiv');
-    const newestOption = page.locator('#newestdiv');
+    const oldestOption = page.locator(
+        EMPLOYEES.locators.oldest
+    );
+
+    const newestOption = page.locator(
+        EMPLOYEES.locators.newest
+    );
+
+    const tableRows = page.locator(
+        EMPLOYEES.locators.tableRows
+    );
 
     // =========================================================
+    // INITIAL STATE
+    // =========================================================
+    // loadEmployeesReport() already loads:
+    // NEWEST / DESC
+    //
+    // Therefore first selectable operation is:
     // NEWEST -> OLDEST
     // =========================================================
 
-    await expect(pagingParent).toBeVisible();
-
-    await pagingParent.click();
-
-    await expect(pagingMenu).toBeVisible();
-
-    await expect(oldestOption).toBeVisible();
-
-    await oldestOption.click();
-
-    // ---------------------------------------------------------
-    // Synchronize with the first refresh.
-    // Do not use CSS class state or fixed sleep.
-    // ---------------------------------------------------------
-
-    await expect(page.locator('#basetable tbody tr').first())
-        .toBeVisible({
-            timeout: 30000
-        });
-
-    // Allow pending DOM/render work from the refresh to complete.
-    await page.evaluate(() =>
-        new Promise(resolve =>
-            requestAnimationFrame(() =>
-                requestAnimationFrame(resolve)
-            )
-        )
-    );
-
-    // The pagination control must be interaction-ready again.
     await expect(pagingParent).toBeVisible({
         timeout: 10000
     });
 
-
     // =========================================================
-    // OLDEST -> NEWEST
+    // OPEN PAGING MENU
     // =========================================================
 
     await pagingParent.click();
 
-    // Synchronize specifically with the overlay becoming available.
     await expect(pagingMenu).toBeVisible({
         timeout: 5000
     });
 
-    // Do not assume the menu is ready merely because the
-    // container is visible. Wait for the actual option.
-    await expect(newestOption).toBeVisible({
+    await expect(oldestOption).toBeVisible({
         timeout: 5000
     });
 
-    await newestOption.click();
+    // =========================================================
+    // OLDest
+    //
+    // Expected:
+    // searchtype      -> ASC + ACTIVE
+    // searchtypeCount -> POST
+    // =========================================================
 
-    // ---------------------------------------------------------
-    // Synchronize with the final refresh.
-    // ---------------------------------------------------------
+    const oldestSearchRequestPromise =
+        page.waitForRequest(
+            request => {
 
-    await expect(page.locator('#basetable tbody tr').first())
-        .toBeVisible({
-            timeout: 30000
-        });
+                if (
+                    !request.url().includes(
+                        EMPLOYEES.api.search
+                    ) ||
+                    request.method() !== 'POST'
+                ) {
+                    return false;
+                }
+
+                const data = request.postDataJSON();
+
+                return (
+                    String(
+                        data?.sortcolumnorder
+                    ).toUpperCase() === 'ASC' &&
+                    data?.recordstate === 'ACTIVE'
+                );
+            },
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    const oldestCountRequestPromise =
+        page.waitForRequest(
+            request =>
+                request.url().includes(
+                    EMPLOYEES.api.count
+                ) &&
+                request.method() === 'POST',
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    const oldestSearchResponsePromise =
+        page.waitForResponse(
+            response => {
+
+                if (
+                    !response.url().includes(
+                        EMPLOYEES.api.search
+                    ) ||
+                    response.status() !== 200 ||
+                    response.request().method() !== 'POST'
+                ) {
+                    return false;
+                }
+
+                const data =
+                    response.request().postDataJSON();
+
+                return (
+                    String(
+                        data?.sortcolumnorder
+                    ).toUpperCase() === 'ASC' &&
+                    data?.recordstate === 'ACTIVE'
+                );
+            },
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    const oldestCountResponsePromise =
+        page.waitForResponse(
+            response =>
+                response.url().includes(
+                    EMPLOYEES.api.count
+                ) &&
+                response.status() === 200 &&
+                response.request().method() === 'POST',
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    await oldestOption.click();
+
+    // Wait for both API requests.
+    const [
+        oldestSearchRequest,
+        oldestCountRequest
+    ] = await Promise.all([
+        oldestSearchRequestPromise,
+        oldestCountRequestPromise
+    ]);
+
+    // Wait for both API responses.
+    await Promise.all([
+        oldestSearchResponsePromise,
+        oldestCountResponsePromise
+    ]);
+
+    // Validate Oldest search request.
+    const oldestSearchPayload =
+        oldestSearchRequest.postDataJSON();
+
+    expect(
+        String(
+            oldestSearchPayload.sortcolumnorder
+        ).toUpperCase(),
+        'Oldest must request ASC'
+    ).toBe('ASC');
+
+    expect(
+        oldestSearchPayload.recordstate,
+        'Oldest must request ACTIVE records'
+    ).toBe('ACTIVE');
+
+    // Validate count request exists.
+    expect(
+        oldestCountRequest.method(),
+        'Oldest count API must use POST'
+    ).toBe('POST');
+
+    // =========================================================
+    // WAIT FOR OLDest UI TO FINISH
+    // =========================================================
+
+    await expect(tableRows.first()).toBeVisible({
+        timeout: EMPLOYEES.timing.ui
+    });
 
     await page.evaluate(() =>
         new Promise(resolve =>
@@ -5424,7 +5445,175 @@ test('25 - Newest and Oldest record navigation works correctly', async ({ page }
             )
         )
     );
+
+    await expect(pagingParent).toBeVisible({
+        timeout: 10000
+    });
+
+    // =========================================================
+    // REOPEN PAGING MENU
+    // =========================================================
+
+    await pagingParent.click();
+
+    await expect(pagingMenu).toBeVisible({
+        timeout: 5000
+    });
+
+    await expect(newestOption).toBeVisible({
+        timeout: 5000
+    });
+
+    // =========================================================
+    // NEWEST
+    //
+    // Expected:
+    // searchtype      -> DESC + ACTIVE
+    // searchtypeCount -> POST
+    // =========================================================
+
+    const newestSearchRequestPromise =
+        page.waitForRequest(
+            request => {
+
+                if (
+                    !request.url().includes(
+                        EMPLOYEES.api.search
+                    ) ||
+                    request.method() !== 'POST'
+                ) {
+                    return false;
+                }
+
+                const data = request.postDataJSON();
+
+                return (
+                    String(
+                        data?.sortcolumnorder
+                    ).toUpperCase() === 'DESC' &&
+                    data?.recordstate === 'ACTIVE'
+                );
+            },
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    const newestCountRequestPromise =
+        page.waitForRequest(
+            request =>
+                request.url().includes(
+                    EMPLOYEES.api.count
+                ) &&
+                request.method() === 'POST',
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    const newestSearchResponsePromise =
+        page.waitForResponse(
+            response => {
+
+                if (
+                    !response.url().includes(
+                        EMPLOYEES.api.search
+                    ) ||
+                    response.status() !== 200 ||
+                    response.request().method() !== 'POST'
+                ) {
+                    return false;
+                }
+
+                const data =
+                    response.request().postDataJSON();
+
+                return (
+                    String(
+                        data?.sortcolumnorder
+                    ).toUpperCase() === 'DESC' &&
+                    data?.recordstate === 'ACTIVE'
+                );
+            },
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    const newestCountResponsePromise =
+        page.waitForResponse(
+            response =>
+                response.url().includes(
+                    EMPLOYEES.api.count
+                ) &&
+                response.status() === 200 &&
+                response.request().method() === 'POST',
+            {
+                timeout: EMPLOYEES.timing.response
+            }
+        );
+
+    await newestOption.click();
+
+    // Wait for both API requests.
+    const [
+        newestSearchRequest,
+        newestCountRequest
+    ] = await Promise.all([
+        newestSearchRequestPromise,
+        newestCountRequestPromise
+    ]);
+
+    // Wait for both API responses.
+    await Promise.all([
+        newestSearchResponsePromise,
+        newestCountResponsePromise
+    ]);
+
+    // Validate Newest search request.
+    const newestSearchPayload =
+        newestSearchRequest.postDataJSON();
+
+    expect(
+        String(
+            newestSearchPayload.sortcolumnorder
+        ).toUpperCase(),
+        'Newest must request DESC'
+    ).toBe('DESC');
+
+    expect(
+        newestSearchPayload.recordstate,
+        'Newest must request ACTIVE records'
+    ).toBe('ACTIVE');
+
+    // Validate count request exists.
+    expect(
+        newestCountRequest.method(),
+        'Newest count API must use POST'
+    ).toBe('POST');
+
+    // =========================================================
+    // WAIT FOR NEWEST UI TO FINISH
+    // =========================================================
+
+    await expect(tableRows.first()).toBeVisible({
+        timeout: EMPLOYEES.timing.ui
+    });
+
+    await page.evaluate(() =>
+        new Promise(resolve =>
+            requestAnimationFrame(() =>
+                requestAnimationFrame(resolve)
+            )
+        )
+    );
+
+    console.log(
+        'Test 25 PASS - Newest (initial) -> Oldest -> Newest verified'
+    );
 });
+
+
 
 // ============================================================
 // TEST 26
