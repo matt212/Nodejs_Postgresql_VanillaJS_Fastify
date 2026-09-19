@@ -507,7 +507,16 @@ test(
         console.log(
             `Random table row: ${randomRowIndex + 1}/${rowCount}`
         );
+const randomRow = tableRows.nth(randomRowIndex);
+const randomRowId =
+    await tableRows
+        .nth(randomRowIndex)
+        .locator('td:first-child input[data-chk-type]')
+        .getAttribute('data-chk-type');
+const randomRowDatas = await randomRow.locator('td').allTextContents();
 
+console.log('IMPORTANT ROW ID:', randomRowId);
+console.log('IMPORTANT ROW DATA:', randomRowDatas.map(v => v.trim()));
         // ============================================================
         // CAPTURE RANDOM ROW DATA
         // AND ALL ACTUAL COLUMN VALUES
@@ -547,14 +556,28 @@ test(
                 randomRowValue;
 
             const columnValues =
-                await page.locator(
-                    `#basetable tbody tr td:nth-child(${columnIndex})`
-                ).allTextContents();
+    await page.locator(
+        `#basetable tbody tr`
+    ).evaluateAll((rows, columnIndex) =>
+        rows.map(row => ({
+            id: row
+                .querySelector(
+                    'td:first-child input[data-chk-type]'
+                )
+                ?.getAttribute('data-chk-type'),
 
-            allColumnValues[fieldKey] =
-                columnValues
-                    .map(value => value.trim())
-                    .filter(Boolean);
+            value: row
+                .querySelector(
+                    `td:nth-child(${columnIndex})`
+                )
+                ?.textContent
+                ?.trim()
+        }))
+        .filter(item => item.value),
+        columnIndex
+    );
+
+allColumnValues[fieldKey] = columnValues;
 
             console.log(
                 `[RANDOM ROW] ${fieldKey}: "${randomRowValue}"`
@@ -654,11 +677,16 @@ test(
 
                     const secondValue =
                         actualValues.find(
-                            value =>
-                                normalizeValue(value) !==
+                            item =>
+                                normalizeValue(item.value) !==
                                 normalizeValue(randomRowValue)
                         );
 
+
+
+                        console.log(
+    `[SECOND VALUE] field="${fieldKey}" value="${secondValue?.value}" id="${secondValue?.id}"`
+);
                     if (!secondValue) {
 
                         console.log(
@@ -670,7 +698,7 @@ test(
 
                     const valuesToSelect = [
                         randomRowValue,
-                        secondValue
+                        secondValue.value
                     ];
 
                     const filterInput =
@@ -823,7 +851,7 @@ test(
                         // ------------------------------------------------
                         // VERIFY AUTOCOMPLETE VALUE
                         // ------------------------------------------------
-
+console.log(`[AUTOCOMPLETE] fieldKey="${fieldKey}" actualValue="${actualValue}" ROW ID="${randomRowId}"`);
                         expect(
                             normalizeValue(
                                 matchingOptionText
