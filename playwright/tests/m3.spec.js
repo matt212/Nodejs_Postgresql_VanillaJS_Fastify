@@ -16,7 +16,7 @@ let validationConfig = require('../../app/routes/utils/' + mod.Name + '/validati
 // ============================================================
 const {
     base
-} = require('../config/module.config');
+} = require('../config/Module/' + mod.Name + '.config.js');
 
 
 
@@ -36,8 +36,20 @@ const {
 
 // TEST 01-07//
 
-require(".././helpers/module.screenload.js")
 
+const {
+    registerModuleScreenLoadTests
+} = require(
+    '../testsets/module.screenload.js'
+);
+
+
+registerModuleScreenLoadTests({
+    test,
+    base,
+    mod,
+    validationConfig
+});
 
 // ============================================================
 // TEST 08
@@ -1359,7 +1371,21 @@ test(
 // Driven by validationmap.
 // No employee field names are hardcoded in the control logic.
 
-require('../helpers/module.crud.js');
+//require('../helpers/module.crud.js');
+//TEST 16-19
+const {
+    registerModuleCrudTests
+} = require(
+    '../testsets/module.crud.js'
+);
+
+
+registerModuleCrudTests({
+    test,
+    base,
+    mod,
+    validationConfig
+});
 
 // ============================================================
 // TEST 20
