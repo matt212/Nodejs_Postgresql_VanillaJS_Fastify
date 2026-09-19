@@ -128,9 +128,25 @@ async function routes(fastify, options) {
     preValidation: [fastify.authenticate]
   }, async (request, reply) => {
     try {
-      dep.assignVariables(mod)
-      const result = await dep.SearchTypeGroupByParameterized(request, mod)
-      return reply.code(200).send(result)
+      // dep.assignVariables(mod)
+      // const result = await dep.SearchTypeGroupByParameterized(request, mod)
+      // return reply.code(200).send(result)
+
+const result = await withResponseCache(
+    request,
+    async () => {
+
+        return await dep.SearchTypeGroupByParameterized(
+            request,
+            mod
+        )
+
+    },
+    {
+        prefix: 'groupby'
+    }
+)
+return reply.code(200).send(result)
     } catch (error) {
       dep.captureErrorLog({
         error,
@@ -311,7 +327,7 @@ function clearResponseCache() {
     responseCache.clear();
 }
 const responseCache = new Map()
-const RESPONSE_CACHE_TTL = 30000
+const RESPONSE_CACHE_TTL = 90000
 
 async function withResponseCache(request, callback) {
   const cacheKey = JSON.stringify({

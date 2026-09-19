@@ -1378,6 +1378,8 @@ let searchtypeOptimizedParameterized = (sqlConstructParams, a) => {
     let sqlstatementsprimary = sqlConstruct[a.type][a.sqlScriptRow](sqlConstructParams);
     sqlConstructParams.arg.parameterValues = sqlConstructParams.arg.parameterValues.filter(Boolean);
     console.log(sqlstatementsprimary);
+    console.log(sqlConstructParams.arg.parameterValues);
+    
     var internset = {};
     async ({
         rows: (callback) => {
@@ -1727,8 +1729,8 @@ let SearchTypeGroupByParameterized = async (req, a) => {
     
     
     let sqlstatementsprimary = sqlConstruct[a.type][a.searchtypegroupby](sqlConstructParams)
-    
-    
+    console.log(sqlstatementsprimary);
+    console.log(tempDep.parameterValues);
     let result = await connections.queryParameterized(sqlstatementsprimary, tempDep.parameterValues)
     return {
       rows: result.rows

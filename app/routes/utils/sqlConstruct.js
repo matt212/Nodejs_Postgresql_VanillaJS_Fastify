@@ -14,7 +14,7 @@ let base = {
       ' from "' +
       tunnel.mod.Name +
       '" as a where ' +
-    this.recordStateCondition(tunnel) +
+    this.recordStateCondition(tunnel.arg) +
     '  ' +
       tunnel.arg.daterange +
       '  ' +
@@ -35,7 +35,7 @@ let base = {
       ' select COUNT(*) as count   from "' +
       tunnel.mod.Name +
       '" as a where ' +
-    this.recordStateCondition(tunnel) +
+    this.recordStateCondition(tunnel.arg) +
     '  ' +
       tunnel.arg.daterange +
       '  ' +
@@ -63,12 +63,15 @@ let base = {
     return 'EXPLAIN (ANALYSE,FORMAT JSON) ' + this.basesearchtype(tunnel)
   },
   searchtypegroupby: function(tunnel) {
+    
     return (
       'select  a.' +
       tunnel.tempDep.searchkey +
       ' from "' +
       tunnel.mod.Name +
       '" as a where  ' +
+    this.recordStateCondition(tunnel.tempDep) +
+    'and   ' +
       tunnel.tempDep.selector +
       ' ' +
       tunnel.tempDep.colmetafilter +
@@ -215,8 +218,8 @@ let base = {
     )
   }
   ,recordStateCondition: function (tunnel) {
-
-  const status = tunnel.arg.recordstate || 'ACTIVE'
+   
+  const status = tunnel.recordstate || 'ACTIVE'
 
   if (status === 'ACTIVE') {
     return ' a.recordstate=true '
