@@ -181,7 +181,7 @@ test(
     '07 - Employees - Total employee count is displayed',
     async ({ page }) => {
 
-        await loadEmployeesReport(page);
+        await loadEmployeesReport(page,base);
 
         const value =
             await page.locator(

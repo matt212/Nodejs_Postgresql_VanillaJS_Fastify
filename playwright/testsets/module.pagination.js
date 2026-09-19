@@ -35,7 +35,7 @@ test(
 
         test.setTimeout(120000);
 
-        await loadEmployeesReport(page);
+        await loadEmployeesReport(page,base);
 
         const pageSizeInput = page.locator(base.locators.pageSize);
         const rows = page.locator(base.locators.tableRows);

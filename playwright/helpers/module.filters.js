@@ -1,13 +1,11 @@
 const { test, expect } = require('@playwright/test');
-const {
-    base
-} = require('../config/module.config');
+
 
 // ============================================================
 // OPEN CONTROL BAR
 // ============================================================
 
-async function openControlBar(page) {
+async function openControlBar(page,base) {
 
     await page.locator(
         base.locators.controlBarCollapse
@@ -25,7 +23,7 @@ async function openControlBar(page) {
 // APPLY DATE RANGE
 // ============================================================
 
-async function applyDateRange(page) {
+async function applyDateRange(page,base) {
 
     await page.locator(
         base.locators.dateRange
@@ -163,22 +161,22 @@ async function applyDateRange(page) {
 // LOAD base REPORT
 // ============================================================
 
-async function loadEmployeesReport(page) {
+async function loadEmployeesReport(page,base) {
 
     await page.goto('/employees');
 
     await page.waitForTimeout(3000);
 
-    await openControlBar(page);
+    await openControlBar(page,base);
 
-    await applyDateRange(page);
+    await applyDateRange(page,base);
 }
 
 // ============================================================
 // OPEN FILTER BAR
 // ============================================================
 
-async function openFilterBar(page) {
+async function openFilterBar(page,base) {
 
             await page.locator(
                 base.locators.filterBarParentToggle
@@ -196,7 +194,7 @@ async function openFilterBar(page) {
 // Kept dynamically from your original test.
 // ============================================================
 
-async function getFirstRowData(page) {
+async function getFirstRowData(page,base) {
 
             const headers = page.locator(
                 base.locators.tableHeaders
@@ -250,7 +248,7 @@ async function getFirstRowData(page) {
 
 async function selectOneDynamicEmployeeFilter(page,base) {
 
-    await openFilterBar(page);
+    await openFilterBar(page,base);
 
     await page.locator(
         base.locators.dynamicFilterToggle

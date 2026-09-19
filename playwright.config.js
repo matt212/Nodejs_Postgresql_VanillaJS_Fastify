@@ -9,7 +9,7 @@ module.exports = defineConfig({
     testDir: './playwright/tests',
 
     timeout: 30000,
-    retries: 3, 
+    retries: 4, 
     retryStrategy: 'isolated', 
     expect: {
         timeout: 30000

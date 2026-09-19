@@ -90,7 +90,7 @@ test(
 
 test('24 - Newest and Oldest record navigation works correctly', async ({ page }) => {
 
-    await loadEmployeesReport(page);
+    await loadEmployeesReport(page,base);
 
     const pagingParent = page.locator(
         base.locators.pagingParent
