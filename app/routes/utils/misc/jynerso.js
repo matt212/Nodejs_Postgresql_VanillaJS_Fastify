@@ -115,10 +115,12 @@ async function routes(fastify, options) {
     data = await packageJsonUpdate(data);
     data = await superadminUpdate(data);
     data = await SqlConstructMulti(data);
+    data = await applyPlaywrightJs(data)
 
     return reply.send({
       a: "yarn applychangesDB",
       b: `yarn ${mainapp[0].datapayloadModulename}Eval`,
+      c:  `yarn ${mainapp[0].datapayloadModulename}PlaywrightEval`,
     });
   } catch (error) {
     request.log.error(error);
@@ -138,8 +140,13 @@ function packageJsonUpdate(mainapp) {
       modname + "Eval"
     ] = `mocha ./app/utils/test/${modname}-test.spec.js --timeout 10000 --exit`;
 
-    Object.assign(interappsgenerator.scripts, o);
+    var o1 = {};
+    o1[
+      modname + "PlaywrightEval"
+    ] = `npx playwright test playwright/tests/playwright${modname}.spec.js `;
 
+    Object.assign(interappsgenerator.scripts, o);
+    Object.assign(interappsgenerator.scripts, o1);
     fs.writeFile(
       "../../package.json",
       beautify(JSON.stringify(interappsgenerator), { indent_size: 2 }),
@@ -2003,7 +2010,48 @@ function applyserverValidationConfig(mainapp) {
     }
   });
 }
+function applyPlaywrightJs(mainapp) {
+  return new Promise((resolve, reject) => {
+    var appsgenerator1 = fs.readFileSync(
+      "../ref/playwright/tests/m3-ref.spec.js",
+      "utf8"
+    );
+    appsgenerator1 = appsgenerator1.replace(
+      /employees/g,
+      mainapp[0].datapayloadModulename
+    );
 
+    console.log(appsgenerator1);
+    fs.writeFile(
+      "../../playwright/tests/playwright" + mainapp[0].datapayloadModulename + ".spec.js",
+      beautify(appsgenerator1, { indent_size: 2 }),
+      function (err, data) {
+        console.log(data)
+        console.log(err)
+        var appsgenerator2 = fs.readFileSync(
+      "../ref/playwright/config/m3.config.js",
+      "utf8"
+    );
+    appsgenerator2 = appsgenerator2.replace(
+      /employees/g,
+      mainapp[0].datapayloadModulename
+    );
+    fs.writeFile(
+      "../../playwright/config/module/" + mainapp[0].datapayloadModulename + ".config.js",
+      beautify(appsgenerator2, { indent_size: 2 }),
+      function (err, data) {
+        resolve(mainapp);
+      }
+    );
+      }
+    );
+///config 
+
+
+
+
+  });
+}
 function swaggerdocs(mainapp) {
   return new Promise((resolve, reject) => {
     try {
