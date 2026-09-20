@@ -28,6 +28,51 @@ const {
   selectOneDynamicEmployeeFilter
 } = require('../helpers/module.filters');
 // ============================================================
+// SUITE BASELINE SEED
+// ============================================================
+
+const {
+  seedModuleData
+} = require(
+  '../helpers/module.seed'
+);
+
+
+// ============================================================
+// CREATE BASELINE DATA ONCE
+//
+// 10 ACTIVE records are created before Tests 01-29.
+//
+// Uses browser.newPage() because beforeAll() cannot use the
+// normal test-scoped { page } fixture.
+//
+// The seed page is closed after seeding.
+// ============================================================
+
+// test.beforeAll(
+//   async ({ browser }) => {
+
+//     const page =
+//       await browser.newPage();
+
+//     try {
+
+//       await seedModuleData({
+//         page,
+//         mod,
+//         base,
+//         validationConfig,
+//         openControlBar,
+//         recordCount: 4
+//       });
+
+//     } finally {
+
+//       await page.close();
+//     }
+//   }
+// );
+// ============================================================
 // TEST 01-07/
 /*
 Test 01: Verifies the user can access the Employees module after login.

@@ -115,23 +115,16 @@ test(
 
         await editCell.click();
 
-        const recordStateInput =
-            page.locator(base.locators.recordStateInput);
 
-        const recordStateControl =
-            page.locator(
-                base.locators.recordStateControl
-            );
-
-        await expect(recordStateInput).toBeAttached({
-            timeout: 30000
-        });
-
-        await expect(recordStateInput).toBeChecked();
-
-        await recordStateControl.click();
-
-        await expect(recordStateInput).not.toBeChecked();
+        const recordStateInput = page.locator(base.locators.recordStateInput);
+    await expect(recordStateInput).toBeAttached({
+      timeout: 30000
+    });
+    await expect(recordStateInput).toBeChecked();
+    // ------------------------------------------------------------
+    // SOFT DELETE
+    // ------------------------------------------------------------
+    await setCheckboxState(page, base.locators.recordStateInput, false);
 
         const deleteUpdateResponsePromise =
             page.waitForResponse(
@@ -351,16 +344,21 @@ test(
 
         await deletedEditCell.click();
 
-        await expect(recordStateInput).toBeAttached({
-            timeout: 30000
-        });
+     
 
-        await expect(recordStateInput).not.toBeChecked();
+await expect(recordStateInput).not.toBeChecked();
 
-        // Check record state back to ACTIVE.
-        await recordStateControl.click();
+// ------------------------------------------------------------
+// RESTORE RECORD TO ACTIVE
+// ------------------------------------------------------------
 
-        await expect(recordStateInput).toBeChecked();
+await setCheckboxState(
+    page,
+    base.locators.recordStateInput,
+    true
+);
+
+await expect(recordStateInput).toBeChecked();
 
         const restoreUpdateResponsePromise =
             page.waitForResponse(
@@ -621,7 +619,20 @@ test(
         );
     }
 );
-
+async function setCheckboxState(page, inputSelector, checked) {
+    const input = page.locator(inputSelector);
+    await expect(input).toBeAttached({
+      timeout: 30000
+    });
+    const currentState = await input.isChecked();
+    if (currentState !== checked) {
+      const control = input.locator('xpath=following-sibling::span[contains(@class,"checkbox-material")]').first();
+      await control.click();
+    }
+    await expect(input).toBeChecked({
+      checked
+    });
+  }
 }
 module.exports = {
     registerModuleLifeCycleTests

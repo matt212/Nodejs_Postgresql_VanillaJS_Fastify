@@ -163,7 +163,8 @@ async function applyDateRange(page,base) {
 
 async function loadEmployeesReport(page,base) {
 
-    await page.goto('/employees');
+    
+    await page.goto('/'+base.mod.Name);
 
     await page.waitForTimeout(3000);
 

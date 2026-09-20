@@ -1319,7 +1319,7 @@ var multiControlsScripts = `
         htmlcontent += \`</div>\`
     })
 //clientbasedJS 
-    var chkcontent=htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);$("#overlaycontent").append(htmlcontent + chkcontent);
+    var chkcontent=htmlPopulateCustomControl.genericCheckboxHtml(currentmoduleid);$("#overlaycontent").append(htmlcontent + chkcontent);setRecordStateDefault();
 },
 //onchkcapture
 baseCheckbox:htmlPopulateCustomControl.genericCheckboxHtmlPrimary()

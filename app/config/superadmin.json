@@ -3,15 +3,16 @@
   "password": "admin123",
   "isactive": "1",
   "muserID": "1",
-  "Modulename": "black-squadron,modname,mrole,role,userrole,muser,employees,gender,mroleset",
+  "Modulename": "black-squadron,modname,mrole,role,userrole,muser,employees,gender,mroleset,baseline",
   "Accestype": "AA",
-  "Rolename": "testrolename"
+  "Rolename": "testrolename",
+  "slidenav": ["black-squadron", "modname", "mrole", "role", "userrole", "muser", "employees", "gender", "mroleset"]
 }, {
   "Username": "krennic",
   "isactive": "1",
   "password": "admin123",
   "muserID": "1",
-  "Modulename": "black-squadron,modname,mrole,role,userrole,muser,employees,gender,mroleset",
+  "Modulename": "black-squadron,modname,mrole,role,userrole,muser,employees,gender,mroleset,baseline",
   "Accestype": "VO",
   "Rolename": "testrolename"
 }, {

@@ -34,10 +34,10 @@ test(
     '01 - Login - User can access Employees',
     async ({ page }) => {
 
-        await page.goto('/employees');
+        await page.goto('/'+mod.Name+'/');
 
         await expect(page)
-            .toHaveURL(/employees/);
+            .toHaveURL('/'+mod.Name+'/');
     }
 );
 
@@ -51,7 +51,7 @@ test(
     '02 - Control Bar - User can open Control Bar',
     async ({ page }) => {
 
-        await page.goto('/employees');
+        await page.goto('/'+mod.Name);
 
         // Same timing used by your original zero-error test.
         await page.waitForTimeout(3000);
@@ -74,7 +74,7 @@ test(
     '03 - Date Range - User can change Employees report date',
     async ({ page }) => {
 
-        await page.goto('/employees');
+        await page.goto('/'+mod.Name);
 
         await page.waitForTimeout(3000);
 

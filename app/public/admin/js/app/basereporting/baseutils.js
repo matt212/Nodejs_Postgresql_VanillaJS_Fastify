@@ -4,7 +4,7 @@ $(function () {
   baseloadsegments.populateaxiskeys()
   htmlpopulate.htmlpopulatetableheader()
   htmlpopulate.htmlpopulatemodal()
-
+  setRecordStateDefault();
   //for test/
 
   // baseloadsegments.initialdatatableload();
@@ -549,7 +549,24 @@ let tableops = {
   }
 }
 
+function setRecordStateDefault() {
 
+    const recordState =
+        document.getElementById('cltrlrecordstate');
+
+    if (!recordState) {
+        return;
+    }
+
+    recordState.checked = true;
+
+    // If your application has custom checkbox handling
+    if (typeof tableops !== 'undefined' &&
+        typeof tableops.onchk === 'function') {
+
+        tableops.onchk(recordState);
+    }
+}
 /*get access token*/
 // baseloadsegments.getapptoken(ajaxbase).then(arg => {
 //   console.log(arg);
