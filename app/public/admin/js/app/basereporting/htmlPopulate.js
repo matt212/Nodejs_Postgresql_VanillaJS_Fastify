@@ -146,7 +146,7 @@ console.log(onsearchfield)
     $('#dvfilterbar div.fieldsfilterbar').append(
       '<div style="display: inline-block;">' +
       '<div class="zoom-menu">' +
-      '<a class="zoom-fab zoom-btn-sm zoom-btn-report scale-transition" onclick="javascript:reqops.srchparams();"><i class="fa fa-bolt"></i></a>' +
+      '<a class="zoom-fab zoom-btn-sm zoom-btn-report scale-transition" id="btnFilterbarSearch" onclick="javascript:reqops.srchparams();"><i class="fa fa-bolt"></i></a>' +
       '</div>' +
       '</div>'
     )

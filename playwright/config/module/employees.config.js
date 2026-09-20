@@ -23,7 +23,7 @@ const base = {
         dynamicFilterInputs: ".fieldsfilterbar input[data-multipleselect-autocomplete]",
         consolidatedSearch: "#txtconsolidatesearch",
         consolidatedSearchAction: "//*[@id=\"dvfilterbar\"]/div[2]/div[1]/div/div[2]",
-        dynamicFilterApply: "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div",
+        dynamicFilterApply: "#btnFilterbarSearch",
         pagingParent: "#dvpaginationsections .pagingsectionparent",
         pagingMenu: "#overlaypaging",
         newest: "#newestdiv",

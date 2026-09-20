@@ -309,7 +309,7 @@ test(
                     ),
 
                     page.locator(
-                        "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                        base.locators.dynamicFilterApply
                     ).click()
 
                 ]);
@@ -1103,7 +1103,7 @@ console.log(`[AUTOCOMPLETE] fieldKey="${fieldKey}" actualValue="${actualValue}" 
                     ),
 
                     page.locator(
-                        "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                        base.locators.dynamicFilterApply
                     ).click()
 
                 ]);

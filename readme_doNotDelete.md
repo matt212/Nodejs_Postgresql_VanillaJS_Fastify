@@ -349,6 +349,8 @@ npx playwright test module -g "25 - Newest and Oldest record navigation works co
 npx playwright test module -g "30 - Delete -> Active absence -> Restore -> Deleted absence lifecycle"
 
 
+yarn playwright show-report playwright-report/report_2026-09-20_18-16-09 --port 9324
+
 LOGIN_USERNAME=krennic \
 LOGIN_PASSWORD=orson \
 k6 run performance/employees.k6.js

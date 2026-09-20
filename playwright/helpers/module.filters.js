@@ -565,7 +565,7 @@ async function applyDynamicEmployeeFilter(page,base
         ),
 
         page.locator(
-            "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+           base.locators.dynamicFilterApply
         ).click()
     ]);
 

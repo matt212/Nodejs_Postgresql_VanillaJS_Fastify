@@ -464,7 +464,7 @@ test(
                 ),
 
                 page.locator(
-                    "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                    base.locators.dynamicFilterApply
                 ).click()
 
             ]);
@@ -781,7 +781,7 @@ test(
                             ),
 
                             page.locator(
-                                "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                                base.locators.dynamicFilterApply
                             ).click()
                         ]);
             const countData = await countResponse.json();
@@ -1135,7 +1135,7 @@ test(
                                 response.status() === 200
                             ),
                             page.locator(
-                                "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+                               base.locators.dynamicFilterApply
                             ).click()
                         ]);
 
@@ -1483,7 +1483,7 @@ test(
             );
 
         await page.locator(
-            "//*[@id=\"dvfilterbar\"]/div[1]/div[4]/div"
+            base.locators.dynamicFilterApply
         ).click();
 
         // ------------------------------------------------------------
