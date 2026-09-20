@@ -35,7 +35,7 @@ const base = {
         recordStateInput: "#cltrlrecordstate",
         recordStateControl: "xpath=/html/body/div[3]/div/div/div[2]/div[1]/form/div/div[5]/div/div/label/div",
         modalSubmit: "#btnmodalsub",
-        createEmployee: "xpath=/html/body/div[2]/div[2]/section/div[1]/div[2]/div[1]/div[2]/div[1]/div/a"
+        createEmployee: "#modalOpenControl"
     },
     api: {
         search: "/"+mod.Name+"/api/searchtype/",
