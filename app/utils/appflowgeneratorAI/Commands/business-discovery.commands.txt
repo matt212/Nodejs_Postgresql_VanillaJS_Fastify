@@ -1,0 +1,12 @@
+BUSINESS_IDEA="online groceries store"
+
+PROMPT="$(cat ~/business-discovery-prompt.txt)"
+
+PROMPT="${PROMPT//\{\{BUSINESS_IDEA\}\}/$BUSINESS_IDEA}"
+PROMPT="${PROMPT//\{\{SEARCH_RESULTS\}\}/$SEARCH_RESULTS}"
+
+llama-cli \
+  -hf Qwen/Qwen3-8B-GGUF:Q4_K_M \
+  -p "$PROMPT" \
+  -n 1000 \
+  -o ~/business-discovery-result-8b.txt
