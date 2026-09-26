@@ -1,0 +1,353 @@
+User:
+### 100% BUSINESS OBJECT COVERAGE — MANDATORY
+
+Business Object discovery and Business Activity discovery are tightly connected.
+
+First identify ALL important real-world Business Objects involved in the business based on:
+- BUSINESS IDEA
+- BUSINESS DOMAIN
+- PRIMARY REFERENCE BUSINESS
+- INTERNET SEARCH RESULTS
+
+Do not stop after identifying only the obvious objects.
+
+For every Business Object identified, determine its complete lifecycle across the business.
+
+For EACH Business Object, internally answer:
+
+1. Where does this object originate, enter, or get created?
+2. Which business activity first handles it?
+3. How is it processed, managed, changed, selected, approved, fulfilled, delivered, used, cancelled, returned, resolved, completed, or otherwise handled?
+4. Which subsequent activities handle it?
+5. What happens to it at the end of its relevant lifecycle?
+6. What business activities depend on this object?
+7. Are there important exceptions or alternative paths affecting this object?
+8. Is there any major business activity missing because this object was overlooked?
+
+Every important Business Object MUST be represented by one or more Business Activities.
+
+Every Business Activity MUST explicitly identify the Business Objects it handles.
+
+### OBJECT COVERAGE RULE
+
+Before producing the final JSON, internally construct an object-to-activity coverage map:
+
+Business Object
+→ Activity where introduced/created/received
+→ Activity where processed/managed
+→ Activity where fulfilled/moved/completed
+→ Activity where cancelled/returned/resolved, if applicable
+→ Final lifecycle activity, if applicable
+
+Then validate:
+
+- EVERY important Business Object appears in at least one activity.
+- EVERY important Business Object is actually handled in the steps of those activities.
+- EVERY important Business Object has its relevant lifecycle represented.
+- EVERY activity references at least one Business Object.
+- NO Business Object exists only as a name without being handled by an activity.
+- NO important activity is omitted because an object was overlooked.
+- NO activity exists only to artificially satisfy object coverage.
+- Do not create duplicate or overlapping Business Objects.
+- Do not create generic industry objects without evidence.
+- Do not create technical/software/database objects.
+- Do not invent lifecycle stages that are unsupported by the evidence.
+
+### 100% COVERAGE GATE
+
+The model MUST NOT finalize the response until the following is true:
+
+100% of identified Business Objects
+→ are mapped to one or more Business Activities
+→ are explicitly handled within Activity Steps
+→ have their relevant lifecycle represented
+→ and are connected to the overall end-to-end business process.
+
+If an important Business Object is discovered while deriving Activities, ADD it to businessObjects and update the Activities accordingly.
+
+If an Activity reveals an important Business Object that was not previously identified, ADD that Business Object first, then ensure the Activity references it.
+
+Business Object discovery and Activity discovery must therefore be performed together as a closed-loop process.
+
+Do NOT output the coverage map or validation process.
+Only output the final JSON.
+
+Assistant:
+[Start thinking]
+
+Okay, the user is asking me to generate a JSON output based on their detailed instructions. Let me start by understanding what they need. They want a 100% business object coverage with mandatory steps. The key points are identifying all important business objects, mapping their lifecycle through business activities, and ensuring that every object is connected to activities without any gaps or overlaps.
+
+First, I need to figure out the business idea, domain, primary reference business, and internet search results. But since the user hasn't provided specific details about the business, maybe they expect a generic example. Wait, the user might be testing the system with a hypothetical scenario. Let me assume a common business domain, like an e-commerce company. That's a good example because it's well-known and has a clear set of business objects.
+
+So, for an e-commerce business, the main business objects would be things like Customer, Product, Order, Payment, Shipping, Inventory, Review, etc. I need to list all these objects and then map each one through their lifecycle. For example, a Customer is created during registration, processed in order creation, and then may be involved in reviews or support activities. Each step needs to be detailed.
+
+Next, I need to ensure that every business object is tied to at least one activity. Let me think about each object:
+
+1. **Customer**: Created when they register, processed during checkout, maybe handled in support, and resolved if there's a complaint.
+2. **Product**: Originates from suppliers, processed in inventory, sold through orders, and retired when out of stock.
+3. **Order**: Created during checkout, processed for payment and shipping, fulfilled by delivery, and cancelled if needed.
+4. **Payment**: Initiated during checkout, processed for verification, completed when successful, failed if declined.
+5. **Shipping**: Generated when order is fulfilled, processed for tracking, delivered to customer, and returned if necessary.
+6. **Inventory**: Managed through procurement, stocked, sold via orders, and replenished when low.
+7. **Review**: Created after purchase, processed for moderation, published, and deleted if inappropriate.
+
+Now, I need to map each of these to the activities. For example, the "Create Customer" activity would handle the Customer object. The "Place Order" activity would handle the Order object. Each activity step should reference the business object.
+
+I also need to check for exceptions or alternative paths. For instance, a customer might have a complaint, which is handled in a support activity. Or an order might be cancelled, leading to a refund process. These exceptions need to be noted in the lifecycle steps.
+
+The user emphasized not creating duplicate or generic objects. So, I should avoid things like "Transaction" unless it's specifically tied to a business process. Also, no technical objects like database entries should be included.
+
+Once all objects and activities are mapped, I need to validate that each object is covered, activities are connected, and there are no missing steps. The final JSON should include businessObjects and businessActivities with their steps, ensuring all the coverage rules are met.
+
+Wait, the user mentioned the 100% coverage gate. So the model can't finalize until all objects are properly mapped. If during the process a new object is discovered, like a "Discount" in the payment activity, I need to add that to the businessObjects list and update the activities accordingly.
+
+I should also ensure that no activity exists just to satisfy coverage. Each activity must have a clear purpose and handle the business object. For example, a "Cancel Order" activity should clearly reference the Order object and outline the steps involved in cancellation.
+
+Finally, the JSON output needs to be structured properly, with each businessObject having a unique ID and lifecycle steps, and each businessActivity referencing the relevant objects. I'll have to double-check that every object is included and that their lifecycles are accurately represented.
+[End thinking]
+
+{
+  "businessObjects": [
+    {
+      "id": "CO1",
+      "name": "Customer",
+      "description": "Individual or entity that purchases products/services",
+      "lifecycle": [
+        "Customer registration (website/app)",
+        "Account management (profile updates)",
+        "Order placement",
+        "Payment processing",
+        "Support interaction",
+        "Account deactivation",
+        "Review submission"
+      ]
+    },
+    {
+      "id": "PR1",
+      "name": "Product",
+      "description": "Physical or digital item offered for sale",
+      "lifecycle": [
+        "Supplier procurement",
+        "Inventory stocking",
+        "Catalog listing",
+        "Order fulfillment",
+        "Inventory reduction",
+        "Product retirement",
+        "Review moderation"
+      ]
+    },
+    {
+      "id": "OR1",
+      "name": "Order",
+      "description": "Request to purchase specific quantity of product",
+      "lifecycle": [
+        "Checkout creation",
+        "Payment verification",
+        "Shipping coordination",
+        "Delivery confirmation",
+        "Cancellation/return processing",
+        "Order status updates",
+        "Inventory adjustment"
+      ]
+    },
+    {
+      "id": "PY1",
+      "name": "Payment",
+      "description": "Transaction of funds for goods/services",
+      "lifecycle": [
+        "Checkout initiation",
+        "Payment method verification",
+        "Transaction processing",
+        "Success confirmation",
+        "Failure handling",
+        "Refund processing",
+        "Fraud detection"
+      ]
+    },
+    {
+      "id": "SH1",
+      "name": "Shipping",
+      "description": "Logistics of product delivery",
+      "lifecycle": [
+        "Order fulfillment",
+        "Carrier selection",
+        "Tracking updates",
+        "Delivery confirmation",
+        "Return processing",
+        "Damage inspection",
+        "Delivery dispute resolution"
+      ]
+    },
+    {
+      "id": "IN1",
+      "name": "Inventory",
+      "description": "Stock of products available for sale",
+      "lifecycle": [
+        "Supplier procurement",
+        "Warehouse receipt",
+        "Stock allocation",
+        "Order fulfillment",
+        "Inventory replenishment",
+        "Stock audit",
+        "Inventory disposal"
+      ]
+    },
+    {
+      "id": "RV1",
+      "name": "Review",
+      "description": "Customer feedback on product/service",
+      "lifecycle": [
+        "Post-purchase creation",
+        "Moderation approval",
+        "Public publication",
+        "Rating analysis",
+        "Spam detection",
+        "Deletion request",
+        "Feedback integration"
+      ]
+    }
+  ],
+  "businessActivities": [
+    {
+      "id": "ACT1",
+      "name": "Customer Registration",
+      "description": "Create customer account with personal and payment information",
+      "steps": [
+        "Collect customer data",
+        "Validate email/phone",
+        "Process payment method",
+        "Generate account profile",
+        "Send confirmation email",
+        "Record customer history"
+      ],
+      "objects": ["CO1"]
+    },
+    {
+      "id": "ACT2",
+      "name": "Product Catalog Management",
+      "description": "Maintain and update product information",
+      "steps": [
+        "Receive supplier data",
+        "Verify product details",
+        "Update pricing information",
+        "Approve product listings",
+        "Publish to storefront",
+        "Archive obsolete products"
+      ],
+      "objects": ["PR1"]
+    },
+    {
+      "id": "ACT3",
+      "name": "Order Placement",
+      "description": "Create and validate customer purchase request",
+      "steps": [
+        "Select products",
+        "Enter quantity",
+        "Verify inventory availability",
+        "Generate order summary",
+        "Confirm payment intent",
+        "Save order draft"
+      ],
+      "objects": ["OR1", "CO1", "PR1"]
+    },
+    {
+      "id": "ACT4",
+      "name": "Payment Processing",
+      "description": "Handle financial transaction for order",
+      "steps": [
+        "Validate payment method",
+        "Authorize transaction",
+        "Process payment capture",
+        "Confirm payment success",
+        "Handle payment failure",
+        "Record transaction history"
+      ],
+      "objects": ["PY1", "OR1"]
+    },
+    {
+      "id": "ACT5",
+      "name": "Shipping Coordination",
+      "description": "Arrange product delivery to customer",
+      "steps": [
+        "Select shipping method",
+        "Generate shipping label",
+        "Track package movement",
+        "Notify customer of shipment",
+        "Update delivery status",
+        "Handle delivery disputes"
+      ],
+      "objects": ["SH1", "OR1", "PR1"]
+    },
+    {
+      "id": "ACT6",
+      "name": "Inventory Management",
+      "description": "Maintain optimal stock levels",
+      "steps": [
+        "Receive supplier shipments",
+        "Count and record inventory",
+        "Allocate stock to orders",
+        "Reorder when stock low",
+        "Perform inventory audits",
+        "Dispose of obsolete stock"
+      ],
+      "objects": ["IN1", "PR1", "OR1"]
+    },
+    {
+      "id": "ACT7",
+      "name": "Review Moderation",
+      "description": "Manage customer feedback content",
+      "steps": [
+        "Collect review submissions",
+        "Verify review authenticity",
+        "Approve for publication",
+        "Remove inappropriate content",
+        "Analyze feedback trends",
+        "Update product ratings"
+      ],
+      "objects": ["RV1", "PR1", "CO1"]
+    },
+    {
+      "id": "ACT8",
+      "name": "Order Cancellation",
+      "description": "Process refund for cancelled order",
+      "steps": [
+        "Initiate cancellation request",
+        "Verify cancellation policy",
+        "Process refund",
+        "Update inventory",
+        "Issue refund confirmation",
+        "Notify customer"
+      ],
+      "objects": ["OR1", "PY1", "IN1"]
+    },
+    {
+      "id": "ACT9",
+      "name": "Return Processing",
+      "description": "Handle product returns and exchanges",
+      "steps": [
+        "Receive return request",
+        "Verify return eligibility",
+        "Inspect returned product",
+        "Process refund/exchange",
+        "Update inventory",
+        "Issue return confirmation"
+      ],
+      "objects": ["SH1", "OR1", "IN1"]
+    },
+    {
+      "id": "ACT10",
+      "name": "Customer Support",
+      "description": "Resolve customer inquiries and issues",
+      "steps": [
+        "Receive support request",
+        "Categorize issue type",
+        "Escalate to appropriate team",
+        "Provide resolution",
+        "Record support history",
+        "Follow up with customer"
+      ],
+      "objects": ["CO1", "OR1", "PR1"]
+    }
+  ]
+}
+
