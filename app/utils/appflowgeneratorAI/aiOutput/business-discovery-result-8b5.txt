@@ -1,12 +1,13 @@
+User:
 ### 100% BUSINESS OBJECT COVERAGE + INTERNET VALIDATION — MANDATORY
 
 ### INPUT
 
 BUSINESS IDEA:
-{{BUSINESS_IDEA}}
+online groceries store
 
 INTERNET SEARCH RESULTS:
-{{SEARCH_RESULTS}}
+
 
 Business Object discovery and Business Activity discovery are tightly connected.
 
@@ -137,45 +138,6 @@ Only create a separate Business Object when Internet evidence supports that it h
 The objective is a BUSINESS MODEL, not a database schema.
 
 ---
-### BUSINESS OBJECT MATERIALITY TEST
-
-A candidate Business Object MUST represent a meaningful real-world
-business entity, transaction, resource, thing, or record that the
-business materially operates on.
-
-Before retaining a candidate Business Object, internally verify:
-
-1. It represents a meaningful real-world business entity, transaction,
-   resource, thing, or record.
-2. The business materially creates, receives, manages, processes,
-   sells, purchases, fulfills, delivers, tracks, owns, exchanges,
-   returns, resolves, or otherwise operates on it.
-3. It has meaningful business handling or lifecycle.
-4. The supplied Internet evidence supports its existence in the
-   discovered business model.
-
-Do NOT create a Business Object merely because the concept appears as:
-
-* information contained in a step
-* a validation target
-* a status
-* a decision
-* a business rule
-* a payment method
-* a delivery address
-* a UI concept
-* a system record
-* a temporary workflow state
-* an implementation concept
-
-If a candidate fails the materiality test, DO NOT include it.
-
-Do NOT create a Business Object merely to satisfy coverage.
-
-Evidence takes priority over completeness.
-
----
-
 
 ### BUSINESS CAPABILITY VS BUSINESS OBJECT RULE
 
@@ -264,61 +226,6 @@ Examples may include, ONLY WHEN SUPPORTED BY INTERNET EVIDENCE:
 These are examples only.
 
 Do NOT automatically include them merely because they are common industry practices.
-
----
-### DO NOT SPLIT ACTIVITIES ARTIFICIALLY
-
-Do NOT create a separate Business Activity merely because a set of
-business checks, validations, decisions, or system operations can be
-given a process-like name.
-
-A Business Activity MUST represent a materially distinct real-world
-business operation with its own business purpose and meaningful
-operational handling.
-
-Do NOT create standalone Business Activities merely for:
-
-* validation
-* verification
-* eligibility checking
-* authorization
-* calculation
-* status updates
-* confirmation
-* notification
-* tracking
-
-unless the supplied Internet evidence clearly demonstrates that the
-operation is independently managed as a distinct business process.
-
-When such operations are part of another business activity, represent
-them as:
-
-* Activity Steps
-* Business Rules
-* Business Decisions
-* Controls
-* Alternative Paths
-
-as appropriate.
-
-For example:
-
-"Order Validation" MUST NOT automatically become a separate Business
-Activity merely because the business checks inventory, customer
-information, payment, or order details.
-
-Those checks may belong within Order Capture, Payment Processing,
-Fulfillment, or another evidence-supported Business Activity.
-
-Do NOT split one real-world business operation into multiple artificial
-Activities merely to increase Business Object or lifecycle coverage.
-
-Do NOT merge genuinely distinct business operations merely to reduce
-the number of Activities.
-
-The correct granularity MUST be determined by the supplied Internet
-evidence and the actual operating model of the business.
 
 ---
 
@@ -569,53 +476,6 @@ If verification reveals an important missing Business Object or Business Activit
 The final JSON MUST represent the Internet-validated business model, not the model's assumptions or general industry knowledge.
 
 ---
-### FINAL INTERNAL CONSISTENCY CHECK
-
-Before finalizing the JSON, perform this mandatory internal consistency
-check.
-
-For EVERY businessObject:
-
-    1. It MUST appear in at least one businessActivity.
-    2. At least one Activity Step MUST explicitly handle that
-       Business Object.
-    3. Its relevant lifecycle MUST be represented by the Activities.
-    4. The object and its handling MUST be supported by Internet
-       evidence.
-
-For EVERY businessActivity:
-
-    1. It MUST reference at least one businessObject.
-    2. Its Activity Steps MUST explicitly handle the referenced
-       Business Objects.
-    3. It MUST represent a genuine real-world business operation.
-    4. It MUST NOT exist solely to satisfy object coverage.
-    5. Its steps and alternative paths MUST be Internet-validated.
-
-If a businessObject fails these conditions:
-
-    REMOVE IT if Internet evidence does not sufficiently support it.
-
-    OR, ONLY when Internet evidence supports the missing handling,
-    ADD the required Business Activity and its validated steps.
-
-If a businessActivity references an object that its steps do not
-actually handle:
-
-    REMOVE the unused object from that activity.
-
-Do NOT invent an Activity merely to satisfy object coverage.
-
-Do NOT invent Activity Steps merely to satisfy object coverage.
-
-Do NOT retain an orphan Business Object.
-
-Do NOT retain an Activity containing unrelated or unused Business
-Objects.
-
-Coverage MUST be achieved through factual Internet evidence, not
-artificial completeness.
----
 
 ### 100% COVERAGE GATE
 
@@ -703,3 +563,138 @@ No [End thinking].
 }
 
 /no_think
+
+Assistant:
+{
+"businessIdea": "online groceries store",
+"primaryReferenceBusiness": "Amazon Fresh",
+"businessDomain": "E-commerce, Food Delivery, Retail",
+"businessObjects": [
+  {
+    "name": "Customer",
+    "description": "An individual or entity that purchases goods or services from the online groceries store."
+  },
+  {
+    "name": "Order",
+    "description": "A request by a customer to purchase specific products from the online groceries store."
+  },
+  {
+    "name": "Product",
+    "description": "A food item or grocery product available for purchase on the online groceries store."
+  },
+  {
+    "name": "Payment",
+    "description": "A transaction that settles the cost of an order with the online groceries store."
+  },
+  {
+    "name": "Inventory",
+    "description": "The stock of products available for sale on the online groceries store."
+  },
+  {
+    "name": "Delivery",
+    "description": "The process of transporting ordered products to the customer's location."
+  },
+  {
+    "name": "Return",
+    "description": "A request by a customer to return a product to the online groceries store."
+  },
+  {
+    "name": "Refund",
+    "description": "A reimbursement of funds to a customer for a returned product."
+  },
+  {
+    "name": "Promotion",
+    "description": "A special offer or discount provided by the online groceries store to encourage purchases."
+  },
+  {
+    "name": "Supplier",
+    "description": "A vendor or provider that supplies products to the online groceries store."
+  },
+  {
+    "name": "Review",
+    "description": "A customer's feedback or rating of a product or service provided by the online groceries store."
+  }
+],
+"businessActivities": [
+  {
+    "name": "Customer Registration",
+    "description": "The process of creating a new customer account with the online groceries store.",
+    "businessObjects": ["Customer"],
+    "steps": ["Provide personal information", "Verify email address", "Set up payment method"],
+    "alternativePaths": ["Existing customer login", "Guest checkout without account creation"]
+  },
+  {
+    "name": "Product Catalog Management",
+    "description": "The process of maintaining and updating the list of products available for purchase.",
+    "businessObjects": ["Product", "Supplier", "Inventory"],
+    "steps": ["Receive product information from suppliers", "Update product details", "Adjust inventory levels"],
+    "alternativePaths": ["Remove discontinued products", "Add new products"]
+  },
+  {
+    "name": "Order Capture",
+    "description": "The process of recording a customer's purchase request.",
+    "businessObjects": ["Order", "Product", "Customer"],
+    "steps": ["Select products", "Add to cart", "Proceed to checkout"],
+    "alternativePaths": ["Guest checkout", "Account-based checkout"]
+  },
+  {
+    "name": "Order Validation",
+    "description": "The process of verifying the legitimacy and completeness of an order.",
+    "businessObjects": ["Order", "Customer", "Payment"],
+    "steps": ["Check payment method", "Verify customer account", "Confirm product availability"],
+    "alternativePaths": ["Payment failure", "Account verification failure"]
+  },
+  {
+    "name": "Payment Processing",
+    "description": "The process of handling and authorizing payment for an order.",
+    "businessObjects": ["Payment", "Order", "Customer"],
+    "steps": ["Process payment", "Confirm payment success", "Update order status"],
+    "alternativePaths": ["Payment failure", "Payment authorization denied"]
+  },
+  {
+    "name": "Order Fulfillment",
+    "description": "The process of preparing and sending an order to the customer.",
+    "businessObjects": ["Order", "Product", "Inventory", "Delivery"],
+    "steps": ["Pick products from inventory", "Pack order", "Initiate delivery"],
+    "alternativePaths": ["Product unavailable", "Inventory shortage"]
+  },
+  {
+    "name": "Delivery Coordination",
+    "description": "The process of scheduling and managing the delivery of an order to the customer.",
+    "businessObjects": ["Delivery", "Order", "Customer"],
+    "steps": ["Assign delivery address", "Schedule delivery time", "Track delivery status"],
+    "alternativePaths": ["Delivery attempt failure", "Customer location change"]
+  },
+  {
+    "name": "Return Processing",
+    "description": "The process of handling a customer's return request.",
+    "businessObjects": ["Return", "Order", "Product", "Customer"],
+    "steps": ["Receive return request", "Inspect returned product", "Determine refund eligibility"],
+    "alternativePaths": ["Return rejected", "Product damage detected"]
+  },
+  {
+    "name": "Refund Processing",
+    "description": "The process of issuing a refund to a customer for a returned product.",
+    "businessObjects": ["Refund", "Payment", "Order", "Customer"],
+    "steps": ["Process refund request", "Update payment status", "Issue refund"],
+    "alternativePaths": ["Refund denied", "Payment method invalid"]
+  },
+  {
+    "name": "Promotion Management",
+    "description": "The process of managing and applying promotional offers to orders.",
+    "businessObjects": ["Promotion", "Order", "Product", "Customer"],
+    "steps": ["Apply promotion code", "Calculate discount", "Update order total"],
+    "alternativePaths": ["Promotion not applicable", "Promotion expiration date passed"]
+  },
+  {
+    "name": "Customer Support",
+    "description": "The process of providing assistance and resolving customer inquiries or issues.",
+    "businessObjects": ["Customer", "Order", "Product", "Payment"],
+    "steps": ["Receive customer inquiry", "Identify issue", "Provide resolution"],
+    "alternativePaths": ["Issue resolved", "Issue escalated"]
+  }
+]
+
+User:
+clear
+

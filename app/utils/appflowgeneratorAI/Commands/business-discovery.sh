@@ -11,4 +11,4 @@ llama-cli \
   -hf Qwen/Qwen3-8B-GGUF:Q4_K_M \
   -p "$PROMPT" \
   -n 10000 \
-  -o app/utils/appflowgeneratorAI/aiOutput/business-discovery-result-8b5.txt
+  -o app/utils/appflowgeneratorAI/aiOutput/business-discovery-result-8b7.txt
