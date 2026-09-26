@@ -551,3 +551,9 @@ EMPLOYEES_CONCURRENCY_P95_MS=10000 \
 EMPLOYEES_CONCURRENCY_USERS=1000 \
 EMPLOYEES_CONCURRENCY_TIMEOUT_MS=600000 \
 npx playwright test playwright/tests/employees.concurrency.spec.js
+
+
+
+
+###########ai based flow generator#######
+app/utils/appflowgeneratorAI/commands/business-discovery.sh

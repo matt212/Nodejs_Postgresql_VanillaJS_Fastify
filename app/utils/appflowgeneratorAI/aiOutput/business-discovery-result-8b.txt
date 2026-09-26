@@ -1,0 +1,220 @@
+User:
+Return ONLY valid JSON.
+
+BUSINESS IDEA:
+online groceries store
+
+INTERNET SEARCH RESULTS:
+
+
+TASK:
+
+Using the BUSINESS IDEA and the supplied INTERNET SEARCH RESULTS, identify the most relevant established real-world business and derive the complete real-world business operating model.
+
+1. Select the TOP 1 established real-world business that is most substantially similar to the BUSINESS IDEA.
+
+2. The selected business MUST be explicitly supported by the supplied Internet search results.
+
+3. Copy the exact business/company/brand name appearing in the Internet search results.
+
+4. NEVER invent, guess, rename, shorten, expand, reinterpret, or modify the business name.
+
+5. Do not select a generic category, product, service, industry, or descriptive phrase as the reference business.
+
+6. Identify the broader BUSINESS DOMAIN represented by the BUSINESS IDEA and reference business.
+
+7. The business domain must represent the broader real-world business category, not a software module, software product, technical architecture, or implementation technology.
+
+8. After identifying the PRIMARY REFERENCE BUSINESS and BUSINESS DOMAIN, generate the COMPLETE major real-world business activities in logical end-to-end order.
+
+9. Generate ALL major activities in one response. Do NOT generate only one activity.
+
+10. Each activity must represent one meaningful real-world business process or business capability.
+
+11. Maintain the logical sequence of how the real-world business operates:
+    what happens first → what happens next → what happens after that.
+
+12. Cover the complete business lifecycle relevant to the business, including customer-facing, operational, fulfillment, financial, support, partner, supplier, inventory, and other relevant processes where genuinely applicable.
+
+13. For every activity, provide ordered real-world business steps.
+
+14. Include realistic alternative paths where they genuinely apply.
+
+15. Do NOT describe software screens.
+
+16. Do NOT describe software modules.
+
+17. Do NOT describe APIs.
+
+18. Do NOT describe databases.
+
+19. Do NOT describe programming languages or technology.
+
+20. Do NOT describe implementation details.
+
+21. Do NOT invent unnecessary processes.
+
+22. Do NOT invent company-specific features unless supported by the supplied Internet evidence.
+
+23. Do NOT add unnecessary processes such as credit checks, identity verification, approvals, or other enterprise processes unless they genuinely apply.
+
+24. Do NOT combine unrelated major business processes into one activity.
+
+25. Do NOT create duplicate or slightly renamed activities.
+
+26. Keep activities at the business-process level because they will later be used to derive:
+    Business Objects → Actors → Rules → Transitions → Stages → Application Flow → Application Modules.
+
+27. Do not prematurely convert activities into application modules.
+
+28. Use the Internet search results as factual grounding. Do not invent facts that are not supported by the supplied evidence.
+
+OUTPUT EXACTLY:
+
+{
+  "businessIdea": "",
+  "primaryReferenceBusiness": "",
+  "businessDomain": "",
+  "activities": [
+    {
+      "sequence": 1,
+      "activity": "",
+      "steps": [],
+      "alternativePaths": []
+    }
+  ]
+}
+
+Do not output anything outside the JSON.
+
+/no_think
+
+Assistant:
+{
+  "businessIdea": "online groceries store",
+  "primaryReferenceBusiness": "Amazon Fresh",
+  "businessDomain": "E-commerce Retail",
+  "activities": [
+    {
+      "sequence": 1,
+      "activity": "Customer Research and Product Development",
+      "steps": [
+        "Conduct market research to identify customer preferences and dietary needs",
+        "Analyze competitors to understand pricing, product variety, and customer satisfaction",
+        "Identify gaps in the market to develop unique product offerings"
+      ],
+      "alternativePaths": [
+        "Focus on niche markets such as organic or gluten-free products"
+      ]
+    },
+    {
+      "sequence": 2,
+      "activity": "Supplier Relationship Management",
+      "steps": [
+        "Identify and evaluate potential suppliers for fresh and packaged groceries",
+        "Negotiate contracts and terms with suppliers",
+        "Establish quality control and delivery timelines with suppliers"
+      ],
+      "alternativePaths": [
+        "Develop direct relationships with local farmers and producers"
+      ]
+    },
+    {
+      "sequence": 3,
+      "activity": "Inventory Management and Procurement",
+      "steps": [
+        "Monitor inventory levels based on demand forecasts",
+        "Place orders with suppliers based on inventory needs",
+        "Ensure timely restocking to avoid stockouts"
+      ],
+      "alternativePaths": [
+        "Implement just-in-time inventory systems to reduce holding costs"
+      ]
+    },
+    {
+      "sequence": 4,
+      "activity": "Website and Platform Development",
+      "steps": [
+        "Design and launch a user-friendly online platform for grocery shopping",
+        "Integrate payment gateways and secure transaction systems",
+        "Ensure mobile responsiveness and accessibility"
+      ],
+      "alternativePaths": [
+        "Use existing e-commerce platforms with grocery-specific plugins"
+      ]
+    },
+    {
+      "sequence": 5,
+      "activity": "Marketing and Customer Acquisition",
+      "steps": [
+        "Develop marketing campaigns targeting local and regional customers",
+        "Utilize social media, email marketing, and search engine optimization",
+        "Offer promotions and loyalty programs to drive repeat purchases"
+      ],
+      "alternativePaths": [
+        "Partner with local influencers and community groups for targeted outreach"
+      ]
+    },
+    {
+      "sequence": 6,
+      "activity": "Order Processing and Fulfillment",
+      "steps": [
+        "Receive and process customer orders through the online platform",
+        "Verify order details and payment confirmation",
+        "Prepare and package customer orders for delivery"
+      ],
+      "alternativePaths": [
+        "Offer in-store pickup as an alternative to home delivery"
+      ]
+    },
+    {
+      "sequence": 7,
+      "activity": "Logistics and Delivery",
+      "steps": [
+        "Coordinate with third-party delivery services or in-house logistics teams",
+        "Schedule delivery times based on customer preferences",
+        "Ensure timely and safe delivery of groceries"
+      ],
+      "alternativePaths": [
+        "Implement same-day or next-day delivery options"
+      ]
+    },
+    {
+      "sequence": 8,
+      "activity": "Customer Support and Feedback",
+      "steps": [
+        "Provide assistance through live chat, email, or phone",
+        "Resolve customer complaints and address concerns",
+        "Collect customer feedback to improve product and service quality"
+      ],
+      "alternativePaths": [
+        "Offer 24/7 support for urgent issues"
+      ]
+    },
+    {
+      "sequence": 9,
+      "activity": "Financial Management and Reporting",
+      "steps": [
+        "Track revenue, expenses, and profit margins",
+        "Manage accounts payable and receivable",
+        "Generate regular financial reports for stakeholders"
+      ],
+      "alternativePaths": [
+        "Utilize accounting software for automated financial tracking"
+      ]
+    },
+    {
+      "sequence": 10,
+      "activity": "Continuous Improvement and Innovation",
+      "steps": [
+        "Analyze performance metrics and customer data for insights",
+        "Invest in new technologies or services to enhance offerings",
+        "Stay updated with market trends and regulatory changes"
+      ],
+      "alternativePaths": [
+        "Expand product lines to include prepared meals or specialty items"
+      ]
+    }
+  ]
+}
+
