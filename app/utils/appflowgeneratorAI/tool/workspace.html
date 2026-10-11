@@ -107,7 +107,12 @@ so do not change anything keep everything as is . only change phase 1 section in
         <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
             📋 Reference Command Patterns:
         </span>
+        
         <ul class="text-[11px] font-mono text-slate-400 space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
+            <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
+                <span class="text-pink-400 font-semibold">Add Phase:</span><br>
+                <code class="text-emerald-400">ADD  SUBGRAPH "Phase 7: text description header"</code>
+            </li>
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
                 <span class="text-blue-400 font-semibold">ADD:</span><br>
                 <span class="text-blue-400 font-semibold">
@@ -136,6 +141,7 @@ Format variants: ADD NODE, ADD ROUND_NODE, ADD STADIUM_NODE, ADD CYLINDER_NODE,
                 <span class="text-pink-400 font-semibold">DISCONNECT:</span><br>
                 <code class="text-emerald-400">DISCONNECT Step 1.2 FROM Step 1.2</code>
             </li>
+            
         </ul>
     </div>
                 </div>
@@ -1290,46 +1296,115 @@ async function executeSerialMermaidCommand(commandText) {
     //                  ADD PARALLELOGRAM_NODE, ADD TRAPEZOID_NODE, ADD DIAMOND.
     // Format input example: ADD DIAMOND route_opt1 "Verify Zip Bounds" TO phase_02
     // ==========================================================================
-    const addCustomShapeMatch = cmd.match(/^ADD\s+(NODE|ROUND_NODE|STADIUM_NODE|SUBROUTINE_NODE|CYLINDER_NODE|CIRCLE_NODE|ASYMMETRIC_NODE|HEXAGON_NODE|PARALLELOGRAM_NODE|TRAPEZOID_NODE|DIAMOND)\s+([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["']\s+TO\s+([a-zA-Z0-9_-]+)/i);
-    if (addCustomShapeMatch) {
-        const [_, shapeType, newId, labelText, phaseId] = addCustomShapeMatch;
-        let openBrack = '["', closeBrack = '"]'; // Default node configuration
-        const shapeUpper = shapeType.toUpperCase();
+    // const addCustomShapeMatch = cmd.match(/^ADD\s+(NODE|ROUND_NODE|STADIUM_NODE|SUBROUTINE_NODE|CYLINDER_NODE|CIRCLE_NODE|ASYMMETRIC_NODE|HEXAGON_NODE|PARALLELOGRAM_NODE|TRAPEZOID_NODE|DIAMOND)\s+([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["']\s+TO\s+([a-zA-Z0-9_-]+)/i);
+    // if (addCustomShapeMatch) {
+    //     const [_, shapeType, newId, labelText, phaseId] = addCustomShapeMatch;
 
-        if (shapeUpper === "ROUND_NODE") { openBrack = '("'; closeBrack = '")'; }
-        else if (shapeUpper === "STADIUM_NODE") { openBrack = '(["'; closeBrack = '"])'; }
-        else if (shapeUpper === "SUBROUTINE_NODE") { openBrack = '[["'; closeBrack = '"]]'; }
-        else if (shapeUpper === "CYLINDER_NODE") { openBrack = '[("'; closeBrack = '")]'; }
-        else if (shapeUpper === "CIRCLE_NODE") { openBrack = '(("'; closeBrack = '"))'; }
-        else if (shapeUpper === "ASYMMETRIC_NODE") { openBrack = '>'; closeBrack = '"]'; }
-        else if (shapeUpper === "HEXAGON_NODE") { openBrack = '{{\"'; closeBrack = '"}}'; }
-        else if (shapeUpper === "PARALLELOGRAM_NODE") { openBrack = '[\\\"'; closeBrack = '"/]'; }
-        else if (shapeUpper === "TRAPEZOID_NODE") { openBrack = '[/\"'; closeBrack = '"\\]'; }
-        else if (shapeUpper === "DIAMOND") { openBrack = '{"'; closeBrack = '"}'; }
-
-        // Double-quote wrappers are explicitly forced inside the string to prevent text truncation loops on re-render
-        const nodeDeclaration = `        ${newId}${openBrack}${labelText}${closeBrack}\n`;
-        const phaseRegex = new RegExp(`(subgraph\\s+${phaseId}\\b(?:\\s*\\[.*?\\])?\\r?\\n?)`, 'i');
         
-        if (phaseRegex.test(currentCode)) {
-            currentCode = currentCode.replace(phaseRegex, `$1${nodeDeclaration}`);
-            hasChanges = true;
-        }
-        continue;
-    }
+    //     let openBrack = '["', closeBrack = '"]'; // Default node configuration
+    //     const shapeUpper = shapeType.toUpperCase();
+
+    //     if (shapeUpper === "ROUND_NODE") { openBrack = '("'; closeBrack = '")'; }
+    //     else if (shapeUpper === "STADIUM_NODE") { openBrack = '(["'; closeBrack = '"])'; }
+    //     else if (shapeUpper === "SUBROUTINE_NODE") { openBrack = '[["'; closeBrack = '"]]'; }
+    //     else if (shapeUpper === "CYLINDER_NODE") { openBrack = '[("'; closeBrack = '")]'; }
+    //     else if (shapeUpper === "CIRCLE_NODE") { openBrack = '(("'; closeBrack = '"))'; }
+    //     else if (shapeUpper === "ASYMMETRIC_NODE") { openBrack = '>'; closeBrack = '"]'; }
+    //     else if (shapeUpper === "HEXAGON_NODE") { openBrack = '{{\"'; closeBrack = '"}}'; }
+    //     else if (shapeUpper === "PARALLELOGRAM_NODE") { openBrack = '[\\\"'; closeBrack = '"/]'; }
+    //     else if (shapeUpper === "TRAPEZOID_NODE") { openBrack = '[/\"'; closeBrack = '"\\]'; }
+    //     else if (shapeUpper === "DIAMOND") { openBrack = '{"'; closeBrack = '"}'; }
+
+    //     // Double-quote wrappers are explicitly forced inside the string to prevent text truncation loops on re-render
+    //     const nodeDeclaration = `        ${newId}${openBrack}${labelText}${closeBrack}\n`;
+    //     const phaseRegex = new RegExp(`(subgraph\\s+${phaseId}\\b(?:\\s*\\[.*?\\])?\\r?\\n?)`, 'i');
+        
+    //     if (phaseRegex.test(currentCode)) {
+    //         currentCode = currentCode.replace(phaseRegex, `$1${nodeDeclaration}`);
+    //         hasChanges = true;
+    //     }
+    //     continue;
+    // }
+    // Updated regex to capture commands missing the explicit ID, as well as standard ones
+const addCustomShapeMatch = cmd.match(/^ADD\s+(NODE|ROUND_NODE|STADIUM_NODE|SUBROUTINE_NODE|CYLINDER_NODE|CIRCLE_NODE|ASYMMETRIC_NODE|HEXAGON_NODE|PARALLELOGRAM_NODE|TRAPEZOID_NODE|DIAMOND)\s+["'](Step\s+(\d+(?:\.\d+)*):?\s*.*?)["']\s+TO\s+(?:["']([a-zA-Z0-9_\s-]+)["']|([a-zA-Z0-9_-]+))/i);
+
+if (addCustomShapeMatch) {
+  const [_, shapeType, fullLabel, stepNumbers, quotedPhaseId, unquotedPhaseId] = addCustomShapeMatch;
+  const phaseId = quotedPhaseId || unquotedPhaseId;
+
+  // Automatically generate the unique identifier (e.g., "Step 1.4" -> "step1_4")
+  const cleanStepNumber = stepNumbers.replace(/\./g, '_');
+  const newId = `step${cleanStepNumber}`;
+
+  let openBrack = '["', closeBrack = '"]';
+  const shapeUpper = shapeType.toUpperCase();
+  
+  if (shapeUpper === "ROUND_NODE") { openBrack = '("'; closeBrack = '")'; }
+  else if (shapeUpper === "STADIUM_NODE") { openBrack = '(["'; closeBrack = '"])'; }
+  else if (shapeUpper === "SUBROUTINE_NODE") { openBrack = '[["'; closeBrack = '"]]'; }
+  else if (shapeUpper === "CYLINDER_NODE") { openBrack = '[("'; closeBrack = '")]'; }
+  else if (shapeUpper === "CIRCLE_NODE") { openBrack = '(("'; closeBrack = '"))'; }
+  else if (shapeUpper === "ASYMMETRIC_NODE") { openBrack = '>'; closeBrack = '"]'; }
+  else if (shapeUpper === "HEXAGON_NODE") { openBrack = '{{\"'; closeBrack = '"}}'; }
+  else if (shapeUpper === "PARALLELOGRAM_NODE") { openBrack = '[\\\"'; closeBrack = '"/]'; }
+  else if (shapeUpper === "TRAPEZOID_NODE") { openBrack = '[/\"'; closeBrack = '"\\]'; }
+  else if (shapeUpper === "DIAMOND") { openBrack = '{"'; closeBrack = '"}'; }
+
+  // Outputs perfectly safe Mermaid syntax: step1_4["Step 1.4: Reset Account"]
+  const nodeDeclaration = `    ${newId}${openBrack}${fullLabel}${closeBrack}\n`;
+  
+  const escapedPhaseId = phaseId.replace(/[-\/\\^\$*+?.()|[\]{}]/g, '\\$&');
+  const phaseRegex = new RegExp(`(subgraph\\s+["']?${escapedPhaseId}["']?\\b(?:\\s*\\[.*?\\])?\\r?\\n?)`, 'i');
+
+  if (phaseRegex.test(currentCode)) {
+    currentCode = currentCode.replace(phaseRegex, `$1${nodeDeclaration}`);
+    hasChanges = true;
+  }
+  continue;
+}
+
     // ==========================================================================
     // 6. OPERATION: MANAGE SUBGRAPHS (Add & Remove Frame Bounds)
     // Format: ADD SUBGRAPH phase_05 "Phase 5 text description header"
     // Format: DELETE SUBGRAPH phase_05
     // ==========================================================================
-    const addSubgraphMatch = cmd.match(/^ADD\s+SUBGRAPH\s+([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["']/i);
-    if (addSubgraphMatch) {
-        const [_, subgraphId, titleLabel] = addSubgraphMatch;
-        const newSubgraphBlock = `\n    subgraph ${subgraphId} ["${titleLabel}"]\n    end\n`;
-        currentCode = currentCode.trim() + newSubgraphBlock;
-        hasChanges = true;
-        continue;
+    // const addSubgraphMatch = cmd.match(/^ADD\s+SUBGRAPH\s+([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["']/i);
+    // if (addSubgraphMatch) {
+    //     const [_, subgraphId, titleLabel] = addSubgraphMatch;
+    //     const newSubgraphBlock = `\n    subgraph ${subgraphId} ["${titleLabel}"]\n    end\n`;
+    //     currentCode = currentCode.trim() + newSubgraphBlock;
+    //     hasChanges = true;
+    //     continue;
+    // }
+// 6. OPERATION: MANAGE SUBGRAPHS (Add & Remove Frame Bounds)
+    // Format: ADD  SUBGRAPH "Phase 5: text description header"
+    
+    // Updated regex to catch both formats: the auto-converting single-string format and the manual ID format
+const addSubgraphMatch = cmd.match(/^ADD\s+SUBGRAPH\s+(?:["'](Phase\s+(\d+):?\s*(.*?))["']|([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["'])/i);
+
+if (addSubgraphMatch) {
+    const [_, fullStringFormat, phaseNum, phaseLabelText, manualId, manualLabel] = addSubgraphMatch;
+    
+    let subgraphId, titleLabel;
+
+    if (fullStringFormat) {
+        // Auto-convert mode: "Phase 5: text description header"
+        // Pad single digits with a leading zero (e.g., "5" becomes "05", "12" stays "12")
+        const paddedNum = phaseNum.padStart(2, '0');
+        subgraphId = `phase_${paddedNum}`;
+        titleLabel = fullStringFormat; // Keeps the full string as the header title
+    } else {
+        // Manual mode backup: phase_05 "Phase 5..."
+        subgraphId = manualId;
+        titleLabel = manualLabel;
     }
+
+    const newSubgraphBlock = `\n    subgraph ${subgraphId} ["${titleLabel}"]\n    end\n`;
+    currentCode = currentCode.trim() + newSubgraphBlock;
+    hasChanges = true;
+    continue;
+}
+
 
     const deleteSubgraphMatch = cmd.match(/^DELETE\s+SUBGRAPH\s+([a-zA-Z0-9_-]+)/i);
     if (deleteSubgraphMatch) {
