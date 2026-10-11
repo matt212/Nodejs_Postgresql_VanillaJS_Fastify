@@ -110,6 +110,13 @@ so do not change anything keep everything as is . only change phase 1 section in
         <ul class="text-[11px] font-mono text-slate-400 space-y-1.5 max-h-[140px] overflow-y-auto pr-1">
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
                 <span class="text-blue-400 font-semibold">ADD:</span><br>
+                <span class="text-blue-400 font-semibold">
+Format variants: ADD NODE, ADD ROUND_NODE, ADD STADIUM_NODE, ADD CYLINDER_NODE,
+    //                  ADD CIRCLE_NODE, ADD ASYMMETRIC_NODE, ADD HEXAGON_NODE,
+    //                  ADD PARALLELOGRAM_NODE, ADD TRAPEZOID_NODE, ADD DIAMOND.
+
+    </span><br><span class="text-blue-400 font-semibold"></span>
+    // Format input example: ADD DIAMOND route_opt1 "Verify Zip Bounds" TO phase_02</span><br>
                 <code class="text-emerald-400">ADD NODE "Step 1.4: Reset Account" TO phase_01</code>
             </li>
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
@@ -121,8 +128,9 @@ so do not change anything keep everything as is . only change phase 1 section in
                 <code class="text-emerald-400">DELETE NODE Step 1.3</code>
             </li>
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
-                <span class="text-indigo-400 font-semibold">CONNECT:</span><br>
+                <span class="text-indigo-400 font-semibold">CONNECT: Supports variants: CONNECT_THICK, CONNECT_DOTTED, CONNECT_MUTUAL, etc.</span><br>
                 <code class="text-emerald-400">CONNECT Step 1.2 TO Step 1.1 WITH "Invalid Credentials"</code>
+                
             </li>
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
                 <span class="text-pink-400 font-semibold">DISCONNECT:</span><br>
@@ -823,19 +831,62 @@ async function reloadCurrentDiagram() {
     if (!currentCode) return;
 
     statusDot.className = "h-2 w-2 rounded-full bg-blue-400 animate-pulse";
-    statusText.textContent = "Simulating fresh file upload pipeline...";
+    statusText.textContent = "Destroying and reinitialising Mermaid engine cache...";
 
     try {
-        // 1. Convert the current editor workspace text into a virtual File object
-        // We use the standard File constructor to replicate a real disk file perfectly
+        // 1. ⚡ THE DESTRUCTIVE PURGE: Force-clear Mermaid's internal tracking states
+        const canvasContainer = document.getElementById('renderTarget') || document.getElementById('diagram-container');
+        if (canvasContainer) {
+            // Strip the processed indicators so the library views the container as brand new
+            canvasContainer.removeAttribute('data-processed');
+            canvasContainer.innerHTML = ""; // Wipe all lingering graphic remnants
+        }
+
+        // 2. ⚡ RE-INITIALISE ENGINE: Reset the core canvas metrics from scratch
+        // This drops all text measurement snapshots stored in memory
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                securityLevel: 'loose',
+                themeCSS: `
+        /* Force text dimensions to remain uniform across all render loops */
+        .node foreignObject div,
+        .node text,
+        .mermaid foreignObject div,
+        g.node foreignObject div {
+            font-size: 11px !important;
+            line-height: 1.5 !important;
+            font-family: ui-sans-serif, system-ui, sans-serif !important;
+            text-rendering: geometricPrecision !important;
+            -webkit-font-smoothing: antialiased !important;
+        }
+    `,
+                flowchart: { 
+                    useMaxWidth: false, 
+                    htmlLabels: true,
+                    curve: 'linear'
+                }
+            });
+        }
+
+        // 3. Pause for a browser microtask layout flash to finish dropping variables
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        statusText.textContent = "Simulating fresh file upload pipeline...";
+
+        // 4. Convert the current editor workspace text into a pristine virtual File object
         const virtualFile = new File([currentCode], "reloaded_diagram.md", {
             type: "text/plain",
             lastModified: new Date()
         });
 
-        // 2. ⚡ ROUTE STRAIGHT TO UPLOAD ENGINE: Hand it over to your working function
-        // This completely bypasses the broken reload rendering lifecycle loops!
-        processUploadedFile(virtualFile);
+        // 5. Route to your working upload handler with an entirely fresh compilation state
+        if (typeof processUploadedFile === 'function') {
+            processUploadedFile(virtualFile);
+        } else {
+            console.warn("⚠️ Pipeline Error: processUploadedFile function is not accessible in this context.");
+        }
 
         statusDot.className = "h-2 w-2 rounded-full bg-green-500";
         statusText.textContent = "Diagram successfully refreshed via native upload simulation.";
@@ -846,6 +897,7 @@ async function reloadCurrentDiagram() {
         statusText.textContent = "Error running virtual file load thread.";
     }
 }
+
 
 
 
@@ -1039,125 +1091,281 @@ async function executeSerialMermaidCommand(commandText) {
         cmd = cmd.trim();
         if (!cmd) continue;
 
-        // 1. OPERATION: CONNECT (Agnostic Node/Serial Input Targets)
-        // Format: CONNECT rollback_zone1 TO Step 1.1 WITH "Reset Pipeline"
-        const connectMatch = cmd.match(/^CONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+(?:Step\s+)?([a-zA-Z0-9._-]+)(?:\s+WITH\s+["']([\s\(\S\)]*?)["'])?/i);
+            // ==========================================================================
+    // 1. OPERATION: CONNECT (Flexible Line Varieties & Text Links)
+    // Format: CONNECT Step 1.2 TO Step 1.1 WITH "Valid Request Link text"
+    // Supports variants: CONNECT_THICK, CONNECT_DOTTED, CONNECT_MUTUAL, etc.
+    // ==========================================================================
+    // const connectMatch = cmd.match(/^(CONNECT|CONNECT_THICK|CONNECT_DOTTED|CONNECT_MUTUAL|CONNECT_UNARROWED|CONNECT_INVISIBLE)\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+(?:Step\s+)?([a-zA-Z0-9._-]+)(?:\s+WITH\s+["']([\s\(\S\)]*?)["'])?/i);
+    // if (connectMatch) {
+    //     const [fullCmd, type, targetA, targetB, linkLabel] = connectMatch;
+    //     const nodeA = resolveNodeId(targetA);
+    //     const nodeB = resolveNodeId(targetB);
+
+    //     if (nodeA && nodeB) {
+    //         let arrowSymbol = "-->"; // Default connection arrow routing
+    //         const cmdUpper = type.toUpperCase();
+            
+    //         if (cmdUpper === "CONNECT_THICK") arrowSymbol = "==>";
+    //         else if (cmdUpper === "CONNECT_DOTTED") arrowSymbol = "-.->";
+    //         else if (cmdUpper === "CONNECT_MUTUAL") arrowSymbol = "<-->";
+    //         else if (cmdUpper === "CONNECT_UNARROWED") arrowSymbol = "---";
+    //         else if (cmdUpper === "CONNECT_INVISIBLE") arrowSymbol = "~~~";
+
+    //         const arrowStr = linkLabel 
+    //             ? `    ${nodeA} -- "${linkLabel}" ${arrowSymbol} ${nodeB}\n` 
+    //             : `    ${nodeA} ${arrowSymbol} ${nodeB}\n`;
+                
+    //         currentCode = currentCode.trim() + `\n${arrowStr}`;
+    //         hasChanges = true;
+    //     } else {
+    //         console.warn(`Routing Failure: Could not track structural match for ${targetA} or ${targetB}`);
+    //     }
+    //     continue;
+    // }
+            // ==========================================================================
+        // 1. OPERATION: CONNECT (Flexible Line Varieties & Text Links)
+        // Format: CONNECT_THICK Step 1.2 TO Step 1.1 WITH "Invalid Credentials"
+        // ==========================================================================
+        const connectMatch = cmd.match(/^(CONNECT_THICK|CONNECT_DOTTED|CONNECT_MUTUAL|CONNECT_UNARROWED|CONNECT_INVISIBLE|CONNECT)\b\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+(?:Step\s+)?([a-zA-Z0-9._-]+)(?:\s+WITH\s+["']([\s\(\S\)]*?)["'])?/i);
         if (connectMatch) {
-            const [_, targetA, targetB, linkLabel] = connectMatch;
-            const nodeA = resolveNodeId(targetA);
-            const nodeB = resolveNodeId(targetB);
+            const [fullCmd, type, targetA, targetB, linkLabel] = connectMatch;
+            const nodeA = resolveNodeId(targetA) || targetA;
+            const nodeB = resolveNodeId(targetB) || targetB;
 
             if (nodeA && nodeB) {
-                const arrowStr = linkLabel ? `    ${nodeA} -- "${linkLabel}" --> ${nodeB}\n` : `    ${nodeA} --> ${nodeB}\n`;
+                let openSymbol = "--";   // Default open connector wrapper
+                let closeSymbol = "-->"; // Default close connector wrapper
+                const cmdUpper = type.toUpperCase();
+                
+                // ⚡ FIX: Sync both the opening and closing syntax strings for each line type
+                if (cmdUpper === "CONNECT_THICK") {
+                    openSymbol = "==";
+                    closeSymbol = "==>";
+                } else if (cmdUpper === "CONNECT_DOTTED") {
+                    openSymbol = "-.";
+                    closeSymbol = ".->";
+                } else if (cmdUpper === "CONNECT_MUTUAL") {
+                    openSymbol = "<--";
+                    closeSymbol = "-->";
+                } else if (cmdUpper === "CONNECT_UNARROWED") {
+                    openSymbol = "--";
+                    closeSymbol = "---";
+                } else if (cmdUpper === "CONNECT_INVISIBLE") {
+                    openSymbol = "~~~"; // Note: Invisible lines do not support link text labels
+                    closeSymbol = "";
+                }
+
+                // Construct structurally legal Mermaid layout syntax paths
+                let arrowStr;
+                if (linkLabel && cmdUpper !== "CONNECT_INVISIBLE") {
+                    if (cmdUpper === "CONNECT_UNARROWED") {
+                        arrowStr = `    ${nodeA} ---|"${linkLabel}"| ${nodeB}\n`;
+                    } else if (cmdUpper === "CONNECT_MUTUAL") {
+                        arrowStr = `    ${nodeA} <-- "${linkLabel}" --> ${nodeB}\n`;
+                    } else {
+                        // Correctly pairs == "Text" ==> and -. "Text" .->
+                        arrowStr = `    ${nodeA} ${openSymbol} "${linkLabel}" ${closeSymbol} ${nodeB}\n`;
+                    }
+                } else {
+                    // Handles unlabeled raw connections seamlessly (e.g., A ==> B or A ~~~ B)
+                    arrowStr = cmdUpper === "CONNECT_INVISIBLE" 
+                        ? `    ${nodeA} ${openSymbol} ${nodeB}\n`
+                        : `    ${nodeA} ${closeSymbol} ${nodeB}\n`;
+                }
+                    
                 currentCode = currentCode.trim() + `\n${arrowStr}`;
                 hasChanges = true;
+                console.log(`🎉 [SUCCESS] Generated clean Mermaid edge: ${arrowStr.trim()}`);
             } else {
                 console.warn(`Routing Failure: Could not track structural match for ${targetA} or ${targetB}`);
             }
             continue;
         }
 
-        // 2. OPERATION: DISCONNECT (Agnostic Node/Serial Input Targets)
-        // Format: DISCONNECT decision_zone1 FROM rollback_zone1
-        const disconnectMatch = cmd.match(/^DISCONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+FROM\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
-        if (disconnectMatch) {
-            const [_, targetA, targetB] = disconnectMatch;
-            const nodeA = resolveNodeId(targetA);
-            const nodeB = resolveNodeId(targetB);
 
-            if (nodeA && nodeB) {
-                const specificLineRegex = new RegExp(`^[ \\t]*${nodeA}\\s*--.*?-->\\s*${nodeB}\\r?\\n?`, 'gm');
-                const cleanArrowRegex = new RegExp(`^[ \\t]*${nodeA}\\s*-->\\s*${nodeB}\\r?\\n?`, 'gm');
-                
-                if (specificLineRegex.test(currentCode) || cleanArrowRegex.test(currentCode)) {
-                    currentCode = currentCode.replace(specificLineRegex, '').replace(cleanArrowRegex, '');
-                    hasChanges = true;
-                }
-            }
-            continue;
-        }
+    // ==========================================================================
+    // 2. OPERATION: DISCONNECT (Removes specific arrow lines cleanly)
+    // Format: DISCONNECT Step 1.2 FROM Step 1.1
+    // ==========================================================================
+    const disconnectMatch = cmd.match(/^DISCONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+FROM\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
+    if (disconnectMatch) {
+        const [_, targetA, targetB] = disconnectMatch;
+        const nodeA = resolveNodeId(targetA);
+        const nodeB = resolveNodeId(targetB);
 
-        // 3. OPERATION: UPDATE NODE TEXT
-        // Format: UPDATE NODE rollback_zone1 TO "Custom Rejection Sequence"
-            const updateMatch = cmd.match(/^UPDATE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+["']([\s\(\S\)]*?)["']/i);
-        if (updateMatch) {
-            console.group(`🚀 [MERMAID AGENT] Processing UPDATE NODE Command`);
-            const [fullMatch, targetIdent, newFullLabel] = updateMatch;
-            const targetNodeId = resolveNodeId(targetIdent);
-
-            if (targetNodeId) {
-                // Captures structural shapes ([...], (...), {...}) even with inner text quotes safely
-                const nodeLabelRegex = new RegExp(`\\b(${targetNodeId})\\s*([\\[\\(\\{]+)["']?([\\s\\S]*?)["']?([\\]\\)\\}]+)`, 'g');
-                
-                const containsExistingLabel = nodeLabelRegex.test(currentCode);
-                nodeLabelRegex.lastIndex = 0; 
-
-                if (containsExistingLabel) {
-                    currentCode = currentCode.replace(nodeLabelRegex, (match, id, openBrack, oldText, closeBrack) => {
-                        // Standardizes the text inside quotes while preserving the outer structural shape
-                        return `${id}${openBrack}"${newFullLabel}"${closeBrack}`;
-                    });
-                    hasChanges = true;
-                    console.log(`🎉 [SUCCESS] Inline text updated while keeping structure shapes intact.`);
-                } else {
-                    // Fallback to update standalone text declarations or append missing declarations
-                    const rawNodeRegex = new RegExp(`^[ \\t]*\\b(${targetNodeId})\\b\\s*$`, 'gm');
-                    if (rawNodeRegex.test(currentCode)) {
-                        currentCode = currentCode.replace(rawNodeRegex, `    $1["${newFullLabel}"]`);
-                    } else {
-                        currentCode = currentCode.trim() + `\n    ${targetNodeId}["${newFullLabel}"]\n`;
-                    }
-                    hasChanges = true;
-                }
-            } else {
-                console.error(`❌ [FAILURE] Engine could not map target "${targetIdent}" to a valid ID.`);
-            }
-            console.groupEnd();
-            continue;
-        }
-
-
-
-
-        const deleteMatch = cmd.match(/^DELETE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
-        if (deleteMatch) {
-            console.group(`🗑️ [MERMAID AGENT] Processing DELETE NODE Command`);
-            const [_, targetIdent] = deleteMatch;
-            const targetNodeId = resolveNodeId(targetIdent);
-
-            if (targetNodeId) {
-                // Strips explicit label declarations along with any matching outer shape wrappers completely
-                const nodeLineRegex = new RegExp(`^[ \\t]*\\b${targetNodeId}\\b(?:\\s*[\\[\\(\\{"'].*?[\\]\\)\\}"])?\\r?\\n?`, 'gm');
-                currentCode = currentCode.replace(nodeLineRegex, '');
-
-                // Removes line-based arrows routing in or out of the targeted element ID token
-                const connectionRegex = new RegExp(`^[ \\t]*(?:\\b${targetNodeId}\\b\\s*(--.*?-->|-->).*?|.*?(--.*?-->|-->)\\s*\\b${targetNodeId}\\b).*?\\r?\\n?`, 'gm');
-                currentCode = currentCode.replace(connectionRegex, '');
-                
-                hasChanges = true;
-                console.log(`🎉 [SUCCESS] Node "${targetNodeId}" and its connection routines wiped out cleanly.`);
-            }
-            console.groupEnd();
-            continue;
-        }
-
-
-        // 5. OPERATION: ADD NODE TO SUBGRAPH
-        // Format: ADD NODE rollback_custom1["Step 2.6: Recovery Core Loop"] TO phase_02
-        const addMatch = cmd.match(/^ADD\s+NODE\s+([a-zA-Z0-9_-]+)\s*(?:["'{(\\[])\s*([\s\S]*?)\s*["'})\\]]\s+TO\s+([a-zA-Z0-9_-]+)/i);
-        if (addMatch) {
-            const [_, newId, labelText, phaseId] = addMatch;
-            const nodeDeclaration = `        ${newId}["${labelText}"]\n`;
+        if (nodeA && nodeB) {
+            // Wipes out labeled or flat path strings connecting these exact two keys
+            const genericArrowRegex = new RegExp(`^[ \\t]*${nodeA}\\s*(?:-->|==>|-\\.-?->|<-->|---|~~~)\\s*${nodeB}\\r?\\n?`, 'gm');
+            const labeledArrowRegex = new RegExp(`^[ \\t]*${nodeA}\\s*--.*?-->\\s*${nodeB}\\r?\\n?`, 'gm');
             
-            const phaseRegex = new RegExp(`(subgraph\\s+${phaseId}\\s*\\[[\\s\\S]*?\\])`, 'i');
-            if (phaseRegex.test(currentCode)) {
-                currentCode = currentCode.replace(phaseRegex, `$1\n${nodeDeclaration}`);
+            if (genericArrowRegex.test(currentCode) || labeledArrowRegex.test(currentCode)) {
+                currentCode = currentCode.replace(genericArrowRegex, '').replace(labeledArrowRegex, '');
                 hasChanges = true;
             }
-            continue;
         }
+        continue;
     }
 
+
+       
+
+           // ==========================================================================
+    // 3. OPERATION: UPDATE NODE TEXT (Preserves custom geometry shapes automatically)
+    // Format: UPDATE NODE Step 1.2 TO "Custom Updated Validation Process"
+    // ==========================================================================
+    const updateMatch = cmd.match(/^UPDATE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+["']([\s\(\S\)]*?)["']/i);
+    if (updateMatch) {
+        console.group(`🚀 [MERMAID AGENT] Processing UPDATE NODE Command`);
+        const [fullMatch, targetIdent, newFullLabel] = updateMatch;
+        const targetNodeId = resolveNodeId(targetIdent);
+
+        if (targetNodeId) {
+            const nodeLabelRegex = new RegExp(`\\b(${targetNodeId})\\s*([\\[\\(\\{"']+.*?[\\s\\S]*?[\\]\\)\\}'"]+)`, 'g');
+            const containsExistingLabel = nodeLabelRegex.test(currentCode);
+            nodeLabelRegex.lastIndex = 0;
+
+            if (containsExistingLabel) {
+                // Dynamically detects open/close brackets to keep existing geometric node forms intact
+                currentCode = currentCode.replace(nodeLabelRegex, (match, id, wrappers) => {
+                    let openShape = '[', closeShape = ']';
+                    if (wrappers.includes('((')) { openShape = '(('; closeShape = '))'; }
+                    else if (wrappers.includes('([')) { openShape = '(['; closeShape = '])'; }
+                    else if (wrappers.includes('[[')) { openShape = '[['; closeShape = ']]'; }
+                    else if (wrappers.includes('[(')) { openShape = '[('; closeShape = ')]'; }
+                    else if (wrappers.includes('>')) { openShape = '>'; closeShape = ']'; }
+                    else if (wrappers.includes('{{')) { openShape = '{{'; closeShape = '}}'; }
+                    else if (wrappers.includes('[\\')) { openShape = '[\\'; closeShape = '/]'; }
+                    else if (wrappers.includes('[/')) { openShape = '[/'; closeShape = '\\]'; }
+                    else if (wrappers.includes('{')) { openShape = '{'; closeShape = '}'; }
+                    else if (wrappers.includes('(')) { openShape = '('; closeShape = ')'; }
+                    
+                    return `${id}${openShape}"${newFullLabel}"${closeShape}`;
+                });
+                hasChanges = true;
+                console.log(`🎉 [SUCCESS] Inline text updated while keeping structure shapes intact.`);
+            } else {
+                const rawNodeRegex = new RegExp(`^[ \\t]*\\b(${targetNodeId})\\b\\s*$`, 'gm');
+                if (rawNodeRegex.test(currentCode)) {
+                    currentCode = currentCode.replace(rawNodeRegex, `    $1["${newFullLabel}"]`);
+                } else {
+                    currentCode = currentCode.trim() + `\n    ${targetNodeId}["${newFullLabel}"]\n`;
+                }
+                hasChanges = true;
+            }
+        } else {
+            console.error(`❌ [FAILURE] Engine could not map target "${targetIdent}" to a valid ID.`);
+        }
+        console.groupEnd();
+        continue;
+    }
+
+    // ==========================================================================
+    // 4. OPERATION: DELETE NODE (Surgically purges node elements & link arrays)
+    // Format: DELETE NODE Step 1.3
+    // ==========================================================================
+    const deleteMatch = cmd.match(/^DELETE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
+    if (deleteMatch) {
+        console.group(`🗑️ [MERMAID AGENT] Processing DELETE NODE Command`);
+        const [_, targetIdent] = deleteMatch;
+        const targetNodeId = resolveNodeId(targetIdent);
+
+        if (targetNodeId) {
+            const nodeLineRegex = new RegExp(`^[ \\t]*\\b${targetNodeId}\\b(?:\\s*[\\[\\(\\{"'].*?[\\]\\)\\}"])?\\r?\\n?`, 'gm');
+            currentCode = currentCode.replace(nodeLineRegex, '');
+
+            const connectionRegex = new RegExp(`^[ \\t]*(?:\\b${targetNodeId}\\b\\s*(?:--.*?-->|-->|==>|-\\.-?->|<-->|---|~~~).*?|.*?(?:--.*?-->|-->|==>|-\\.-?->|<-->|---|~~~)\\s*\\b${targetNodeId}\\b).*?\\r?\\n?`, 'gm');
+            currentCode = currentCode.replace(connectionRegex, '');
+            
+            hasChanges = true;
+            console.log(`🎉 [SUCCESS] Node "${targetNodeId}" and its connections wiped out cleanly.`);
+        }
+        console.groupEnd();
+        continue;
+    }
+    // ==========================================================================
+    // 5. OPERATION: ADD SHAPE NODE TO SUBGRAPH (Encapsulates layout string options)
+    // Format variants: ADD NODE, ADD ROUND_NODE, ADD STADIUM_NODE, ADD CYLINDER_NODE,
+    //                  ADD CIRCLE_NODE, ADD ASYMMETRIC_NODE, ADD HEXAGON_NODE,
+    //                  ADD PARALLELOGRAM_NODE, ADD TRAPEZOID_NODE, ADD DIAMOND.
+    // Format input example: ADD DIAMOND route_opt1 "Verify Zip Bounds" TO phase_02
+    // ==========================================================================
+    const addCustomShapeMatch = cmd.match(/^ADD\s+(NODE|ROUND_NODE|STADIUM_NODE|SUBROUTINE_NODE|CYLINDER_NODE|CIRCLE_NODE|ASYMMETRIC_NODE|HEXAGON_NODE|PARALLELOGRAM_NODE|TRAPEZOID_NODE|DIAMOND)\s+([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["']\s+TO\s+([a-zA-Z0-9_-]+)/i);
+    if (addCustomShapeMatch) {
+        const [_, shapeType, newId, labelText, phaseId] = addCustomShapeMatch;
+        let openBrack = '["', closeBrack = '"]'; // Default node configuration
+        const shapeUpper = shapeType.toUpperCase();
+
+        if (shapeUpper === "ROUND_NODE") { openBrack = '("'; closeBrack = '")'; }
+        else if (shapeUpper === "STADIUM_NODE") { openBrack = '(["'; closeBrack = '"])'; }
+        else if (shapeUpper === "SUBROUTINE_NODE") { openBrack = '[["'; closeBrack = '"]]'; }
+        else if (shapeUpper === "CYLINDER_NODE") { openBrack = '[("'; closeBrack = '")]'; }
+        else if (shapeUpper === "CIRCLE_NODE") { openBrack = '(("'; closeBrack = '"))'; }
+        else if (shapeUpper === "ASYMMETRIC_NODE") { openBrack = '>'; closeBrack = '"]'; }
+        else if (shapeUpper === "HEXAGON_NODE") { openBrack = '{{\"'; closeBrack = '"}}'; }
+        else if (shapeUpper === "PARALLELOGRAM_NODE") { openBrack = '[\\\"'; closeBrack = '"/]'; }
+        else if (shapeUpper === "TRAPEZOID_NODE") { openBrack = '[/\"'; closeBrack = '"\\]'; }
+        else if (shapeUpper === "DIAMOND") { openBrack = '{"'; closeBrack = '"}'; }
+
+        // Double-quote wrappers are explicitly forced inside the string to prevent text truncation loops on re-render
+        const nodeDeclaration = `        ${newId}${openBrack}${labelText}${closeBrack}\n`;
+        const phaseRegex = new RegExp(`(subgraph\\s+${phaseId}\\b(?:\\s*\\[.*?\\])?\\r?\\n?)`, 'i');
+        
+        if (phaseRegex.test(currentCode)) {
+            currentCode = currentCode.replace(phaseRegex, `$1${nodeDeclaration}`);
+            hasChanges = true;
+        }
+        continue;
+    }
+    // ==========================================================================
+    // 6. OPERATION: MANAGE SUBGRAPHS (Add & Remove Frame Bounds)
+    // Format: ADD SUBGRAPH phase_05 "Phase 5 text description header"
+    // Format: DELETE SUBGRAPH phase_05
+    // ==========================================================================
+    const addSubgraphMatch = cmd.match(/^ADD\s+SUBGRAPH\s+([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["']/i);
+    if (addSubgraphMatch) {
+        const [_, subgraphId, titleLabel] = addSubgraphMatch;
+        const newSubgraphBlock = `\n    subgraph ${subgraphId} ["${titleLabel}"]\n    end\n`;
+        currentCode = currentCode.trim() + newSubgraphBlock;
+        hasChanges = true;
+        continue;
+    }
+
+    const deleteSubgraphMatch = cmd.match(/^DELETE\s+SUBGRAPH\s+([a-zA-Z0-9_-]+)/i);
+    if (deleteSubgraphMatch) {
+        const [_, subgraphId] = deleteSubgraphMatch;
+        // Dissolves the wrapper declaration lines matching the ID while preserving internal children loops
+        const targetSubgraphRegex = new RegExp(`^[ \\t]*subgraph\\s+${subgraphId}\\b[\\s\\S]*?^[ \\t]*end\\r?\\n?`, 'gm');
+        if (targetSubgraphRegex.test(currentCode)) {
+            currentCode = currentCode.replace(targetSubgraphRegex, '');
+            hasChanges = true;
+        }
+        continue;
+    }
+
+    // ==========================================================================
+    // 7. OPERATION: INJECT COMPONENT CSS STYLING CLASSES
+    // Format: STYLE NODE Step 1.2 FILL #111827, STROKE #3b82f6, STROKE-WIDTH 2px
+    // ==========================================================================
+    const styleMatch = cmd.match(/^STYLE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+([\s\(\S\)]+)\$/i);
+    if (styleMatch) {
+        const [_, targetIdent, styleDirectives] = styleMatch;
+        const targetNodeId = resolveNodeId(targetIdent);
+
+        if (targetNodeId) {
+            const styleDeclaration = `    style ${targetNodeId} ${styleDirectives.trim()}\n`;
+            currentCode = currentCode.trim() + `\n${styleDeclaration}`;
+            hasChanges = true;
+        }
+        continue;
+    }
+} // Final exit bracket for loop parser thread execution mapping
+
+
+
+       
+    
+console.log(currentCode.trim())
     // --- PHASE 3: PARSE AND RE-RENDER ENGINE RECONCILIATION ---
     if (hasChanges) {
         await initializeFreshCanvas(currentCode.trim());
