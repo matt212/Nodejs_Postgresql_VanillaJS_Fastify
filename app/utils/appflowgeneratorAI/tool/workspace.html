@@ -2341,27 +2341,191 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
             }
 
             // --- PROCESS 7B: CONNECT ROAD LANE ---
+           
             const matchConnect = cmd.match(/^(CONNECT_THICK|CONNECT_DOTTED|CONNECT_MUTUAL|CONNECT_UNARROWED|CONNECT_INVISIBLE|CONNECT)\b\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+(?:Step\s+)?([a-zA-Z0-9._-]+)(?:\s+WITH\s+["']([\s\(\S\)]*?)["'])?/i);
-            if (matchConnect) {
-                const [_, type, targetA, targetB, linkLabel] = matchConnect;
-                const nodeA = resolveId(targetA);
-                const nodeB = resolveId(targetB);
 
-                const svgCanvas = document.querySelector('.mermaid svg') || document.querySelector('svg');
-                if (svgCanvas) {
-                    const edgeG = document.createElementNS("http://w3.org", "g");
-                    edgeG.setAttribute("class", `edgePath ls-${nodeA} le-${nodeB}`);
-                    edgeG.innerHTML = `<path d="M 50,50 L 150,150" stroke="#474747" stroke-width="2" fill="none"/>`;
-                    svgCanvas.appendChild(edgeG);
+console.groupCollapsed(`🔍 Connection Parser: Analyzing command -> "${cmd.trim()}"`);
+console.log("Match Status:", matchConnect ? "✅ MATCHED" : "❌ FAILED");
+
+if (matchConnect) {
+    const [_, type, targetA, targetB, linkLabel] = matchConnect;
+    const nodeA = resolveId(targetA);
+    const nodeB = resolveId(targetB);
+
+    console.log("Extracted Data:", {
+        rawType: type,
+        targetA: targetA,
+        resolvedNodeA: nodeA,
+        targetB: targetB,
+        resolvedNodeB: nodeB,
+        linkLabel: linkLabel || "(none)"
+    });
+
+    // 1. Map each connection type case to its respective Mermaid syntax operator
+    let arrowSymbol = "-->"; 
+    const normalizedType = type.toUpperCase();
+
+    switch (normalizedType) {
+        case "CONNECT_THICK":
+            arrowSymbol = "==>";
+            break;
+        case "CONNECT_DOTTED":
+            arrowSymbol = "-.->";
+            break;
+        case "CONNECT_MUTUAL":
+            arrowSymbol = "<-->";
+            break;
+        case "CONNECT_UNARROWED":
+            arrowSymbol = "---";
+            break;
+        case "CONNECT_INVISIBLE":
+            arrowSymbol = "~~~";
+            break;
+        case "CONNECT":
+        default:
+            arrowSymbol = "-->";
+            break;
+    }
+
+    // 2. Generate the syntax string (handles line styling and inline text labels)
+    let arrowStr = "";
+    if (linkLabel) {
+        if (normalizedType === "CONNECT_UNARROWED") {
+            arrowStr = `    ${nodeA} ---|"${linkLabel}"| ${nodeB}\n`;
+        } else if (normalizedType === "CONNECT_DOTTED") {
+            arrowStr = `    ${nodeA} -. "${linkLabel}" .-> ${nodeB}\n`;
+        } else {
+            arrowStr = `    ${nodeA} -- "${linkLabel}" ${arrowSymbol} ${nodeB}\n`;
+        }
+    } else {
+        arrowStr = `    ${nodeA} ${arrowSymbol} ${nodeB}\n`;
+    }
+    
+    console.log(`📊 Generated Mermaid Syntax: ${arrowStr.trim()}`);
+    
+    workingCode = workingCode.trim() + `\n${arrowStr}`;
+    hasChanges = true;
+    
+    // =========================================================================
+    // 🌐 PLACE THE MODULAR LAYER INJECTION HERE (REPLACING THE OLD REDRAW CODE)
+    // =========================================================================
+    const svgCanvas = document.querySelector('.mermaid svg') || document.querySelector('svg');
+    if (svgCanvas) {
+        const domA = document.querySelector(`g.node[id*="${nodeA}"]`) || document.getElementById(nodeA) || document.querySelector(`[id*="${nodeA}"]`);
+        const domB = document.querySelector(`g.node[id*="${nodeB}"]`) || document.getElementById(nodeB) || document.querySelector(`[id*="${nodeB}"]`);
+
+        if (domA && domB && domA !== domB) {
+            const targetLayer = svgCanvas.querySelector('g.edgePaths') || svgCanvas.querySelector('g.output') || svgCanvas;
+
+            const getSvgLayerCoords = (el, container) => {
+                const bbox = el.getBBox();
+                let transformX = 0;
+                let transformY = 0;
+                
+                const transformAttr = el.getAttribute('transform') || '';
+                const match = transformAttr.match(/translate\(([^,)]+)[, ]([^)]+)\)/);
+                if (match) {
+                    transformX = parseFloat(match[1]);
+                    transformY = parseFloat(match[2]);
+                } else {
+                    const cBox = container.getBoundingClientRect();
+                    const eBox = el.getBoundingClientRect();
+                    return {
+                        width: bbox.width,
+                        height: bbox.height,
+                        centerX: (eBox.left + eBox.width / 2) - cBox.left,
+                        centerY: (eBox.top + eBox.height / 2) - cBox.top,
+                        top: eBox.top - cBox.top,
+                        bottom: eBox.bottom - cBox.top
+                    };
                 }
 
-                let arrowSymbol = "-->";
-                if (type.toUpperCase() === "CONNECT_THICK") arrowSymbol = "==>";
-                const arrowStr = linkLabel ? `    ${nodeA} -- "${linkLabel}" ${arrowSymbol} ${nodeB}\n` : `    ${nodeA} ${arrowSymbol} ${nodeB}\n`;
-                workingCode = workingCode.trim() + `\n${arrowStr}`;
-                hasChanges = true;
-                continue;
+                return {
+                    width: bbox.width,
+                    height: bbox.height,
+                    centerX: transformX,
+                    centerY: transformY,
+                    top: transformY - (bbox.height / 2),
+                    bottom: transformY + (bbox.height / 2)
+                };
+            };
+
+            const locA = getSvgLayerCoords(domA, targetLayer);
+            const locB = getSvgLayerCoords(domB, targetLayer);
+
+            let startX = locA.centerX;
+            let startY = locA.top; 
+            let endX = locB.centerX;
+            let endY = locB.bottom; 
+
+            if (locA.centerY < locB.centerY) {
+                startY = locA.bottom;
+                endY = locB.top;
             }
+
+            const diffX = endX - startX;
+            const diffY = endY - startY;
+            
+            const controlY1 = startY + (diffY * 0.25);
+            const controlY2 = endY - (diffY * 0.25);
+            
+            let pathData = `M ${startX},${startY} C ${startX},${controlY1} ${endX},${controlY2} ${endX},${endY}`;
+            
+            if (locA.centerY > locB.centerY && Math.abs(diffX) < 40) {
+                const sweepOffset = startX - (locA.width / 2) - 50;
+                pathData = `M ${startX},${startY} C ${sweepOffset},${startY} ${sweepOffset},${endY} ${endX},${endY}`;
+            }
+
+            // 💡 FIX 1: Extract the unique chart dynamic hash directly from nearby paths
+            const samplePath = targetLayer.querySelector('path');
+            let chartHash = 'mermaid-generated';
+            if (samplePath && samplePath.id) {
+                // If ID is "mermaid-1791832736363-L_node_0", isolates "mermaid-1791832736363"
+                const parts = samplePath.id.split('-');
+                if (parts.length > 1) {
+                    chartHash = `${parts[0]}-${parts[1]}`;
+                }
+            }
+
+            // 💡 FIX 2: Dynamically parse the accurate system arrowhead marker mapping ID
+            const defMarker = svgCanvas.querySelector('defs marker[id*="point"]') || 
+                               svgCanvas.querySelector('defs marker[id*="arrowhead"]');
+            const markerId = defMarker ? defMarker.getAttribute('id') : `${chartHash}_flowchart-v2-pointEnd`;
+
+            const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+            edgeG.setAttribute("class", "edgePath ls-" + nodeA + " le-" + nodeB);
+            edgeG.setAttribute("id", "dynamic-edge-" + nodeA + "-" + nodeB);
+
+            const isDotted = normalizedType === 'CONNECT_DOTTED';
+            const isThick = normalizedType === 'CONNECT_THICK';
+
+            // 💡 FIX 3: Injecting completed attributes dynamically
+            edgeG.innerHTML = `
+                <path d="${pathData}" 
+                      id="${chartHash}-L_${nodeA}_${nodeB}_dynamic" 
+                      class="edge-thickness-normal edge-pattern-solid flowchart-link" 
+                      stroke="#474747" 
+                      stroke-width="${isThick ? '3.5' : '2'}" 
+                      fill="none" 
+                      style="${isDotted ? 'stroke-dasharray: 5,5;' : ''}"
+                      data-edge="true"
+                      data-et="edge"
+                      data-look="classic"
+                      marker-end="url(#${markerId})"/>
+            `;
+
+            targetLayer.appendChild(edgeG);
+            console.log(`🌐 Native Dynamic Path Generated: d="${pathData}" linked to marker: #${markerId}`);
+        } else {
+            console.warn(`⚠️ Modular Link Blocked: Element identification check failed to locate distinct target nodes.`);
+        }
+    }
+}
+
+
+
+
+
 
             // --- PROCESS 7C: DISCONNECT ROAD LANE ---
             const matchDisconnect = cmd.match(/^DISCONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+FROM\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
