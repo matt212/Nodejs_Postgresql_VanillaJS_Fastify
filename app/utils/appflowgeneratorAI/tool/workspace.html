@@ -117,7 +117,10 @@ so do not change anything keep everything as is . only change phase 1 section in
                 <span class="text-pink-400 font-semibold">Update Phase:</span><br>
                 <code class="text-emerald-400">UPDATE phase phase07 TO "phase7 : new updated content"</code>
             </li>
-           
+           <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
+                <span class="text-red-400 font-semibold">DELETE Phase:</span><br>
+                <code class="text-emerald-400">DELETE phase phase07</code>
+            </li>
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
                 <span class="text-blue-400 font-semibold">ADD Node:</span><br>
                 <span class="text-blue-400 font-semibold">
@@ -1495,17 +1498,64 @@ if (addSubgraphMatch) {
 }
 
 
-    const deleteSubgraphMatch = cmd.match(/^DELETE\s+SUBGRAPH\s+([a-zA-Z0-9_-]+)/i);
-    if (deleteSubgraphMatch) {
-        const [_, subgraphId] = deleteSubgraphMatch;
-        // Dissolves the wrapper declaration lines matching the ID while preserving internal children loops
-        const targetSubgraphRegex = new RegExp(`^[ \\t]*subgraph\\s+${subgraphId}\\b[\\s\\S]*?^[ \\t]*end\\r?\\n?`, 'gm');
-        if (targetSubgraphRegex.test(currentCode)) {
-            currentCode = currentCode.replace(targetSubgraphRegex, '');
-            hasChanges = true;
+    const deletePhaseMatch = cmd.match(/^DELETE\s+PHASE\s+([a-zA-Z0-9._\s-]+)/i);
+if (deletePhaseMatch) {
+    console.group(`🗑️ [MERMAID AGENT] Processing DELETE PHASE Command`);
+    const [_, targetIdent] = deletePhaseMatch;
+    const trimmedIdent = targetIdent.trim().toLowerCase(); // e.g., "phase 1", "phase01", "phase_01"
+
+    // Create normalized versions without spaces or underscores to guarantee a match
+    const collapsedIdent = trimmedIdent.replace(/[\s_]/g, ''); // "phase1" or "phase01"
+
+    const lines = currentCode.split(/\r?\n/);
+    
+    let inTargetSubgraph = false;
+    let openSubgraphsCount = 0;
+
+    const cleanLines = lines.filter(line => {
+        const trimmedLine = line.trim();
+        const lowerLine = trimmedLine.toLowerCase();
+
+        // 1. Detect any subgraph declaration opening line
+        if (lowerLine.startsWith('subgraph ')) {
+            openSubgraphsCount++;
+
+            // Collapse spaces and underscores on the line text to see if it matches the target phase identification
+            const collapsedLine = lowerLine.replace(/[\s_]/g, '');
+
+            if (lowerLine.includes(trimmedIdent) || collapsedLine.includes(collapsedIdent)) {
+                inTargetSubgraph = true;
+                // Delete ONLY the opening wrapper line
+                return false; 
+            }
         }
-        continue;
-    }
+
+        // 2. Detect the end of subgraphs
+        if (trimmedLine === 'end') {
+            if (inTargetSubgraph && openSubgraphsCount === 1) {
+                // Found the matching end line for our target phase wrapper!
+                inTargetSubgraph = false;
+                openSubgraphsCount--;
+                // Delete ONLY the closing wrapper line
+                return false; 
+            }
+            if (openSubgraphsCount > 0) {
+                openSubgraphsCount--;
+            }
+        }
+
+        // Return true to keep everything else (including nodes inside the phase) completely untouched
+        return true;
+    });
+
+    currentCode = cleanLines.join('\n');
+    hasChanges = true;
+
+    console.log(`🎉 [SUCCESS] Dissolved phase wrapper layout for "${targetIdent}".`);
+    console.groupEnd();
+    continue;
+}
+
 
     // ==========================================================================
     // 7. OPERATION: INJECT COMPONENT CSS STYLING CLASSES
