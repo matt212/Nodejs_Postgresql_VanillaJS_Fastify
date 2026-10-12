@@ -1417,11 +1417,13 @@ if (deleteMatch) {
     //     continue;
     // }
     // Updated regex to capture commands missing the explicit ID, as well as standard ones
+//const addCustomShapeMatch = cmd.match(/^ADD\s+(NODE|ROUND_NODE|STADIUM_NODE|SUBROUTINE_NODE|CYLINDER_NODE|CIRCLE_NODE|ASYMMETRIC_NODE|HEXAGON_NODE|PARALLELOGRAM_NODE|TRAPEZOID_NODE|DIAMOND)\s+["'](Step\s+(\d+(?:\.\d+)*):?\s*.*?)["']\s+TO\s+(?:["']([a-zA-Z0-9_\s-]+)["']|([a-zA-Z0-9_-]+))/i);
 const addCustomShapeMatch = cmd.match(/^ADD\s+(NODE|ROUND_NODE|STADIUM_NODE|SUBROUTINE_NODE|CYLINDER_NODE|CIRCLE_NODE|ASYMMETRIC_NODE|HEXAGON_NODE|PARALLELOGRAM_NODE|TRAPEZOID_NODE|DIAMOND)\s+["'](Step\s+(\d+(?:\.\d+)*):?\s*.*?)["']\s+TO\s+(?:["']([a-zA-Z0-9_\s-]+)["']|([a-zA-Z0-9_-]+))/i);
+
 
 if (addCustomShapeMatch) {
   const [_, shapeType, fullLabel, stepNumbers, quotedPhaseId, unquotedPhaseId] = addCustomShapeMatch;
-  const phaseId = quotedPhaseId || unquotedPhaseId;
+    const phaseId = quotedPhaseId || unquotedPhaseId;
 
   // Automatically generate the unique identifier (e.g., "Step 1.4" -> "step1_4")
   const cleanStepNumber = stepNumbers.replace(/\./g, '_');
@@ -1442,17 +1444,35 @@ if (addCustomShapeMatch) {
   else if (shapeUpper === "DIAMOND") { openBrack = '{"'; closeBrack = '"}'; }
 
   // Outputs perfectly safe Mermaid syntax: step1_4["Step 1.4: Reset Account"]
-  const nodeDeclaration = `    ${newId}${openBrack}${fullLabel}${closeBrack}\n`;
-  
-  const escapedPhaseId = phaseId.replace(/[-\/\\^\$*+?.()|[\]{}]/g, '\\$&');
-  const phaseRegex = new RegExp(`(subgraph\\s+["']?${escapedPhaseId}["']?\\b(?:\\s*\\[.*?\\])?\\r?\\n?)`, 'i');
+  const nodeDeclaration = `        ${newId}${openBrack}${fullLabel}${closeBrack}`;
 
-  if (phaseRegex.test(currentCode)) {
-    currentCode = currentCode.replace(phaseRegex, `$1${nodeDeclaration}`);
+  // --- NEW FUZZY NORMALIZATION FIX APPLIED HERE ---
+  const collapsedTarget = phaseId.trim().toLowerCase().replace(/[\s_]/g, ''); // "phase01"
+  
+  const lines = currentCode.split(/\r?\n/);
+
+  let matchedLineIndex = -1;
+
+  for (let i = 0; i < lines.length; i++) {
+    const lowerLine = lines[i].toLowerCase().trim();
+    if (lowerLine.startsWith('subgraph ')) {
+      const collapsedLine = lowerLine.replace(/[\s_]/g, ''); // "subgraphphase01"
+      if (collapsedLine.includes(collapsedTarget)) {
+        matchedLineIndex = i;
+        break;
+      }
+    }
+  }
+
+  if (matchedLineIndex !== -1) {
+    // Safely insert the new node line directly below the subgraph declaration row
+    lines.splice(matchedLineIndex + 1, 0, nodeDeclaration);
+    currentCode = lines.join('\n');
     hasChanges = true;
   }
   continue;
 }
+
 
     // ==========================================================================
     // 6. OPERATION: MANAGE SUBGRAPHS (Add & Remove Frame Bounds)
