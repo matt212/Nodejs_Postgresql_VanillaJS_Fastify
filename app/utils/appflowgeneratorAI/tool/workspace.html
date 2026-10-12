@@ -115,7 +115,7 @@ so do not change anything keep everything as is . only change phase 1 section in
             </li>
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
                 <span class="text-pink-400 font-semibold">Update Phase:</span><br>
-                <code class="text-emerald-400">UPDATE PHASE phase07 TO "phase7 : new updated content"</code>
+                <code class="text-emerald-400">UPDATE phase phase07 TO "phase7 : new updated content"</code>
             </li>
            
             <li class="bg-slate-950/40 p-1.5 rounded border border-slate-800/40 hover:border-slate-700/60 transition-colors">
@@ -1275,7 +1275,7 @@ async function executeSerialMermaidCommand(commandText) {
 //Format:UPDATE PHASE phase07 TO "phase7 : new updated content"
 // or
 //Format: UPDATE PHASE phase_07 TO "phase7 : new updated content"
-    const updateSubgraphMatch = cmd.match(/^UPDATE\s+(?:SUBGRAPH|PHASE)\s+(?:["']?Phase\s*[_0]*(\d+):?\s*.*?["']?|([a-zA-Z0-9_-]+))\s+TO\s+["']([\s\(\S\)]*?)["']/i);
+    const updateSubgraphMatch = cmd.match(/^UPDATE\s+(?:SUBGRAPH|phase)\s+(?:["']?Phase\s*[_0]*(\d+):?\s*.*?["']?|([a-zA-Z0-9_-]+))\s+TO\s+["']([\s\(\S\)]*?)["']/i);
 
 if (updateSubgraphMatch) {
     console.group(`🚀 [MERMAID AGENT] Processing UPDATE SUBGRAPH Command`);
