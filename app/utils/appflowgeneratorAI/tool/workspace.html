@@ -1314,6 +1314,60 @@ if (updateSubgraphMatch) {
     continue;
 }
 
+//Format: UPDATE CONNECTION FROM Step 1.2 TO Step 1.3 TO "Approved Credentials"
+
+const updateConnectionMatch = cmd.match(/^UPDATE\s+CONNECTION\s+FROM\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+["'](.*?)["']/i);
+
+if (updateConnectionMatch) {
+    console.group(`🔗 [MERMAID AGENT] Processing UPDATE CONNECTION Command`);
+    const [_, sourceIdent, targetIdent, newEdgeLabel] = updateConnectionMatch;
+
+    // 1. Resolve technical Node IDs from human label handles (e.g., "Step 1.1" -> "entrance_node1")
+    const sourceNodeId = resolveNodeId(sourceIdent.trim());
+    const targetNodeId = resolveNodeId(targetIdent.trim());
+
+    if (!sourceNodeId || !targetNodeId) {
+        console.error(`❌ [FAILURE] Engine could not resolve steps: "${sourceIdent}" or "${targetIdent}"`);
+        console.groupEnd();
+        continue;
+    }
+
+    // 2. Loop through rows line-by-line to find the connection route entry
+    const lines = currentCode.split(/\r?\n/);
+
+    let updated = false;
+
+    const updatedLines = lines.map(line => {
+        const trimmedLine = line.trim();
+
+        // Target lines containing both matching node IDs in the correct flow direction
+        // Handles multiple formats: "node1 --> node2" or "node1 -- text --> node2"
+        if (trimmedLine.includes(sourceNodeId) && 
+            trimmedLine.includes(targetNodeId) && 
+            trimmedLine.indexOf(sourceNodeId) < trimmedLine.indexOf(targetNodeId)) {
+            
+            // Extract the original leading indentation spaces
+            const indentation = line.match(/^[ \t]*/) || '';
+            
+            // Standardise the connection layout syntax while injecting the fresh description text
+            updated = true;
+            return `${indentation}${sourceNodeId} -- "${newEdgeLabel}" --> ${targetNodeId}`;
+        }
+        return line;
+    });
+
+    if (updated) {
+        currentCode = updatedLines.join('\n');
+        hasChanges = true;
+        console.log(`🎉 [SUCCESS] Updated transition text between "${sourceIdent}" and "${targetIdent}" to "${newEdgeLabel}".`);
+    } else {
+        console.warn(`⚠️ [WARNING] No matching active route line found connecting ${sourceNodeId} to ${targetNodeId}.`);
+    }
+
+    console.groupEnd();
+    continue;
+}
+
     // ==========================================================================
     // 4. OPERATION: DELETE NODE (Surgically purges node elements & link arrays)
     // Format: DELETE NODE Step 1.3
