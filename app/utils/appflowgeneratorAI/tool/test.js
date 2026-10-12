@@ -209,4 +209,16 @@ function executeOptimizedConnectionUpdate(rawInputText, currentCode) {
           marker-end="url(#mermaid-1791832736363_flowchart-v2-pointEnd)">
     </path>
 </g>
+
+<g class="edgeLabel" transform="translate(2900.621, 420.125)">
+        <g class="label" data-id="L_decision_auth1_entrance_node1_99" transform="translate(-66.93, -12)">
+            <foreignObject width="133.86" height="24">
+                <div xmlns="http://w3.org" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center; background-color: #333333; padding: 2px 6px; border-radius: 3px;">
+                    <span class="edgeLabel">
+                        <p style="margin: 0; padding: 0; font-family: 'Trebuchet MS', verdana, arial, sans-serif; font-size: 13px; color: #ffffff;">Invalid Credentials</p>
+                    </span>
+                </div>
+            </foreignObject>
+        </g>
+    </g>
  */

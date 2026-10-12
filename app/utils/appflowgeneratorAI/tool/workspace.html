@@ -1830,7 +1830,7 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
         const commands = rawInputText.split(/\r?\n/);
         console.log(`🎬 [MASTER OPTIMIZER] Slicing ${commands.length} rows.`);
 
-               console.group(`🔍 [SCANNER ENGINE] Initializing Graph Directory Re-Indexing`);
+        console.group(`🔍 [SCANNER ENGINE] Initializing Graph Directory Re-Indexing`);
         
         const serialMapping = {};
         const rawNodesFound = new Set();
@@ -2500,7 +2500,7 @@ if (matchConnect) {
             const isThick = normalizedType === 'CONNECT_THICK';
 
             // 💡 FIX 3: Injecting completed attributes dynamically
-            edgeG.innerHTML = `
+            let innerHTMLStr  = `
                 <path d="${pathData}" 
                       id="${chartHash}-L_${nodeA}_${nodeB}_dynamic" 
                       class="edge-thickness-normal edge-pattern-solid flowchart-link" 
@@ -2514,6 +2514,83 @@ if (matchConnect) {
                       marker-end="url(#${markerId})"/>
             `;
 
+            // 1. Calculate the standard vertical center point between your nodes
+const dynamicLabelY = (startY + endY) / 2;
+
+// 2. Identify the apex horizontal curve sweep boundary dynamically
+let dynamicLabelX = (startX + endX) / 2;
+
+// If an upward connection loop is active, calculate its right-side sweeping peak position
+if (locA.centerY > locB.centerY && Math.abs(diffX) < 40) {
+    // Locate the exact outermost curve vertex line calculated in your pathData string
+    const sweepApexX = startX - (locA.width / 2) - 50; 
+    
+    // Position the text label right on top of that loop curve path apex point
+    dynamicLabelX = sweepApexX; 
+}
+if (linkLabel) {
+    const estimatedTextWidth = linkLabel.length * 7 + 16;
+   const textHalfWidth = estimatedTextWidth / 2;
+    innerHTMLStr += `
+        <g class="edgeLabel" transform="translate(${dynamicLabelX.toFixed(3)}, ${dynamicLabelY.toFixed(3)})">
+            <g class="label" data-id="L_${nodeA}_${nodeB}_dynamic" transform="translate(-66.93, -12)">
+                <!-- ✅ FIXED: Corrected the strict standard W3C XML Namespace validation URL -->
+                <foreignObject width="${estimatedTextWidth}" height="24">
+                    <div xmlns="http://www.w3.org/2000/svg" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center; background-color: #333333; padding: 2px 6px; border-radius: 3px;">
+                        <span class="edgeLabel">
+                            <p style="margin: 0; padding: 0; font-family: 'Trebuchet MS', verdana, arial, sans-serif; font-size: 13px; color: #ffffff;">${linkLabel}</p>
+                        </span>
+                    </div>
+                </foreignObject>
+            </g>
+        </g>
+    `;
+}
+
+// innerHTMLStr += `<g class="edgeLabel" transform="translate(2900.621, 420.125)">
+//         <g class="label" data-id="L_decision_auth1_entrance_node1_99" transform="translate(-66.93, -12)">
+//             <foreignObject width="133.86" height="24">
+//                 <div xmlns="http://w3.org" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center; background-color: #333333; padding: 2px 6px; border-radius: 3px;">
+//                     <span class="edgeLabel">
+//                         <p style="margin: 0; padding: 0; font-family: 'Trebuchet MS', verdana, arial, sans-serif; font-size: 13px; color: #ffffff;">Invalid Credentials</p>
+//                     </span>
+//                 </div>
+//             </foreignObject>
+//         </g>
+//     </g>`
+
+            // if (linkLabel) {
+            //     const estimatedTextWidth = linkLabel.length * 7 + 16;
+            //     const textHalfWidth = estimatedTextWidth / 2;
+
+            //     innerHTMLStr += `
+            //         <g class="custom-dynamic-label" transform="translate(${finalLabelX}, ${finalLabelY})" style="cursor: pointer;" data-custom-link="true">
+            //             <g class="label-container" transform="translate(0, 0)">
+            //                 <!-- White masking shape card keeps line background clean -->
+            //                 <rect rx="3" ry="3" 
+            //                       x="-${textHalfWidth}" 
+            //                       y="-11" 
+            //                       width="${estimatedTextWidth}" 
+            //                       height="22" 
+            //                       fill="#ffffff" 
+            //                       stroke="none" 
+            //                       style="opacity: 0.95;"></rect>
+                            
+            //                 <!-- Text node layout styling -->
+            //                 <text text-anchor="middle" 
+            //                       dominant-baseline="central" 
+            //                       y="1"
+            //                       style="font-family: 'Trebuchet MS', verdana, arial, sans-serif; font-size: 13px; fill: #333333; font-weight: bold; pointer-events: none;">${linkLabel}</text>
+            //             </g>
+            //         </g>
+            //     `;
+
+            // }
+
+
+
+            //edgeG.innerHTML = htmlPayload;
+            edgeG.innerHTML = innerHTMLStr;
             targetLayer.appendChild(edgeG);
             console.log(`🌐 Native Dynamic Path Generated: d="${pathData}" linked to marker: #${markerId}`);
         } else {
