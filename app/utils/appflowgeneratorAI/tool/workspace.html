@@ -2211,17 +2211,156 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 }
             }
             // --- PROCESS 7C: DISCONNECT ROAD LANE ---
+                        // --- PROCESS 7C: DISCONNECT ROAD LANE ---
+                        // --- PROCESS 7C: DISCONNECT ROAD LANE ---
+                       // --- PROCESS 7C: DISCONNECT ROAD LANE ---
             const matchDisconnect = cmd.match(/^DISCONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+FROM\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
             if (matchDisconnect) {
+                const startTime = performance.now();
                 const [_, targetA, targetB] = matchDisconnect;
-                const nodeA = resolveId(targetA);
-                const nodeB = resolveId(targetB);
-                document.querySelectorAll(`.ls-${nodeA}.le-${nodeB}, .id-${nodeA}-${nodeB}`).forEach(el => el.remove());
+                
+                const nodeA = resolveIdHelper(targetA);
+                const nodeB = resolveIdHelper(targetB);
+                const isSelfLoop = (nodeA === nodeB);
+
+                console.group(`⚡ [DISCONNECT PIPELINE] Execution Initiated`);
+                console.log(`📊 [COMMAND CONFIG] Raw Input: "${cmd.trim()}"`);
+                console.log(`🧩 [RESOLVER SCAN] Source: "${targetA}" ➔ [${nodeA}] | Target: "${targetB}" ➔ [${nodeB}] ${isSelfLoop ? '⚠️ (SELF-LOOP DETECTED)' : ''}`);
+
+                // --- STEP 1: SMART VISUAL DOM DELETION ---
+                const structuralEdgeSelectors = [
+                    `g.edgePath[class*="ls-${nodeA}"][class*="le-${nodeB}"]`,
+                    `g.edgePath[id*="${nodeA}"][id*="${nodeB}"]`,
+                    `path[id*="${nodeA}"][id*="${nodeB}"]`,
+                    `g.edgeLabel[id*="${nodeA}"][id*="${nodeB}"]`,
+                    `g.edgeLabel` 
+                ].join(',');
+
+                const visualElements = document.querySelectorAll(structuralEdgeSelectors);
+                console.log(`🖥️  [DOM QUERY] Discovered ${visualElements.length} potential layout nodes matching rough spatial boundaries.`);
+                
+                let domRemovedCount = 0;
+
+                visualElements.forEach((el, index) => {
+                    let shouldRemove = false;
+                    const baseId = el.id || '(no id)';
+                    const baseClass = el.className?.baseVal || (typeof el.className === 'string' ? el.className : '(no class)');
+                    
+                    if (!el.classList.contains('edgeLabel')) {
+                        const pathEl = el.querySelector('path') || el;
+                        const pathId = pathEl.id || '';
+                        
+                        if (isSelfLoop) {
+                            // 💡 STRICTOR SELF-LOOP CHECK: Ensure BOTH source and target hooks point to the same node
+                            // Standard Mermaid format: L_source_target or flowchart-source-target
+                            const hasDoubleTarget = (baseId.split(nodeA).length > 2) || 
+                                                     (baseClass.split(nodeA).length > 2) || 
+                                                     (pathId.split(nodeA).length > 2);
+                            if (hasDoubleTarget) {
+                                shouldRemove = true;
+                            }
+                        } else {
+                            shouldRemove = true;
+                        }
+                    } else {
+                        const innerLabelG = el.querySelector('g.label');
+                        const dataId = innerLabelG ? innerLabelG.getAttribute('data-id') : '(no data-id)';
+
+                        if (isSelfLoop) {
+                            // 💡 STRICTOR LABEL CHECK: Ensure label metadata tracks back to a loop structure
+                            const hasDoubleLabelTarget = (baseId.split(nodeA).length > 2) || 
+                                                           (baseClass.split(nodeA).length > 2) || 
+                                                           (dataId && dataId.split(nodeA).length > 2);
+                            if (hasDoubleLabelTarget) {
+                                shouldRemove = true;
+                            }
+                        } else {
+                            if (
+                                (baseId.includes(nodeA) && baseId.includes(nodeB)) || 
+                                (baseClass.includes(nodeA) && baseClass.includes(nodeB)) ||
+                                (dataId && dataId.includes(nodeA) && dataId.includes(nodeB))
+                            ) {
+                                shouldRemove = true;
+                            }
+                        }
+                    }
+
+                    if (shouldRemove) {
+                        console.log(`   🎯 [DOM PURGE] Target [${index}] Match Validated! Dropping element structure:`, {
+                            tagName: el.tagName,
+                            id: baseId,
+                            class: baseClass
+                        });
+                        el.remove(); 
+                        domRemovedCount++;
+                    }
+                });
+
+                // --- STEP 2: METADATA COMPILER ANALYSIS & SYNCHRONIZATION ---
                 const lines = workingCode.split(/\r?\n/);
-                workingCode = lines.filter(line => !(line.includes(nodeA) && line.includes(nodeB))).join('\n');
-                hasChanges = true;
+                let textSyncLinesRemoved = 0;
+                
+                const cleanLines = lines.filter((line, index) => {
+                    const trLine = line.trim();
+                    if (!trLine || trLine.startsWith('graph ') || trLine.startsWith('subgraph ') || trLine === 'end') {
+                        return true;
+                    }
+
+                    const isLinkSyntax = trLine.includes('-->') || trLine.includes('---') || trLine.includes('==>') || trLine.includes('-.->');
+                    if (!isLinkSyntax) return true;
+
+                    if (isSelfLoop) {
+                        // 💡 EXACT REGEX PATTERN MATCHING FOR SELF-LOOPS
+                        // Matches "nodeA --> nodeA" or "nodeA -- text --> nodeA" while ignoring paths connecting to other nodes
+                        const selfLoopRegex = new RegExp(`^\\s*\\b${nodeA}\\b.*(-->|---|==>|-.->).*\\b${nodeA}\\b\\s*$`);
+                        if (selfLoopRegex.test(trLine)) {
+                            console.log(`   📝 [CODE LINE DROP] Match found on script line ${index + 1}: "${trLine}"`);
+                            textSyncLinesRemoved++;
+                            return false;
+                        }
+                    } else {
+                        const containsBoth = trLine.includes(nodeA) && trLine.includes(nodeB);
+                        const isDirectional = trLine.indexOf(nodeA) < trLine.indexOf(nodeB);
+                        if (containsBoth && isDirectional) {
+                            console.log(`   📝 [CODE LINE DROP] Match found on script line ${index + 1}: "${trLine}"`);
+                            textSyncLinesRemoved++;
+                            return false;
+                        }
+                    }
+                    return true;
+                });
+
+                workingCode = cleanLines.join('\n');
+                
+                // --- STEP 3: PREVENT RE-RENDER SYSTEM LOOPS ---
+                const targetEditor = document.getElementById('codeEditor') || (typeof codeEditor !== 'undefined' ? codeEditor : null);
+                if (targetEditor) {
+                    const originalRefresh = window.refreshDiagram || window.renderMermaid || null;
+                    if (originalRefresh && typeof originalRefresh === 'function') {
+                        window.refreshDiagram = () => {};
+                        window.renderMermaid = () => {};
+                    }
+
+                    targetEditor.value = workingCode;
+
+                    setTimeout(() => {
+                        if (originalRefresh) {
+                            window.refreshDiagram = originalRefresh;
+                            window.renderMermaid = originalRefresh;
+                        }
+                    }, 50);
+                }
+
+                hasChanges = false; 
+                
+                const endTime = performance.now();
+                console.log(`✨ [PIPELINE SUCCESS] Visual mutations applied. DOM Nodes Purged: ${domRemovedCount} | Code Lines Filtered: ${textSyncLinesRemoved} | Delta Profile Time: ${(endTime - startTime).toFixed(2)}ms`);
+                console.groupEnd();
                 continue;
             }
+
+
+
         }
         if (hasChanges) {
             codeEditor.value = workingCode;
