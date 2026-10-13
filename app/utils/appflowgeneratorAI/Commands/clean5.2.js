@@ -1,0 +1,68 @@
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Reads a raw text file, isolates the clean Mermaid block following the 2nd "Assistant:" marker,
+ * and saves it into a timestamped markdown file.
+ * @param {string} inputFilePath - Path to the source raw txt file.
+ */
+function cleanAndExtractMermaid(inputFilePath) {
+    try {
+        // 1. Verify file exists
+        if (!fs.existsSync(inputFilePath)) {
+            console.error(`❌ [ERROR] Source file not found at: \${inputFilePath}`);
+            return;
+        }
+
+        // 2. Read the source text content
+        const rawContent = fs.readFileSync(inputFilePath, 'utf8');
+
+        // 3. Split the file using the "Assistant:" delimiter case-sensitively
+        const marker = "Assistant:";
+        const segments = rawContent.split(marker);
+
+        // Crucial validation: Ensure there are at least two "Assistant:" markers present (creating 3 parts)
+        if (segments.length < 2) {
+            console.error(`❌ [ERROR] Aborting code execution: Could not locate the second "\${marker}" token block in the file.`);
+            return;
+        }
+
+        // 4. Extract everything following the second "Assistant:" block
+        // segments[0] = before 1st Assistant
+        // segments[1] = between 1st and 2nd Assistant
+        // segments[2...] = everything after the 2nd Assistant (rejoined in case the string appears in the code text)
+        let coreContent = segments.slice(1).join(marker).trim();
+
+        // 5. Wrap inside clean markdown code fence backticks blocks
+        const finalOutput = `\`\`\`mermaid\n${coreContent}\n\`\`\``;
+
+        // 6. Generate precise execution timestamp filename string (Format: YYYYMMDD_HHMMSS)
+        const now = new Date();
+        const timestamp = now.toISOString()
+            .replace(/[-:]/g, '')      // Clear dates dashes and time colons
+            .replace('T', '_')         // Swap separator delimiter character to clean underscore
+            .split('.')[0];            // Drop fractional milliseconds tail completely
+
+        const outputFileName = `mermaid_diagram_${timestamp}.md`;
+        const outputFilePath = path.join(path.dirname(inputFilePath), outputFileName);
+
+        // 7. Commit write configuration array output directly onto physical hardware disk
+        fs.writeFileSync(outputFilePath, finalOutput, 'utf8');
+        console.log(`🎉 [SUCCESS] File cleanly processed and exported!`);
+        console.log(`📁 Saved to location: ${outputFilePath}`);
+
+    } catch (error) {
+        console.error("💥 [CRITICAL CRASH] Redirection exception caught within file pipeline processing loop:", error);
+    }
+}
+
+// ============================================================================
+// HOW TO EXECUTE SCRIPT:
+// ============================================================================
+// Pass your local relative path parameter index here to run the function execution trace loop:
+
+
+//const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-08.txt';
+const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-13T13-12-24-996Z.txt';
+
+cleanAndExtractMermaid(TARGET_INPUT_FILE);
