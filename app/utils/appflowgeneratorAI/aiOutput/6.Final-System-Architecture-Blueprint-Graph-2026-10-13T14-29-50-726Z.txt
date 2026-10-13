@@ -1,81 +1,67 @@
 User:
-You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest abstract technical system payload schemas and synthesize a high-readability, executive-level visual workflow diagram formatted strictly as a Mermaid.js flowchart utilizing a clean, strict top-down layout (graph TD).
 
-=== CRITICAL COMPILER & SYNTAX SAFEGUARDS (ZERO PARSING ERRORS) ===
-
-1. STRICT VARIABLE AND GEOMETRIC BRACKET SEPARATION:
-   - Every node variable identifier name MUST be short, plain lowercase alphanumeric strings without any symbols, punctuation, colons, or brackets embedded inside them.
-   - Text contents must be nested cleanly within structural geometric tokens exactly matching these layout patterns:
-     * Correct Standard Box: node_variable_name["Functional Component Step Label String Text"]
-     * Correct Decision Diamond: decision_variable_name{"Conditional Evaluation Diamond Question Text"}
-   - YOU ARE STRICTLY FORBIDDEN from wrapping bracket structural notation within other bracket notation text labels (e.g., Never write: node_name["node_name{Text}"]).
-
-2. NO RECURSIVE SELF-LOOPS AND CONNECTIONS:
-   - YOU ARE ABSOLUTELY FORBIDDEN from linking a node identifier back into its exact identical variable identity code string (e.g., Never write: exit_node_4 --> exit_node_4). Every arrow link MUST point forward, downward, or via a controlled, single-step vertical step-back to a completely different, unique variable identity target step. Horizontal or diagonal loopbacks are strictly forbidden.
-   - Ensure the diagram connections are written out cleanly exactly once. Do not repeat long, duplicated code iterations.
-
-3. INLINE VALIDATION CROSSROADS & VALID MERMAID LINK SYNTAX:
-   - Insert inline Mermaid decision diamond shapes directly within the local timeline flow inside the subgraphs where evaluations occur using correct curly braces syntax containing plain text questions only.
-   - CRITICAL SYNTAX SAFEGUARD: You are STRICTLY FORBIDDEN from outputting HTML break tags (<br/>), forward slashes (/), backslashes (), or trailing whitespace blocks INSIDE the curly braces string {...} of a decision node identifier. 
-   - When writing conditional paths out of a decision node, use a standard arrow label pattern with solid lines exclusively. Never combine a double hyphen link text and an arrow link text on the same line.
-   - CRITICAL CONNECTOR MANDATE: You are REQUIRED to use standard solid structural arrows (-->) for all directional paths, evaluation pathways, structural loops, and exception routing across the entire diagram layout to ensure uniform compiler compatibility.
-   - STRING ENCAPSULATION MANDATE: All connection label text strings MUST be enclosed in double quotes (e.g., nodeA -- "Yes (Validated)" --> nodeB) to isolate special characters and prevent compilation parser errors.
+    You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest technical system payload schemas and synthesize a high-readability, executive-level visual workflow diagram formatted strictly as a Mermaid.js flowchart utilizing a clean, strict top-down layout (graph TD).
 
 === TOP-DOWN VISUAL LAYOUT CONSTRAINTS (MANDATORY) ===
 
-4.ANTI-LEAK SUBGRAPH CONTAINER ISOLATION (HUB-AND-SPOKE ENFORCEMENT):
+1. STRUCTURAL GATEWAY ROUTING LAYER (HUB-AND-SPOKE SANITIZATION):
    - Nodes inside a subgraph container are STRICTLY FORBIDDEN from linking directly to internal nodes inside a different subgraph container.
-   - CRITICAL ANTI-SPIDERWEB BAN: You are STRICTLY FORBIDDEN from linking nodes horizontally, sideways, diagonally, or wrapping them in a circular web layout. The entire structure must cascade downward in a clear, sequential vertical hierarchy.
-   - You MUST enforce a strict Hub-and-Spoke topology for inter-subgraph travel:
+   - You MUST enforce a strict Hub-and-Spoke topology for every single subgraph block:
      * Entrance Node: Designate or create exactly ONE node at the absolute top boundary of the subgraph to act as the single entry point for all incoming external arrows.
      * Exit Node: Designate or create exactly ONE node at the absolute bottom boundary of the subgraph to act as the single exit point for all outgoing external arrows.
    - Inter-subgraph communication MUST occur exclusively by linking the Exit Node of a preceding subgraph directly to the Entrance Node of the next chronological subgraph.
-   - EXCEPTION INTERCEPT ROUTING: Mid-flight failure/exception nodes are STRICTLY FORBIDDEN from linking directly to a nested global closure node inside another subgraph. Instead, all validation failure/alert nodes must exit their home subgraph by routing exclusively through that home subgraph's dedicated "Exit Node" or to a root-declared global entrance proxy node. 
    - CRITICAL COMPILING CONSTRAINT: You are STRICTLY FORBIDDEN from linking a node variable identifier directly to an outer subgraph container name string ID block. Edges must ONLY connect explicit Node-to-Node targets.
 
-
-5. CLEAN STACKED LOOPBACKS (NO SPIDERWEB INTERSECTIONS):
-   - To prevent overlapping cross-lines and spiderweb layouts while preserving vital state-remediation tracks, follow a strict vertical stack rule:
-     * Runtime validation failures (e.g., resource unavailable, validation mismatch) must route straight up into the immediate preceding interface staging step *within the same vertical stack*.
-     * The loopback arrow MUST be drawn directly from the decision diamond up to the retry node without crossing any other horizontal or diagonal lines.
+2. UNIQUE CONTAINER & VARIABLE BALANCING:
    - Every single subgraph block MUST possess a completely unique, lowercase, underscore-separated string identifier ID name. NEVER reuse a subgraph ID string anywhere in the entire output.
-   - Every node variable identifier name within the entire diagram MUST be completely unique. Every variable identifier used anywhere in a layout link (including all entry points, exit points, and operational alert nodes) MUST be explicitly declared with its bracket shape and text label INSIDE its designated subgraph container before it is referenced in the connection streams. No uninitialized variables are permitted.
-
-6. STATE CLEARANCE & RECOVERY LAYER STATE:
-   - Before any runtime system state mutation, target resource allocation, or execution validation occurs, you MUST explicitly establish a logical Discovery & Curation layer immediately following the root initialization step.
-   - Split exception paths cleanly based on the operational context:
-     * CRITICAL SYSTEM FAULTS: Malicious anomalies or core authorization infrastructure failures must route directly into a "Global Infrastructure Audit Ledger".
-     * FUNCTIONAL EXCEPTIONS: Standard, routine state validation anomalies (e.g., transaction rejected, boundary invalid, resource window full) must NEVER terminate in a dead-end log. They must step back directly to the local Interactive Interface staging layer to prompt immediate actor remediation actions.
-   - If an operational milestone breakdown occurs during data ingestion or processing, the processing thread must branch out of the validation point using standard solid structural connections back to the preceding operational stage to handle state substitution or corrections before proceeding.
+   - Every single node variable identifier name MUST be initialized with its structural geometric bracket shape and text label EXACTLY ONCE inside its designated home subgraph block container (e.g., node_variable["Step Text"] or decision_variable{"Question Text"}).
+   - In the subsequent graph connection and link streams section at the bottom of the diagram, you MUST reference those variables using their naked identifier names exclusively (e.g., node_a --> node_b or node_a -- "Text" --> node_b) without re-appending geometric brackets, brackets text, or quotes. Re-defining or re-labeling an existing variable ID in a secondary location is strictly forbidden.
+   - You are strictly forbidden from declaring a subgraph identifier standalone on its own line under link sections without child components or functional connectivity.
 
 
-=== UNIVERSAL STATE INVARIANTS (NO LOOSE ENDS) ===
+3. THE UNIVERSAL ARROW CONNECTOR INVARIANT (ZERO SYNTAX ERRORS):
+   - You are ABSOLUTELY FORBIDDEN from putting text strings directly between two sequential arrows on a single link line (e.g., Never write: node_a --> "Label Text" --> node_b). This is invalid syntax and breaks the parser.
+   - For standard, unconditional processing steps between process boxes, you MUST use plain, naked solid arrows with no text attached: node_a --> node_b
+   - To label a pathway, conditional transition, or milestone track, you MUST use the strict hyphen-quote arrow pattern exclusively: node_a -- "Descriptive Process Action Text" --> node_b
+   - When branching out from an evaluation decision diamond, follow this identical format: decision_node -- "On Success" --> success_node
+   - You are REQUIRED to use standard solid structural arrows (-->) for all directional paths, evaluation pathways, structural loops, and exception routing across the entire diagram layout to ensure uniform compiler compatibility.
 
-7. INLINE COMPONENT SCOPING SYSTEM INVARIANT:
-   - Every single validation decision diamond, functional exception check, and alternate recovery track node MUST be declared explicitly INSIDE the same subgraph block container where its primary operational activity executes. 
-   - You are strictly forbidden from placing validation crossroads or failure vectors outside of their home subgraph boundaries to prevent intersecting lines across containers.
 
-8. STATE CLEARANCE & MUTATION COMMIT SYNCHRONIZATION:
-   - You must enforce a strict chronological state dependency regarding core clearance approvals and structural record generation. 
-   - A structural baseline state or system execution artifact cannot be officially designated as "Created," "Committed," or "Finalized" until AFTER a successful authorization/settlement status is achieved in the gating confirmation node.
-   - The flow must strictly map: Clearance Gating Verification -> Authorized State Status -> Post-Clearance Document/Record Creation -> Downstream Fulfillment/Resource Assignment Execution.
+=== UNIVERSAL TRANSACTIONAL STATE INVARIANTS (NO LOOSE ENDS) ===
 
-9. TRANSACTIONAL EXCEPTION RESILIENCY:
-   - If a standard business logic validation variance occurs, the execution thread must never terminate into a permanent global system closure state.
-   - The thread must route directly and vertically backward to the immediate preceding interactive interface staging layer within its own local stack to permit immediate data correction.
+4. THE INITIAL DISCOVERY & CURATION LAYER STATE:
+   - Before any transactional commit, resource allocation, or logistical verification occurs, you MUST explicitly establish a logical Discovery & Curation layer immediately following the root initialization/access step.
+   - The workflow must natively map the interactive sequence where an actor navigates classifications, queries datasets, evaluates item metrics, and aggregates choices into a temporary staging state  before triggering target actions.
+
+5. POST-SETTLEMENT TRANSACTION COMMIT SYNCHRONIZATION:
+   - You must enforce a strict chronological state dependency regarding financial settlement and structural record creation. 
+   - A core Transactional Record or Final Order Document cannot be officially designated as "Created," "Committed," or "Finalized" until AFTER a successful authorization/settlement status is achieved in the payment/billing validation node.
+   - The flow must strictly map: Financial Settlement Verification -> Authorized Status -> Post-Settlement Document Creation -> Downstream Fulfillment/Resource Assignment Execution.
+
+6. MID-FLIGHT EXCEPTION HANDLING & TRANSACTIONAL ROLLBACKS:
+   - You must ensure there are ZERO dead ends or unhandled operational loops for failures occurring mid-process.
+   - If a failure, exception, or cancellation trigger occurs AFTER a successful transaction settlement status but BEFORE final delivery/handover, the exception path must immediately branch out of the validation diamond.
+   - This failure track must follow the uniform solid-line hyphen-quote formatting rule (e.g., decision_node -- "On Exception Trigger" --> rollback_node), bypass normal forward progression, route directly through a reversing ledger/compensation action, and terminate cleanly into a distinct, final system disruption closure node at the bottom of the architecture.
+
+6.1 MULTI-PATH STRUCTURAL INTEGRITY RULES (TOTAL STATE ARCHITECTURE):
+   - For every milestone validation, query check, or item submission, you MUST concurrently evaluate four distinct operational tracks rather than a simple one-way channel:
+     1. THE HAPPY PATH (Primary Success): The direct path where all system checks pass seamlessly.
+     2. THE ALTERNATE PATH (Alternative Fulfillment): A parallel success route bypassing normal steps (e.g., Quick Re-order from history, Subscription Autofills).
+     3. THE DEGRADED PATH (Soft Failure / Substitution): A partial success state where missing resources trigger substitutions or reduced allocations instead of an absolute system cancellation (e.g., partial stock allocation).
+     4. THE UNHAPPY PATH WITH RECOVERY (Self-Healing Loop): A structural exception that routes back into a localized remediation loop (e.g., Retry Payment Gateway, Re-enter Address Pin) to recover the session as mandated by Rule 13.
+   - If an alternate state requires complete termination, it must branch out cleanly using your standard link styling rules directly to a distinct system disruption closure node.
 
 
 === DATA MATRIX RECONCILIATION & SYNTHESIS (HYPER-INTELLIGENCE) ===
 
-10. FULL DYNAMIC INGESTION MANDATE:
-    - The output structural phases, nodes, logic trees, text labels, descriptions, and loop flows MUST be dynamically extracted, synthesized, and populated directly and exclusively from the raw data values passed into the input payload matrices below.
-    - Concurrently analyze all three provided data matrices to build a seamless workflow with zero disconnected blocks:
+7. TRIPLE-MATRIX CROSS-REFERENCE ENFORCEMENT:
+    - You MUST concurrently analyze all three provided data matrices to build a seamless workflow with zero disconnected blocks:
       * The Structural Map: Use the 'COMPONENT LAYOUT OBJECTS' matrix to identify your core system entities, inputs, activities, and outputs.
       * The Security Permissions: Use the 'ROLE SET VALIDATIONS' matrix to determine which operational actions, creations, mutations, and status modifications are authorized for specific actors.
       * The Chronological Timeline: Use the 'CHRONOLOGICAL JOURNEY TRACKS' matrix as the master timeline blueprint to establish the exact sequential ordering of execution steps.
     - RECONCILIATION RULE: For every step derived from the Chronological Journey Tracks, cross-reference the Component Layout Objects to extract its specific processing activity, inputs, and outputs. Then, cross-reference the Role Set Validations to ensure the node descriptions reflect the authorized capabilities and business guardrails of the acting role. Do not let any data element from one matrix contradict or become isolated from the others.
 
-11. DETERMINISTIC ENTRANCE STATE INITIALIZATION:
+8. DETERMINISTIC ENTRANCE STATE INITIALIZATION:
     - To establish a flawless starting point with no loose ends, search the 'CHRONOLOGICAL JOURNEY TRACKS' matrix for 'Step 1' of the primary initiator role. 
     - This exact milestone MUST serve as the absolute root initialization step for the entire diagram.
     - Synthesize this step with its corresponding entity in the 'COMPONENT LAYOUT OBJECTS' matrix to form the single Entrance Node of Subgraph 1. 
@@ -83,24 +69,54 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest abstract 
 
 === STYLING, PARSING, AND INTERFACE LANGUAGE TRANSLATION ===
 
-12. ABSOLUTE BIFT OF COLOR AND STYLING (NO COLOR POLICY):
-   - You are STRICTLY FORBIDDEN from outputting any color configurations, color coding, styling templates, theme styles, or "classDef" / "class" declarations anywhere in the diagram code.
-   - The entire diagram must be completely black-and-white, plain, and standard out-of-the-box Mermaid rendering default styling.
-13. REVERSE PROCESSING STATE AUDIT LEDGER:
-   - In the event of a downstream handover verification failure or execution rejection, you MUST route the system entities through an explicit "Verification Quarantine & Inspection Staging" phase.
-   - Do NOT allow returned or failed assets to trigger an instantaneous "Resource Release" update until an active evaluation lifecycle marks the entities as viable for re-allocation.
+9. ABSOLUTE SHAPE DEFINITION & SYNTAX VALIDATION RULES:
+   - Every node variable identifier name MUST be short, plain lowercase alphanumeric strings without any symbols or brackets embedded inside them.
+   - Text contents must be nested cleanly within structural geometric tokens exactly matching these layout patterns:
+     * Correct: node_variable_name["Business Process Box Label String Text"]
+     * Correct: decision_variable_name{"Business Evaluation Diamond Question Text"}
+   - YOU ARE STRICTLY FORBIDDEN from wrapping bracket structural notation within other bracket notation (e.g., Never write: node_name["node_name{Text}"]).
+   - CRITICAL CLASS STYLE BAN: You are ABSOLUTELY FORBIDDEN from appending class styles, class definitions, or trailing operator markers (e.g., Never write: node_id:::marker or subgraph_id:::style) anywhere in your output. Every line must terminate cleanly with standard plain Mermaid alphanumeric and layout bracket syntax exclusively.
+   - Nodes are strictly forbidden from pointing directly back into themselves as an isolated arrow link loop.
 
 
-14. SEQUENCE MARKERS & CLOSED-LOOP NOTIFICATIONS:
+
+10. TECHNICAL JARGON REPLACEMENT GLOSSARY (DOMAIN AGNOSTIC):
+   - Aggressively translate developer-centric engineering syntax into clear business capability terms.
+   - Use the following token translation map to intercept and convert forbidden architectural vocabulary:
+
+     | Forbidden Technical/Engineering Jargon | Mandatory Business Translation Equivalent |
+     |---------------------------------------|--------------------------------------------|
+     | API / Endpoint / Microservice         | Service Interface / Functional Capability  |
+     | DB / DAL / Postgres / Database / SQL  | Information Registry / Ledger / Data Base |
+     | IAM / JWT / Token / Auth Cookie       | Access Credentials / Verified Identity Sec |
+     | Webhook / Event Trigger / Kafka       | State Change Update / Notification Vector  |
+     | UI / Frontend / Screen / View / Page  | Visual Interface / Interactive Presentation|
+
+11. SEQUENCE MARKERS & CLOSED-LOOP NOTIFICATIONS:
    - Segment the master timeline chronologically using structural phase comment blocks.
    - Wherever an actor or component initiates a request, validation, or transaction submission, you MUST explicitly map the immediate return notification, error alert, or confirmation vector back to the initiator as the very next chronological link.
 
-15. CHRONOLOGICAL PATHS WITH UNIFORM ARROW LINK FORMATTING:
-   - Use standard solid arrow label brackets to label chronological state changes explicitly using descriptive business text strings based directly on the ingested matrix data.
-   - For alternate paths or loop rollbacks, clearly describe the processing action using a distinct contextual indicator string enclosed inside the solid arrow label brackets.
+12. CHRONOLOGICAL PATHS WITH HYPHENATED ALPHABETIC SUB-INDEXING:
+    - Prefix macro timeline arrows with incremental sequential integers (e.g., 1., 2., 3.).
+    - To illustrate closely bound child sub-processes, inner business validations, or instant request-response feedback loops, you MUST utilize a strict hyphenated alphabetic modifier for exception/failure tracks. You are ABSOLUTELY FORBIDDEN from formatting link labels using pipe characters. Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively (e.g., node_a -- "Index. Process Step Text" --> node_b).
 
-16. CRITICAL OUTPUT FORMAT COMPLIANCE:
-• Output the Mermaid diagram code cleanly nested inside standard markdown code block fences (```mermaid) to ensure the rendering interface presents it as a copy-pasteable object block. Do not prepend conversational filler words or post-processing commentary; deliver the fenced code block instantly.
+
+13. CLOSED-LOOP ERROR REMEDIATION TRACKING INVARIANT:
+    - For every logical failure path or business exception track branching out of a validation checkpoint, you are REQUIRED to connect the arrow path backward to a previously initialized operational node within the same subgraph block container.
+    - Creating loose, unlinked exception endpoints or breaking out of a local container layout boundary via a horizontal error arrow is strictly prohibited. All recovery tracks must form a closed loop pointing cleanly to a valid process box.
+
+
+14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING:
+   - Every single functional component step, background operational task, decision gate, and staging node label text string MUST be strictly prefixed with its explicit hierarchical chronological position identifier formatted exactly as "Step X.Y: " (where 'X' is the current numeric Phase number, and 'Y' is a strictly incrementing sequence starting at 1 for the first element inside that specific phase).
+   - Use strict numeric markers for primary system subgraphs and phased tracks, and lower-case alphabetical dot-notation identifiers for internal sequential actions and nested steps.
+   - MANDATORY PARTITION LIMIT: You are REQUIRED to break the layout down into at least 5 chronologically separate subgraph containers (e.g., "subgraph phase_01 [Phase 1: ...]"). You are STRICTLY FORBIDDEN from grouping more than 6 functional step node boxes inside a single subgraph container. If a phase contains more than 6 operations, divide it into balanced sub-phase boxes linked cleanly via exit-to-entrance hub edges.
+   - ABSOLUTE GENERATION STOP BOUNDARY: Once the final terminal node connection line is written, you are REQUIRED to halt the token stream immediately. You are STRICTLY FORBIDDEN from outputting secondary verification notes, inner debugging commentary, or re-verifying constraints. Stop processing immediately at the final bracket link character.
+
+15. MANDATORY TERMINAL CODE BOUNDARY COMPLIANCE:
+   - Output ONLY the raw Mermaid diagram syntax strings starting directly with the root token: graph TD
+   - You are ABSOLUTELY FORBIDDEN from outputting introductory conversational text, trailing descriptions, markdown summaries, or internal self-correction notes outside the graph code. 
+   - The final character of your output stream MUST be the last node configuration connection definition line. Stop the token generation pipeline instantly at that boundary character.
+
 === SOURCE INPUT PAYLOAD DATA ===
 --- COMPONENT LAYOUT OBJECTS ---
 === Final DATA MATRIX for domain :Quick Commerce (Q-Commerce) and niche :Hyperlocal Grocery Delivery  ===
@@ -197,6 +213,7 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest abstract 
     "output": "Cancelled order status and released stock availability"
   }
 ]
+
 --- ROLE SET VALIDATIONS ---
 === Final SYSTEM ACTORS & AUTHORIZATION MATRIX ===
 
@@ -418,6 +435,7 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest abstract 
       "Processing Payment Transactions",
       "Validating Refund Claims",
       "Managing Subscription 
+
 --- CHRONOLOGICAL JOURNEY TRACKS ---
 === E2E ACTOR TRANSACTION JOURNEYS for domain :Quick Commerce (Q-Commerce) and niche :Hyperlocal Grocery Delivery  ===
 
@@ -557,87 +575,96 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest abstract 
         "data_object_layer": "Evaluates 'Refund Claim' input including reason and evidence; performs claim validation and partial/full fund reversal; outputs refund approval and adjusted account balance."
       },
       {
-        "step": "3",
-        "data_object_layer": "Manages 'Subscription Plan' input for recurring billing cycles; calculates fees and sets up automated billing; outputs active membership tier and priority delivery rights confirmation."
-      },
-      {
-        "step": "4",
-        "data_object_layer": "Executes 'Loyalty Points Ledger' updates by calculating point accrual and redemption validation; modifies order total based on points used; outputs updated points balance and discounted total."
-      }
-    ]
-  }
-]
-Assistant:
-
-
  
 
+    
+    
+
 Assistant:
-```mermaid
 graph TD
-    %% ==============================================================================
-    %% SUBGRAPH 1: USER ONBOARDING & INITIALIZATION
-    %% ==============================================================================
-    subgraph subgraph_user_onboarding_init["subgraph_user_onboarding_init"]
-        direction TB
-        EntranceNode_user_onboarding_init["Entrance Node: System Initialization"]
-        
-        user_account_reg["User Account: Identity Verification"]
-        iam_audit_check{"IAM Security Officer: Validate Credentials"}
-        auth_token_gen["Authenticated Session Token"]
-        
-        exit_node_user_onboarding_init["Exit Node: Authenticated User Context"]
-        
-        EntranceNode_user_onboarding_init --> user_account_reg
-        user_account_reg --> iam_audit_check
-        iam_audit_check -- "Valid Credentials" --> auth_token_gen
-        iam_audit_check -- "Invalid Credentials" --> exit_node_user_onboarding_init
-        auth_token_gen --> exit_node_user_onboarding_init
+    subgraph phase_01["Phase 1: Identity & Access Discovery"]
+        subgraph entry_hub["Entry Hub: Customer Initiation"]
+            init_root[Step 1.1: User Account - Initiate Registration]
+            init_root --> auth_verify{"Step 1.2: IAM Security - Validate Identity"}
+            auth_verify -- "On Authentication Failure" --> init_root
+            auth_verify -- "On Validation Success" --> session_create["Step 1.3: IAM Security - Create Authenticated Session"]
+            session_create --> session_exit["Session Exit Node"]
+        end
+        session_exit --> entry_exit["Phase 1 Exit Node"]
     end
 
-    %% ==============================================================================
-    %% SUBGRAPH 2: SERVICE AREA VALIDATION & GEOLOCATION
-    %% ==============================================================================
-    subgraph subgraph_geolocation_validation["subgraph_geolocation_validation"]
-        direction TB
-        EntranceNode_geolocation_validation["Entrance Node: Authenticated User Context"]
-        
-        geo_request["Geolocation Request: GPS Coordinates"]
-        zone_mapping["Service Area Validation"]
-        delivery_pin_confirmed["Confirmed Delivery Pin"]
-        
-        exit_node_geolocation_validation["Exit Node: Confirmed Delivery Pin"]
-        
-        EntranceNode_geolocation_validation --> geo_request
-        geo_request --> zone_mapping
-        zone_mapping --> delivery_pin_confirmed
-        delivery_pin_confirmed --> exit_node_geolocation_validation
+    subgraph phase_02["Phase 2: Context & Inventory Curation"]
+        subgraph entry_hub["Entry Hub: Zone & Cart Context"]
+            entry_node[Step 2.1: Geolocation Request - Submit GPS Coordinates]
+            entry_node --> zone_map{"Step 2.2: System - Validate Delivery Zone"}
+            zone_map -- "On Zone Mismatch" --> entry_node
+            zone_map -- "On Zone Valid" --> fee_cal["Step 2.3: System - Calculate Service Fee"]
+            fee_cal --> cart_init["Step 2.4: Cart Item - Aggregate Product Selections"]
+            cart_init --> cart_exit["Phase 2 Exit Node"]
+        end
+        entry_exit --> cart_init
+        cart_exit --> phase_02_exit["Phase 2 Exit Node"]
     end
 
-    %% ==============================================================================
-    %% SUBGRAPH 3: CART CONSTRUCTION & INVENTORY PREVIEW
-    %% ==============================================================================
-    subgraph subgraph_cart_construction["subgraph_cart_construction"]
-        direction TB
-        EntranceNode_cart_construction["Entrance Node: Confirmed Delivery Pin"]
-        
-        cart_item_sel["Cart Item: SKU Selection"]
-        stock_check{"Cart Item: Inventory Availability Check"}
-        price_calc["Real-Time Price Calculation"]
-        cart_state_update["Updated Cart State"]
-        
-        exit_node_cart_construction["Exit Node: Updated Cart State"]
-        
-        EntranceNode_cart_construction --> cart_item_sel
-        cart_item_sel --> stock_check
-        stock_check -- "Stock Available" --> price_calc
-        stock_check -- "Stock Unavailable" --> exit_node_geolocation_validation
-        price_calc --> cart_state_update
-        cart_state_update --> exit_node_cart_construction
+    subgraph phase_03["Phase 3: Logistics & Order Configuration"]
+        subgraph entry_hub["Entry Hub: Slot & Order Header Setup"]
+            slot_req[Step 3.1: Delivery Slot - Request Time Window]
+            slot_req --> disp_avail{"Step 3.2: Dispatcher - Check Courier Availability"}
+            disp_avail -- "On No Slots Available" --> slot_req
+            disp_avail -- "On Slots Available" --> slot_alloc["Step 3.3: Dispatcher - Assign Time Window"]
+            slot_alloc --> order_prep["Step 3.4: Order Header - Prepare Final Payload"]
+            order_prep --> header_exit["Phase 3 Exit Node"]
+        end
+        phase_02_exit --> slot_req
+        header_exit --> phase_03_exit["Phase 3 Exit Node"]
     end
 
-    %% ==============================================================================
-    %% SUBGRAPH 4: SLOT ALLOCATION & LOGISTICS PREP
-    %% ==============================================================================
-    subgraph sub
+    subgraph phase_04["Phase 4: Financial Settlement & Commit"]
+        subgraph entry_hub["Entry Hub: Payment & Final Commit"]
+            pay_init[Step 4.1: Payment Transaction - Initiate Fund Transfer]
+            pay_init --> auth_check{"Step 4.2: System - Verify Authorization Status"}
+            auth_check -- "On Payment Declined" --> pay_init
+            auth_check -- "On Payment Authorized" --> settle_trans["Step 4.3: Finance - Process Settlement"]
+            settle_trans --> settle_conf{"Step 4.4: System - Confirm Final Settlement"}
+            settle_conf -- "On Exception" --> settle_trans
+            settle_conf -- "On Success" --> doc_create["Step 4.5: System - Create Final Order Document"]
+            doc_create --> settle_exit["Phase 4 Exit Node"]
+        end
+        phase_03_exit --> pay_init
+        settle_exit --> phase_04_exit["Phase 4 Exit Node"]
+    end
+
+    subgraph phase_05["Phase 5: Fulfillment & Delivery Execution"]
+        subgraph entry_hub["Entry Hub: Logistics & Handover"]
+            assign_cour[Step 5.1: Logistics - Assign Courier to Route]
+            assign_cour --> pickup_gen[Step 5.2: Store - Generate Pickup Manifest]
+            pickup_gen --> stock_upd{"Step 5.3: Store - Verify Stock Deduction"}
+            stock_upd -- "On Stock Shortage" --> pickup_gen
+            stock_upd -- "On Stock Confirmed" --> cour_out["Step 5.4: Logistics - Update Courier Status"]
+            cour_out --> handover_req[Step 5.5: Handover Receipt - Customer Confirm Delivery]
+            handover_req --> qual_chk{"Step 5.6: Store - Validate Quality Count"}
+            qual_chk -- "On Quality Issue" --> pickup_gen
+            qual_chk -- "On Quality OK" --> final_cap["Step 5.7: Finance - Capture Final Payment"]
+            final_cap --> handover_exit["Phase 5 Exit Node"]
+        end
+        phase_04_exit --> assign_cour
+        handover_exit --> phase_05_exit["Phase 5 Exit Node"]
+    end
+
+    subgraph phase_06["Phase 6: Post-Settlement Lifecycle"]
+        subgraph entry_hub["Entry Hub: Post-Order Actions"]
+            post_node[Step 6.1: Loyalty/Refund - Select Action Path]
+            post_node --> act_type{"Step 6.2: System - Determine Action Type"}
+            act_type -- "On Refund Claim" --> refund_val{"Step 6.3: Finance - Validate Claim"}
+            act_type -- "On Cancellation" --> cancel_val{"Step 6.4: System - Validate Cancellation"}
+            act_type -- "On Loyalty" --> pts_upd["Step 6.5: System - Update Points Ledger"]
+            refund_val -- "On Claim Valid" --> refund_proc["Step 6.6: Finance - Process Fund Reversal"]
+            cancel_val -- "On Cancel Valid" --> stock_rel["Step 6.7: Store - Release Reserved Stock"]
+            pts_upd --> life_cycle_end["Step 6.8: System - Close Transaction"]
+            refund_proc --> life_cycle_end
+            stock_rel --> life_cycle_end
+        end
+        phase_05_exit --> post_node
+        life_cycle_end --> life_cycle_end["Phase 6 Exit Node"]
+    end
 

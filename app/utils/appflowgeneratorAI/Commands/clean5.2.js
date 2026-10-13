@@ -38,10 +38,26 @@ function cleanAndExtractMermaid(inputFilePath) {
 
         // 6. Generate precise execution timestamp filename string (Format: YYYYMMDD_HHMMSS)
         const now = new Date();
-        const timestamp = now.toISOString()
-            .replace(/[-:]/g, '')      // Clear dates dashes and time colons
-            .replace('T', '_')         // Swap separator delimiter character to clean underscore
-            .split('.')[0];            // Drop fractional milliseconds tail completely
+        
+
+// 1. Extract date components (DD-MM-YY)
+const day = String(now.getDate()).padStart(2, '0');
+const month = String(now.getMonth() + 1).padStart(2, '0'); 
+const year = String(now.getFullYear()).slice(-2);          
+
+// 2. Extract 12-hour time components (HH:MMam/pm)
+let hours = now.getHours();
+const minutes = String(now.getMinutes()).padStart(2, '0');
+const ampm = hours >= 12 ? 'pm' : 'am';
+
+hours = hours % 12;
+hours = hours ? hours : 12; // Formats 0 to 12
+const formattedHours = String(hours).padStart(2, '0');
+
+// 3. Assemble with dashes and colons intact
+const timestamp = `${day}-${month}-${year}_${formattedHours}:${minutes}${ampm}`;
+// Result Example: "13-10-26_07:57pm"
+
 
         const outputFileName = `mermaid_diagram_${timestamp}.md`;
         const outputFilePath = path.join(path.dirname(inputFilePath), outputFileName);
@@ -63,6 +79,6 @@ function cleanAndExtractMermaid(inputFilePath) {
 
 
 //const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-08.txt';
-const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-13T13-12-24-996Z.txt';
+const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-13T19-22-33-185Z.txt';
 
 cleanAndExtractMermaid(TARGET_INPUT_FILE);

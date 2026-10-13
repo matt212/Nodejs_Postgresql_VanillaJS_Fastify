@@ -5,12 +5,11 @@ User:
 === TOP-DOWN VISUAL LAYOUT CONSTRAINTS (MANDATORY) ===
 
 1. STRUCTURAL GATEWAY ROUTING LAYER (HUB-AND-SPOKE SANITIZATION):
-   - Nodes inside a subgraph container are STRICTLY FORBIDDEN from linking directly to internal nodes inside a different subgraph container.
-   - You MUST enforce a strict Hub-and-Spoke topology for every single subgraph block:
-     * Entrance Node: Designate or create exactly ONE node at the absolute top boundary of the subgraph to act as the single entry point for all incoming external arrows.
-     * Exit Node: Designate or create exactly ONE node at the absolute bottom boundary of the subgraph to act as the single exit point for all outgoing external arrows.
-   - Inter-subgraph communication MUST occur exclusively by linking the Exit Node of a preceding subgraph directly to the Entrance Node of the next chronological subgraph.
-   - CRITICAL COMPILING CONSTRAINT: You are STRICTLY FORBIDDEN from linking a node variable identifier directly to an outer subgraph container name string ID block. Edges must ONLY connect explicit Node-to-Node targets.
+   - You MUST enforce an explicit Hub-and-Spoke structure layout inside every single subgraph block using exactly two dedicated gateway anchors:
+     * Entrance Node: You MUST initialize exactly ONE node at the absolute top boundary inside the subgraph container. Every single incoming external arrow vector originating from outside this container boundary MUST target this node exclusively.
+     * Exit Node: You MUST initialize exactly ONE node at the absolute bottom boundary inside the subgraph container. Every single internal process line, decision path, or loop recovery track within this container MUST converge downward into this node. Every arrow exiting this container MUST originate from this node exclusively.
+   - Inter-subgraph connection streams MUST only pass from the Exit Node of a preceding subgraph wrapper directly to the Entrance Node of the next chronological subgraph wrapper. 
+   - CRITICAL COMPILING CONSTRAINT: Every arrow edge link written at the bottom of the script MUST connect explicit Node-to-Node alphanumeric variables exclusively. You are strictly forbidden from pointing a node arrow directly at an outer subgraph title identifier string.
 
 2. UNIQUE CONTAINER & VARIABLE BALANCING:
    - Every single subgraph block MUST possess a completely unique, lowercase, underscore-separated string identifier ID name. NEVER reuse a subgraph ID string anywhere in the entire output.
@@ -31,7 +30,7 @@ User:
 
 4. THE INITIAL DISCOVERY & CURATION LAYER STATE:
    - Before any transactional commit, resource allocation, or logistical verification occurs, you MUST explicitly establish a logical Discovery & Curation layer immediately following the root initialization/access step.
-   - The workflow must natively map the interactive sequence where an actor navigates classifications, queries datasets, evaluates item metrics, and aggregates choices into a temporary staging state (e.g., shopping cart, queue, staging list) before triggering target actions.
+   - The workflow must natively map the interactive sequence where an actor navigates classifications, queries datasets, evaluates item metrics, and aggregates choices into a temporary staging state  before triggering target actions.
 
 5. POST-SETTLEMENT TRANSACTION COMMIT SYNCHRONIZATION:
    - You must enforce a strict chronological state dependency regarding financial settlement and structural record creation. 
@@ -42,6 +41,14 @@ User:
    - You must ensure there are ZERO dead ends or unhandled operational loops for failures occurring mid-process.
    - If a failure, exception, or cancellation trigger occurs AFTER a successful transaction settlement status but BEFORE final delivery/handover, the exception path must immediately branch out of the validation diamond.
    - This failure track must follow the uniform solid-line hyphen-quote formatting rule (e.g., decision_node -- "On Exception Trigger" --> rollback_node), bypass normal forward progression, route directly through a reversing ledger/compensation action, and terminate cleanly into a distinct, final system disruption closure node at the bottom of the architecture.
+
+6.1 MULTI-PATH STRUCTURAL INTEGRITY RULES (TOTAL STATE ARCHITECTURE):
+   - For every milestone validation milestone checkpoint or decision gate initialized, you MUST explicitly declare and label distinct node components inside the phase subgraph container for four functional tracks:
+     1. THE HAPPY PATH (Primary Success): The central top-down sequential path of execution process boxes.
+     2. THE ALTERNATE PATH (Alternative Fulfillment): A parallel success process box node mapping automation hooks, cached historical profile states, or pre-configured defaults that bypass normal discovery tracking.
+     3. THE DEGRADED PATH (Soft Failure / Substitution): A secondary process box node mapping partial resource availability, item substitutions, or downgraded execution states instead of a complete crash.
+     4. THE UNHAPPY PATH WITH RECOVERY (Self-Healing Loop): A dedicated remediation or configuration adjustment process box node positioned right next to the validation crossroads.
+   - CRITICAL REQUIREMENT: Every alternative path, degraded path, and self-healing node described above MUST be fully initialized with its geometric bracket layout notation inside the subgraph wrapper before any link streams are generated.
 
 
 === DATA MATRIX RECONCILIATION & SYNTHESIS (HYPER-INTELLIGENCE) ===
@@ -93,9 +100,12 @@ User:
     - To illustrate closely bound child sub-processes, inner business validations, or instant request-response feedback loops, you MUST utilize a strict hyphenated alphabetic modifier for exception/failure tracks. You are ABSOLUTELY FORBIDDEN from formatting link labels using pipe characters. Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively (e.g., node_a -- "Index. Process Step Text" --> node_b).
 
 
-13. CLOSED-LOOP ERROR REMEDIATION TRACKING INVARIANT:
-    - For every logical failure path or business exception track branching out of a validation checkpoint, you are REQUIRED to connect the arrow path backward to a previously initialized operational node within the same subgraph block container.
-    - Creating loose, unlinked exception endpoints or breaking out of a local container layout boundary via a horizontal error arrow is strictly prohibited. All recovery tracks must form a closed loop pointing cleanly to a valid process box.
+13. CLOSED-LOOP EXCEPTION PROCESSING & CROSS-BOUNDARY LIFECYCLE RECONCILIATION:
+    - The final lifecycle closure subgraph container MUST NOT sit isolated or linear. It must act as a dynamic global state routing hub for the entire flow layout.
+    - You MUST structurally wire cross-boundary connection links originating directly from every single upstream decision validation diamond straight into the final container using these strict syntax behaviors:
+      * Hard Failures & Disputes: Map a dashed line arrow connector script (-.->) originating from the upstream evaluation validation diamond directly to its corresponding dedicated exception, compensation ledger, or dispute reversal node initialized inside the final closure container.
+      * Hard Session Cancellations: Map a dashed line arrow connector script (-.->) from an unrecoverable resource shortfall gate directly to a stock release or session cancellation processing node inside the final closure container.
+    - To prevent endless processing traps, you are STRICTLY FORBIDDEN from linking an unhappy path error arrow directly backward into the immediate preceding initiator node on the same operational line. All final happy paths, exception resolutions, and unrecoverable channels must converge cleanly into a singular, universal system closure termination node at the absolute bottom of the flowchart.
 
 
 14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING:
@@ -574,74 +584,138 @@ User:
 
 Assistant:
 graph TD
-    subgraph phase_01 [Phase 1: Identity & Context Establishment]
-        entry_customer["Step 1.0: End-User Customer - 'User Account' Registration"]
-        iam_audit{"Step 1.1: IAM Security Officer - 'User Account' Identity Validation"}
-        session_token["Step 1.2: IAM Security Officer - 'Authenticated Session Token' & Context"]
-        geo_request["Step 2.0: End-User Customer - 'Geolocation Request' Submission"]
-        zone_map["Step 2.1: System - 'Delivery Zone' Mapping"]
+    subgraph phase_01 [Phase 1: Identity & Access Discovery]
+        EntranceNode01["Step 1.1: End-User Customer Initiates User Account Registration"]
+        IAMVerify{"Step 1.2: IAM Security Officer Validates Identity & Credentials"}
+        SuccessPath01["Step 1.3: Authenticated Session Token Issued"]
+        ErrorPath01["Step 1.4: IAM Security Officer Triggers Account Lockout"]
+        AltPath01["Step 1.5: IAM Security Officer Admin-Initiated New Account"]
+        DegradedPath01["Step 1.6: IAM Security Officer Suspends Session"]
+        ExitNode01["Step 1.7: Discovery & Curation Layer Staging Complete"]
     end
 
-    subgraph phase_02 [Phase 2: Selection & Staging]
-        entry_staging["Step 3.0: End-User Customer - 'Cart Item' Selection"]
-        stock_check{"Step 3.1: System - 'Merchant Inventory Stock' Availability Check"}
-        cart_state["Step 3.2: System - 'Updated Cart State' with Real-Time Stock"]
-        slot_req["Step 4.0: End-User Customer - 'Delivery Slot' Request"]
-        slot_alloc{"Step 4.1: Logistics Dispatcher - 'Delivery Slot' Allocation"}
-        timestamps["Step 4.2: System - 'Assigned Timestamps' for Pickup/Delivery"]
+    subgraph phase_02 [Phase 2: Localization & Selection]
+        EntranceNode02["Step 2.1: Customer Submits Geolocation Request via GPS"]
+        ZoneCheck{"Step 2.2: System Validates Service Area & Delivery Zones"}
+        SuccessPath02["Step 2.3: Confirmed Delivery Pin & Service Fee Calculated"]
+        ErrorPath02["Step 2.4: System Triggers Delivery Zone Failure"]
+        AltPath02["Step 2.5: System Assigns Cached Historical Profile Location"]
+        DegradedPath02["Step 2.6: System Downgrades to Nearest Store Location"]
+        ExitNode02["Step 2.7: Inventory Discovery & Selection State Aggregated"]
     end
 
-    subgraph phase_03 [Phase 3: Transaction Initiation & Authorization]
-        entry_order["Step 5.0: End-User Customer - 'Order Header' & 'Order Line Item' Submission"]
-        payment_proc{"Step 5.1: Finance & Billing Agent - 'Payment Transaction' Processing"}
-        fund_auth["Step 5.2: Finance & Billing Agent - 'Authorized' Status Confirmation"]
-        order_id["Step 5.3: System - 'Unique Order ID' & Receipt Generation"]
-        log_opt["Step 6.0: Logistics Dispatcher - 'Assigned Courier' Route Optimization"]
-        courier_id["Step 6.1: System - 'Active Delivery Task' & Courier ID Assignment"]
+    subgraph phase_03 [Phase 3: Cart Construction & Slot Allocation]
+        EntranceNode03["Step 3.1: Customer Creates Cart Item with Product Selection"]
+        StockCheck{"Step 3.2: System Checks Real-Time Inventory Availability"}
+        SuccessPath03["Step 3.3: Real-Time Stock Confirmation & Price Calculated"]
+        ErrorPath03["Step 3.4: System Triggers Out-of-Stock Exception"]
+        AltPath03["Step 3.5: System Applies Pre-Configured Default Substitute"]
+        DegradedPath03["Step 3.6: System Updates Cart with Partial Availability Flag"]
+        SlotReq{"Step 3.7: Customer Requests Delivery Slot"}
+        DispatcherCheck{"Step 3.8: Logistics Dispatcher Validates Courier Availability"}
+        SuccessPath03B["Step 3.9: Assigned Pickup & Delivery Timestamps Issued"]
+        ExitNode03["Step 3.10: Cart Contents Staged for Checkout"]
     end
 
-    subgraph phase_04 [Phase 4: Execution & Manifesting]
-        entry_manifest["Step 7.0: Store Associate - 'Pickup Manifest' Generation"]
-        stock_reserve{"Step 7.1: Store Associate - 'Order Line Item' Line-Level Reservation"}
-        physical_pick["Step 7.2: Store Associate - 'Pickup Manifest' Item Verification"]
-        final_stock["Step 7.3: Merchant Inventory Manager - 'Merchant Inventory Stock' Batch Deduction"]
+    subgraph phase_04 [Phase 4: Order Finalization & Settlement]
+        EntranceNode04["Step 4.1: Customer Submits Order Header & Payment Method"]
+        CreateOrder["Step 4.2: Order Creation & Payment Authorization Request"]
+        AuthCheck{"Step 4.3: Finance & Billing Agent Validates Payment Gateway"}
+        SuccessPath04["Step 4.4: Authorized Status Achieved & Digital Invoice Generated"]
+        ErrorPath04["Step 4.5: Finance & Billing Agent Triggers Fraud Alert"]
+        AltPath04["Step 4.6: Finance & Billing Agent Applies Loyalty Points Redemption"]
+        DegradedPath04["Step 4.7: Finance & Billing Agent Processes Partial Payment"]
+        CreateOrder2{"Step 4.8: Line-Level Inventory Reservation & Stock Hold"}
+        SuccessPath04B["Step 4.9: Reserved Stock Hold Confirmed & Order Receipt Issued"]
+        ExitNode04["Step 4.10: Transactional Record Committed to Ledger"]
     end
 
-    subgraph phase_05 [Phase 5: Settlement & Completion]
-        entry_handover["Step 8.0: End-User Customer - 'Handover Receipt' Input"]
-        handover_check{"Step 8.1: System - 'Handover Receipt' Quality Validation"}
-        final_cap["Step 8.2: Finance & Billing Agent - 'Final Payment Capture'"]
-        delivered_status["Step 8.3: System - 'Delivered Status' Update"]
-        post_actions["Step 8.4: System - 'Loyalty Points Ledger' or 'Refund Claim' Logic"]
+    subgraph phase_05 [Phase 5: Fulfillment & Handover]
+        EntranceNode05["Step 5.1: System Assigns Courier & Generates Pickup Manifest"]
+        RouteOpt{"Step 5.2: Logistics Dispatcher Executes Route Optimization"}
+        SuccessPath05["Step 5.3: Active Delivery Task & Assigned Courier ID Issued"]
+        ErrorPath05["Step 5.4: Logistics Dispatcher Triggers Re-Assignment"]
+        AltPath05["Step 5.5: System Dispatches Cached Courier Profile"]
+        DegradedPath05["Step 5.6: System Assigns Alternative Courier Route"]
+        PickupAct{"Step 5.7: Store Associate Executes Item Verification"}
+        SuccessPath05B["Step 5.8: Pickup Manifest Ready & Stock Deduction Complete"]
+        HandoverAct{"Step 5.9: Customer Provides Handover Receipt"}
+        SuccessPath05C["Step 5.10: Quality Check Passed & Final Payment Capture"]
+        ExitNode05["Step 5.11: Order Finalized & System Closure Triggered"]
     end
 
-    entry_customer --> iam_audit
-    iam_audit -- "On Validation Success" --> session_token
-    session_token --> geo_request
-    geo_request --> zone_map
-    zone_map --> entry_staging
-    entry_staging --> stock_check
-    stock_check -- "On Stock Available" --> cart_state
-    cart_state --> slot_req
-    slot_req --> slot_alloc
-    slot_alloc --> timestamps
-    timestamps --> entry_order
-    entry_order --> payment_proc
-    payment_proc -- "On Payment Failure" --> rollback_error["Step 5.5: System - 'Transaction Rollback' & Stock Release"]
-    rollback_error --> cart_state
-    payment_proc -- "On Payment Success" --> fund_auth
-    fund_auth --> order_id
-    order_id --> log_opt
-    log_opt --> courier_id
-    courier_id --> entry_manifest
-    entry_manifest --> stock_reserve
-    stock_reserve --> physical_pick
-    physical_pick --> final_stock
-    final_stock --> entry_handover
-    entry_handover --> handover_check
-    handover_check -- "On Item Mismatch" --> post_actions
-    handover_check -- "On Success" --> final_cap
-    final_cap --> delivered_status
-    delivered_status --> post_actions
-    post_actions --> end_state["Step 9.0: System - 'Closed Loop' Notification"]
+    subgraph phase_06 [Phase 6: Global State Closure & Exception Hub]
+        ClosureNode["Step 6.1: Universal System Closure Node"]
+        RefundAct{"Step 6.2: Customer Initiates Refund Claim"}
+        SuccessPath06["Step 6.3: Finance & Billing Agent Processes Fund Reversal"]
+        ErrorPath06["Step 6.4: Finance & Billing Agent Validates Claim Evidence"]
+        CancelAct{"Step 6.5: Customer Initiates Cancellation Request"}
+        SuccessPath06B["Step 6.6: Merchant Inventory Manager Releases Stock Hold"]
+        ErrorPath06B["Step 6.7: Merchant Inventory Manager Triggers Stock Release"]
+    end
+
+    EntranceNode01 --> IAMVerify
+    IAMVerify -- "On Success" --> SuccessPath01
+    IAMVerify -- "On Failure" --> ErrorPath01
+    IAMVerify -- "On Admin Override" --> AltPath01
+    IAMVerify -- "On Degraded Auth" --> DegradedPath01
+    SuccessPath01 --> ExitNode01
+
+    EntranceNode02 --> ZoneCheck
+    ZoneCheck -- "On Success" --> SuccessPath02
+    ZoneCheck -- "On Failure" --> ErrorPath02
+    ZoneCheck -- "On Alternate" --> AltPath02
+    ZoneCheck -- "On Degraded" --> DegradedPath02
+    SuccessPath02 --> ExitNode02
+
+    EntranceNode03 --> StockCheck
+    StockCheck -- "On Success" --> SuccessPath03
+    StockCheck -- "On Failure" --> ErrorPath03
+    StockCheck -- "On Alternate" --> AltPath03
+    StockCheck -- "On Degraded" --> DegradedPath03
+    SuccessPath03 --> SlotReq
+    SlotReq --> DispatcherCheck
+    DispatcherCheck -- "On Success" --> SuccessPath03B
+    DispatcherCheck -- "On Failure" --> ExitNode03
+
+    EntranceNode04 --> CreateOrder
+    CreateOrder --> AuthCheck
+    AuthCheck -- "On Success" --> SuccessPath04
+    AuthCheck -- "On Failure" --> ErrorPath04
+    AuthCheck -- "On Loyalty Alt" --> AltPath04
+    AuthCheck -- "On Partial Degraded" --> DegradedPath04
+    SuccessPath04 --> CreateOrder2
+    CreateOrder2 -- "On Success" --> SuccessPath04B
+    CreateOrder2 -- "On Failure" --> ExitNode04
+
+    EntranceNode05 --> RouteOpt
+    RouteOpt -- "On Success" --> SuccessPath05
+    RouteOpt -- "On Failure" --> ErrorPath05
+    RouteOpt -- "On Alternate" --> AltPath05
+    RouteOpt -- "On Degraded" --> DegradedPath05
+    SuccessPath05 --> PickupAct
+    PickupAct -- "On Success" --> SuccessPath05B
+    PickupAct -- "On Failure" --> ExitNode05
+    SuccessPath05B --> HandoverAct
+    HandoverAct -- "On Success" --> SuccessPath05C
+    HandoverAct -- "On Failure" --> ExitNode05
+
+    ExitNode01 --> EntranceNode02
+    ExitNode02 --> EntranceNode03
+    ExitNode03 --> EntranceNode04
+    ExitNode04 --> EntranceNode05
+    ExitNode05 --> ClosureNode
+
+    ErrorPath02 -.-> ErrorPath06
+    ErrorPath03 -.-> ErrorPath06
+    ErrorPath04 -.-> ErrorPath06
+    ErrorPath05 -.-> ErrorPath06
+
+    RefundAct --> SuccessPath06
+    ErrorPath06 --> SuccessPath06
+    SuccessPath06 --> ClosureNode
+
+    CancelAct --> SuccessPath06B
+    ErrorPath06B --> SuccessPath06B
+    SuccessPath06B --> ClosureNode
 

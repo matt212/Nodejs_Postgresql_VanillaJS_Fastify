@@ -155,12 +155,11 @@ function executeLlamaCliWithNativeRedirect(promptText, taskName, finalTargetFile
 === TOP-DOWN VISUAL LAYOUT CONSTRAINTS (MANDATORY) ===
 
 1. STRUCTURAL GATEWAY ROUTING LAYER (HUB-AND-SPOKE SANITIZATION):
-   - Nodes inside a subgraph container are STRICTLY FORBIDDEN from linking directly to internal nodes inside a different subgraph container.
-   - You MUST enforce a strict Hub-and-Spoke topology for every single subgraph block:
-     * Entrance Node: Designate or create exactly ONE node at the absolute top boundary of the subgraph to act as the single entry point for all incoming external arrows.
-     * Exit Node: Designate or create exactly ONE node at the absolute bottom boundary of the subgraph to act as the single exit point for all outgoing external arrows.
-   - Inter-subgraph communication MUST occur exclusively by linking the Exit Node of a preceding subgraph directly to the Entrance Node of the next chronological subgraph.
-   - CRITICAL COMPILING CONSTRAINT: You are STRICTLY FORBIDDEN from linking a node variable identifier directly to an outer subgraph container name string ID block. Edges must ONLY connect explicit Node-to-Node targets.
+   - You MUST enforce an explicit Hub-and-Spoke structure layout inside every single subgraph block using exactly two dedicated gateway anchors:
+     * Entrance Node: You MUST initialize exactly ONE node at the absolute top boundary inside the subgraph container. Every single incoming external arrow vector originating from outside this container boundary MUST target this node exclusively.
+     * Exit Node: You MUST initialize exactly ONE node at the absolute bottom boundary inside the subgraph container. Every single internal process line, decision path, or loop recovery track within this container MUST converge downward into this node. Every arrow exiting this container MUST originate from this node exclusively.
+   - Inter-subgraph connection streams MUST only pass from the Exit Node of a preceding subgraph wrapper directly to the Entrance Node of the next chronological subgraph wrapper. 
+   - CRITICAL COMPILING CONSTRAINT: Every arrow edge link written at the bottom of the script MUST connect explicit Node-to-Node alphanumeric variables exclusively. You are strictly forbidden from pointing a node arrow directly at an outer subgraph title identifier string.
 
 2. UNIQUE CONTAINER & VARIABLE BALANCING:
    - Every single subgraph block MUST possess a completely unique, lowercase, underscore-separated string identifier ID name. NEVER reuse a subgraph ID string anywhere in the entire output.
@@ -181,7 +180,7 @@ function executeLlamaCliWithNativeRedirect(promptText, taskName, finalTargetFile
 
 4. THE INITIAL DISCOVERY & CURATION LAYER STATE:
    - Before any transactional commit, resource allocation, or logistical verification occurs, you MUST explicitly establish a logical Discovery & Curation layer immediately following the root initialization/access step.
-   - The workflow must natively map the interactive sequence where an actor navigates classifications, queries datasets, evaluates item metrics, and aggregates choices into a temporary staging state (e.g., shopping cart, queue, staging list) before triggering target actions.
+   - The workflow must natively map the interactive sequence where an actor navigates classifications, queries datasets, evaluates item metrics, and aggregates choices into a temporary staging state  before triggering target actions.
 
 5. POST-SETTLEMENT TRANSACTION COMMIT SYNCHRONIZATION:
    - You must enforce a strict chronological state dependency regarding financial settlement and structural record creation. 
@@ -192,6 +191,14 @@ function executeLlamaCliWithNativeRedirect(promptText, taskName, finalTargetFile
    - You must ensure there are ZERO dead ends or unhandled operational loops for failures occurring mid-process.
    - If a failure, exception, or cancellation trigger occurs AFTER a successful transaction settlement status but BEFORE final delivery/handover, the exception path must immediately branch out of the validation diamond.
    - This failure track must follow the uniform solid-line hyphen-quote formatting rule (e.g., decision_node -- "On Exception Trigger" --> rollback_node), bypass normal forward progression, route directly through a reversing ledger/compensation action, and terminate cleanly into a distinct, final system disruption closure node at the bottom of the architecture.
+
+6.1 MULTI-PATH STRUCTURAL INTEGRITY RULES (TOTAL STATE ARCHITECTURE):
+   - For every milestone validation milestone checkpoint or decision gate initialized, you MUST explicitly declare and label distinct node components inside the phase subgraph container for four functional tracks:
+     1. THE HAPPY PATH (Primary Success): The central top-down sequential path of execution process boxes.
+     2. THE ALTERNATE PATH (Alternative Fulfillment): A parallel success process box node mapping automation hooks, cached historical profile states, or pre-configured defaults that bypass normal discovery tracking.
+     3. THE DEGRADED PATH (Soft Failure / Substitution): A secondary process box node mapping partial resource availability, item substitutions, or downgraded execution states instead of a complete crash.
+     4. THE UNHAPPY PATH WITH RECOVERY (Self-Healing Loop): A dedicated remediation or configuration adjustment process box node positioned right next to the validation crossroads.
+   - CRITICAL REQUIREMENT: Every alternative path, degraded path, and self-healing node described above MUST be fully initialized with its geometric bracket layout notation inside the subgraph wrapper before any link streams are generated.
 
 
 === DATA MATRIX RECONCILIATION & SYNTHESIS (HYPER-INTELLIGENCE) ===
@@ -243,9 +250,12 @@ function executeLlamaCliWithNativeRedirect(promptText, taskName, finalTargetFile
     - To illustrate closely bound child sub-processes, inner business validations, or instant request-response feedback loops, you MUST utilize a strict hyphenated alphabetic modifier for exception/failure tracks. You are ABSOLUTELY FORBIDDEN from formatting link labels using pipe characters. Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively (e.g., node_a -- "Index. Process Step Text" --> node_b).
 
 
-13. CLOSED-LOOP ERROR REMEDIATION TRACKING INVARIANT:
-    - For every logical failure path or business exception track branching out of a validation checkpoint, you are REQUIRED to connect the arrow path backward to a previously initialized operational node within the same subgraph block container.
-    - Creating loose, unlinked exception endpoints or breaking out of a local container layout boundary via a horizontal error arrow is strictly prohibited. All recovery tracks must form a closed loop pointing cleanly to a valid process box.
+13. CLOSED-LOOP EXCEPTION PROCESSING & CROSS-BOUNDARY LIFECYCLE RECONCILIATION:
+    - The final lifecycle closure subgraph container MUST NOT sit isolated or linear. It must act as a dynamic global state routing hub for the entire flow layout.
+    - You MUST structurally wire cross-boundary connection links originating directly from every single upstream decision validation diamond straight into the final container using these strict syntax behaviors:
+      * Hard Failures & Disputes: Map a dashed line arrow connector script (-.->) originating from the upstream evaluation validation diamond directly to its corresponding dedicated exception, compensation ledger, or dispute reversal node initialized inside the final closure container.
+      * Hard Session Cancellations: Map a dashed line arrow connector script (-.->) from an unrecoverable resource shortfall gate directly to a stock release or session cancellation processing node inside the final closure container.
+    - To prevent endless processing traps, you are STRICTLY FORBIDDEN from linking an unhappy path error arrow directly backward into the immediate preceding initiator node on the same operational line. All final happy paths, exception resolutions, and unrecoverable channels must converge cleanly into a singular, universal system closure termination node at the absolute bottom of the flowchart.
 
 
 14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING:
