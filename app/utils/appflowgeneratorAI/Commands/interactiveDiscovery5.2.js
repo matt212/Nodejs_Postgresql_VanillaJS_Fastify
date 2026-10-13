@@ -249,7 +249,7 @@ function executeLlamaCliWithNativeRedirect(promptText, taskName, finalTargetFile
 
 
 14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING:
-   - Every single functional component step, background operational task, decision gate, and staging node label text string MUST be strictly prefixed with its explicit hierarchical chronological position identifier.
+   - Every single functional component step, background operational task, decision gate, and staging node label text string MUST be strictly prefixed with its explicit hierarchical chronological position identifier formatted exactly as "Step X.Y: " (where 'X' is the current numeric Phase number, and 'Y' is a strictly incrementing sequence starting at 1 for the first element inside that specific phase).
    - Use strict numeric markers for primary system subgraphs and phased tracks, and lower-case alphabetical dot-notation identifiers for internal sequential actions and nested steps.
    - MANDATORY PARTITION LIMIT: You are REQUIRED to break the layout down into at least 5 chronologically separate subgraph containers (e.g., "subgraph phase_01 [Phase 1: ...]"). You are STRICTLY FORBIDDEN from grouping more than 6 functional step node boxes inside a single subgraph container. If a phase contains more than 6 operations, divide it into balanced sub-phase boxes linked cleanly via exit-to-entrance hub edges.
    - ABSOLUTE GENERATION STOP BOUNDARY: Once the final terminal node connection line is written, you are REQUIRED to halt the token stream immediately. You are STRICTLY FORBIDDEN from outputting secondary verification notes, inner debugging commentary, or re-verifying constraints. Stop processing immediately at the final bracket link character.
