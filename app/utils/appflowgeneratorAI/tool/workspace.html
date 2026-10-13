@@ -666,185 +666,6 @@ async function initializeFreshCanvas(cleanCode) {
     autoFitLayout();
 }
 
-// NEW SEPARATE FUNCTION: Reloads and completely repaints the active diagram state
-// async function reloadCurrentDiagram() {
-//     const currentCode = codeEditor.value.trim();
-//     if (!currentCode) return;
-
-//     statusDot.className = "h-2 w-2 rounded-full bg-blue-400 animate-pulse";
-//     statusText.textContent = "Forcing full canvas structural refresh...";
-
-//     // Call your extracted modular load pipeline function to reset layout vectors cleanly
-//     await initializeFreshCanvas(currentCode);
-
-//     statusDot.className = "h-2 w-2 rounded-full bg-green-500";
-//     statusText.textContent = "Diagram reloaded and layout calculations updated successfully.";
-// }
-// async function reloadCurrentDiagram() {
-//     // 1. Grab the current text directly from your editor canvas view
-//     const currentCode = codeEditor.value.trim();
-//     if (!currentCode) return;
-
-//     statusDot.className = "h-2 w-2 rounded-full bg-blue-400 animate-pulse";
-//     statusText.textContent = "Forcing full canvas structural refresh...";
-
-//     // 2. ⚡ THE FIX: Tell Mermaid to treat this exactly like a brand-new file upload
-//     const canvasContainer = document.getElementById('diagram-container') || renderTarget;
-//     if (canvasContainer) {
-//         canvasContainer.removeAttribute('data-processed');
-//     }
-
-//     // 3. REUSE YOUR EXACT UPLOAD CODE LIFECYCLE STEPS
-//     // (We pass it through your custom extractor just like the raw upload event)
-//     codeEditor.value = extractRawMermaid(currentCode);
-
-//     // ⚡ ACTIVATE TELEMETRY HOOK
-//     DiagramTelemetry.logPhase('Reload Diagram', currentCode);
-//     // Trigger your standard synchronous compilation drawing loop
-//     await renderDiagram();
-    
-//     // Match your exact upload timeout sequence perfectly
-//     setTimeout(autoFitLayout, 250);
-
-//     // 4. Update the telemetry systems indicators
-//     statusDot.className = "h-2 w-2 rounded-full bg-green-500";
-//     statusText.textContent = "Diagram reloaded and layout calculations updated successfully.";
-// }
-
-// async function reloadCurrentDiagram() {
-//     const currentCode = codeEditor.value.trim();
-//     if (!currentCode) return;
-
-//     statusDot.className = "h-2 w-2 rounded-full bg-blue-400 animate-pulse";
-//     statusText.textContent = "Forcing full canvas structural refresh...";
-
-//     // 1. Completely purge the active canvas element
-//     renderTarget.innerHTML = "";
-//     renderTarget.removeAttribute('data-processed');
-
-//     // 2. ⚡ THE ABSOLUTE FIX: Force execution thread to wait until the browser font geometry tree is idle
-//     // The first frame intercepts the click layout paint; the second frame ensures the DOM container metrics are fully live.
-//  //   await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-// await new Promise(resolve => setTimeout(resolve, 250));
-
-//     statusText.textContent = "Executing crisp canvas calculations...";
-//     // 3. Log telemetry on clean workspace baseline execution boundaries
-//     if (typeof DiagramTelemetry !== 'undefined') {
-//         DiagramTelemetry.logPhase('Reload Diagram', currentCode);
-//     }
-
-//     // 4. Pass exact code block straight to your standard render execution call
-//     await renderDiagram();
-
-//     // 5. Short pause to let elements draw before calculating camera zoom settings
-//     await new Promise(resolve => requestAnimationFrame(resolve));
-
-//     // 6. Autofit the layout view camera coordinates safely
-//     if (typeof autoFitLayout === "function") {
-//         autoFitLayout();
-//     }
-
-//     statusDot.className = "h-2 w-2 rounded-full bg-green-500";
-//     statusText.textContent = "Diagram reloaded and layout calculations updated successfully.";
-//     // ⚡ EXECUTE SIDE-BY-SIDE ANALYTICS
-//     setTimeout(() => {
-//         LayoutAuditor.compareAfterReload();
-//     }, 300);
-// }
-// async function reloadCurrentDiagram() {
-//     const currentCode = codeEditor.value.trim();
-//     if (!currentCode) return;
-
-//     statusDot.className = "h-2 w-2 rounded-full bg-blue-400 animate-pulse";
-//     statusText.textContent = "Isolating canvas template calculation blocks...";
-
-//     // 1. Create a pristine, off-screen workspace sandbox container attached directly to document body
-//     // This safely bypasses active flex transitions, sidebar scaling, or dirty element states.
-//     const sandboxId = "mermaid-clean-sandbox-" + Date.now();
-//     const sandboxDiv = document.createElement('div');
-//     sandboxDiv.id = sandboxId;
-    
-//     // Lock baseline dimensions to guarantee text calculations run at a true 1:1 scale matrix footprint
-//     sandboxDiv.style.cssText = `
-//         position: absolute !important;
-//         visibility: hidden !important;
-//         top: -9999px !important;
-//         left: -9999px !important;
-//         width: 1920px !important;
-//         height: 1080px !important;
-//     `;
-//     document.body.appendChild(sandboxDiv);
-
-//     // 2. Clear out the live container markers completely
-//     renderTarget.innerHTML = "";
-//     renderTarget.removeAttribute('data-processed');
-
-//     // 3. Create a clean, unprocessed target child node inside the isolated body sandbox
-//     const sandboxTarget = document.createElement('div');
-//     sandboxTarget.id = "temp-mermaid-render-node";
-//     sandboxDiv.appendChild(sandboxTarget);
-
-//     if (typeof DiagramTelemetry !== 'undefined') {
-//         DiagramTelemetry.logPhase('Reload Diagram', currentCode);
-//     }
-
-//     statusText.textContent = "Executing exact canvas calculations...";
-
-//     try {
-//         // 4. Temporarily point your render target element reference to the sandbox node
-//         // (This intercept forces the engine to build its internal styles inside a clean scope)
-//         const originalRenderTarget = renderTarget;
-        
-//         // Temporarily override the variable Mermaid reads during renderDiagram()
-//         // Ensure your renderDiagram function uses the reference target target node
-//         const targetElementBackup = window.renderTargetElement;
-//         window.renderTargetElement = sandboxTarget;
-        
-//         // 5. Execute your standard synchronous rendering pass loop
-//         // Modify this call if renderDiagram requires direct text string parameter passing
-//         await renderDiagram();
-        
-//         // Restore your workspace context references safely
-//         window.renderTargetElement = targetElementBackup;
-        
-//         // 6. Swap the freshly generated clean SVG canvas directly into your active dashboard view panel
-//         const compiledSvg = sandboxTarget.innerHTML || sandboxDiv.innerHTML;
-//         if (compiledSvg.includes('<svg')) {
-//             originalRenderTarget.innerHTML = compiledSvg;
-//         } else {
-//             // Fallback fallback loop in case standard rendering mounts directly to a global ID
-//             const globalSvg = document.querySelector(`#${sandboxId} svg`) || sandboxTarget.querySelector('svg');
-//             if (globalSvg) {
-//                 originalRenderTarget.appendChild(globalSvg);
-//             }
-//         }
-
-//     } catch (pipelineError) {
-//         console.error("❌ Isolated Sandbox Compilation Crash:", pipelineError);
-//         renderTarget.innerHTML = `<div class="p-4 text-red-400 font-mono text-xs">Parsing Error Detected</div>`;
-//     } finally {
-//         // 7. Completely strip out the off-screen sandbox elements from the document tree safely
-//         sandboxDiv.remove();
-//     }
-
-//     // 8. Wait for vector layers to draw completely before updating look camera bounds
-//     await new Promise(resolve => requestAnimationFrame(resolve));
-
-//     // 9. Autofit the layout view camera coordinates safely around the real element positions
-//     if (typeof autoFitLayout === "function") {
-//         autoFitLayout();
-//     }
-
-//     statusDot.className = "h-2 w-2 rounded-full bg-green-500";
-//     statusText.textContent = "Diagram reloaded with clean baseline alignment.";
-    
-//     // 10. Execute side-by-side telemetry validation check
-//     setTimeout(() => {
-//         if (typeof LayoutAuditor !== 'undefined') {
-//             LayoutAuditor.compareAfterReload();
-//         }
-//     }, 300);
-// }
 async function reloadCurrentDiagram() {
     const currentCode = codeEditor.value.trim();
     if (!currentCode) return;
@@ -923,134 +744,7 @@ async function reloadCurrentDiagram() {
 
 // Bind the new button action to our separate reload function
 document.getElementById('reloadDiagramBtn').addEventListener('click', reloadCurrentDiagram);
-// NEW DETERMINISTIC ENHANCEMENT FUNCTION: Serial Number Pattern Command Engine
-// async function executeSerialMermaidCommand(commandText) {
-//     let currentCode = codeEditor.value;
-//     if (!currentCode || !commandText) return;
 
-//     // --- PHASE 1: GENERATE BULLETPROOF TELEMETRY MAP INDEX ---
-//     const nodeMapping = {}; 
-    
-//     // Space-proof, quote-proof scanner that isolates the ID and stops exactly at the Step digits
-//     const labelScanner = /([a-zA-Z0-9_-]+)\s*(?:["'{(\\[])\s*["']?\s*Step\s*([0-9]+(?:\.[0-9a-zA-Z]+)*)/gi;
-    
-//     let match;
-//     while ((match = labelScanner.exec(currentCode)) !== null) {
-//         const nodeId = match[1];
-//         const serialNum = match[2].trim();
-//         nodeMapping[serialNum] = nodeId;
-//     }
-
-//     // Prints out the internal map directory to your F12 browser console for validation
-//     console.log("🚀 Non-AI Engine Successfully Indexed Map:", nodeMapping);
-
-//     // Dynamic Helper: Converts user prompt values safely into technical node IDs
-//     function resolveNodeId(inputStr) {
-//         if (!inputStr) return null;
-//         // Strip out words, spaces, and quotes to isolate the pure comparison key (e.g., "1.2")
-//         const cleanKey = inputStr.replace(/Step/i, '').replace(/["']/g, '').trim();
-//         return nodeMapping[cleanKey] || null;
-//     }
-
-//     // --- PHASE 2: PARSE AND EXECUTE OPERATIONAL STRUCTURES ---
-//     const commands = commandText.split('\n');
-//     let hasChanges = false;
-
-//     for (let cmd of commands) {
-//         cmd = cmd.trim();
-//         if (!cmd) continue;
-
-//         // 1. OPERATION: CONNECT BY SERIAL NUMBER
-//         const connectMatch = cmd.match(/^CONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+(?:Step\s+)?([a-zA-Z0-9._-]+)(?:\s+WITH\s+["']([\s\(\S\)]*?)["'])?/i);
-//         if (connectMatch) {
-//             const [_, serialA, serialB, linkLabel] = connectMatch;
-//             const nodeA = resolveNodeId(serialA);
-//             const nodeB = resolveNodeId(serialB);
-
-//             if (nodeA && nodeB) {
-//                 const arrowStr = linkLabel ? `    ${nodeA} -- "${linkLabel}" --> ${nodeB}\n` : `    ${nodeA} --> ${nodeB}\n`;
-//                 currentCode = currentCode.trim() + `\n${arrowStr}`;
-//                 hasChanges = true;
-//             } else {
-//                 console.warn(`Routing Failure: Could not resolve steps mapping for ${serialA} or ${serialB}`);
-//             }
-//             continue;
-//         }
-
-//         // 2. OPERATION: DISCONNECT BY SERIAL NUMBER
-//         const disconnectMatch = cmd.match(/^DISCONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+FROM\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
-//         if (disconnectMatch) {
-//             const [_, serialA, serialB] = disconnectMatch;
-//             const nodeA = resolveNodeId(serialA);
-//             const nodeB = resolveNodeId(serialB);
-
-//             if (nodeA && nodeB) {
-//                 const specificLineRegex = new RegExp(`^[ \\t]*${nodeA}\\s*--.*?-->\\s*${nodeB}\\r?\\n?`, 'gm');
-//                 if (specificLineRegex.test(currentCode)) {
-//                     currentCode = currentCode.replace(specificLineRegex, '');
-//                     hasChanges = true;
-//                 }
-//             }
-//             continue;
-//         }
-
-//         // 3. OPERATION: UPDATE NODE TEXT BY SERIAL
-//         const updateMatch = cmd.match(/^UPDATE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+["']([\s\(\S\)]*?)["']/i);
-//         if (updateMatch) {
-//             const [_, serialTarget, newFullLabel] = updateMatch;
-//             const targetNodeId = resolveNodeId(serialTarget);
-
-//             if (targetNodeId) {
-//                 const nodeLabelRegex = new RegExp(`(${targetNodeId}\\s*["'{(\\[])([\\s\\S]*?)(["'})\\]])`, 'g');
-//                 if (nodeLabelRegex.test(currentCode)) {
-//                     currentCode = currentCode.replace(nodeLabelRegex, `$1${newFullLabel}$3`);
-//                     hasChanges = true;
-//                 }
-//             }
-//             continue;
-//         }
-
-//         // 4. OPERATION: DELETE NODE BY SERIAL
-//         const deleteMatch = cmd.match(/^DELETE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
-//         if (deleteMatch) {
-//             const [_, serialTarget] = deleteMatch;
-//             const targetNodeId = resolveNodeId(serialTarget);
-
-//             if (targetNodeId) {
-//                 const nodeLineRegex = new RegExp(`^[ \\t]*${targetNodeId}\\s*(?:["'{(\\[])\\s*Step\\s*${serialTarget}[\\s\\S]*?["'})\\]]\\r?\\n?`, 'gm');
-//                 const connectionRegex = new RegExp(`^[ \\t]*(?:${targetNodeId}\\s*--.*?-->.*?|.*?--.*?-->\\s*${targetNodeId})\\r?\\n?`, 'gm');
-//                 currentCode = currentCode.replace(nodeLineRegex, '').replace(connectionRegex, '');
-//                 hasChanges = true;
-//             }
-//             continue;
-//         }
-
-//         // 5. OPERATION: ADD NODE TO PHASE WITH GENERATED TARGET ID
-//         const addMatch = cmd.match(/^ADD\s+NODE\s+["']([\s\(\S\)]*?)["']\s+TO\s+([a-zA-Z0-9_-]+)/i);
-//         if (addMatch) {
-//             const [_, newFullLabel, phaseId] = addMatch;
-//             const uniqueNodeId = `gen_node_${Date.now()}_${Math.floor(Math.random() * 100)}`;
-//             const nodeDeclaration = `        ${uniqueNodeId}["${newFullLabel}"]\n`;
-            
-//             const phaseRegex = new RegExp(`(subgraph\\s+${phaseId}\\s*\\[[\\s\\S]*?\\])`, 'i');
-//             if (phaseRegex.test(currentCode)) {
-//                 currentCode = currentCode.replace(phaseRegex, `$1\n${nodeDeclaration}`);
-//                 hasChanges = true;
-//             }
-//             continue;
-//         }
-//     }
-
-//     // --- PHASE 3: COMPILER HANDSHAKE COMMIT PASS ---
-//     if (hasChanges) {
-//         await initializeFreshCanvas(currentCode.trim());
-//         statusDot.className = "h-2 w-2 rounded-full bg-green-500";
-//         statusText.textContent = "Surgical operations successfully executed using index mappings.";
-//     } else {
-//         statusDot.className = "h-2 w-2 rounded-full bg-orange-500";
-//         statusText.textContent = "Command executed, but no matching Step Numbers were located.";
-//     }
-// }
 async function executeSerialMermaidCommand(commandText) {
     let currentCode = codeEditor.value;
     if (!currentCode || !commandText) return;
@@ -1577,22 +1271,6 @@ async function executeSerialMermaidCommand(commandText) {
     }
 }
 
-// Hook this listener up at the bottom of your script module
-// document.getElementById('runDeterministicBtn').addEventListener('click', async () => {
-//     const rawInputText = document.getElementById('aiPrompt').value;
-//     // Forwards the instructions straight to your new serial parser
-//    // await executeSerialMermaidCommand(rawInputText);
-// const currentCode = codeEditor.value;
-  
-
-//     // Route A: Attempt instant, zero-flicker batch patch processing
-//     const isPatchedInstantly = executeOptimizedConnectionUpdate(rawInputText, currentCode);
-
-//     // Route B: Structural changes or fallback to reconstruction layout engine loops
-//     if (!isPatchedInstantly) {
-//         console.log("🔄 [ENGINE] Structural updates or size shifts detected. Rebuilding full canvas...");
-//         await executeSerialMermaidCommand(rawInputText);
-//     }
 
     
 
@@ -1829,35 +1507,27 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
     try {
         const commands = rawInputText.split(/\r?\n/);
         console.log(`🎬 [MASTER OPTIMIZER] Slicing ${commands.length} rows.`);
-
         console.group(`🔍 [SCANNER ENGINE] Initializing Graph Directory Re-Indexing`);
-        
         const serialMapping = {};
         const rawNodesFound = new Set();
-        
         // --- LAYER 1: LABEL SCANNING ---
         const labelScanner = /([a-zA-Z0-9_-]+)\s*(?:["'{(\\[])\s*["']?\s*Step\s*([0-9]+(?:\.[0-9a-zA-Z]+)*)/gi;
         let match;
         let labelMatchCount = 0;
-        
         console.log("📄 [SCANNING] Scanning source markdown for Step-to-NodeID bindings...");
         while ((match = labelScanner.exec(currentCode)) !== null) {
             const nodeId = match[1];
             const serialNum = match[2].trim();
-            
             serialMapping[serialNum] = nodeId;
             rawNodesFound.add(nodeId);
             labelMatchCount++;
-            
             console.log(`   🏷️ [MAP FOUND] Punctuation index "${serialNum}" ----> Technical Node ID "${nodeId}"`);
         }
         console.log(`✅ [SCANNING COMPLETE] Indexed ${labelMatchCount} semantic Step number handles.`);
-
         // --- LAYER 2: STRUCTURAL SCANNING ---
-               const structuralScanner = /\b([a-zA-Z0-9_-]+)\b(?=\s*(?:-->|--|["'{(\\[]))/g;
+        const structuralScanner = /\b([a-zA-Z0-9_-]+)\b(?=\s*(?:-->|--|["'{(\\[]))/g;
         let structMatch;
         let structuralMatchCount = 0;
-        
         console.log("📐 [SCANNING] Sweeping directional vector lanes for raw structural variables...");
         while ((structMatch = structuralScanner.exec(currentCode)) !== null) {
             const foundId = structMatch[1];
@@ -1868,9 +1538,7 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
         }
         console.log(`✅ [SCANNING COMPLETE] Discovered ${structuralMatchCount} functional connectivity components.`);
         console.log(`📦 [TOTAL TRACKED COMPONENTS] Unique nodes in active set context:`, Array.from(rawNodesFound));
-        
         console.groupEnd(); // Closes the scanner setup block safely
-
         // --- LAYER 3: THE RESOLVER FUNCTION ---
         /**
          * Resolves human label keys or step numbering indices back into technical engine node handles.
@@ -1880,20 +1548,14 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 console.warn("🔍 [RESOLVER] Aborted execution: Passed an empty or undefined string lookup key.");
                 return "";
             }
-            
             const clean = inputStr.trim().replace(/["']/g, '');
             const key = clean.replace(/Step/i, '').trim();
             const resolved = serialMapping[key] || clean;
-            
             console.log(`🔍 [RESOLVER ENGINE] Input handle: "${inputStr}" | Cleaned matching key: "${key}" ====> Resolved True NodeID: "${resolved}"`);
             return resolved;
         }
-
         // 💡 CRITICAL ALIAS: Securely maps the local scope function pointer to avoid ReferenceErrors inside loop sections
         const resolveIdHelper = resolveId;
-
-
-
         let workingCode = currentCode;
         let hasChanges = false;
         // ==========================================================================
@@ -1902,80 +1564,77 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
         for (let cmd of commands) {
             cmd = cmd.trim();
             if (!cmd) continue;
-
             // --- PROCESS 1: ADD PHASE ---
-                const matchAddPhase = cmd.match(/^ADD\s+(?:SUBGRAPH|PHASE)\s+(?:["'](Phase\s+(\d+):?\s*(.*?))["']|([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["'])/i);
-                if (matchAddPhase) {
+            const matchAddPhase = cmd.match(/^ADD\s+(?:SUBGRAPH|PHASE)\s+(?:["'](Phase\s+(\d+):?\s*(.*?))["']|([a-zA-Z0-9_-]+)\s+["']([\s\(\S\)]*?)["'])/i);
+            if (matchAddPhase) {
                 const [_, fullStr, phaseNum, labelTxt, manualId, manualLabel] = matchAddPhase;
                 let subId = fullStr ? `phase_${phaseNum.padStart(2, '0')}` : manualId;
                 let title = fullStr ? fullStr : manualLabel;
                 // DOM Mutation: Append the new phase visual element to the main chart element wrapper
                 const svgCanvas = document.querySelector('.mermaid svg, #mermaid-svg') || document.querySelector('svg');
                 if (svgCanvas) {
-                // 1. DYNAMIC MATH: Scan all existing phase boxes to find the lowest y-coordinate
-                let lowestY = 0;
-                const existingRects = svgCanvas.querySelectorAll('g.subgraph rect, g.cluster rect');
-                existingRects.forEach(rect => {
-                // Read the current position and height of each bounding box
-                const rectY = parseFloat(rect.getAttribute('y')) || 0;
-                const rectHeight = parseFloat(rect.getAttribute('height')) || 0;
-                const bottomEdge = rectY + rectHeight;
-                if (bottomEdge > lowestY) {
-                    lowestY = bottomEdge;
-                }
-                });
-                // If no boxes are found, fall back to a standard baseline position
-                if (lowestY === 0) lowestY = 50;
-                const targetY = lowestY + 40;
-                const blockHeight = 180;
-                const totalRequiredDepth = targetY + blockHeight + 50; // Add an outer layout margin buffer
-                // 2. 💡 CRITICAL CHANGE: DYNAMICALLY EXPAND THE SVG VIEWBOX WINDOW LIMITS
-                // Read the current viewBox string layout array values (e.g., "0 0 3215 3334")
-                const currentViewBox = svgCanvas.getAttribute('viewBox');
-                if (currentViewBox) {
-                const parts = currentViewBox.split(/\s+/);
-                if (parts.length === 4) {
-                    const currentVBHeight = parseFloat(parts[3]);
-                    // If our new element spills past the current view frame edge, expand the window limits
-                    if (totalRequiredDepth > currentVBHeight) {
-                        // Update the viewBox height index value parameter
-                        parts[3] = totalRequiredDepth.toString();
-                        svgCanvas.setAttribute('viewBox', parts.join(' '));
-                        // Synchronize the physical presentation height styling tags on the DOM tree container
-                        svgCanvas.setAttribute('height', `${totalRequiredDepth}px`);
-                        if (svgCanvas.style) {
-                            svgCanvas.style.height = `${totalRequiredDepth}px`;
+                    // 1. DYNAMIC MATH: Scan all existing phase boxes to find the lowest y-coordinate
+                    let lowestY = 0;
+                    const existingRects = svgCanvas.querySelectorAll('g.subgraph rect, g.cluster rect');
+                    existingRects.forEach(rect => {
+                        // Read the current position and height of each bounding box
+                        const rectY = parseFloat(rect.getAttribute('y')) || 0;
+                        const rectHeight = parseFloat(rect.getAttribute('height')) || 0;
+                        const bottomEdge = rectY + rectHeight;
+                        if (bottomEdge > lowestY) {
+                            lowestY = bottomEdge;
                         }
-                        console.log(`📏 [VIEWBOX EXPANDED] Stretched canvas boundary to accommodate size: ${totalRequiredDepth}px`);
+                    });
+                    // If no boxes are found, fall back to a standard baseline position
+                    if (lowestY === 0) lowestY = 50;
+                    const targetY = lowestY + 40;
+                    const blockHeight = 180;
+                    const totalRequiredDepth = targetY + blockHeight + 50; // Add an outer layout margin buffer
+                    // 2. 💡 CRITICAL CHANGE: DYNAMICALLY EXPAND THE SVG VIEWBOX WINDOW LIMITS
+                    // Read the current viewBox string layout array values (e.g., "0 0 3215 3334")
+                    const currentViewBox = svgCanvas.getAttribute('viewBox');
+                    if (currentViewBox) {
+                        const parts = currentViewBox.split(/\s+/);
+                        if (parts.length === 4) {
+                            const currentVBHeight = parseFloat(parts[3]);
+                            // If our new element spills past the current view frame edge, expand the window limits
+                            if (totalRequiredDepth > currentVBHeight) {
+                                // Update the viewBox height index value parameter
+                                parts[3] = totalRequiredDepth.toString();
+                                svgCanvas.setAttribute('viewBox', parts.join(' '));
+                                // Synchronize the physical presentation height styling tags on the DOM tree container
+                                svgCanvas.setAttribute('height', `${totalRequiredDepth}px`);
+                                if (svgCanvas.style) {
+                                    svgCanvas.style.height = `${totalRequiredDepth}px`;
+                                }
+                                console.log(`📏 [VIEWBOX EXPANDED] Stretched canvas boundary to accommodate size: ${totalRequiredDepth}px`);
+                            }
+                        }
                     }
-                }
-                }
-                const newPhaseG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                newPhaseG.setAttribute("id", subId);
-                newPhaseG.setAttribute("class", "subgraph cluster");
-                //newPhaseG.innerHTML = `<rect x="10" y="10" width="200" height="150" fill="#2d2d2d" stroke="#474747"/><text x="20" y="30" fill="#fff" class="subgraphLabel">${title}</text>`;
-                newPhaseG.innerHTML = `
+                    const newPhaseG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    newPhaseG.setAttribute("id", subId);
+                    newPhaseG.setAttribute("class", "subgraph cluster");
+                    //newPhaseG.innerHTML = `<rect x="10" y="10" width="200" height="150" fill="#2d2d2d" stroke="#474747"/><text x="20" y="30" fill="#fff" class="subgraphLabel">${title}</text>`;
+                    newPhaseG.innerHTML = `
                 <rect x="20" y="${targetY}" width="350" height="${blockHeight}" fill="#2d2d2d" stroke="#474747" stroke-width="2" rx="8"/>
                 <text x="40" y="${targetY + 35}" fill="#ffffff" font-family="sans-serif" font-size="16px" font-weight="bold" class="subgraphLabel">${title}</text>
                 `;
-                svgCanvas.appendChild(newPhaseG);
+                    svgCanvas.appendChild(newPhaseG);
                 }
                 workingCode = workingCode.trim() + `\n    subgraph ${subId} ["${title}"]\n    end\n`;
                 hasChanges = true;
                 continue;
-                } // This is just a sample script. Paste your real code (javascript or HTML) here.
-                if ('this_is' == /an_example/) {
+            } // This is just a sample script. Paste your real code (javascript or HTML) here.
+            if ('this_is' == /an_example/) {
                 of_beautifier();
-                } else {
+            } else {
                 //var a = b ? (c % d) : e[f];
-                }
-
+            }
             // --- PROCESS 2: UPDATE PHASE TEXT ---
             const matchUpdatePhase = cmd.match(/^UPDATE\s+(?:SUBGRAPH|phase)\s+(?:["']?Phase\s*[_0]*(\d+):?\s*.*?["']?|([a-zA-Z0-9_-]+))\s+TO\s+["']([\s\(\S\)]*?)["']/i);
             if (matchUpdatePhase) {
                 const [_, phaseNum, manualId, newTitle] = matchUpdatePhase;
                 let subId = phaseNum ? `phase_${phaseNum.padStart(2, '0')}` : manualId;
-
                 const allLabels = document.querySelectorAll('.subgraphLabel, .subgraph-title, text');
                 allLabels.forEach(label => {
                     const cluster = label.closest('g.subgraph, g.cluster');
@@ -1983,7 +1642,6 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                         label.textContent = newTitle;
                     }
                 });
-
                 const subRegex = new RegExp(`(subgraph\\s+${subId}\\b)(?:\\s*\\[.*?\\\])?`, 'i');
                 if (subRegex.test(workingCode)) {
                     workingCode = workingCode.replace(subRegex, `$1 ["${newTitle}"]`);
@@ -1991,25 +1649,29 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 }
                 continue;
             }
-
             // --- PROCESS 3: DELETE PHASE ---
             const matchDeletePhase = cmd.match(/^DELETE\s+PHASE\s+([a-zA-Z0-9._\s-]+)/i);
             if (matchDeletePhase) {
                 const [_, targetIdent] = matchDeletePhase;
                 const trIdent = targetIdent.trim().toLowerCase();
                 const collIdent = trIdent.replace(/[\s_]/g, '');
-
                 const targetG = document.getElementById(collIdent) || document.querySelector(`[id*="${collIdent}"]`);
                 if (targetG) targetG.remove(); // Drop structural frame from DOM instantly
-
                 const lines = workingCode.split(/\r?\n/);
-                let inTarget = false, count = 0;
+                let inTarget = false,
+                    count = 0;
                 const cleanLines = lines.filter(line => {
                     const trLine = line.trim().toLowerCase();
                     if (trLine.startsWith('subgraph ') && (trLine.includes(trIdent) || trLine.replace(/[\s_]/g, '').includes(collapsedIdent))) {
-                        inTarget = true; count++; return false;
+                        inTarget = true;
+                        count++;
+                        return false;
                     }
-                    if (trLine === 'end' && inTarget && count === 1) { inTarget = false; count--; return false; }
+                    if (trLine === 'end' && inTarget && count === 1) {
+                        inTarget = false;
+                        count--;
+                        return false;
+                    }
                     if (trLine === 'end' && count > 0) count--;
                     return true;
                 });
@@ -2022,80 +1684,87 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
             // ==========================================================================
             // --- PROCESS 4: ADD NODE (All 11 Geometric Shapes) ---
             // ==========================================================================
-// SECTION 4: NODE CORE PROCESSES (4 - REPAIRED ADD NODE)
-// ==========================================================================
-// ==========================================================================
-// SECTION 4: NODE CORE PROCESSES (4 - REPAIRED ADD NODE)
-// ==========================================================================
-// FIXED: Escaped the internal quotes inside the RegExp literal to prevent string parsing engine reference drops
+            // SECTION 4: NODE CORE PROCESSES (4 - REPAIRED ADD NODE)
+            // ==========================================================================
+            // ==========================================================================
+            // SECTION 4: NODE CORE PROCESSES (4 - REPAIRED ADD NODE)
+            // ==========================================================================
+            // FIXED: Escaped the internal quotes inside the RegExp literal to prevent string parsing engine reference drops
             const matchAddNode = cmd.match(/^ADD\s+(NODE|ROUND_NODE|STADIUM_NODE|SUBROUTINE_NODE|CYLINDER_NODE|CIRCLE_NODE|ASYMMETRIC_NODE|HEXAGON_NODE|PARALLELOGRAM_NODE|TRAPEZOID_NODE|DIAMOND)\s+["'](Step\s+(\d+(?:\.\d+)*):?\s*.*?)["']\s+TO\s+(?:["']([a-zA-Z0-9_\s-]+)["']|([a-zA-Z0-9_-]+))/i);
-
-                if (matchAddNode) {
+            if (matchAddNode) {
                 console.group(`🚀 [NODE OPTIMIZER] Processing ADD NODE Command`);
                 const [_, type, fullLabel, stepNums, qPhase, unqPhase] = matchAddNode;
                 const phaseId = qPhase || unqPhase;
                 const cleanStep = stepNums.replace(/\./g, '_');
                 const newId = `step${cleanStep}`;
-
                 console.log(`📋 [PARSED DATA] Shape Type: "${type}" | Handle Label: "${fullLabel}" | Target Phase String: "${phaseId}"`);
                 console.log(`🆔 [GENERATED ID] Unique structural variable index token: "${newId}"`);
-
-                let op = '["', cl = '"]';
+                let op = '["',
+                    cl = '"]';
                 const shapeUpper = type.toUpperCase();
-                if (shapeUpper === "ROUND_NODE") { op = '("'; cl = '")'; }
-                else if (shapeUpper === "STADIUM_NODE") { op = '(["'; cl = '"])'; }
-                else if (shapeUpper === "SUBROUTINE_NODE") { op = '[["'; cl = '"]]'; }
-                else if (shapeUpper === "CYLINDER_NODE") { op = '[("'; cl = '")]'; }
-                else if (shapeUpper === "CIRCLE_NODE") { op = '(("'; cl = '"))'; }
-                else if (shapeUpper === "ASYMMETRIC_NODE") { op = '>'; cl = '"]'; }
-                else if (shapeUpper === "HEXAGON_NODE") { op = '{{\"'; cl = '"}}'; }
-                else if (shapeUpper === "PARALLELOGRAM_NODE") { op = '[\\\"'; cl = '"/]'; }
-                else if (shapeUpper === "TRAPEZOID_NODE") { op = '[/\"'; cl = '"\\]'; }
-                else if (shapeUpper === "DIAMOND") { op = '{"'; cl = '"}'; }
-
+                if (shapeUpper === "ROUND_NODE") {
+                    op = '("';
+                    cl = '")';
+                } else if (shapeUpper === "STADIUM_NODE") {
+                    op = '(["';
+                    cl = '"])';
+                } else if (shapeUpper === "SUBROUTINE_NODE") {
+                    op = '[["';
+                    cl = '"]]';
+                } else if (shapeUpper === "CYLINDER_NODE") {
+                    op = '[("';
+                    cl = '")]';
+                } else if (shapeUpper === "CIRCLE_NODE") {
+                    op = '(("';
+                    cl = '"))';
+                } else if (shapeUpper === "ASYMMETRIC_NODE") {
+                    op = '>';
+                    cl = '"]';
+                } else if (shapeUpper === "HEXAGON_NODE") {
+                    op = '{{\"';
+                    cl = '"}}';
+                } else if (shapeUpper === "PARALLELOGRAM_NODE") {
+                    op = '[\\\"';
+                    cl = '"/]';
+                } else if (shapeUpper === "TRAPEZOID_NODE") {
+                    op = '[/\"';
+                    cl = '"\\]';
+                } else if (shapeUpper === "DIAMOND") {
+                    op = '{"';
+                    cl = '"}';
+                }
                 // Resolves ID securely using your active functional routing dictionary reference
                 console.log(`🔍 [RESOLVER] Sending "${phaseId}" to resolveIdHelper...`);
                 const targetNodePhaseId = resolveIdHelper(phaseId);
                 console.log(`🔍 [RESOLVER] Output true structural target ID: "${targetNodePhaseId}"`);
-
                 const selectorStr = `[id*="${phaseId.replace(/[\s_]/g, '').toLowerCase()}"]`;
-                const targetPhaseG = document.getElementById(targetNodePhaseId) || 
-                                    document.querySelector(`[id*="${targetNodePhaseId}"]`) ||
-                                    document.querySelector(selectorStr) ||
-                                    document.querySelector(`g.cluster[id*="${cleanPhaseKey.replace(/[\s_]/g, '')}"]`);
-
-
+                const targetPhaseG = document.getElementById(targetNodePhaseId) || document.querySelector(`[id*="${targetNodePhaseId}"]`) || document.querySelector(selectorStr) || document.querySelector(`g.cluster[id*="${cleanPhaseKey.replace(/[\s_]/g, '')}"]`);
                 if (targetPhaseG) {
-                console.log(`🎯 [DOM HIT] Successfully localized matching live SVG group element layer:`, targetPhaseG);
-
-                // Enforces standard W3C SVG specifications to make layout elements instantly visible on canvas
-                const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-                nodeG.setAttribute("id", newId);
-                nodeG.setAttribute("class", "node default flowchart-node custom-injected-node");
-                nodeG.style.opacity = "1";
-                nodeG.style.visibility = "visible";
-                nodeG.style.pointerEvents = "all";
-                nodeG.style.cursor = "pointer";
-                const customNodesCount = targetPhaseG.querySelectorAll('.custom-injected-node').length;
-                const verticalStaggerOffset = customNodesCount * 60;
-
-                const parentRect = targetPhaseG.querySelector('rect');
-                let injectX = 50;
-                let injectY = 50;
-
-                if (parentRect) {
-                    injectX = (parseFloat(parentRect.getAttribute('x')) || 0) + 30;
-                    injectY = (parseFloat(parentRect.getAttribute('y')) || 0) + 60 + verticalStaggerOffset;
-                    
-                    const currentRectHeight = parseFloat(parentRect.getAttribute('height')) || 0;
-                    if ((injectY + 60) > ((parseFloat(parentRect.getAttribute('y')) || 0) + currentRectHeight)) {
-                        parentRect.setAttribute('height', currentRectHeight + 65);
+                    console.log(`🎯 [DOM HIT] Successfully localized matching live SVG group element layer:`, targetPhaseG);
+                    // Enforces standard W3C SVG specifications to make layout elements instantly visible on canvas
+                    const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                    nodeG.setAttribute("id", newId);
+                    nodeG.setAttribute("class", "node default flowchart-node custom-injected-node");
+                    nodeG.style.opacity = "1";
+                    nodeG.style.visibility = "visible";
+                    nodeG.style.pointerEvents = "all";
+                    nodeG.style.cursor = "pointer";
+                    const customNodesCount = targetPhaseG.querySelectorAll('.custom-injected-node').length;
+                    const verticalStaggerOffset = customNodesCount * 60;
+                    const parentRect = targetPhaseG.querySelector('rect');
+                    let injectX = 50;
+                    let injectY = 50;
+                    if (parentRect) {
+                        injectX = (parseFloat(parentRect.getAttribute('x')) || 0) + 30;
+                        injectY = (parseFloat(parentRect.getAttribute('y')) || 0) + 60 + verticalStaggerOffset;
+                        const currentRectHeight = parseFloat(parentRect.getAttribute('height')) || 0;
+                        if ((injectY + 60) > ((parseFloat(parentRect.getAttribute('y')) || 0) + currentRectHeight)) {
+                            parentRect.setAttribute('height', currentRectHeight + 65);
+                        }
                     }
-                }
-
-                // 2. SAFE INJECTION: Render using high-contrast themes matching your dark node layouts
-                        // 💡 UPDATED: Set the styles explicitly to handle clean text contrast overrides
-                let internimStyle = `
+                    // 2. SAFE INJECTION: Render using high-contrast themes matching your dark node layouts
+                    // 💡 UPDATED: Set the styles explicitly to handle clean text contrast overrides
+                    let internimStyle = `
                     fill: #ffffff !important;
                     color: #ffffff !important; 
                     font-family: sans-serif; 
@@ -2107,9 +1776,8 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                     opacity: 1 !important;
                     visibility: visible !important;
                 `.trim();
-
-                // 💡 UPDATED innerHTML: Forces the rect to a solid black background using forced vector fill attributes
-                nodeG.innerHTML = `
+                    // 💡 UPDATED innerHTML: Forces the rect to a solid black background using forced vector fill attributes
+                    nodeG.innerHTML = `
                     <rect x="${injectX}" y="${injectY}" width="180" height="45" rx="5" 
                             fill="#000000" 
                             stroke="#555566" 
@@ -2123,117 +1791,110 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                             font-size="12px" 
                             font-weight="bold">${fullLabel}</text>
                 `;
-
-                targetPhaseG.appendChild(nodeG);
-
-                console.log(`🎉 [SUCCESS] Instantly injected visual block element "${newId}" into live SVG layout view.`);
-                if (targetPhaseG.style) {
-                    const originalDisplay = targetPhaseG.style.display;
-                    targetPhaseG.style.display = 'none';
-                    targetPhaseG.offsetHeight; // Triggers immediate document element layout recalculation
-                    targetPhaseG.style.display = originalDisplay || '';
-                }
+                    targetPhaseG.appendChild(nodeG);
+                    console.log(`🎉 [SUCCESS] Instantly injected visual block element "${newId}" into live SVG layout view.`);
+                    if (targetPhaseG.style) {
+                        const originalDisplay = targetPhaseG.style.display;
+                        targetPhaseG.style.display = 'none';
+                        targetPhaseG.offsetHeight; // Triggers immediate document element layout recalculation
+                        targetPhaseG.style.display = originalDisplay || '';
+                    }
                 } else {
-                console.warn(`❌ [DOM MISS] Failed to locate visual element container in DOM using ID: "${targetNodePhaseId}" or Selector: "${selectorStr}"`);
+                    console.warn(`❌ [DOM MISS] Failed to locate visual element container in DOM using ID: "${targetNodePhaseId}" or Selector: "${selectorStr}"`);
                 }
-
                 console.log("💾 [SYNC SEQUENCE] Re-indexing raw markdown lines to append code model background arrays...");
                 const lines = workingCode.split(/\r?\n/);
                 const collTarget = phaseId.trim().toLowerCase().replace(/[\s_]/g, '');
                 let codeInjected = false;
-
                 for (let i = 0; i < lines.length; i++) {
-                const lowerLine = lines[i].toLowerCase().trim();
-                if (lowerLine.startsWith('subgraph ') && lowerLine.replace(/[\s_]/g, '').includes(collTarget)) {
-                    const codeString = `        ${newId}${op}${fullLabel}${cl}`;
-                    lines.splice(i + 1, 0, codeString);
-                    console.log(`📝 [SYNC SUCCESS] Appended raw code row on line index ${i + 1}: -> "${codeString}"`);
-                    codeInjected = true;
-                    break;
+                    const lowerLine = lines[i].toLowerCase().trim();
+                    if (lowerLine.startsWith('subgraph ') && lowerLine.replace(/[\s_]/g, '').includes(collTarget)) {
+                        const codeString = `        ${newId}${op}${fullLabel}${cl}`;
+                        lines.splice(i + 1, 0, codeString);
+                        console.log(`📝 [SYNC SUCCESS] Appended raw code row on line index ${i + 1}: -> "${codeString}"`);
+                        codeInjected = true;
+                        break;
+                    }
                 }
-                }
-
                 if (!codeInjected) {
-                console.error(`❌ [SYNC FAILURE] Could not find a matching "subgraph" line marker inside the source file for target: "${collTarget}"`);
+                    console.error(`❌ [SYNC FAILURE] Could not find a matching "subgraph" line marker inside the source file for target: "${collTarget}"`);
                 }
-
                 workingCode = lines.join('\n');
                 hasChanges = true;
-
                 console.groupEnd();
                 continue;
-                }
-
-
-
-
+            }
             // --- PROCESS 5: UPDATE NODE TEXT ---
+                        // --- PROCESS 5: UPDATE NODE TEXT ---
             const matchUpdateNode = cmd.match(/^UPDATE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._\s-]+)\s+TO\s+["'](.*?)["']/i);
             if (matchUpdateNode) {
-    console.group(`📝 [NODE OPTIMIZER] Processing UPDATE NODE Command`);
-    
-    const [_, targetIdent, newFullLabel] = matchUpdateNode;
-    console.log(`📋 [PARSED DATA] Target Input Handle: "${targetIdent}" | New Target Text: "${newFullLabel}"`);
-    
-    // Resolve the human tracking handle back into the machine variable name
-    console.log(`🔍 [RESOLVER] Sending "${targetIdent}" to resolveId...`);
-    const targetNodeId = resolveId(targetIdent);
-    console.log(`🔍 [RESOLVER] Output true structural target ID: "${targetNodeId}"`);
-
-    // --- STEP 1: LIVE CANVASES VISUAL DOM UPDATES ---
-    const strictNodeSelector = `g.node[id*="${targetNodeId}"], .node[id^="${targetNodeId}"], [id*="flowchart-${targetNodeId}"].node`;
-    const nodeGroup = document.querySelector(strictNodeSelector) || 
-                      document.getElementById(targetNodeId);
-
-    
-    if (nodeGroup) {
-        console.log(`🎯 [DOM HIT] Successfully localized matching live node container group:`, nodeGroup);
-        const labelTarget = nodeGroup.querySelector('.nodeLabel, p, span, text') || nodeGroup;
-        
-        console.log(`🏷️ [DOM UPDATE] Swapping visible text characters: "${labelTarget.textContent.trim()}" ====> "${newFullLabel}"`);
-        labelTarget.textContent = newFullLabel;
-        
-        // Ensure nesting span labels mirror the exact text updates cleanly
-        const innerSubElements = nodeGroup.querySelectorAll('span, p');
-        if (innerSubElements.length > 0) {
-            console.log(`🔗 [DOM CHILD UPDATE] Synchronizing text layers across ${innerSubElements.length} nested child components.`);
-            innerSubElements.forEach(el => el.textContent = newFullLabel);
-        }
-    } else {
-        console.warn(`❌ [DOM MISS] Failed to locate visual element container in DOM using ID: "${targetNodeId}" or Selector: "${selectorStr}"`);
-    }
-
-    // --- STEP 2: CODE DATA MODEL SYNC ---
-    const regexNode = new RegExp(`\\b(${targetNodeId})\\s*([\\[\\(\\{"']+.*?[\\s\\S]*?[\\]\\)\\}'"]+)`, 'g');
-    
-    if (regexNode.test(workingCode)) {
-        console.log(`💾 [SYNC SEQUENCE] Target identifier matched inside text data model configuration arrays.`);
-        
-        workingCode = workingCode.replace(regexNode, (m, id, wrappers) => {
-            let op = '[', cl = ']';
-            if (wrappers.includes('((')) { op = '(('; cl = '))'; }
-            else if (wrappers.includes('([')) { op = '(['; cl = '])'; }
-            else if (wrappers.includes('[[')) { op = '[['; cl = ']]'; }
-            else if (wrappers.includes('[(')) { op = '[('; cl = ')]'; }
-            else if (wrappers.includes('>')) { op = '>'; cl = ']'; }
-            else if (wrappers.includes('{{')) { op = '{{'; cl = '}}'; }
-            else if (wrappers.includes('[\\')) { op = '[\\'; cl = '/]'; }
-            else if (wrappers.includes('[/')) { op = '[/'; cl = '\\]'; }
-            else if (wrappers.includes('{')) { op = '{'; cl = '}'; }
-            
-            const generatedModelString = `${id}${op}"${newFullLabel}"${cl}`;
-            console.log(`📝 [SYNC SUCCESS] Replaced markdown layout strings with wrappers: "${wrappers}" ====> -> "${generatedModelString}"`);
-            return generatedModelString;
-        });
-        hasChanges = true;
-    } else {
-        console.error(`❌ [SYNC FAILURE] Could not find the declaration row for node variable key "${targetNodeId}" inside currentCode source metadata strings.`);
-    }
-
-    console.groupEnd();
-    continue;
-}
-
+                console.group(`📝 [NODE OPTIMIZER] Processing UPDATE NODE Command`);
+                const [_, targetIdent, newFullLabel] = matchUpdateNode;
+                console.log(`📋 [PARSED DATA] Target Input Handle: "${targetIdent}" | New Target Text: "${newFullLabel}"`);
+                
+                // Resolve the human tracking handle back into the machine variable name
+                console.log(`🔍 [RESOLVER] Sending "${targetIdent}" to resolveIdHelper...`);
+                const targetNodeId = resolveIdHelper(targetIdent);
+                console.log(`🔍 [RESOLVER] Output true structural target ID: "${targetNodeId}"`);
+                
+                // --- STEP 1: LIVE CANVASES VISUAL DOM UPDATES ---
+                const strictNodeSelector = `g.node[id*="${targetNodeId}"], .node[id^="${targetNodeId}"], [id*="flowchart-${targetNodeId}"].node`;
+                const nodeGroup = document.querySelector(strictNodeSelector) || document.getElementById(targetNodeId);
+                
+                if (nodeGroup) {
+                    console.log(`🎯 [DOM HIT] Successfully localized matching live node container group:`, nodeGroup);
+                    const labelTarget = nodeGroup.querySelector('.nodeLabel, p, span, text') || nodeGroup;
+                    console.log(`🏷️ [DOM UPDATE] Swapping visible text characters: "${labelTarget.textContent?.trim()}" ====> "${newFullLabel}"`);
+                    labelTarget.textContent = newFullLabel;
+                    
+                    // Ensure nesting span or paragraph labels mirror the exact text updates cleanly
+                    const innerSubElements = nodeGroup.querySelectorAll('span, p');
+                    if (innerSubElements.length > 0) {
+                        console.log(`🔗 [DOM CHILD UPDATE] Synchronizing text layers across ${innerSubElements.length} nested child components.`);
+                        innerSubElements.forEach(el => {
+                            el.textContent = newFullLabel;
+                        });
+                    }
+                } else {
+                    console.warn(`❌ [DOM MISS] Failed to locate visual node element container in DOM using ID: "${targetNodeId}"`);
+                }
+                
+                // --- STEP 2: CODE DATA MODEL SYNC ---
+                const regexNode = new RegExp(`\\b(${targetNodeId})\\s*([\\[\\(\\{"']+.*?[\\s\\S]*?[\\]\\)\\}'"]+)`, 'g');
+                if (regexNode.test(workingCode)) {
+                    console.log(`💾 [SYNC SEQUENCE] Target identifier matched inside text data model configuration arrays.`);
+                    workingCode = workingCode.replace(regexNode, (m, id, wrappers) => {
+                        let op = '[', cl = ']';
+                        if (wrappers.includes('((')) {
+                            op = '(('; cl = '))';
+                        } else if (wrappers.includes('([')) {
+                            op = '(['; cl = '])';
+                        } else if (wrappers.includes('[[')) {
+                            op = '[['; cl = ']]';
+                        } else if (wrappers.includes('[(')) {
+                            op = '[('; cl = ')]';
+                        } else if (wrappers.includes('>')) {
+                            op = '>'; cl = ']';
+                        } else if (wrappers.includes('{{')) {
+                            op = '{{'; cl = '}}';
+                        } else if (wrappers.includes('[\\')) {
+                            op = '[\\'; cl = '/]';
+                        } else if (wrappers.includes('[/')) {
+                            op = '[/'; cl = '\\]';
+                        } else if (wrappers.includes('{')) {
+                            op = '{'; cl = '}';
+                        }
+                        const generatedModelString = `${id}${op}"${newFullLabel}"${cl}`;
+                        console.log(`📝 [SYNC SUCCESS] Replaced markdown layout strings with wrappers: "${wrappers}" ====> -> "${generatedModelString}"`);
+                        return generatedModelString;
+                    });
+                    hasChanges = true;
+                } else {
+                    console.error(`❌ [SYNC FAILURE] Could not find the declaration row for node variable key "${targetNodeId}" inside workingCode source metadata strings.`);
+                }
+                console.groupEnd();
+                continue;
+            }
 
             // --- PROCESS 6: DELETE NODE & LINKS ---
             const matchDeleteNode = cmd.match(/^DELETE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._\s-]+)/i);
@@ -2241,10 +1902,8 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 const [_, targetIdent] = matchDeleteNode;
                 const trIdent = targetIdent.trim();
                 const targetNodeId = resolveId(trIdent);
-
                 const nodeG = document.getElementById(targetNodeId) || document.querySelector(`[id*="${targetNodeId}"]`);
                 if (nodeG) nodeG.remove();
-
                 const lines = workingCode.split(/\r?\n/);
                 const cleanLines = lines.filter(line => {
                     const trLine = line.trim();
@@ -2270,7 +1929,6 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 const [_, srcIdent, tgtIdent, newLabel] = matchUpdateConn;
                 const srcNodeId = resolveId(srcIdent);
                 const tgtNodeId = resolveId(tgtIdent);
-
                 let oldLabel = "";
                 const lines = workingCode.split(/\r?\n/);
                 for (let line of lines) {
@@ -2279,28 +1937,23 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                         if (ext) oldLabel = ext[1].trim();
                     }
                 }
-
                 const textElements = document.querySelectorAll('.edgeLabels text, g.edgeLabel tspan, .edgeLabel span, g.edgeLabel text, .edgeLabel, g.edgeLabel p');
                 for (const textEl of textElements) {
                     const containerGroup = textEl.closest('g.edgeLabel') || textEl;
                     const baseId = containerGroup.id || '';
                     const baseClass = containerGroup.className?.baseVal || '';
                     const currentText = textEl.textContent ? textEl.textContent.trim() : "";
-
                     const hasPath = (baseId.includes(srcNodeId) && baseId.includes(tgtNodeId)) || (baseClass.includes(srcNodeId) && baseClass.includes(tgtNodeId));
                     const hasText = oldLabel !== "" && currentText.toLowerCase() === oldLabel.toLowerCase();
-
                     if ((hasPath || hasText) && !textEl.closest('.node')) {
                         const innerTarget = textEl.querySelector('p, span') || textEl;
                         innerTarget.textContent = newLabel;
-
                         const foreignObj = containerGroup.querySelector('foreignObject');
                         const labelBkgDiv = containerGroup.querySelector('div.labelBkg');
                         if (foreignObj) {
                             const maxWrapWidth = 150;
                             foreignObj.setAttribute('width', maxWrapWidth);
                             foreignObj.setAttribute('height', 60);
-
                             if (labelBkgDiv) {
                                 labelBkgDiv.style.width = `${maxWrapWidth}px`;
                                 labelBkgDiv.style.height = "auto";
@@ -2327,7 +1980,6 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                         break;
                     }
                 }
-
                 const updatedLines = lines.map(line => {
                     const trLine = line.trim();
                     if (trLine.includes(srcNodeId) && trLine.includes(tgtNodeId) && trLine.indexOf(srcNodeId) < trLine.indexOf(tgtNodeId)) {
@@ -2339,168 +1991,140 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 hasChanges = true;
                 continue;
             }
-
             // --- PROCESS 7B: CONNECT ROAD LANE ---
-           
             const matchConnect = cmd.match(/^(CONNECT_THICK|CONNECT_DOTTED|CONNECT_MUTUAL|CONNECT_UNARROWED|CONNECT_INVISIBLE|CONNECT)\b\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+TO\s+(?:Step\s+)?([a-zA-Z0-9._-]+)(?:\s+WITH\s+["']([\s\(\S\)]*?)["'])?/i);
-
-console.groupCollapsed(`🔍 Connection Parser: Analyzing command -> "${cmd.trim()}"`);
-console.log("Match Status:", matchConnect ? "✅ MATCHED" : "❌ FAILED");
-
-if (matchConnect) {
-    const [_, type, targetA, targetB, linkLabel] = matchConnect;
-    const nodeA = resolveId(targetA);
-    const nodeB = resolveId(targetB);
-
-    console.log("Extracted Data:", {
-        rawType: type,
-        targetA: targetA,
-        resolvedNodeA: nodeA,
-        targetB: targetB,
-        resolvedNodeB: nodeB,
-        linkLabel: linkLabel || "(none)"
-    });
-
-    // 1. Map each connection type case to its respective Mermaid syntax operator
-    let arrowSymbol = "-->"; 
-    const normalizedType = type.toUpperCase();
-
-    switch (normalizedType) {
-        case "CONNECT_THICK":
-            arrowSymbol = "==>";
-            break;
-        case "CONNECT_DOTTED":
-            arrowSymbol = "-.->";
-            break;
-        case "CONNECT_MUTUAL":
-            arrowSymbol = "<-->";
-            break;
-        case "CONNECT_UNARROWED":
-            arrowSymbol = "---";
-            break;
-        case "CONNECT_INVISIBLE":
-            arrowSymbol = "~~~";
-            break;
-        case "CONNECT":
-        default:
-            arrowSymbol = "-->";
-            break;
-    }
-
-    // 2. Generate the syntax string (handles line styling and inline text labels)
-    let arrowStr = "";
-    if (linkLabel) {
-        if (normalizedType === "CONNECT_UNARROWED") {
-            arrowStr = `    ${nodeA} ---|"${linkLabel}"| ${nodeB}\n`;
-        } else if (normalizedType === "CONNECT_DOTTED") {
-            arrowStr = `    ${nodeA} -. "${linkLabel}" .-> ${nodeB}\n`;
-        } else {
-            arrowStr = `    ${nodeA} -- "${linkLabel}" ${arrowSymbol} ${nodeB}\n`;
-        }
-    } else {
-        arrowStr = `    ${nodeA} ${arrowSymbol} ${nodeB}\n`;
-    }
-    
-    console.log(`📊 Generated Mermaid Syntax: ${arrowStr.trim()}`);
-    
-    workingCode = workingCode.trim() + `\n${arrowStr}`;
-    hasChanges = true;
-    
-    // =========================================================================
-    // 🌐 PLACE THE MODULAR LAYER INJECTION HERE (REPLACING THE OLD REDRAW CODE)
-    // =========================================================================
-    const svgCanvas = document.querySelector('.mermaid svg') || document.querySelector('svg');
-    if (svgCanvas) {
-        const domA = document.querySelector(`g.node[id*="${nodeA}"]`) || document.getElementById(nodeA) || document.querySelector(`[id*="${nodeA}"]`);
-        const domB = document.querySelector(`g.node[id*="${nodeB}"]`) || document.getElementById(nodeB) || document.querySelector(`[id*="${nodeB}"]`);
-
-        if (domA && domB && domA !== domB) {
-            const targetLayer = svgCanvas.querySelector('g.edgePaths') || svgCanvas.querySelector('g.output') || svgCanvas;
-
-            const getSvgLayerCoords = (el, container) => {
-                const bbox = el.getBBox();
-                let transformX = 0;
-                let transformY = 0;
-                
-                const transformAttr = el.getAttribute('transform') || '';
-                const match = transformAttr.match(/translate\(([^,)]+)[, ]([^)]+)\)/);
-                if (match) {
-                    transformX = parseFloat(match[1]);
-                    transformY = parseFloat(match[2]);
+            console.groupCollapsed(`🔍 Connection Parser: Analyzing command -> "${cmd.trim()}"`);
+            console.log("Match Status:", matchConnect ? "✅ MATCHED" : "❌ FAILED");
+            if (matchConnect) {
+                const [_, type, targetA, targetB, linkLabel] = matchConnect;
+                const nodeA = resolveId(targetA);
+                const nodeB = resolveId(targetB);
+                console.log("Extracted Data:", {
+                    rawType: type,
+                    targetA: targetA,
+                    resolvedNodeA: nodeA,
+                    targetB: targetB,
+                    resolvedNodeB: nodeB,
+                    linkLabel: linkLabel || "(none)"
+                });
+                // 1. Map each connection type case to its respective Mermaid syntax operator
+                let arrowSymbol = "-->";
+                const normalizedType = type.toUpperCase();
+                switch (normalizedType) {
+                    case "CONNECT_THICK":
+                        arrowSymbol = "==>";
+                        break;
+                    case "CONNECT_DOTTED":
+                        arrowSymbol = "-.->";
+                        break;
+                    case "CONNECT_MUTUAL":
+                        arrowSymbol = "<-->";
+                        break;
+                    case "CONNECT_UNARROWED":
+                        arrowSymbol = "---";
+                        break;
+                    case "CONNECT_INVISIBLE":
+                        arrowSymbol = "~~~";
+                        break;
+                    case "CONNECT":
+                    default:
+                        arrowSymbol = "-->";
+                        break;
+                }
+                // 2. Generate the syntax string (handles line styling and inline text labels)
+                let arrowStr = "";
+                if (linkLabel) {
+                    if (normalizedType === "CONNECT_UNARROWED") {
+                        arrowStr = `    ${nodeA} ---|"${linkLabel}"| ${nodeB}\n`;
+                    } else if (normalizedType === "CONNECT_DOTTED") {
+                        arrowStr = `    ${nodeA} -. "${linkLabel}" .-> ${nodeB}\n`;
+                    } else {
+                        arrowStr = `    ${nodeA} -- "${linkLabel}" ${arrowSymbol} ${nodeB}\n`;
+                    }
                 } else {
-                    const cBox = container.getBoundingClientRect();
-                    const eBox = el.getBoundingClientRect();
-                    return {
-                        width: bbox.width,
-                        height: bbox.height,
-                        centerX: (eBox.left + eBox.width / 2) - cBox.left,
-                        centerY: (eBox.top + eBox.height / 2) - cBox.top,
-                        top: eBox.top - cBox.top,
-                        bottom: eBox.bottom - cBox.top
-                    };
+                    arrowStr = `    ${nodeA} ${arrowSymbol} ${nodeB}\n`;
                 }
-
-                return {
-                    width: bbox.width,
-                    height: bbox.height,
-                    centerX: transformX,
-                    centerY: transformY,
-                    top: transformY - (bbox.height / 2),
-                    bottom: transformY + (bbox.height / 2)
-                };
-            };
-
-            const locA = getSvgLayerCoords(domA, targetLayer);
-            const locB = getSvgLayerCoords(domB, targetLayer);
-
-            let startX = locA.centerX;
-            let startY = locA.top; 
-            let endX = locB.centerX;
-            let endY = locB.bottom; 
-
-            if (locA.centerY < locB.centerY) {
-                startY = locA.bottom;
-                endY = locB.top;
-            }
-
-            const diffX = endX - startX;
-            const diffY = endY - startY;
-            
-            const controlY1 = startY + (diffY * 0.25);
-            const controlY2 = endY - (diffY * 0.25);
-            
-            let pathData = `M ${startX},${startY} C ${startX},${controlY1} ${endX},${controlY2} ${endX},${endY}`;
-            
-            if (locA.centerY > locB.centerY && Math.abs(diffX) < 40) {
-                const sweepOffset = startX - (locA.width / 2) - 50;
-                pathData = `M ${startX},${startY} C ${sweepOffset},${startY} ${sweepOffset},${endY} ${endX},${endY}`;
-            }
-
-            // 💡 FIX 1: Extract the unique chart dynamic hash directly from nearby paths
-            const samplePath = targetLayer.querySelector('path');
-            let chartHash = 'mermaid-generated';
-            if (samplePath && samplePath.id) {
-                // If ID is "mermaid-1791832736363-L_node_0", isolates "mermaid-1791832736363"
-                const parts = samplePath.id.split('-');
-                if (parts.length > 1) {
-                    chartHash = `${parts[0]}-${parts[1]}`;
-                }
-            }
-
-            // 💡 FIX 2: Dynamically parse the accurate system arrowhead marker mapping ID
-            const defMarker = svgCanvas.querySelector('defs marker[id*="point"]') || 
-                               svgCanvas.querySelector('defs marker[id*="arrowhead"]');
-            const markerId = defMarker ? defMarker.getAttribute('id') : `${chartHash}_flowchart-v2-pointEnd`;
-
-            const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
-            edgeG.setAttribute("class", "edgePath ls-" + nodeA + " le-" + nodeB);
-            edgeG.setAttribute("id", "dynamic-edge-" + nodeA + "-" + nodeB);
-
-            const isDotted = normalizedType === 'CONNECT_DOTTED';
-            const isThick = normalizedType === 'CONNECT_THICK';
-
-            // 💡 FIX 3: Injecting completed attributes dynamically
-            let innerHTMLStr  = `
+                console.log(`📊 Generated Mermaid Syntax: ${arrowStr.trim()}`);
+                workingCode = workingCode.trim() + `\n${arrowStr}`;
+                hasChanges = true;
+                // =========================================================================
+                // 🌐 PLACE THE MODULAR LAYER INJECTION HERE (REPLACING THE OLD REDRAW CODE)
+                // =========================================================================
+                const svgCanvas = document.querySelector('.mermaid svg') || document.querySelector('svg');
+                if (svgCanvas) {
+                    const domA = document.querySelector(`g.node[id*="${nodeA}"]`) || document.getElementById(nodeA) || document.querySelector(`[id*="${nodeA}"]`);
+                    const domB = document.querySelector(`g.node[id*="${nodeB}"]`) || document.getElementById(nodeB) || document.querySelector(`[id*="${nodeB}"]`);
+                    if (domA && domB && domA !== domB) {
+                        const targetLayer = svgCanvas.querySelector('g.edgePaths') || svgCanvas.querySelector('g.output') || svgCanvas;
+                        const getSvgLayerCoords = (el, container) => {
+                            const bbox = el.getBBox();
+                            let transformX = 0;
+                            let transformY = 0;
+                            const transformAttr = el.getAttribute('transform') || '';
+                            const match = transformAttr.match(/translate\(([^,)]+)[, ]([^)]+)\)/);
+                            if (match) {
+                                transformX = parseFloat(match[1]);
+                                transformY = parseFloat(match[2]);
+                            } else {
+                                const cBox = container.getBoundingClientRect();
+                                const eBox = el.getBoundingClientRect();
+                                return {
+                                    width: bbox.width,
+                                    height: bbox.height,
+                                    centerX: (eBox.left + eBox.width / 2) - cBox.left,
+                                    centerY: (eBox.top + eBox.height / 2) - cBox.top,
+                                    top: eBox.top - cBox.top,
+                                    bottom: eBox.bottom - cBox.top
+                                };
+                            }
+                            return {
+                                width: bbox.width,
+                                height: bbox.height,
+                                centerX: transformX,
+                                centerY: transformY,
+                                top: transformY - (bbox.height / 2),
+                                bottom: transformY + (bbox.height / 2)
+                            };
+                        };
+                        const locA = getSvgLayerCoords(domA, targetLayer);
+                        const locB = getSvgLayerCoords(domB, targetLayer);
+                        let startX = locA.centerX;
+                        let startY = locA.top;
+                        let endX = locB.centerX;
+                        let endY = locB.bottom;
+                        if (locA.centerY < locB.centerY) {
+                            startY = locA.bottom;
+                            endY = locB.top;
+                        }
+                        const diffX = endX - startX;
+                        const diffY = endY - startY;
+                        const controlY1 = startY + (diffY * 0.25);
+                        const controlY2 = endY - (diffY * 0.25);
+                        let pathData = `M ${startX},${startY} C ${startX},${controlY1} ${endX},${controlY2} ${endX},${endY}`;
+                        if (locA.centerY > locB.centerY && Math.abs(diffX) < 40) {
+                            const sweepOffset = startX - (locA.width / 2) - 50;
+                            pathData = `M ${startX},${startY} C ${sweepOffset},${startY} ${sweepOffset},${endY} ${endX},${endY}`;
+                        }
+                        // 💡 FIX 1: Extract the unique chart dynamic hash directly from nearby paths
+                        const samplePath = targetLayer.querySelector('path');
+                        let chartHash = 'mermaid-generated';
+                        if (samplePath && samplePath.id) {
+                            // If ID is "mermaid-1791832736363-L_node_0", isolates "mermaid-1791832736363"
+                            const parts = samplePath.id.split('-');
+                            if (parts.length > 1) {
+                                chartHash = `${parts[0]}-${parts[1]}`;
+                            }
+                        }
+                        // 💡 FIX 2: Dynamically parse the accurate system arrowhead marker mapping ID
+                        const defMarker = svgCanvas.querySelector('defs marker[id*="point"]') || svgCanvas.querySelector('defs marker[id*="arrowhead"]');
+                        const markerId = defMarker ? defMarker.getAttribute('id') : `${chartHash}_flowchart-v2-pointEnd`;
+                        const edgeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                        edgeG.setAttribute("class", "edgePath ls-" + nodeA + " le-" + nodeB);
+                        edgeG.setAttribute("id", "dynamic-edge-" + nodeA + "-" + nodeB);
+                        const isDotted = normalizedType === 'CONNECT_DOTTED';
+                        const isThick = normalizedType === 'CONNECT_THICK';
+                        // 💡 FIX 3: Injecting completed attributes dynamically
+                        let innerHTMLStr = `
                 <path d="${pathData}" 
                       id="${chartHash}-L_${nodeA}_${nodeB}_dynamic" 
                       class="edge-thickness-normal edge-pattern-solid flowchart-link" 
@@ -2513,25 +2137,21 @@ if (matchConnect) {
                       data-look="classic"
                       marker-end="url(#${markerId})"/>
             `;
-
-            // 1. Calculate the standard vertical center point between your nodes
-const dynamicLabelY = (startY + endY) / 2;
-
-// 2. Identify the apex horizontal curve sweep boundary dynamically
-let dynamicLabelX = (startX + endX) / 2;
-
-// If an upward connection loop is active, calculate its right-side sweeping peak position
-if (locA.centerY > locB.centerY && Math.abs(diffX) < 40) {
-    // Locate the exact outermost curve vertex line calculated in your pathData string
-    const sweepApexX = startX - (locA.width / 2) - 50; 
-    
-    // Position the text label right on top of that loop curve path apex point
-    dynamicLabelX = sweepApexX; 
-}
-if (linkLabel) {
-    const estimatedTextWidth = linkLabel.length * 7 + 16;
-   const textHalfWidth = estimatedTextWidth / 2;
-    innerHTMLStr += `
+                        // 1. Calculate the standard vertical center point between your nodes
+                        const dynamicLabelY = (startY + endY) / 2;
+                        // 2. Identify the apex horizontal curve sweep boundary dynamically
+                        let dynamicLabelX = (startX + endX) / 2;
+                        // If an upward connection loop is active, calculate its right-side sweeping peak position
+                        if (locA.centerY > locB.centerY && Math.abs(diffX) < 40) {
+                            // Locate the exact outermost curve vertex line calculated in your pathData string
+                            const sweepApexX = startX - (locA.width / 2) - 50;
+                            // Position the text label right on top of that loop curve path apex point
+                            dynamicLabelX = sweepApexX;
+                        }
+                        if (linkLabel) {
+                            const estimatedTextWidth = linkLabel.length * 7 + 16;
+                            const textHalfWidth = estimatedTextWidth / 2;
+                            innerHTMLStr += `
         <g class="edgeLabel" transform="translate(${dynamicLabelX.toFixed(3)}, ${dynamicLabelY.toFixed(3)})">
             <g class="label" data-id="L_${nodeA}_${nodeB}_dynamic" transform="translate(-66.93, -12)">
                 <!-- ✅ FIXED: Corrected the strict standard W3C XML Namespace validation URL -->
@@ -2545,81 +2165,29 @@ if (linkLabel) {
             </g>
         </g>
     `;
-}
-
-// innerHTMLStr += `<g class="edgeLabel" transform="translate(2900.621, 420.125)">
-//         <g class="label" data-id="L_decision_auth1_entrance_node1_99" transform="translate(-66.93, -12)">
-//             <foreignObject width="133.86" height="24">
-//                 <div xmlns="http://w3.org" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center; background-color: #333333; padding: 2px 6px; border-radius: 3px;">
-//                     <span class="edgeLabel">
-//                         <p style="margin: 0; padding: 0; font-family: 'Trebuchet MS', verdana, arial, sans-serif; font-size: 13px; color: #ffffff;">Invalid Credentials</p>
-//                     </span>
-//                 </div>
-//             </foreignObject>
-//         </g>
-//     </g>`
-
-            // if (linkLabel) {
-            //     const estimatedTextWidth = linkLabel.length * 7 + 16;
-            //     const textHalfWidth = estimatedTextWidth / 2;
-
-            //     innerHTMLStr += `
-            //         <g class="custom-dynamic-label" transform="translate(${finalLabelX}, ${finalLabelY})" style="cursor: pointer;" data-custom-link="true">
-            //             <g class="label-container" transform="translate(0, 0)">
-            //                 <!-- White masking shape card keeps line background clean -->
-            //                 <rect rx="3" ry="3" 
-            //                       x="-${textHalfWidth}" 
-            //                       y="-11" 
-            //                       width="${estimatedTextWidth}" 
-            //                       height="22" 
-            //                       fill="#ffffff" 
-            //                       stroke="none" 
-            //                       style="opacity: 0.95;"></rect>
-                            
-            //                 <!-- Text node layout styling -->
-            //                 <text text-anchor="middle" 
-            //                       dominant-baseline="central" 
-            //                       y="1"
-            //                       style="font-family: 'Trebuchet MS', verdana, arial, sans-serif; font-size: 13px; fill: #333333; font-weight: bold; pointer-events: none;">${linkLabel}</text>
-            //             </g>
-            //         </g>
-            //     `;
-
-            // }
-
-
-
-            //edgeG.innerHTML = htmlPayload;
-            edgeG.innerHTML = innerHTMLStr;
-            targetLayer.appendChild(edgeG);
-            console.log(`🌐 Native Dynamic Path Generated: d="${pathData}" linked to marker: #${markerId}`);
-        } else {
-            console.warn(`⚠️ Modular Link Blocked: Element identification check failed to locate distinct target nodes.`);
-        }
-    }
-}
-
-
-
-
-
-
+                        }
+                        //edgeG.innerHTML = htmlPayload;
+                        edgeG.innerHTML = innerHTMLStr;
+                        targetLayer.appendChild(edgeG);
+                        console.log(`🌐 Native Dynamic Path Generated: d="${pathData}" linked to marker: #${markerId}`);
+                    } else {
+                        console.warn(`⚠️ Modular Link Blocked: Element identification check failed to locate distinct target nodes.`);
+                    }
+                }
+            }
             // --- PROCESS 7C: DISCONNECT ROAD LANE ---
             const matchDisconnect = cmd.match(/^DISCONNECT\s+(?:Step\s+)?([a-zA-Z0-9._-]+)\s+FROM\s+(?:Step\s+)?([a-zA-Z0-9._-]+)/i);
             if (matchDisconnect) {
                 const [_, targetA, targetB] = matchDisconnect;
                 const nodeA = resolveId(targetA);
                 const nodeB = resolveId(targetB);
-
                 document.querySelectorAll(`.ls-${nodeA}.le-${nodeB}, .id-${nodeA}-${nodeB}`).forEach(el => el.remove());
-
                 const lines = workingCode.split(/\r?\n/);
                 workingCode = lines.filter(line => !(line.includes(nodeA) && line.includes(nodeB))).join('\n');
                 hasChanges = true;
                 continue;
             }
         }
-
         if (hasChanges) {
             codeEditor.value = workingCode;
             const dot = document.getElementById('statusDot');
