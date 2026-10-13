@@ -1650,35 +1650,70 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 continue;
             }
             // --- PROCESS 3: DELETE PHASE ---
-            const matchDeletePhase = cmd.match(/^DELETE\s+PHASE\s+([a-zA-Z0-9._\s-]+)/i);
+                       // --- PROCESS 3: DELETE PHASE ---
+            const matchDeletePhase = cmd.match(/^DELETE\s+(?:SUBGRAPH|PHASE)\s+(?:["']?Phase\s*[_0]*(\d+):?\s*.*?["']?|([a-zA-Z0-9_-]+))/i);
             if (matchDeletePhase) {
-                const [_, targetIdent] = matchDeletePhase;
-                const trIdent = targetIdent.trim().toLowerCase();
+                console.group(`🗑️ [PHASE OPTIMIZER] Processing DELETE PHASE Command`);
+                const [_, phaseNum, manualId] = matchDeletePhase;
+                
+                // Formulate the target IDs (e.g., phase_07) matching how your ADD/UPDATE steps format it
+                let subId = phaseNum ? `phase_${phaseNum.padStart(2, '0')}` : manualId;
+                const trIdent = subId.trim().toLowerCase();
                 const collIdent = trIdent.replace(/[\s_]/g, '');
-                const targetG = document.getElementById(collIdent) || document.querySelector(`[id*="${collIdent}"]`);
-                if (targetG) targetG.remove(); // Drop structural frame from DOM instantly
+
+                console.log(`📋 [PARSED DATA] Target Ident: "${subId}" | Collapsed Ident: "${collIdent}"`);
+
+                // --- STEP 1: ZERO-LAG VISUAL DOM REMOVAL ---
+                // Scans for exact IDs or partial dynamic string matches to purge from the live canvas viewport instantly
+                const targetG = document.getElementById(subId) || 
+                                document.getElementById(collIdent) || 
+                                document.querySelector(`[id*="${trIdent}"]`) || 
+                                document.querySelector(`[id*="${collIdent}"]`);
+                                
+                if (targetG) {
+                    console.log(`🎯 [DOM HIT] Successfully localized phase container. Removing element structure...`);
+                    targetG.remove(); // Drops structural frame from DOM instantly with zero reloads
+                } else {
+                    console.warn(`❌ [DOM MISS] Failed to locate visual phase container in DOM.`);
+                }
+
+                // --- STEP 2: CODE DATA MODEL SYNC ---
                 const lines = workingCode.split(/\r?\n/);
-                let inTarget = false,
-                    count = 0;
+                let inTarget = false;
+                let count = 0;
+
                 const cleanLines = lines.filter(line => {
                     const trLine = line.trim().toLowerCase();
-                    if (trLine.startsWith('subgraph ') && (trLine.includes(trIdent) || trLine.replace(/[\s_]/g, '').includes(collapsedIdent))) {
+                    const collapsedLine = trLine.replace(/[\s_]/g, '');
+
+                    // Detect target subgraph declarations using either standardized array tokens or manual text chains
+                    if (trLine.startsWith('subgraph ') && (trLine.includes(trIdent) || collapsedLine.includes(collIdent))) {
                         inTarget = true;
                         count++;
-                        return false;
+                        return false; // Drops the initialization line context quietly
                     }
+                    
+                    // Trace nested closure boundaries safely to avoid dropping parent contexts
                     if (trLine === 'end' && inTarget && count === 1) {
                         inTarget = false;
                         count--;
-                        return false;
+                        return false; // Drops the terminating block wrapper cleanly
                     }
-                    if (trLine === 'end' && count > 0) count--;
+                    
+                    if (trLine === 'end' && count > 0) {
+                        count--;
+                    }
+                    
                     return true;
                 });
+
                 workingCode = cleanLines.join('\n');
                 hasChanges = true;
+                
+                console.groupEnd();
                 continue;
             }
+
             // ==========================================================================
             // SECTION 4: NODE CORE PROCESSES (4, 5, 6)
             // ==========================================================================
