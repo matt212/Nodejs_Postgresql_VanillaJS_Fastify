@@ -1185,9 +1185,23 @@ function generateDeterministicBusinessFlowchart(objectsFile, actorsFile, journey
             }
         });
         console.log("💾 [4/4] Exporting generated architecture assets...");
+        //const now = new Date();
+        //const dateStamp = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
         const now = new Date();
-        const dateStamp = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
-        const outputName = "swimlane_systems_architecture_map_" + dateStamp + ".md";
+
+const dd = String(now.getDate()).padStart(2, '0');
+const mm = String(now.getMonth() + 1).padStart(2, '0');
+const yy = String(now.getFullYear()).slice(-2);
+
+let hours12 = now.getHours() % 12;
+hours12 = hours12 ? hours12 : 12; // convert 0 to 12
+const hrsStr = String(hours12).padStart(2, '0');
+
+const min = String(now.getMinutes()).padStart(2, '0');
+
+const formattedDate = `${dd}-${mm}-${yy}_${hrsStr}_${min}`;
+
+        const outputName = "6.swimlane_systems_architecture_map_" + formattedDate + ".md";
 
         let targetDir = __dirname.endsWith("commands") ? __dirname.replace("commands", "aiOutput") : path.join(__dirname, "aiOutput");
         if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
