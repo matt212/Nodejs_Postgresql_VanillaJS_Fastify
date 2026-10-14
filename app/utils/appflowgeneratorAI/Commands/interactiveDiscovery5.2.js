@@ -193,12 +193,14 @@ function executeLlamaCliWithNativeRedirect(promptText, taskName, finalTargetFile
    - This failure track must follow the uniform solid-line hyphen-quote formatting rule (e.g., decision_node -- "On Exception Trigger" --> rollback_node), bypass normal forward progression, route directly through a reversing ledger/compensation action, and terminate cleanly into a distinct, final system disruption closure node at the bottom of the architecture.
 
 6.1 MULTI-PATH STRUCTURAL INTEGRITY RULES (TOTAL STATE ARCHITECTURE):
-   - For every milestone validation milestone checkpoint or decision gate initialized, you MUST explicitly declare and label distinct node components inside the phase subgraph container for four functional tracks:
-     1. THE HAPPY PATH (Primary Success): The central top-down sequential path of execution process boxes.
-     2. THE ALTERNATE PATH (Alternative Fulfillment): A parallel success process box node mapping automation hooks, cached historical profile states, or pre-configured defaults that bypass normal discovery tracking.
-     3. THE DEGRADED PATH (Soft Failure / Substitution): A secondary process box node mapping partial resource availability, item substitutions, or downgraded execution states instead of a complete crash.
-     4. THE UNHAPPY PATH WITH RECOVERY (Self-Healing Loop): A dedicated remediation or configuration adjustment process box node positioned right next to the validation crossroads.
-   - CRITICAL REQUIREMENT: Every alternative path, degraded path, and self-healing node described above MUST be fully initialized with its geometric bracket layout notation inside the subgraph wrapper before any link streams are generated.
+   - For every milestone validation checkpoint or decision gate initialized, you MUST explicitly declare and label distinct node components. To strictly obey the 6-node container ceiling in Rule 14, you MUST split the milestone phase across two separate, consecutive sub-containers labeled "a" and "b" (e.g., phase_01_a and phase_01_b).
+   - Sub-Phase "a" container MUST hold:
+     1. THE HAPPY PATH (Primary Success): The central top-down execution process box node.
+     2. THE UNHAPPY PATH WITH RECOVERY (Self-Healing Loop): A dedicated remediation or configuration adjustment process box node positioned right next to the validation crossroads diamond gate.
+   - Sub-Phase "b" container MUST hold:
+     3. THE ALTERNATE PATH (Alternative Fulfillment): A parallel success process box node mapping automation hooks, cached historical profile states, or pre-configured defaults.
+     4. THE DEGRADED PATH (Soft Failure / Substitution): A secondary process box node mapping partial resource availability, item substitutions, or downgraded execution states instead of a complete crash.
+   - CRITICAL REQUIREMENT: Every alternative path, degraded path, and self-healing node described above MUST be fully initialized with its geometric bracket layout notation inside its designated "a" or "b" subgraph wrapper before any link streams are generated at the bottom of the script.
 
 
 === DATA MATRIX RECONCILIATION & SYNTHESIS (HYPER-INTELLIGENCE) ===
@@ -259,10 +261,10 @@ function executeLlamaCliWithNativeRedirect(promptText, taskName, finalTargetFile
 
 
 14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING:
-   - Every single functional component step, background operational task, decision gate, and staging node label text string MUST be strictly prefixed with its explicit hierarchical chronological position identifier formatted exactly as "Step X.Y: " (where 'X' is the current numeric Phase number, and 'Y' is a strictly incrementing sequence starting at 1 for the first element inside that specific phase).
+   - Every single functional component step, background operational task, decision gate, and staging node label text string MUST be strictly prefixed with its explicit hierarchical chronological position identifier formatted exactly as "Step X.Y: " (where 'X' is the current numeric Phase number, and 'Y' is a strictly incrementing sequence starting at 1 for the first element inside that specific phase subgraph wrapper).
    - Use strict numeric markers for primary system subgraphs and phased tracks, and lower-case alphabetical dot-notation identifiers for internal sequential actions and nested steps.
-   - MANDATORY PARTITION LIMIT: You are REQUIRED to break the layout down into at least 5 chronologically separate subgraph containers (e.g., "subgraph phase_01 [Phase 1: ...]"). You are STRICTLY FORBIDDEN from grouping more than 6 functional step node boxes inside a single subgraph container. If a phase contains more than 6 operations, divide it into balanced sub-phase boxes linked cleanly via exit-to-entrance hub edges.
-   - ABSOLUTE GENERATION STOP BOUNDARY: Once the final terminal node connection line is written, you are REQUIRED to halt the token stream immediately. You are STRICTLY FORBIDDEN from outputting secondary verification notes, inner debugging commentary, or re-verifying constraints. Stop processing immediately at the final bracket link character.
+   - MANDATORY PARTITION LIMIT: You are REQUIRED to break the layout down into at least 5 chronologically separate milestone phases. You are STRICTLY FORBIDDEN from grouping more than 6 functional step node boxes inside a single subgraph container. 
+   - CRITICAL COMPLIANCE STRATEGY FOR GGUF QUANTIZATION: To safely enforce this 6-node limit while tracking total-state multi-path loops, you MUST utilize the multi-container sub-phasing rules defined in Rule 6.1 (e.g., phase_01_a and phase_01_b) to spread your nodes evenly across consecutive sub-phase boxes linked cleanly via exit-to-entrance hub edges.
 
 15. MANDATORY TERMINAL CODE BOUNDARY COMPLIANCE:
    - Output ONLY the raw Mermaid diagram syntax strings starting directly with the root token: graph TD

@@ -3,12 +3,11 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest technical
 === TOP-DOWN VISUAL LAYOUT CONSTRAINTS (MANDATORY) ===
 
 1. STRUCTURAL GATEWAY ROUTING LAYER (HUB-AND-SPOKE SANITIZATION):
-   - Nodes inside a subgraph container are STRICTLY FORBIDDEN from linking directly to internal nodes inside a different subgraph container.
-   - You MUST enforce a strict Hub-and-Spoke topology for every single subgraph block:
-     * Entrance Node: Designate or create exactly ONE node at the absolute top boundary of the subgraph to act as the single entry point for all incoming external arrows.
-     * Exit Node: Designate or create exactly ONE node at the absolute bottom boundary of the subgraph to act as the single exit point for all outgoing external arrows.
-   - Inter-subgraph communication MUST occur exclusively by linking the Exit Node of a preceding subgraph directly to the Entrance Node of the next chronological subgraph.
-   - CRITICAL COMPILING CONSTRAINT: You are STRICTLY FORBIDDEN from linking a node variable identifier directly to an outer subgraph container name string ID block. Edges must ONLY connect explicit Node-to-Node targets.
+   - You MUST enforce an explicit Hub-and-Spoke structure layout inside every single subgraph block using exactly two dedicated gateway anchors:
+     * Entrance Node: You MUST initialize exactly ONE node at the absolute top boundary inside the subgraph container. Every single incoming external arrow vector originating from outside this container boundary MUST target this node exclusively.
+     * Exit Node: You MUST initialize exactly ONE node at the absolute bottom boundary inside the subgraph container. Every single internal process line, decision path, or loop recovery track within this container MUST converge downward into this node. Every arrow exiting this container MUST originate from this node exclusively.
+   - Inter-subgraph connection streams MUST only pass from the Exit Node of a preceding subgraph wrapper directly to the Entrance Node of the next chronological subgraph wrapper. 
+   - CRITICAL COMPILING CONSTRAINT: Every arrow edge link written at the bottom of the script MUST connect explicit Node-to-Node alphanumeric variables exclusively. You are strictly forbidden from pointing a node arrow directly at an outer subgraph title identifier string.
 
 2. UNIQUE CONTAINER & VARIABLE BALANCING:
    - Every single subgraph block MUST possess a completely unique, lowercase, underscore-separated string identifier ID name. NEVER reuse a subgraph ID string anywhere in the entire output.
@@ -42,12 +41,13 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest technical
    - This failure track must follow the uniform solid-line hyphen-quote formatting rule (e.g., decision_node -- "On Exception Trigger" --> rollback_node), bypass normal forward progression, route directly through a reversing ledger/compensation action, and terminate cleanly into a distinct, final system disruption closure node at the bottom of the architecture.
 
 6.1 MULTI-PATH STRUCTURAL INTEGRITY RULES (TOTAL STATE ARCHITECTURE):
-   - For every milestone validation, ledger query, or state modification check, you MUST concurrently evaluate distinct operational tracks rather than a simple one-way forward channel:
-     1. THE HAPPY PATH (Primary Success): The direct path where all structural check vectors pass seamlessly.
-     2. THE ALTERNATE PATH (Alternative Fulfillment): A parallel success route utilizing pre-existing account configuration metrics or automated profile curation records to bypass manual processing states.
-     3. THE DEGRADED PATH (Soft Failure / Substitution): A partial success state where resource constraints or item shortfalls trigger substitution options or partial allocation updates instead of a hard system cancellation.
-     4. THE UNHAPPY PATH WITH RECOVERY (Self-Healing Loop): A structural exception that routes back into a localized remediation checkpoint to recover the current session as mandated by Rule 13.
-   - Every single structural mechanism required to manage these paths (e.g., substitution blocks, backup channels, remediation loops) must be explicitly initialized as a named node within its home subgraph container before any link streams are wired.
+   - For every milestone validation milestone checkpoint or decision gate initialized, you MUST explicitly declare and label distinct node components inside the phase subgraph container for four functional tracks:
+     1. THE HAPPY PATH (Primary Success): The central top-down sequential path of execution process boxes.
+     2. THE ALTERNATE PATH (Alternative Fulfillment): A parallel success process box node mapping automation hooks, cached historical profile states, or pre-configured defaults that bypass normal discovery tracking.
+     3. THE DEGRADED PATH (Soft Failure / Substitution): A secondary process box node mapping partial resource availability, item substitutions, or downgraded execution states instead of a complete crash.
+     4. THE UNHAPPY PATH WITH RECOVERY (Self-Healing Loop): A dedicated remediation or configuration adjustment process box node positioned right next to the validation crossroads.
+   - CRITICAL REQUIREMENT: Every alternative path, degraded path, and self-healing node described above MUST be fully initialized with its geometric bracket layout notation inside the subgraph wrapper before any link streams are generated.
+
 
 === DATA MATRIX RECONCILIATION & SYNTHESIS (HYPER-INTELLIGENCE) ===
 
@@ -98,12 +98,13 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT ENGINE. Your task is to ingest technical
     - To illustrate closely bound child sub-processes, inner business validations, or instant request-response feedback loops, you MUST utilize a strict hyphenated alphabetic modifier for exception/failure tracks. You are ABSOLUTELY FORBIDDEN from formatting link labels using pipe characters. Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively (e.g., node_a -- "Index. Process Step Text" --> node_b).
 
 
-13. CLOSED-LOOP EXCEPTION PROCESSING & CHRONOLOGICAL LIFECYCLE RECONCILIATION:
-    - You are STRICTLY FORBIDDEN from leaving the final post-settlement or lifecycle closure subgraph container hanging idle as an isolated component without functional connectivity. The final container must act as a dynamic state routing hub for all alternate lifecycle outcomes.
-    - You MUST structurally connect the entry points of your final lifecycle closure subgraph directly from the corresponding decision validation diamonds initialized in your upstream execution and fulfillment subgraphs:
-      * Branch your post-settlement exception tracks, operational disputes, and cancellation requests out of their respective upstream evaluation diamonds and point them directly to their corresponding validation components inside the final closure container.
-      * Route the absolute terminal milestone of your primary success path (Happy Path) cleanly forward into the transactional balance and account finalization blocks inside the final closure container.
-    - To prevent infinite processing loops, you are strictly forbidden from routing a failure track directly backward into the immediate preceding node on the same operational line. All alternate tracks, exceptions, and recovery branches must converge cleanly into a single, universal lifecycle closure termination node at the absolute bottom of the diagram.
+13. CLOSED-LOOP EXCEPTION PROCESSING & CROSS-BOUNDARY LIFECYCLE RECONCILIATION:
+    - The final lifecycle closure subgraph container MUST NOT sit isolated or linear. It must act as a dynamic global state routing hub for the entire flow layout.
+    - You MUST structurally wire cross-boundary connection links originating directly from every single upstream decision validation diamond straight into the final container using these strict syntax behaviors:
+      * Hard Failures & Disputes: Map a dashed line arrow connector script (-.->) originating from the upstream evaluation validation diamond directly to its corresponding dedicated exception, compensation ledger, or dispute reversal node initialized inside the final closure container.
+      * Hard Session Cancellations: Map a dashed line arrow connector script (-.->) from an unrecoverable resource shortfall gate directly to a stock release or session cancellation processing node inside the final closure container.
+    - To prevent endless processing traps, you are STRICTLY FORBIDDEN from linking an unhappy path error arrow directly backward into the immediate preceding initiator node on the same operational line. All final happy paths, exception resolutions, and unrecoverable channels must converge cleanly into a singular, universal system closure termination node at the absolute bottom of the flowchart.
+
 
 14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING:
    - Every single functional component step, background operational task, decision gate, and staging node label text string MUST be strictly prefixed with its explicit hierarchical chronological position identifier formatted exactly as "Step X.Y: " (where 'X' is the current numeric Phase number, and 'Y' is a strictly incrementing sequence starting at 1 for the first element inside that specific phase).
@@ -125,6 +126,3 @@ ${actorsMatrixContent.substring(0, 8000)}
 
 --- CHRONOLOGICAL JOURNEY TRACKS ---
 ${journeysMatrixContent.substring(0, 8000)}
-
-    
-    `;
