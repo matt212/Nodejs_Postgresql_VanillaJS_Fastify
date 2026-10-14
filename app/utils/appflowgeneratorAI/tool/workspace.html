@@ -547,7 +547,22 @@ Rules:
             
             const anchor = document.createElement('a');
             anchor.href = url;
-            anchor.download = `mermaid-diagram-${Date.now()}.md`;
+            const now = new Date();
+
+const dd = String(now.getDate()).padStart(2, '0');
+const mm = String(now.getMonth() + 1).padStart(2, '0');
+const yy = String(now.getFullYear()).slice(-2);
+
+let hours12 = now.getHours() % 12;
+hours12 = hours12 ? hours12 : 12; // convert 0 to 12
+const hrsStr = String(hours12).padStart(2, '0');
+
+const min = String(now.getMinutes()).padStart(2, '0');
+
+const formattedDate = `${dd}-${mm}-${yy}_${hrsStr}_${min}`;
+console.log(formattedDate);
+
+            anchor.download = `mermaid-diagram-${formattedDate}.md`;
             document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);

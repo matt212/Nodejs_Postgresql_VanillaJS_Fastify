@@ -79,6 +79,6 @@ const timestamp = `${day}-${month}-${year}_${formattedHours}:${minutes}${ampm}`;
 
 
 //const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-08.txt';
-const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-14T09-27-13-774Z.txt';
+const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-14T10-01-07-363Z.txt';
 
 cleanAndExtractMermaid(TARGET_INPUT_FILE);
