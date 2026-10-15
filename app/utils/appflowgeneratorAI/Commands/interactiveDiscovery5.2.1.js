@@ -165,14 +165,16 @@ const BLUEPRINT_SECTION_3 = `
    - Segment the master timeline chronologically using structural phase comment blocks.
    - Wherever an actor or component initiates a request, validation, or transaction submission, you MUST explicitly map the immediate return notification, error alert, or confirmation vector back to the initiator as the very next chronological link.
 
-12. CHRONOLOGICAL PATHS WITH HYPHENATED ALPHABETIC SUB-INDEXING
-    - Prefix macro timeline arrows with incremental sequential integers (e.g., 1., 2., 3.). Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively.
+12. CHRONOLOGICAL PATH STRUCTURAL LINK INTEGRITY
+    - Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively.
+    - CRITICAL PARSING CONSTRAINT: You are ABSOLUTELY FORBIDDEN from prefixing connection lines with numeric markers, list indices, or numbers (e.g., Never write: "1. node_a --> node_b"). Every connection line must start cleanly with a naked node identifier variable name.
 
 13. CLOSED-LOOP EXCEPTION PROCESSING & CROSS-BOUNDARY LIFECYCLE RECONCILIATION
     - The final lifecycle closure subgraph container MUST NOT sit isolated or linear. It must act as a dynamic global state routing hub for the entire flow layout.
     - You MUST structurally wire cross-boundary connection links originating directly from every single upstream decision validation diamond straight into the final container using these strict syntax behaviors:
-      * Hard Failures & Disputes: Map a dashed line arrow connector script (-.->) originating from the upstream evaluation validation diamond directly to its corresponding dedicated exception, compensation ledger, or dispute reversal node initialized inside the final closure container.
-      * Hard Session Cancellations: Map a dashed line arrow connector script (-.->) from an unrecoverable resource shortfall gate directly to a stock release or session cancellation processing node inside the final closure container.
+      * Hard Failures & Disputes: Map a standard solid line arrow with text label (node -- "Text" --> node)  originating from the upstream evaluation validation diamond directly to its corresponding dedicated exception, compensation ledger, or dispute reversal node initialized inside the final closure container.
+      * Hard Session Cancellations: Map a standard solid line arrow with text label (node -- "Text" --> node)  from an unrecoverable resource shortfall gate directly to a stock release or session cancellation processing node inside the final closure container.
+    - CRITICAL COMPILING CONSTRAINT: You are ABSOLUTELY FORBIDDEN from using dotted, dashed, or broken arrow syntaxes like "-.->", "-.->", or "-.-" anywhere in the entire output. Every path must be completely solid.
     - To prevent endless processing traps, you are STRICTLY FORBIDDEN from linking an unhappy path error arrow directly backward into the immediate preceding initiator node on the same operational line. All final happy paths, exception resolutions, and unrecoverable channels must converge cleanly into a singular, universal system closure termination node at the absolute bottom of the flowchart.
 
 14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING
@@ -311,11 +313,11 @@ function cleanAndExtractMermaid(inputFilePath) {
   // Result Example: "13-10-26_07:57pm"
   
   
-          const outputFileName = `mermaid_diagram_${timestamp}.md`;
+          const outputFileName = `5.2.1_mermaid_diagram_${timestamp}.md`;
           const outputFilePath = path.join(path.dirname(inputFilePath), outputFileName);
   
           // 7. Commit write configuration array output directly onto physical hardware disk
-          await fs.writeFileSync(outputFilePath, finalOutput, 'utf8');
+          fs.writeFileSync(outputFilePath, finalOutput, 'utf8');
           console.log(`🎉 [SUCCESS] File cleanly processed and exported!`);
           console.log(`📁 Saved to location: ${outputFilePath}`);
           
