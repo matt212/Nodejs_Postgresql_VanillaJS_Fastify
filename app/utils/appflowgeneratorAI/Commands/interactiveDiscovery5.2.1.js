@@ -39,10 +39,13 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 function resolveLatestStageFile(directory, prefixPattern) {
+  console.log(prefixPattern)
+  console.log(directory)
   if (!fs.existsSync(directory)) return null;
   const files = fs.readdirSync(directory);
   
-  const matchedFiles = files.filter(f => f.startsWith(prefixPattern) && f.endsWith(CONFIG.SCANNING_PATTERNS.FILE_EXTENSION));
+  const matchedFiles = files.filter(f => f.startsWith(prefixPattern));
+  console.log(files)
   if (matchedFiles.length === 0) return null;
 
   matchedFiles.sort((a, b) => fs.statSync(path.join(directory, b)).mtimeMs - fs.statSync(path.join(directory, a)).mtimeMs);
@@ -188,10 +191,13 @@ const BLUEPRINT_SECTION_3 = `
     console.log("🚀 INITIALIZING FAILSALFE NATIVE-REDIRECT COMPILER EXPORT ENGINE...");
 
     const objectsFilePath = resolveLatestStageFile(OUTPUT_DIR, CONFIG.SCANNING_PATTERNS.STAGE_1_OBJECTS);
+   
     const actorsFilePath = resolveLatestStageFile(OUTPUT_DIR, CONFIG.SCANNING_PATTERNS.STAGE_2_ACTORS);
-    const journeysFilePath = resolveLatestStageFile(OUTPUT_DIR, CONFIG.SCANNING_PATTERNS.STAGE_3_JOURNEYS);
-    const topologyFilePath = resolveLatestStageFile(OUTPUT_DIR, CONFIG.SCANNING_PATTERNS.STAGE_4_TOPOLOGY);
     
+    const journeysFilePath = resolveLatestStageFile(OUTPUT_DIR, CONFIG.SCANNING_PATTERNS.STAGE_3_JOURNEYS);
+    
+    const topologyFilePath = resolveLatestStageFile(OUTPUT_DIR, CONFIG.SCANNING_PATTERNS.STAGE_4_TOPOLOGY);
+console.log(topologyFilePath)
     if (!objectsFilePath || !actorsFilePath || !journeysFilePath || !topologyFilePath) {
       throw new Error("Could not automatically locate all four required input source files inside your output directory.");
     }
