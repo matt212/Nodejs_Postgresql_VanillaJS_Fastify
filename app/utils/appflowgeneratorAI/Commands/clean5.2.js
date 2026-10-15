@@ -6,6 +6,20 @@ const path = require('path');
  * and saves it into a timestamped markdown file.
  * @param {string} inputFilePath - Path to the source raw txt file.
  */
+
+function extractAfterLastAssistant(rawContent) {
+  const marker = "Assistant:";
+  const lastIndex = rawContent.lastIndexOf(marker);
+
+  // If the marker isn't found at all, return an empty string or handle gracefully
+  if (lastIndex === -1) {
+    return ""; 
+  }
+
+  // Slice everything after the marker index + the length of "Assistant:"
+  return rawContent.slice(lastIndex + marker.length).trim();
+}
+
 function cleanAndExtractMermaid(inputFilePath) {
     try {
         // 1. Verify file exists
@@ -18,20 +32,21 @@ function cleanAndExtractMermaid(inputFilePath) {
         const rawContent = fs.readFileSync(inputFilePath, 'utf8');
 
         // 3. Split the file using the "Assistant:" delimiter case-sensitively
-        const marker = "Assistant:";
-        const segments = rawContent.split(marker);
+        // const marker = "Assistant:";
+        // const segments = rawContent.split(marker);
 
         // Crucial validation: Ensure there are at least two "Assistant:" markers present (creating 3 parts)
-        if (segments.length < 2) {
-            console.error(`❌ [ERROR] Aborting code execution: Could not locate the second "\${marker}" token block in the file.`);
-            return;
-        }
+        // if (segments.length < 2) {
+        //     console.error(`❌ [ERROR] Aborting code execution: Could not locate the second "\${marker}" token block in the file.`);
+        //     return;
+        // }
 
         // 4. Extract everything following the second "Assistant:" block
         // segments[0] = before 1st Assistant
         // segments[1] = between 1st and 2nd Assistant
         // segments[2...] = everything after the 2nd Assistant (rejoined in case the string appears in the code text)
-        let coreContent = segments.slice(1).join(marker).trim();
+       // let coreContent = segments.slice(1).join(marker).trim();
+const coreContent = extractAfterLastAssistant(rawContent);
 
         // 5. Wrap inside clean markdown code fence backticks blocks
         const finalOutput = `\`\`\`mermaid\n${coreContent}\n\`\`\``;
@@ -79,6 +94,6 @@ const timestamp = `${day}-${month}-${year}_${formattedHours}:${minutes}${ampm}`;
 
 
 //const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-08.txt';
-const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/6.Final-System-Architecture-Blueprint-Graph-2026-10-14T11-18-46-356Z.txt';
+const TARGET_INPUT_FILE = 'app/utils/appflowgeneratorAI/aiOutput/7.Final-System-Architecture-Blueprint-Graph-2026-10-15T11-15-03-200Z.txt';
 
 cleanAndExtractMermaid(TARGET_INPUT_FILE);
