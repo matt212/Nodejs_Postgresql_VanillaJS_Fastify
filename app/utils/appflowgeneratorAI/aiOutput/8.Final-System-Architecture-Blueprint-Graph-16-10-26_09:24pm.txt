@@ -1,0 +1,106 @@
+
+Assistant:
+# 🏗️ Identity & Access Management Layer
+
+* **User Account**
+  * `• AUTHENTICATED_SESSION`: Asset created via: Customer registration details and authentication credentials. Timeline Track: Initiates 'User Account' registration with personal PII; IAM Security Officer validates identity verification inputs against policy; outputs authenticated session token and user context enabling subsequent access.
+  * `• ID_VERIFIED_PROFILE`: Executing: Identity verification and profile initialization. Outputs schema payload: Authenticated session token and user context.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Zero-knowledge access to PII; view only hashes and masked identifiers","Order_Lock":"Cannot modify business logic flows; can only suspend actor access during investigation"}]
+
+* **Pickup Manifest**
+  * `• TASK_INITIATION`: Asset created via: List of items to collect and store location coordinates. Timeline Track: Receives system-generated 'Pickup Manifest' input listing items to collect and store location coordinates; generates task list for store floor; outputs item verification log initiation.
+  * `• VERIFICATION_COMPLETE`: Executing: Store associate task generation and item verification. Outputs schema payload: Collected items list and ready-for-pickup status.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"}]
+
+# 🌐 Logistics & Fulfillment Layer
+
+* **Geolocation Request**
+  * `• PIN_CONFIRMED`: Asset created via: Mobile device GPS coordinates and address verification data. Timeline Track: Submits 'Geolocation Request' via mobile GPS coordinates; system performs service area validation and delivery zone mapping against 'Merchant Inventory Stock' locations; outputs confirmed delivery pin and applicable service fee.
+  * `• ZONE_MAPPING_COMPLETE`: Executing: Service area validation and delivery zone mapping. Outputs schema payload: Confirmed delivery pin and applicable service fee.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Zero-knowledge access to PII; view only hashes and masked identifiers","Order_Lock":"Cannot modify business logic flows; can only suspend actor access during investigation"}]
+
+* **Merchant Inventory Stock**
+  * `• INVENTORY_SNAPSHOT`: Asset created via: Real-time stock levels from local store database. Timeline Track: Submits 'Geolocation Request' via mobile GPS coordinates; system performs service area validation and delivery zone mapping against 'Merchant Inventory Stock' locations; outputs confirmed delivery pin and applicable service fee.
+  * `• STOCK_ADJUSTED`: Executing: Batch deduction and shelf-space allocation update. Outputs schema payload: Adjusted available quantity and stock status flags.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"},{"Data_Privacy":"Access limited to inventory data; no access to customer or courier PII","Order_Lock":"Cannot directly cancel active Orders; must trigger Inventory Release via Cancellation Request workflow"}]
+
+# 🛒 Transaction & Cart Layer
+
+* **Cart Item**
+  * `• CART_POPULATED`: Asset created via: Product selection, quantity, and selected delivery slot. Timeline Track: Selects products to create 'Cart Item' inputs including SKU and quantity; system executes real-time inventory availability checks and price calculation logic; outputs updated cart state with confirmed stock levels.
+  * `• AVAILABILITY_CHECKED`: Executing: Inventory availability check and price calculation. Outputs schema payload: Updated cart state with real-time stock confirmation.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"}]
+
+* **Subscription Plan**
+  * `• MEMBERSHIP_ACTIVE`: Asset created via: User eligibility and recurring payment authorization. Timeline Track: Manages 'Subscription Plan' input for recurring billing cycles; calculates fees and sets up automated billing; outputs active membership tier and priority delivery rights confirmation.
+  * `• BILLING_SCHEDULED`: Executing: Fee calculation and recurring billing cycle setup. Outputs schema payload: Active membership tier and priority delivery rights.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]
+
+# ⏱️ Scheduling & Time Layer
+
+* **Delivery Slot**
+  * `• TIME_WINDOW_ALLOCATED`: Asset created via: Customer requested time window and driver availability data. Timeline Track: Requests a 'Delivery Slot' based on preferred time window; Logistics Dispatcher validates courier availability data and allocates slot; outputs assigned pickup and delivery timestamps.
+  * `• SCHEDULE_LOCKED`: Executing: Slot allocation and time-window enforcement logic. Outputs schema payload: Assigned pickup and delivery timestamps.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Can view addresses and contact info; cannot view customer personal profile history","Order_Lock":"Cannot alter Order Header payment status; can only reassign logistics resources"}]
+
+# 💳 Financial Settlement Layer
+
+* **Order Header**
+  * `• TRANSACTION_INITIATED`: Asset created via: Finalized cart contents, delivery address, and payment method. Timeline Track: Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt.
+  * `• ORDER_CREATED`: Executing: Order creation and initial payment authorization. Outputs schema payload: Unique Order ID and confirmed order receipt.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Can view addresses and contact info; cannot view customer personal profile history","Order_Lock":"Cannot alter Order Header payment status; can only reassign logistics resources"}]
+
+* **Order Line Item**
+  * `• LINE_ITEM_FINALIZED`: Asset created via: Detailed product specifications, SKU, and unit price per order header. Timeline Track: Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt.
+  * `• INVENTORY_RESERVED`: Executing: Line-level inventory reservation and weight estimation. Outputs schema payload: Reserved stock hold and aggregated line subtotal.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"}]
+
+* **Payment Transaction**
+  * `• FUND_TRANSFER_INITIATED`: Asset created via: Order total, tax, fees, and selected payment gateway data. Timeline Track: Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt.
+  * `• PAYMENT_PROCESSED`: Executing: Secure fund transfer and receipt generation. Outputs schema payload: Paid status flag and digital invoice record.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]
+
+# 🚚 Logistics Execution Layer
+
+* **Assigned Courier**
+  * `• COURIER_ASSIGNED`: Asset created via: Order ID, delivery address, and courier availability status. Timeline Track: During transit, views 'Assigned Courier' details via app; Logistics Dispatcher executes route optimization and assigns active delivery task; outputs courier ID and real-time location updates.
+  * `• ROUTE_OPTIMIZED`: Executing: Route optimization and driver assignment validation. Outputs schema payload: Active delivery task and assigned courier ID.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Can view addresses and contact info; cannot view customer personal profile history","Order_Lock":"Cannot alter Order Header payment status; can only reassign logistics resources"}]
+
+# 📦 Completion & Post-Order Layer
+
+* **Handover Receipt**
+  * `• DELIVERY_CONFIRMED`: Asset created via: Customer signature or digital confirmation and item count. Timeline Track: Upon arrival, provides 'Handover Receipt' input via digital signature and item count verification; Store Associate confirms quality check; outputs delivered status update and final payment capture confirmation.
+  * `• QUALITY_VERIFIED`: Executing: Completion validation and quality check verification. Outputs schema payload: Delivered status update and final payment capture.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"}]
+
+* **Refund Claim**
+  * `• RETURN_REQUESTED`: Asset created via: Reason for return, damaged item evidence, and original order ID. Timeline Track: Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances.
+  * `• CLAIM_VALIDATED`: Executing: Claim validation and partial/full fund reversal. Outputs schema payload: Refund approval and adjusted account balance.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]
+
+* **Loyalty Points Ledger**
+  * `• POINTS_ACCRUED`: Asset created via: Purchase total and promotional offer codes. Timeline Track: Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances.
+  * `• REDEMPTION_PROCESSED`: Executing: Point accrual calculation and redemption validation. Outputs schema payload: Updated points balance and discounted order total.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]
+
+* **Cancellation Request**
+  * `• ORDER_CANCELLED`: Asset created via: User cancellation reason and current order status. Timeline Track: Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances.
+  * `• INVENTORY_RELEASED`: Executing: Inventory release and refund initiation logic. Outputs schema payload: Cancelled order status and released stock availability.
+  * `• EXCEPTION_ROUTE_TRIGGER`: Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.
+  * `• FINALIZED_ENTITY`: Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"}]
+

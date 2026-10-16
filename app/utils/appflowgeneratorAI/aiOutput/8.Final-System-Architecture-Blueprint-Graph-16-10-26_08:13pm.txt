@@ -1,0 +1,518 @@
+User:
+
+[SYSTEM CONSTRAINTS INTERFACE]
+You are a World-Class Business Architecture Presentation Compiler. 
+Your mandate is to read the raw input JSON configuration schema below and compile it into a beautifully formatted, 100% complete business asset lifecycle spec.
+
+[INSTRUCTIONS]
+1. Intelligently evaluate the entities, their activities, and timeline contexts. Group related assets into logical functional clusters (e.g. Access layer, Context layer, Transaction layer, Logistics layer, and Post-Order/Exception layer).
+2. For every individual asset, map out its functional sub-stages natively based on its data payload metrics. You must translate the structural lifecycle arrays (such as INITIALIZED, PROCESSING_VALIDATION, DEGRADED_REMEDIATION_LOOP, and FINAL_MUTATION_COMMIT) into domain-specific terminal milestones (e.g., mapping user_account states down to UNVERIFIED, ACTIVE, and SUSPENDED / LOCKED).
+3. Do not omit any of the 15 entities found in the schema. Output your response as a clean, corporate business specification document in plain markdown text.
+
+[RAW METRIC SOURCE CONTEXT]
+{
+  "user_account": {
+    "entity": "User Account",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Customer registration details and authentication credentials. Timeline Track: Initiates 'User Account' registration with personal PII; IAM Security Officer validates identity verification inputs against policy; outputs authenticated session token and user context enabling subsequent access."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Identity verification and profile initialization. Outputs schema payload: Authenticated session token and user context."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Zero-knowledge access to PII; view only hashes and masked identifiers","Order_Lock":"Cannot modify business logic flows; can only suspend actor access during investigation"}]"
+      }
+    ]
+  },
+  "geolocation_request": {
+    "entity": "Geolocation Request",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Mobile device GPS coordinates and address verification data. Timeline Track: Submits 'Geolocation Request' via mobile GPS coordinates; system performs service area validation and delivery zone mapping against 'Merchant Inventory Stock' locations; outputs confirmed delivery pin and applicable service fee."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Service area validation and delivery zone mapping. Outputs schema payload: Confirmed delivery pin and applicable service fee."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Zero-knowledge access to PII; view only hashes and masked identifiers","Order_Lock":"Cannot modify business logic flows; can only suspend actor access during investigation"}]"
+      }
+    ]
+  },
+  "cart_item": {
+    "entity": "Cart Item",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Product selection, quantity, and selected delivery slot. Timeline Track: Selects products to create 'Cart Item' inputs including SKU and quantity; system executes real-time inventory availability checks and price calculation logic; outputs updated cart state with confirmed stock levels."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Inventory availability check and price calculation. Outputs schema payload: Updated cart state with real-time stock confirmation."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"}]"
+      }
+    ]
+  },
+  "order_header": {
+    "entity": "Order Header",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Finalized cart contents, delivery address, and payment method. Timeline Track: Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Order creation and initial payment authorization. Outputs schema payload: Unique Order ID and confirmed order receipt."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Can view addresses and contact info; cannot view customer personal profile history","Order_Lock":"Cannot alter Order Header payment status; can only reassign logistics resources"}]"
+      }
+    ]
+  },
+  "order_line_item": {
+    "entity": "Order Line Item",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Detailed product specifications, SKU, and unit price per order header. Timeline Track: Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Line-level inventory reservation and weight estimation. Outputs schema payload: Reserved stock hold and aggregated line subtotal."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"}]"
+      }
+    ]
+  },
+  "delivery_slot": {
+    "entity": "Delivery Slot",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Customer requested time window and driver availability data. Timeline Track: Requests a 'Delivery Slot' based on preferred time window; Logistics Dispatcher validates courier availability data and allocates slot; outputs assigned pickup and delivery timestamps."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Slot allocation and time-window enforcement logic. Outputs schema payload: Assigned pickup and delivery timestamps."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Can view addresses and contact info; cannot view customer personal profile history","Order_Lock":"Cannot alter Order Header payment status; can only reassign logistics resources"}]"
+      }
+    ]
+  },
+  "merchant_inventory_stock": {
+    "entity": "Merchant Inventory Stock",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Real-time stock levels from local store database. Timeline Track: Submits 'Geolocation Request' via mobile GPS coordinates; system performs service area validation and delivery zone mapping against 'Merchant Inventory Stock' locations; outputs confirmed delivery pin and applicable service fee."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Batch deduction and shelf-space allocation update. Outputs schema payload: Adjusted available quantity and stock status flags."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"},{"Data_Privacy":"Access limited to inventory data; no access to customer or courier PII","Order_Lock":"Cannot directly cancel active Orders; must trigger Inventory Release via Cancellation Request workflow"}]"
+      }
+    ]
+  },
+  "assigned_courier": {
+    "entity": "Assigned Courier",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Order ID, delivery address, and courier availability status. Timeline Track: During transit, views 'Assigned Courier' details via app; Logistics Dispatcher executes route optimization and assigns active delivery task; outputs courier ID and real-time location updates."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Route optimization and driver assignment validation. Outputs schema payload: Active delivery task and assigned courier ID."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Can view addresses and contact info; cannot view customer personal profile history","Order_Lock":"Cannot alter Order Header payment status; can only reassign logistics resources"}]"
+      }
+    ]
+  },
+  "pickup_manifest": {
+    "entity": "Pickup Manifest",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: List of items to collect and store location coordinates. Timeline Track: Receives system-generated 'Pickup Manifest' input listing items to collect and store location coordinates; generates task list for store floor; outputs item verification log initiation."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Store associate task generation and item verification. Outputs schema payload: Collected items list and ready-for-pickup status."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"}]"
+      }
+    ]
+  },
+  "handover_receipt": {
+    "entity": "Handover Receipt",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Customer signature or digital confirmation and item count. Timeline Track: Upon arrival, provides 'Handover Receipt' input via digital signature and item count verification; Store Associate confirms quality check; outputs delivered status update and final payment capture confirmation."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Completion validation and quality check verification. Outputs schema payload: Delivered status update and final payment capture."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"}]"
+      }
+    ]
+  },
+  "payment_transaction": {
+    "entity": "Payment Transaction",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Order total, tax, fees, and selected payment gateway data. Timeline Track: Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Secure fund transfer and receipt generation. Outputs schema payload: Paid status flag and digital invoice record."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]"
+      }
+    ]
+  },
+  "refund_claim": {
+    "entity": "Refund Claim",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Reason for return, damaged item evidence, and original order ID. Timeline Track: Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Claim validation and partial/full fund reversal. Outputs schema payload: Refund approval and adjusted account balance."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Personal PII and payment tokens encrypted; visible only to self and authorized support agents","Order_Lock":"Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'"},{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]"
+      }
+    ]
+  },
+  "subscription_plan": {
+    "entity": "Subscription Plan",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: User eligibility and recurring payment authorization. Timeline Track: Manages 'Subscription Plan' input for recurring billing cycles; calculates fees and sets up automated billing; outputs active membership tier and priority delivery rights confirmation."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Fee calculation and recurring billing cycle setup. Outputs schema payload: Active membership tier and priority delivery rights."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]"
+      }
+    ]
+  },
+  "loyalty_points_ledger": {
+    "entity": "Loyalty Points Ledger",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: Purchase total and promotional offer codes. Timeline Track: Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Point accrual calculation and redemption validation. Outputs schema payload: Updated points balance and discounted order total."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers","Order_Lock":"Cannot modify Order Line Items; can only adjust financial settlement states"}]"
+      }
+    ]
+  },
+  "cancellation_request": {
+    "entity": "Cancellation Request",
+    "compiledAssetLifecycleLedger": [
+      {
+        "stage": "INITIALIZED / STAGED",
+        "functionalCriteria": "Asset created via: User cancellation reason and current order status. Timeline Track: Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances."
+      },
+      {
+        "stage": "PROCESSING_VALIDATION",
+        "functionalCriteria": "Executing: Inventory release and refund initiation logic. Outputs schema payload: Cancelled order status and released stock availability."
+      },
+      {
+        "stage": "DEGRADED_REMEDIATION_LOOP",
+        "functionalCriteria": "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
+      },
+      {
+        "stage": "FINAL_MUTATION_COMMIT",
+        "functionalCriteria": "Asset state finalized. Governed by structural parameters: [{"Data_Privacy":"Access restricted to current store shift and assigned orders; cannot view customer PII beyond necessary contact info","Order_Lock":"Cannot modify Order Header financial details; can only adjust inventory reserves for active orders"}]"
+      }
+    ]
+  }
+}
+
+[OUTPUT CONTRACT]
+Begin your response immediately with the executive synthesis summary. Stop token generation instantly once the last exception playbook option is mapped.
+
+Assistant:
+# Business Asset Lifecycle Specification: E-Commerce & Logistics Ecosystem
+
+## Executive Synthesis Summary
+This specification details the lifecycle architecture of a high-throughput digital marketplace, integrating user identity management, geospatial logistics, inventory synchronization, and financial settlement. The system is engineered around a four-phase atomic lifecycle for every entity: **INITIALIZED / STAGED**, **PROCESSING_VALIDATION**, **DEGRADED_REMEDIATION_LOOP**, and **FINAL_MUTATION_COMMIT**.
+
+The ecosystem is stratified into five functional clusters:
+1.  **Identity & Access Layer:** Manages user personas and authentication tokens.
+2.  **Transaction & Inventory Layer:** Orchestrates cart assembly, order finalization, and real-time stock reservation.
+3.  **Logistics & Fulfillment Layer:** Handles geolocation mapping, courier assignment, pickup manifests, and physical handover.
+4.  **Financial Settlement Layer:** Governs payment processing, refunds, subscriptions, and loyalty economics.
+5.  **Governance & Compliance Layer:** Enforces strict data privacy (PII masking, PCI-DSS) and operational locks (financial immutability post-authorization).
+
+The following sections detail the granular lifecycle milestones and state transitions for all 15 defined entities.
+
+---
+
+## Cluster 1: Identity & Access Layer
+
+### 1. User Account
+**Functional Definition:** The central identity node enabling authentication, session management, and data privacy enforcement.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **STAGING_REGISTRATION** | Asset creation via customer registration details and authentication credentials. Initiates registration with personal PII; IAM Security Officer validates identity verification inputs against policy. |
+| **PROCESSING_VALIDATION** | **TOKEN_PROVISIONING** | Executes identity verification and profile initialization. Outputs: Authenticated session token and user context. |
+| **DEGRADED_REMEDIATION_LOOP** | **IDEXCEPTION_HANDLING** | Parses validation discrepancies from graph tracking matrices; routes control to exception loops for failed identity proofs or credential mismatches. |
+| **FINAL_MUTATION_COMMIT** | **STATE_LOCKING** | Finalizes asset state with strict governance:<br>• **PII Protection:** Personal PII and payment tokens encrypted (visible only to self/authorized support).<br>• **Account Locking:** Cannot modify Order Header/Line Items once Payment is 'Authorized'/'Captured'. |
+
+### 2. Geolocation Request
+**Functional Definition:** The spatial anchor for delivery feasibility and service fee calculation.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **SPATIAL_SUBMISSION** | Asset creation via mobile device GPS coordinates and address verification. System performs service area validation and delivery zone mapping against merchant locations. |
+| **PROCESSING_VALIDATION** | **ZONAL_MAPPING** | Executes service area validation and delivery zone mapping. Outputs: Confirmed delivery pin and applicable service fee. |
+| **DEGRADED_REMEDIATION_LOOP** | **GEO_EXCEPTION_HANDLING** | Parses validation discrepancies (e.g., dead drops, zone boundaries) from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **LOCATION_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** Zero-knowledge access to PII (view only hashes and masked identifiers).<br>• **Logic Lock:** Cannot modify business logic flows; can only suspend actor access during investigation. |
+
+---
+
+## Cluster 2: Transaction & Inventory Layer
+
+### 3. Cart Item
+**Functional Definition:** The aggregatable unit of commerce, subject to real-time stock validation before order commitment.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **SKU_SELECTION** | Asset creation via product selection, quantity, and selected delivery slot. System executes real-time inventory availability checks and price calculation logic. |
+| **PROCESSING_VALIDATION** | **STOCK_CONFIRMATION** | Executes inventory availability check and price calculation. Outputs: Updated cart state with real-time stock confirmation. |
+| **DEGRADED_REMEDIATION_LOOP** | **INVENTORY_EXCEPTION** | Parses discrepancies (oversold items, price variance) from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **CART_LOCKING** | Finalizes asset state with strict governance:<br>• **PII Protection:** Personal PII and payment tokens encrypted.<br>• **Order Lock:** Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'. |
+
+### 4. Order Header
+**Functional Definition:** The legal and financial contract of the transaction, binding the user, payment, and logistics intent.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **TRANSACTION_INITIATION** | Asset creation via finalized cart, delivery address, and payment method. 'Payment Transaction' component processes fund transfer and generates digital invoice. |
+| **PROCESSING_VALIDATION** | **ORDER_AUTHORIZATION** | Executes order creation and initial payment authorization. Outputs: Unique Order ID and confirmed order receipt. |
+| **DEGRADED_REMEDIATION_LOOP** | **ORDER_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **CONTRACT_FINALIZATION** | Finalizes asset state with strict governance:<br>• **PII Protection:** PII encrypted; visible only to self/authorized support.<br>• **Logic Lock:** Can view addresses/contact info only (no profile history).<br>• **Payment Lock:** Cannot alter Order Header payment status; can only reassign logistics resources. |
+
+### 5. Order Line Item
+**Functional Definition:** The granular specification of goods, managing specific inventory reserves and line-level subtotals.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **LINE_SPECIFICATION** | Asset creation via detailed product specs, SKU, and unit price. System processes fund transfer and generates digital invoice. |
+| **PROCESSING_VALIDATION** | **RESERVATION_HOLD** | Executes line-level inventory reservation and weight estimation. Outputs: Reserved stock hold and aggregated line subtotal. |
+| **DEGRADED_REMEDIATION_LOOP** | **LINE_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **LINE_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** Access restricted to current store shift/assigned orders; no customer PII beyond necessary contact info.<br>• **Inventory Lock:** Cannot modify Order Header financial details; can only adjust inventory reserves for active orders. |
+
+### 6. Delivery Slot
+**Functional Definition:** The temporal constraint governing the physical movement of goods from merchant to customer.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **WINDOW_REQUEST** | Asset creation via customer requested time window and driver availability. Logistics Dispatcher validates courier availability and allocates slot. |
+| **PROCESSING_VALIDATION** | **TIME_ALLOCATION** | Executes slot allocation and time-window enforcement logic. Outputs: Assigned pickup and delivery timestamps. |
+| **DEGRADED_REMEDIATION_LOOP** | **SLOT_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **SLOT_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** PII encrypted.<br>• **Logic Lock:** Can view addresses/contact info only.<br>• **Payment Lock:** Cannot alter Order Header payment status; can only reassign logistics resources. |
+
+### 7. Merchant Inventory Stock
+**Functional Definition:** The dynamic supply ledger, reflecting real-time availability and deducting stock upon reservation.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **STOCK_FEED** | Asset creation via real-time stock levels from local store database. System performs service area validation against merchant locations. |
+| **PROCESSING_VALIDATION** | **BATCH_DEDUCTION** | Executes batch deduction and shelf-space allocation update. Outputs: Adjusted available quantity and stock status flags. |
+| **DEGRADED_REMEDIATION_LOOP** | **STOCK_RECOVERY** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **INVENTORY_LOCK** | Finalizes asset state with strict governance:<br>• **PII Protection:** Access limited to inventory data; no access to customer/courier PII.<br>• **Cancellation Lock:** Cannot directly cancel active Orders; must trigger Inventory Release via Cancellation Request workflow. |
+
+---
+
+## Cluster 3: Logistics & Fulfillment Layer
+
+### 8. Assigned Courier
+**Functional Definition:** The active logistics agent assigned to a specific delivery task, tracking real-time location and route optimization.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **ROUTING_ASSIGNMENT** | Asset creation via Order ID, delivery address, and courier availability. Logistics Dispatcher executes route optimization and assigns active delivery task. |
+| **PROCESSING_VALIDATION** | **TASK_ACTIVATION** | Executes route optimization and driver assignment validation. Outputs: Active delivery task and assigned courier ID. |
+| **DEGRADED_REMEDIATION_LOOP** | **ROUTING_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **ASSIGNMENT_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** PII encrypted.<br>• **Logic Lock:** Can view addresses/contact info only.<br>• **Payment Lock:** Cannot alter Order Header payment status; can only reassign logistics resources. |
+
+### 9. Pickup Manifest
+**Functional Definition:** The operational task list generated for store associates to collect and verify items prior to courier dispatch.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **TASK_GENERATION** | Asset creation via list of items to collect and store location coordinates. Generates task list for store floor; initiates item verification log. |
+| **PROCESSING_VALIDATION** | **VERIFICATION_LOG** | Executes store associate task generation and item verification. Outputs: Collected items list and ready-for-pickup status. |
+| **DEGRADED_REMEDIATION_LOOP** | **MANIFEST_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **MANIFEST_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** Access restricted to current store shift/assigned orders; no customer PII beyond necessary contact info.<br>• **Inventory Lock:** Cannot modify Order Header financial details; can only adjust inventory reserves for active orders. |
+
+### 10. Handover Receipt
+**Functional Definition:** The final proof of delivery (POD), triggering payment capture and order closure.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **ARRIVAL_TRIGGER** | Asset creation via customer signature or digital confirmation and item count. Store Associate confirms quality check. |
+| **PROCESSING_VALIDATION** | **COMPLETION_VALIDATION** | Executes completion validation and quality check verification. Outputs: Delivered status update and final payment capture confirmation. |
+| **DEGRADED_REMEDIATION_LOOP** | **HANDOVER_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **DELIVERY_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** Personal PII and payment tokens encrypted; visible only to self and authorized support agents.<br>• **Order Lock:** Cannot modify Order Header or Order Line Items after Payment Transaction status is 'Authorized' or 'Captured'. |
+
+---
+
+## Cluster 4: Financial Settlement Layer
+
+### 11. Payment Transaction
+**Functional Definition:** The secure exchange of funds, generating invoices and establishing the financial liability of the order.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **FUND_INITIATION** | Asset creation via order total, tax, fees, and selected payment gateway data. Processes fund transfer and generates digital invoice. |
+| **PROCESSING_VALIDATION** | **SECURE_TRANSFER** | Executes secure fund transfer and receipt generation. Outputs: Paid status flag and digital invoice record. |
+| **DEGRADED_REMEDIATION_LOOP** | **PAYMENT_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **SETTLEMENT_COMMIT** | Finalizes asset state with strict governance:<br>• **Compliance:** Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers.<br>• **Financial Lock:** Cannot modify Order Line Items; can only adjust financial settlement states. |
+
+### 12. Refund Claim
+**Functional Definition:** The post-order reversal mechanism for damaged goods or service failures, interacting with loyalty balances.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **CLAIM_INITIATION** | Asset creation via reason for return, damaged item evidence, and original order ID. Finance & Billing Agent validates claims and adjusts balances. |
+| **PROCESSING_VALIDATION** | **REVERSAL_EXECUTION** | Executes claim validation and partial/full fund reversal. Outputs: Refund approval and adjusted account balance. |
+| **DEGRADED_REMEDIATION_LOOP** | **CLAIM_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **REFUND_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** PII encrypted.<br>• **Compliance:** Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers.<br>• **Financial Lock:** Cannot modify Order Line Items; can only adjust financial settlement states. |
+
+### 13. Subscription Plan
+**Functional Definition:** The recurring revenue engine, managing automated billing cycles and membership tiers.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **RECURRING_SETUP** | Asset creation via user eligibility and recurring payment authorization. Calculates fees and sets up automated billing. |
+| **PROCESSING_VALIDATION** | **CYCLE_ACTIVATION** | Executes fee calculation and recurring billing cycle setup. Outputs: Active membership tier and priority delivery rights. |
+| **DEGRADED_REMEDIATION_LOOP** | **SUBSCRIPTION_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **PLAN_COMMIT** | Finalizes asset state with strict governance:<br>• **Compliance:** Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers.<br>• **Financial Lock:** Cannot modify Order Line Items; can only adjust financial settlement states. |
+
+### 14. Loyalty Points Ledger
+**Functional Definition:** The customer equity tracker, handling accruals, redemptions, and discounts against order totals.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **POINT_ACCRUAL** | Asset creation via purchase total and promotional offer codes. Finance & Billing Agent validates claims and adjusts balances. |
+| **PROCESSING_VALIDATION** | **REDEMPTION_CALC** | Executes point accrual calculation and redemption validation. Outputs: Updated points balance and discounted order total. |
+| **DEGRADED_REMEDIATION_LOOP** | **LOYALTY_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **LEDGER_COMMIT** | Finalizes asset state with strict governance:<br>• **Compliance:** Strict PCI-DSS compliance; access limited to transaction IDs and masked card numbers.<br>• **Financial Lock:** Cannot modify Order Line Items; can only adjust financial settlement states. |
+
+---
+
+## Cluster 5: Governance & Post-Order Exception Layer
+
+### 15. Cancellation Request
+**Functional Definition:** The formal mechanism to reverse an order before or after handover, triggering inventory release and refund logic.
+
+| Lifecycle Stage | Terminal Milestone | Functional Criteria & State Mapping |
+| :--- | :--- | :--- |
+| **INITIALIZED / STAGED** | **CANCEL_INITIATION** | Asset creation via user cancellation reason and current order status. Participates in post-order lifecycle by initiating 'Cancellation Request' before handover. |
+| **PROCESSING_VALIDATION** | **INVENTORY_RELEASE** | Executes inventory release and refund initiation logic. Outputs: Cancelled order status and released stock availability. |
+| **DEGRADED_REMEDIATION_LOOP** | **CANCEL_EXCEPTION** | Parses validation discrepancies from graph tracking matrices; routes to exception loops. |
+| **FINAL_MUTATION_COMMIT** | **CANCELLATION_COMMIT** | Finalizes asset state with strict governance:<br>• **PII Protection:** Access restricted to current store shift/assigned orders; no customer PII beyond necessary contact info.<br>• **Financial Lock:** Cannot modify Order Header financial details; can only adjust inventory reserves for active orders. |
+

@@ -281,3 +281,4 @@ function resolveLatestStageFile(directory, prefixPattern) {
   matchedFiles.sort((a, b) => fs.statSync(path.join(directory, b)).mtimeMs - fs.statSync(path.join(directory, a)).mtimeMs);
   return path.join(directory, matchedFiles[0]); 
 }
+
