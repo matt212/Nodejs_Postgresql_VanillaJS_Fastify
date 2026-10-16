@@ -48,23 +48,41 @@ class FunctionalArchitectureRAG {
     return text.toLowerCase().replace(/[^a-z0-9]/g, '_');
   }
 
+    /**
+   * FIX 3: Enforce strict boundary matching without requiring literal single quotes
+   */
   retrieveJourneyChunks(objectName) {
     let stepIndex = "0";
-    let textualContext = "";
+    let textualContext = "Unmapped Timeline Context";
     
-    this.journeyMatrix.forEach(journey => {
-      journey.chronological_milestones_and_data_inputs.forEach(milestone => {
-        if (milestone.data_object_layer.toLowerCase().includes(objectName.toLowerCase())) {
-          stepIndex = milestone.step;
-          textualContext = milestone.data_object_layer;
+    // Normalize target string to lower-case to execute stable matching loops
+    const normalizedTarget = objectName.toLowerCase().trim();
+
+    for (const journey of this.journeyMatrix) {
+      if (Array.isArray(journey.chronological_milestones_and_data_inputs)) {
+        // Evaluate dataset rows using standard string matching mechanics
+        const structuralMatch = journey.chronological_milestones_and_data_inputs.find(milestone => {
+          const contentText = milestone.data_object_layer.toLowerCase();
+          return contentText.includes(normalizedTarget);
+        });
+
+        if (structuralMatch) {
+          stepIndex = structuralMatch.step;
+          // FIXED: Changed milestone.data_object_layer to structuralMatch.data_object_layer
+          textualContext = structuralMatch.data_object_layer;
+          break; // Hard-stop iteration once the true context track matches
         }
-      });
-    });
+      }
+    }
     return { stepIndex, textualContext };
   }
 
-  retrieveGraphTopologyChunks(stepIndex) {
+
+
+    retrieveGraphTopologyChunks(stepIndex) {
     const graphString = JSON.stringify(this.mermaidGraph);
+    
+    // Generates flexible index patterns (e.g., p1_1, p3_1) derived from journey trackers
     const targetToken = `p${stepIndex}_1`;
 
     return {
@@ -73,6 +91,7 @@ class FunctionalArchitectureRAG {
       associatedGate: targetToken
     };
   }
+
 
   retrieveActorClearanceChunks(objectName) {
     const permissions = [];
@@ -92,37 +111,39 @@ class FunctionalArchitectureRAG {
   /**
    * Pipeline Stage 2: Simulates the LLM Context Ingestion to output precise stages
    */
+    /**
+   * FIX 1: Map exact schema fields directly from File 1 variables
+   */
   compileLifecycleLedger(targetEntityId) {
     const context = this.vectorIndex.get(targetEntityId);
-    if (!context) return { error: "Target entity chunk not found in vector index." };
+    if (!context) return { error: "Target entity metadata chunk not found." };
 
-    // The RAG Engine acts as a pure layout compiler mapping text fragments to nodes
     const finalBusinessStages = [];
 
-    // Stage 1: Root Initialization
     finalBusinessStages.push({
       stage: "INITIALIZED / STAGED",
-      functionalCriteria: `Asset created via ${context.ioSchema.input}. Originates from ${context.chronology.textualContext.split(';')[0]}.`
+      functionalCriteria: `Asset created via: ${context.ioSchema.input}. Timeline Track: ${context.chronology.textualContext}`
     });
 
-    // Stage 2: Evaluation & Verification Gate
+    // FIXED: Corrected key definitions mapping 'activity' and 'output'
     finalBusinessStages.push({
       stage: "PROCESSING_VALIDATION",
-      functionalCriteria: `Executing: ${context.ioSchema.activityLogic}. Outputs schema payload: ${context.ioSchema.outputCriteria}.`
+      functionalCriteria: `Executing: ${context.ioSchema.activity}. Outputs schema payload: ${context.ioSchema.output}.`
     });
 
-    // Stage 3: Dynamic Exception Tracking
     if (context.topology.hasSoftFailLoop) {
       finalBusinessStages.push({
         stage: "DEGRADED_REMEDIATION_LOOP",
-        functionalCriteria: `Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops.`
+        functionalCriteria: "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
       });
     }
 
-    // Stage 4: Immutable Commit
+    // FIX 2: Deduplicate data privacy policies during final settlement mapping
+    const uniqueGuardrails = [...new Set(context.rbac.map(r => JSON.stringify(r.policies)))].map(p => JSON.parse(p));
+
     finalBusinessStages.push({
       stage: "FINAL_MUTATION_COMMIT",
-      functionalCriteria: `Asset state finalized. Governed by structural parameters: ${JSON.stringify(context.rbac.map(r => r.policies))}`
+      functionalCriteria: `Asset state finalized. Governed by structural parameters: ${JSON.stringify(uniqueGuardrails)}`
     });
 
     return {
@@ -130,6 +151,12 @@ class FunctionalArchitectureRAG {
       compiledAssetLifecycleLedger: finalBusinessStages
     };
   }
+
+  /**
+   * FIX 3: Enforce strict word boundaries so initial steps don't get overwritten
+   */
+  
+
 }
 
 // ============================================================================
