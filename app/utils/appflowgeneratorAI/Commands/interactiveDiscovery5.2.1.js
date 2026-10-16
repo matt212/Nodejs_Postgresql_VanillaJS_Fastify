@@ -9,7 +9,7 @@ const readline = require('readline');
 const CONFIG = {
   PATHS: {
     PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
-    OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput',
+    OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/baseline/',
     TMP_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/promptFile',
     EXPORT_PREFIX: '7.Final-System-Architecture-Blueprint-Graph-'
   },
@@ -91,9 +91,9 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT COMPILER. Your absolute mandate is to in
 1. STRUCTURAL GATEWAY ROUTING LAYER (HUB-AND-SPOKE SANITIZATION)
    - You MUST enforce an explicit Hub-and-Spoke structure layout inside every single subgraph block using exactly two dedicated gateway anchors:
      * Entrance Node: You MUST initialize exactly ONE node at the absolute top boundary inside the subgraph container. Every single incoming external arrow vector originating from outside this container boundary MUST target this node exclusively.
-     * Exit Node: You MUST initialize exactly ONE node at the absolute bottom boundary inside the subgraph container. Every single internal process line, decision path, or loop recovery track within this container MUST converge downward into this node. Every arrow exiting this container MUST originate from this node exclusively.
-   - Inter-subgraph connection streams MUST only pass from the Exit Node of a preceding subgraph wrapper directly to the Entrance Node of the next chronological subgraph wrapper. 
-   - CRITICAL COMPILING CONSTRAINT: Every arrow edge link written at the bottom of the script MUST connect explicit Node-to-Node alphanumeric variables exclusively. You are strictly forbidden from pointing a node arrow directly at an outer subgraph title identifier string.
+       * Exit Node Validation: You MUST initialize exactly ONE node at the absolute bottom boundary inside the subgraph container. To prevent infinite graph compilation dead-ends, you are ABSOLUTELY FORBIDDEN from linking this exit node variable back into itself. 
+ - Inter-Subgraph Linear Continuity: You MUST explicitly map sequential container connections at the bottom of the script by routing the Exit Node variable of the preceding subgraph directly to the Entrance Node variable of the next chronological subgraph container . You are strictly forbidden from pointing a node arrow directly at an outer subgraph title identifier string.
+
 
 2. UNIQUE CONTAINER & VARIABLE BALANCING
    - Every single subgraph block MUST possess a completely unique, lowercase, underscore-separated string identifier ID name. NEVER reuse a subgraph ID string anywhere in the entire output.
@@ -107,23 +107,23 @@ You are a WORLD-CLASS SYSTEMS ARCHITECT COMPILER. Your absolute mandate is to in
    - To label a pathway, conditional transition, or milestone track, you MUST use the strict hyphen-quote arrow pattern exclusively: node_a -- "Descriptive Process Action Text" --> node_b
    - When branching out from an evaluation decision diamond, follow this identical format: decision_node -- "On Success" --> success_node
    - You are REQUIRED to use standard solid structural arrows (-->) for all directional paths, evaluation pathways, structural loops, and exception routing across the entire diagram layout to ensure uniform compiler compatibility.
-`;
+
+3.1 INTERNAL NODE FLOW INVARIANT
+   - Every single node initialized inside a subgraph container MUST participate in a continuous, unbroken execution path. 
+   - You MUST explicitly route an incoming arrow vector from the proceeding step variable directly into the following decision gate diamond variable within the same container block. No evaluation gate diamond or functional step is allowed to exist without an active incoming path from its designated predecessor.
+   
+   `;
 const BLUEPRINT_SECTION_2 = `
 # SECTION II: UNIVERSAL TRANSACTIONAL STATE INVARIANTS (NO LOOSE ENDS)
 
-4. THE INITIAL DISCOVERY & CURATION LAYER STATE
-   - Before any transactional commit, resource allocation, or logistical verification occurs, you MUST explicitly establish a logical Discovery & Curation layer immediately following the root initialization/access step.
-   - The workflow must natively map the interactive sequence where an actor navigates classifications, queries datasets, evaluates item metrics, and aggregates choices into a temporary staging state before triggering target actions.
+4. SEQUENTIAL MATRIX LEADER DECONSTRUCTION
+   - Synthesize the sequential transitions strictly according to the raw chronological index array order of the parsed data matrices, without assuming any predefined industry or corporate use case.
 
-5. POST-SETTLEMENT TRANSACTION COMMIT SYNCHRONIZATION
-   - You must enforce a strict chronological state dependency regarding financial settlement and structural record creation. 
-   - A core Transactional Record or Final Order Document cannot be officially designated as "Created," "Committed," or "Finalized" until AFTER a successful authorization/settlement status is achieved in the payment/billing validation node.
-   - The flow must strictly map: Financial Settlement Verification -> Authorized Status -> Post-Settlement Document Creation -> Downstream Fulfillment/Resource Assignment Execution.
+5. CONDITIONAL LIFECYCLE RECONCILIATION
+   - For every validation gate, verification step, or choice branch item parsed from the incoming payload schemas, you MUST map out its respective alternate and exception pathways. 
 
-6. MID-FLIGHT EXCEPTION HANDLING & TRANSACTIONAL ROLLBACKS
-   - You must ensure there are ZERO dead ends or unhandled operational loops for failures occurring mid-process.
-   - If a failure, exception, or cancellation trigger occurs AFTER a successful transaction settlement status but BEFORE final delivery/handover, the exception path must immediately branch out of the validation diamond.
-   - This failure track must follow the uniform solid-line hyphen-quote formatting rule (e.g., decision_node -- "On Exception Trigger" --> rollback_node), bypass normal forward progression, route directly through a reversing ledger/compensation action, and terminate cleanly into a distinct, final system disruption closure node at the bottom of the architecture.
+6. BOUNDED REMEDIATION AND LIFECYCLE REVERSIONS
+   - If a fault indicator or processing anomaly path is parsed from the source schema, you MUST explicitly map its exit vector: soft failures must route back to their immediate healing target to close the loop, and hard failures must route away from forward linear progression, directly executing an inversion action that terminates into the final system lifecycle closure node.
 
 6.1 MULTI-PATH STRUCTURAL INTEGRITY RULES (TOTAL STATE ARCHITECTURE)
    - For every milestone validation checkpoint or decision gate initialized, you MUST explicitly declare and label distinct node components. To strictly obey the 6-node container ceiling in Rule 14, you MUST split the milestone phase across two separate, consecutive sub-containers labeled "a" and "b" (e.g., phase_01_a and phase_01_b).
@@ -142,16 +142,20 @@ const BLUEPRINT_SECTION_3 = `
       * Matrix 3 (Chronological Journey Tracks): Master timeline sequence blueprint.
 
 8. DETERMINISTIC ENTRANCE STATE INITIALIZATION
-    - Search the Chronological Journey Tracks matrix for 'Step 1' of the primary initiator role. This exact milestone MUST serve as the absolute root initialization step for the entire diagram.
+    - Search the Chronological Journey Tracks matrix for the absolute initial root sequence index key matching the primary lifecycle instantiator. This exact milestone MUST serve as the absolute root initialization step for the entire diagram.
     - Synthesize this step with its corresponding entity in the Component Layout matrix to form the single Entrance Node of Subgraph 1. Every subsequent path cascades sequentially downward from this single starting point.
 
 # SECTION IV: STYLING, PARSING, AND INTERFACE LANGUAGE TRANSLATION
 
 9. ABSOLUTE SHAPE DEFINITION & SYNTAX VALIDATION RULES
    - Every node variable identifier name MUST be short, plain lowercase alphanumeric strings without any symbols or brackets embedded inside them.
-   - Text contents must be nested cleanly within structural geometric tokens exactly matching these layout patterns: node_variable_name["Box Text"] or decision_variable_name{"Diamond Text"}.
+   - Text contents must be nested cleanly within structural geometric tokens exactly matching these specific layout patterns: node_variable_name["Box Text"] or decision_variable_name{"Diamond Text"}.
+   - CRITICAL STRING ESCAPING CONSTRAINT: If a node text label includes emojis or status alerts, you are STRICTLY FORBIDDEN from nesting secondary square brackets inside those text quotes. You must separate status markers using standard colon punctuation exclusively.
+   - SPECIAL CHARACTER SANITIZATION: You are ABSOLUTELY FORBIDDEN from inserting unescaped raw ampersand symbols inside node labels. You must aggressively replace all instances of the character with the full textual word "and" to ensure parser compatibility.
    - CRITICAL CLASS STYLE BAN: You are ABSOLUTELY FORBIDDEN from appending class styles, class definitions, or trailing operator markers anywhere in your output. Every line must terminate cleanly with standard plain Mermaid alphanumeric and layout bracket syntax exclusively.
    - Nodes are strictly forbidden from pointing directly back into themselves as an isolated arrow link loop.
+
+
 
 10. TECHNICAL JARGON REPLACEMENT GLOSSARY (DOMAIN AGNOSTIC)
    - Aggressively translate developer-centric engineering syntax into clear business capability terms:

@@ -9,7 +9,7 @@ const readline = require('readline');
 const CONFIG = {
   PATHS: {
     PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
-    OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput',
+    OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/baseline/',
     TMP_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/promptFile',
     EXPORT_PREFIX: '6.Final-System-Architecture-Blueprint-Graph-'
   },

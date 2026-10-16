@@ -65,9 +65,13 @@ const BLUEPRINT_SECTION_3 = `
 
 9. ABSOLUTE SHAPE DEFINITION & SYNTAX VALIDATION RULES
    - Every node variable identifier name MUST be short, plain lowercase alphanumeric strings without any symbols or brackets embedded inside them.
-   - Text contents must be nested cleanly within structural geometric tokens exactly matching these layout patterns: node_variable_name["Box Text"] or decision_variable_name{"Diamond Text"}.
+   - Text contents must be nested cleanly within structural geometric tokens exactly matching these specific layout patterns: node_variable_name["Box Text"] or decision_variable_name{"Diamond Text"}.
+   - CRITICAL STRING ESCAPING CONSTRAINT: If a node text label includes emojis or status alerts, you are STRICTLY FORBIDDEN from nesting secondary square brackets inside those text quotes. You must separate status markers using standard colon punctuation exclusively.
+   - SPECIAL CHARACTER SANITIZATION: You are ABSOLUTELY FORBIDDEN from inserting unescaped raw ampersand symbols inside node labels. You must aggressively replace all instances of the character with the full textual word "and" to ensure parser compatibility.
    - CRITICAL CLASS STYLE BAN: You are ABSOLUTELY FORBIDDEN from appending class styles, class definitions, or trailing operator markers anywhere in your output. Every line must terminate cleanly with standard plain Mermaid alphanumeric and layout bracket syntax exclusively.
    - Nodes are strictly forbidden from pointing directly back into themselves as an isolated arrow link loop.
+
+
 
 10. TECHNICAL JARGON REPLACEMENT GLOSSARY (DOMAIN AGNOSTIC)
    - Aggressively translate developer-centric engineering syntax into clear business capability terms:
@@ -81,14 +85,16 @@ const BLUEPRINT_SECTION_3 = `
    - Segment the master timeline chronologically using structural phase comment blocks.
    - Wherever an actor or component initiates a request, validation, or transaction submission, you MUST explicitly map the immediate return notification, error alert, or confirmation vector back to the initiator as the very next chronological link.
 
-12. CHRONOLOGICAL PATHS WITH HYPHENATED ALPHABETIC SUB-INDEXING
-    - Prefix macro timeline arrows with incremental sequential integers (e.g., 1., 2., 3.). Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively.
+12. CHRONOLOGICAL PATH STRUCTURAL LINK INTEGRITY
+    - Every single descriptive link string throughout the entire flowchart MUST utilize the uniform hyphen-quote arrow pattern exclusively.
+    - CRITICAL PARSING CONSTRAINT: You are ABSOLUTELY FORBIDDEN from prefixing connection lines with numeric markers, list indices, or numbers (e.g., Never write: "1. node_a --> node_b"). Every connection line must start cleanly with a naked node identifier variable name.
 
 13. CLOSED-LOOP EXCEPTION PROCESSING & CROSS-BOUNDARY LIFECYCLE RECONCILIATION
     - The final lifecycle closure subgraph container MUST NOT sit isolated or linear. It must act as a dynamic global state routing hub for the entire flow layout.
     - You MUST structurally wire cross-boundary connection links originating directly from every single upstream decision validation diamond straight into the final container using these strict syntax behaviors:
-      * Hard Failures & Disputes: Map a dashed line arrow connector script (-.->) originating from the upstream evaluation validation diamond directly to its corresponding dedicated exception, compensation ledger, or dispute reversal node initialized inside the final closure container.
-      * Hard Session Cancellations: Map a dashed line arrow connector script (-.->) from an unrecoverable resource shortfall gate directly to a stock release or session cancellation processing node inside the final closure container.
+      * Hard Failures & Disputes: Map a standard solid line arrow with text label (node -- "Text" --> node)  originating from the upstream evaluation validation diamond directly to its corresponding dedicated exception, compensation ledger, or dispute reversal node initialized inside the final closure container.
+      * Hard Session Cancellations: Map a standard solid line arrow with text label (node -- "Text" --> node)  from an unrecoverable resource shortfall gate directly to a stock release or session cancellation processing node inside the final closure container.
+    - CRITICAL COMPILING CONSTRAINT: You are ABSOLUTELY FORBIDDEN from using dotted, dashed, or broken arrow syntaxes like "-.->", "-.->", or "-.-" anywhere in the entire output. Every path must be completely solid.
     - To prevent endless processing traps, you are STRICTLY FORBIDDEN from linking an unhappy path error arrow directly backward into the immediate preceding initiator node on the same operational line. All final happy paths, exception resolutions, and unrecoverable channels must converge cleanly into a singular, universal system closure termination node at the absolute bottom of the flowchart.
 
 14. MANDATORY HIERARCHICAL STEP MULTI-CONTAINER PARTITIONING
