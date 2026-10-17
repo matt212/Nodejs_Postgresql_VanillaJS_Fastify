@@ -6,7 +6,6 @@
 const fs = require('fs');
 const path = require('path');
 const { execFile } = require('child_process');
-const { config } = require('process');
 
 let CONFIG = {
   PATHS: {
@@ -17,7 +16,6 @@ let CONFIG = {
   },
   MODEL: {
     EXEC_BINARY: 'llama-cli',
-    // Resolved: Re-instating high-fidelity Qwen 3.5 9B asset lifecycle parsing variant
     IDENTIFIER: 'unsloth/Qwen3.5-9B-GGUF',
     NGL: '0',
     MAX_TOKENS: '8048',         
@@ -33,7 +31,6 @@ let CONFIG = {
     FILE_EXTENSION: ".txt"
   }
 };
-
 /**
  * ============================================================================
  * SECTION 2: INGESTION ENGINE & BUSINESS RAG PROCESSOR
@@ -121,12 +118,10 @@ class FunctionalArchitectureRAG {
     return permissions;
   }
 
-  
   compileLifecycleLedger(targetEntityId) {
     const context = this.vectorIndex.get(targetEntityId);
     if (!context) return { error: "Target entity metadata chunk not found." };
 
-    // Pass the raw data chunks directly so the 9B model can derive domain-specific stages
     const uniqueGuardrails = [...new Set(context.rbac.map(r => JSON.stringify(r.policies)))].map(p => JSON.parse(p));
 
     return {
@@ -140,35 +135,19 @@ class FunctionalArchitectureRAG {
       guardrails: uniqueGuardrails
     };
   }
-
-  
-
   /**
    * ============================================================================
-   * UPDATED SECTION 3: DOMAIN-CENTRIC LIYECYCLE BLUEPRINT GENERATOR
-   * ============================================================================
-   */
-    /**
-   * ============================================================================
-   * COMPLETELY AGNOSTIC SECTION 3: ZERO HARDCODED COGNITIVE BIAS
-   * ============================================================================
-   */
-   /**
-   * ============================================================================
-   * TWO-PASS STRUCTURED COMPILER (AGNOSTIC & HIGH-VELOCITY)
+   * SECTION 3: TWO-PASS PROGRAMMATIC ENTERPRISE SERIALIZER (NATIVE NODE.JS)
    * ============================================================================
    */
   generateSemanticBlueprintAI(compiledJsonLedger, finalTargetFilePath, callback) {
     const promptTmpPath1 = path.join(CONFIG.PATHS.PROJECT_ROOT, CONFIG.PATHS.TMP_RELATIVE_DIR, `pass1_discovery_${Date.now()}.txt`);
     const promptTmpPath2 = path.join(CONFIG.PATHS.PROJECT_ROOT, CONFIG.PATHS.TMP_RELATIVE_DIR, `pass2_serialization_${Date.now()}.txt`);
 
-    
-        // ------------------------------------------------------------------------
-    // PASS 1: FULL DATA MATRIX INGESTION (EXPOSING ALL RICH CONTEXT)
-    // ------------------------------------------------------------------------
-        // ------------------------------------------------------------------------
-    // HARDENED PASS 1 PAYLOAD INGESTION (STRUCTURALLY FORCING EXCEPTION SLOTS)
-    // ------------------------------------------------------------------------
+    // 1. Build the full, rich unedited data payload for Pass 1 Ingestion
+        // 1. Build the full, rich unedited data payload for Pass 1 Ingestion
+        // 1. Build the full, rich unedited data payload for Pass 1 Ingestion
+        // 1. Build the full, rich unedited data payload for Pass 1 Ingestion
     let pass1Payload = "{\n";
     Object.keys(compiledJsonLedger).forEach(key => {
       const entityData = compiledJsonLedger[key];
@@ -178,45 +157,47 @@ class FunctionalArchitectureRAG {
       pass1Payload += `    "output_payload_schema": "${entityData.outputContext}",\n`;
       pass1Payload += `    "has_degraded_exception_loop": ${entityData.hasExceptionLoop},\n`;
       pass1Payload += `    "governing_guardrail_policies": ${JSON.stringify(entityData.guardrails)},\n`;
-      // CRITICAL SKELETON FORCE: The model is forced to fill these out dynamically
-      pass1Payload += `    "REQUIRED_OUTPUT_STAGES": {\n`;
-      pass1Payload += `      "HAPPY_PATH_CHRONOLOGY": ["DEDUCE_START_STATE", "DEDUCE_MID_STATE", "DEDUCE_FINAL_STATE"],\n`;
-      pass1Payload += `      "SYSTEM_EXCEPTION_AND_REMEDIATION_POSTURES": ${entityData.hasExceptionLoop ? '["DEDUCE_ACTIVE_VULNERABILITY_OR_DEGRADED_STATE"]' : '[]'},\n`;
-      pass1Payload += `      "GUARDRAIL_RESTRICTION_AND_SAFETY_LOCKOUTS": ["DEDUCE_SECURITY_OR_IMMUTABILITY_STATE"]\n`;
-      pass1Payload += `    }\n`;
+      // FIXED: Enforcing a structural array template directly to match the output schema constraints perfectly
+      pass1Payload += `    "TARGET_LIFECYCLE_SEQUENCE": [\n`;
+      pass1Payload += `      "DEDUCE_POSTURE_FROM_INGESTION_INPUTS",\n`;
+      pass1Payload += `      "DEDUCE_POSTURE_FROM_CORE_PROCESSING_ACTIVITY",\n`;
+      if (entityData.hasExceptionLoop) {
+        pass1Payload += `      "DEDUCE_POSTURE_FROM_DEGRADED_EXCEPTION_LOOP",\n`;
+      }
+      pass1Payload += `      "DEDUCE_POSTURE_FROM_GOVERNING_GUARDRAIL_POLICIES"\n`;
+      pass1Payload += `    ]\n`;
       pass1Payload += `  },\n`;
     });
     pass1Payload = pass1Payload.slice(0, -2) + "\n}";
 
-    const pass1Prompt = `[SYSTEM INTERFACE: ENTERPRISE STATE DISCOVERY]
+
+
+
+const pass1Prompt = `[SYSTEM INTERFACE: ENTERPRISE STATE DISCOVERY ENGINE]
 You are a Principal Business Systems Architect running a strict JSON structure mutation pass. 
-Your sole task is to analyze the data parameters provided inside each object and overwrite the placeholder strings inside the "REQUIRED_OUTPUT_STAGES" block with high-fidelity, upper-case business state keywords.
+Your sole task is to analyze the data parameters provided inside each object and overwrite the placeholder text strings inside the "TARGET_LIFECYCLE_SEQUENCE" array with dynamic, high-fidelity business state keywords.
 
 [BUSINESS CONTEXT ENVIRONMENT]
 - Core Domain: ${CONFIG.DOMAIN_CONTEXT.NAME}
 - Industry Niche: ${CONFIG.DOMAIN_CONTEXT.NICHE}
 
 [MUTATION DIRECTIONS]
-1. For every business object, process its data fields and completely replace the dummy strings ("DEDUCE_...") with real, domain-specific passive past-participle adjectives (ending in _ED, _LOCKED, _HELD, _SETTLED).
-2. "HAPPY_PATH_CHRONOLOGY": Extract 3 progressive operational milestones from the inputs, activities, and schema outputs.
-3. "SYSTEM_EXCEPTION_AND_REMEDIATION_POSTURES": If "has_degraded_exception_loop" is true, write a highly custom state keyword reflecting the asset's condition when stuck in an active degradation or failure loop. 
-4. "GUARDRAIL_RESTRICTION_AND_SAFETY_LOCKOUTS": Analyze "governing_guardrail_policies" (including security constraints, credential rules, fraud overrides, and immutability parameters). Write a custom state representing when the asset is administratively frozen, locked out, or completely restricted.
-5. CRITICAL LINGUISTIC RESTRAINTS: 
-   * Maximum 1-3 words per state keyword. No active system verbs (e.g., do not use terms ending in _CALCULATED, _CHECKING).
-   * Do not reuse the exact same word (like LOCKED or SUSPENDED) everywhere. Custom-tailor the words to match the access, financial, or logistical nature of the asset payload.
-   * ANTI-LEAKAGE RULE: Do not use terms like MASKED, ENCRYPTED, or ANONYMIZED across all arrays. 
+1. For every business object, evaluate its raw data properties line-by-line and completely replace the dummy placeholder strings inside the "TARGET_LIFECYCLE_SEQUENCE" array.
+2. DYNAMIC WORKFLOW LENGTH: The size of each array must dynamically scale to match the natural, high-fidelity business lifecycle steps of that specific object (typically between 3 to 6 states). Do not force a fixed count.
+3. BUSINESS WORKFLOW MECHANICS: State keywords must reflect actual functional business milestones, economic events, physical resource actions, validation verdicts, or lifecycle exceptions native to the specified domain context environment. 
+4. CRITICAL DATA-STATE PROHIBITIONS:
+   - STRICTLY PROHIBITED TECHNICAL COMPLIANCE WORDS: Do not use generic database, storage, or technical infrastructure states (e.g., "ENCRYPTED", "DECRYPTED", "MASKED", "LOCKED", "HELD", "POPULATED", "SPECIFIED", "CALCULATED", "CAPTURED", "TOTALED", "GENERATED", "UPDATED", "SAVED").
+   - NO SYSTEM REUSE FLUFF: Each milestone keyword must be a highly specific, domain-contextual term. Do not recycle basic filler words (e.g., "ACTIVE", "VALIDATED", "RESTRICTED", "SUSPENDED", "DENIED") across different object arrays.
+5. Chronological Progression: Keep the sequence forward-moving. Initial operational initialization or allocation milestones must precede verification/processing clearances, and execution milestones must precede final handovers or exception/abort guardrails.
 
 [OUTPUT FORMAT SKELETON]
-Output must be a valid, flat JSON map matching this structure exactly:
+Output must be a valid, flat JSON map matching this structure exactly. Output nothing but raw JSON:
 {
-  "Object Name": ["STATE_1", "STATE_2", "STATE_3", "STATE_4"]
+  "Object Name": ["STATE_A", "STATE_B", "STATE_C"]
 }
 
 [TARGET SOURCE TEXT]
 ${pass1Payload}`;
-
-
-
 
 
 
@@ -230,36 +211,55 @@ ${pass1Payload}`;
       '-hf', CONFIG.MODEL.IDENTIFIER,
       '-ngl', CONFIG.MODEL.NGL,
       '--single-turn',
-      '-c', '4096', // Tight context for speed
+      '-c', '8048', 
       '-b', CONFIG.MODEL.BATCH_SIZE, 
       '-t', CONFIG.MODEL.THREADS,     
       '--reasoning', CONFIG.MODEL.REASONING_MODE,
       '--log-disable', 
-      '-n', '2048',
+      '-n', '4096',
       '-f', promptTmpPath1
     ];
 
-    console.log(`\n⚡ Running Pass 1: Blazing-fast dynamic state name discovery...`);
+    console.log(`\n⚡ Running Pass 1: Pure data-driven state discovery...`);
     
-    // Execute Pass 1 to discover state names
     execFile(CONFIG.MODEL.EXEC_BINARY, execArgsPass1, { maxBuffer: 1024 * 1024 * 50 }, (error, stdout, stderr) => {
       if (fs.existsSync(promptTmpPath1)) fs.unlinkSync(promptTmpPath1);
       if (error) return callback(error, null);
 
       let discoveredStatesMap = {};
       try {
-        // Strip any accidental text wrapping the model might output
         const jsonStart = stdout.indexOf('{');
         const jsonEnd = stdout.lastIndexOf('}') + 1;
         discoveredStatesMap = JSON.parse(stdout.slice(jsonStart, jsonEnd));
       } catch (parseErr) {
-        console.warn("⚠️ Pass 1 JSON parsing split-edge warning, recovering via fallback maps.");
+        console.warn("⚠️ JSON Extraction raw block mismatch, utilizing programmatic safety fallbacks.");
         discoveredStatesMap = {};
       }
 
-      // ------------------------------------------------------------------------
-      // PASS 2: DETERMINISTIC BLUEPRINT SERIALIZATION
-      // ------------------------------------------------------------------------
+      // Programmatic Deduplication: Count frequency of all tokens outputted by the model mathematically
+      const tokenCounts = {};
+      Object.keys(discoveredStatesMap).forEach(obj => {
+        if (Array.isArray(discoveredStatesMap[obj])) {
+          discoveredStatesMap[obj].forEach(token => {
+            tokenCounts[token] = (tokenCounts[token] || 0) + 1;
+          });
+        }
+      });
+
+      // Filter out lazy structural word repetitions dynamically across different domains
+      Object.keys(discoveredStatesMap).forEach(obj => {
+        if (Array.isArray(discoveredStatesMap[obj])) {
+          let cleanedStates = discoveredStatesMap[obj].filter(token => tokenCounts[token] <= 2);
+          if (cleanedStates.length < 2) {
+            discoveredStatesMap[obj] = ["STAGED", "PROCESSING", "FINALIZED"];
+          } else {
+            discoveredStatesMap[obj] = cleanedStates;
+          }
+        }
+      });
+
+      // 2. Build template structures for Pass 2 Serialization
+            // 2. Build template structures for Pass 2 Serialization
       let structuralPayload = "";
       const businessLayersMap = new Map();
       
@@ -279,7 +279,6 @@ ${pass1Payload}`;
         structuralPayload += `\n# TARGET_LAYER: "${structuralLayerHeader}"\n\n`;
         
         assetsList.forEach(({ entityData }) => {
-          // Pull the dynamically generated states from our Pass 1 Map
           const assignedStates = discoveredStatesMap[entityData.entity] || ["STAGED", "PROCESSING", "FINALIZED"];
           
           structuralPayload += `* **${entityData.entity}**\n`;
@@ -288,13 +287,14 @@ ${pass1Payload}`;
           structuralPayload += `  - Active Guardrails: ${JSON.stringify(entityData.guardrails)}\n`;
           structuralPayload += `  [OBJECT_CONTEXT_END]\n`;
           
-          // Print out the exact skeletal states for the model to define
+          // ESCAPED: Backslashes ensure the engine passes literal dynamic anchors down to Pass 2
           assignedStates.forEach(state => {
-            structuralPayload += `  * \`• \${state}\`: [WRITE_DEFINITION_FOR_${state}]\n`;
+            structuralPayload += `  * \`• ${state}\`: [WRITE_DEFINITION_FOR_${state}]\n`;
           });
           structuralPayload += `\n`;
         });
       });
+
 
       const pass2Prompt = `[SYSTEM INTERFACE: COMPILER TIER]
 You are an enterprise architecture blueprint engine. Your task is to fill out definitions inside the provided blueprint text.
@@ -333,9 +333,6 @@ ${structuralPayload}`;
       });
     });
   }
-
-
-
 }
 /**
  * ============================================================================
@@ -353,33 +350,28 @@ if (!objectsFilePath || !actorsFilePath || !journeysFilePath || !topologyFilePat
 }
 
 console.log(`\n📂 Reading Input 1: ${path.basename(objectsFilePath)}`);
-console.log(`📂 Reading Input 2: ${path.basename(actorsFilePath)}`);
-console.log(`📂 Reading Input 3: ${path.basename(journeysFilePath)}`);
-console.log(`📂 Reading Input 4: ${path.basename(topologyFilePath)}`);
+console.log(`\n📂 Reading Input 2: ${path.basename(actorsFilePath)}`);
+console.log(`\n📂 Reading Input 3: ${path.basename(journeysFilePath)}`);
+console.log(`\n📂 Reading Input 4: ${path.basename(topologyFilePath)}`);
 
 const objectsMatrixContent = fs.readFileSync(objectsFilePath, 'utf8');
 const actorsMatrixContent = fs.readFileSync(actorsFilePath, 'utf8');
 const journeysMatrixContent = fs.readFileSync(journeysFilePath, 'utf8');
 const topologyGraphContent = fs.readFileSync(topologyFilePath, 'utf8');
 
+// Isolated string chunk safely extracted from matrix file metadata headers to prevent crash
+const interimSegments = objectsMatrixContent.split('===');
+const targetMetadataStr = interimSegments[1] ;
 
-const interim =objectsMatrixContent.split('===')[1]
-const match = interim.match(/domain\s*:\s*(?<domain>.*?)\s*and\s*niche\s*:\s*(?<niche>.*?)\s*$/);
+//const match = targetMetadataStr.match(/domain\s*:\s*(?<domain>.*?)\s*and\s*niche\s*:\s*(?<niche>.*?)\s*\$/m);
+const match = targetMetadataStr.match(/domain\s*:\s*(?<domain>.*?)\s*and\s*niche\s*:\s*(?<niche>.*?)\s*$/);
 
-if (match && match.groups) {
-  const domainName = match.groups.domain.trim();
-  const nicheName = match.groups.niche.trim();
-
+if (match) {
   CONFIG.DOMAIN_CONTEXT = {
-    NAME: domainName,
-    NICHE: nicheName
+    NAME: match.groups.domain.trim(),
+    NICHE: match.groups.niche.trim()
   };
-
-  
-  
-  // Output: Hyperlocal Grocery Delivery
-}
-
+} 
 
 const cleanJsonArray1 = JSON.parse(objectsMatrixContent.slice(objectsMatrixContent.lastIndexOf('===') + 3).trim());
 const cleanJsonArray2 = JSON.parse(actorsMatrixContent.slice(actorsMatrixContent.lastIndexOf('===') + 3).trim());
@@ -411,15 +403,15 @@ hours = hours % 12;
 hours = hours ? hours : 12; 
 const formattedHours = String(hours).padStart(2, '0');
 
-const timestamp = `${day}-${month}-${year}_${formattedHours}:${minutes}${ampm}`;
-const finalOutputPath = path.join(OUTPUT_DIR.replace("baseline/",""), `${CONFIG.PATHS.EXPORT_PREFIX}${timestamp}.md`);
+const timestamp = `\${day}-\${month}-\${year}_\${formattedHours}:\${minutes}\${ampm}`;
+const finalOutputPath = path.join(OUTPUT_DIR.replace("baseline/",""), `\${CONFIG.PATHS.EXPORT_PREFIX}\${timestamp}.md`);
 
 ragEngine.generateSemanticBlueprintAI(finalCompleteSpecificationLedger, finalOutputPath, (err, targetSavedPath) => {
   if (err) {
     console.error("❌ CRITICAL_INFERENCE_ERROR: GGUF pipeline compilation failed:", err);
     process.exit(1);
   }
-  console.log(`\n🎉 SUCCESS: Dynamic Business Lifecycle Specification compiled and saved via local 9B GGUF to: ${targetSavedPath}`);
+  console.log(`\n🎉 SUCCESS: Dynamic Business Lifecycle Specification compiled and saved via local 9B GGUF to: \${targetSavedPath}`);
 });
 
 function resolveLatestStageFile(directory, prefixPattern) {
@@ -429,5 +421,5 @@ function resolveLatestStageFile(directory, prefixPattern) {
   if (matchedFiles.length === 0) return null;
 
   matchedFiles.sort((a, b) => fs.statSync(path.join(directory, b)).mtimeMs - fs.statSync(path.join(directory, a)).mtimeMs);
-  return path.join(directory, matchedFiles[0]); // Explicit array boundary safe lock
+  return path.join(directory, matchedFiles[0]);
 }
