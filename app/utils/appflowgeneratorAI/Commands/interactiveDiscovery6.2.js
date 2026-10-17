@@ -201,9 +201,6 @@ ${pass1Payload}`;
 
 
 
-
-
-
     fs.mkdirSync(path.dirname(promptTmpPath1), { recursive: true });
     fs.writeFileSync(promptTmpPath1, pass1Prompt, 'utf8');
 
