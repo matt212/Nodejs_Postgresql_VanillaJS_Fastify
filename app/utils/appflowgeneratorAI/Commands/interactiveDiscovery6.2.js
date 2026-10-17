@@ -173,31 +173,19 @@ class FunctionalArchitectureRAG {
 
 
 
-const pass1Prompt = `[SYSTEM INTERFACE: ENTERPRISE STATE DISCOVERY ENGINE]
-You are a Principal Business Systems Architect running a strict JSON structure mutation pass. 
-Your sole task is to analyze the data parameters provided inside each object and overwrite the placeholder text strings inside the "TARGET_LIFECYCLE_SEQUENCE" array with dynamic, high-fidelity business state keywords.
+const pass1Prompt = `<|im_start|>system
+You are a Principal Architect. Map the objects below to custom chronological UPPER_CASE corporate status arrays.
+Rules: Passive state adjectives ending in _ED, _LOCKED, _HELD, _SETTLED only. Max 3 words. No active system tasks (avoid _INITIATED, _ESTABLISHED, _ENFORCED, _AUDITED, _CALCULATED). No payload nouns (avoid _SESSION, _ACCOUNT, _DATA, _PII). Output raw JSON map only.<|im_end|>
+<|im_start|>user
+Domain: ${CONFIG.DOMAIN_CONTEXT.NAME} | Niche: ${CONFIG.DOMAIN_CONTEXT.NICHE}
+Target Dataset Matrix:
+${pass1Payload}
+Generate the JSON map skeleton matching {"Object": ["STATE"]} syntax directly below:<|im_end|>
+<|im_start|>assistant
+{`;
 
-[BUSINESS CONTEXT ENVIRONMENT]
-- Core Domain: ${CONFIG.DOMAIN_CONTEXT.NAME}
-- Industry Niche: ${CONFIG.DOMAIN_CONTEXT.NICHE}
 
-[MUTATION DIRECTIONS]
-1. For every business object, evaluate its raw data properties line-by-line and completely replace the dummy placeholder strings inside the "TARGET_LIFECYCLE_SEQUENCE" array.
-2. DYNAMIC WORKFLOW LENGTH: The size of each array must dynamically scale to match the natural, high-fidelity business lifecycle steps of that specific object (typically between 3 to 6 states). Do not force a fixed count.
-3. BUSINESS WORKFLOW MECHANICS: State keywords must reflect actual functional business milestones, economic events, physical resource actions, validation verdicts, or lifecycle exceptions native to the specified domain context environment. 
-4. CRITICAL DATA-STATE PROHIBITIONS:
-   - STRICTLY PROHIBITED TECHNICAL COMPLIANCE WORDS: Do not use generic database, storage, or technical infrastructure states (e.g., "ENCRYPTED", "DECRYPTED", "MASKED", "LOCKED", "HELD", "POPULATED", "SPECIFIED", "CALCULATED", "CAPTURED", "TOTALED", "GENERATED", "UPDATED", "SAVED").
-   - NO SYSTEM REUSE FLUFF: Each milestone keyword must be a highly specific, domain-contextual term. Do not recycle basic filler words (e.g., "ACTIVE", "VALIDATED", "RESTRICTED", "SUSPENDED", "DENIED") across different object arrays.
-5. Chronological Progression: Keep the sequence forward-moving. Initial operational initialization or allocation milestones must precede verification/processing clearances, and execution milestones must precede final handovers or exception/abort guardrails.
 
-[OUTPUT FORMAT SKELETON]
-Output must be a valid, flat JSON map matching this structure exactly. Output nothing but raw JSON:
-{
-  "Object Name": ["STATE_A", "STATE_B", "STATE_C"]
-}
-
-[TARGET SOURCE TEXT]
-${pass1Payload}`;
 
 
 
