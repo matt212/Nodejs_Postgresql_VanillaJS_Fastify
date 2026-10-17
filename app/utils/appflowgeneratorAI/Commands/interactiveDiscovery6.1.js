@@ -167,7 +167,7 @@ const CONFIG = {
     PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
     OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/baseline/',
     TMP_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/promptFile',
-    EXPORT_PREFIX: '8.Final-System-Architecture-Blueprint-Graph-'
+    EXPORT_PREFIX: '8.6.1.Final-System-Architecture-Blueprint-Graph-'
   },
   MODEL: {
     EXEC_BINARY: 'llama-cli',

@@ -6,13 +6,14 @@
 const fs = require('fs');
 const path = require('path');
 const { execFile } = require('child_process');
+const { config } = require('process');
 
-const CONFIG = {
+let CONFIG = {
   PATHS: {
     PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
     OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/baseline/',
     TMP_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/promptFile',
-    EXPORT_PREFIX: '8.Final-System-Architecture-Blueprint-Graph-'
+    EXPORT_PREFIX: '8.6.2.Final-System-Architecture-Blueprint-Graph-'
   },
   MODEL: {
     EXEC_BINARY: 'llama-cli',
@@ -120,130 +121,221 @@ class FunctionalArchitectureRAG {
     return permissions;
   }
 
+  
   compileLifecycleLedger(targetEntityId) {
     const context = this.vectorIndex.get(targetEntityId);
     if (!context) return { error: "Target entity metadata chunk not found." };
 
-    const finalBusinessStages = [];
-
-    finalBusinessStages.push({
-      stage: "INITIALIZED / STAGED",
-      functionalCriteria: `Asset created via: ${context.ioSchema.input}. Timeline Track: ${context.chronology.textualContext}`
-    });
-
-    finalBusinessStages.push({
-      stage: "PROCESSING_VALIDATION",
-      functionalCriteria: `Executing: ${context.ioSchema.activity}. Outputs schema payload: ${context.ioSchema.output}.`
-    });
-
-    if (context.topology.hasSoftFailLoop) {
-      finalBusinessStages.push({
-        stage: "DEGRADED_REMEDIATION_LOOP",
-        functionalCriteria: "Validation discrepancy parsed from graph tracking matrix. Routing control to exception loops."
-      });
-    }
-
+    // Pass the raw data chunks directly so the 9B model can derive domain-specific stages
     const uniqueGuardrails = [...new Set(context.rbac.map(r => JSON.stringify(r.policies)))].map(p => JSON.parse(p));
-
-    finalBusinessStages.push({
-      stage: "FINAL_MUTATION_COMMIT",
-      functionalCriteria: `Asset state finalized. Governed by structural parameters: ${JSON.stringify(uniqueGuardrails)}`
-    });
 
     return {
       entity: context.rawName,
-      compiledAssetLifecycleLedger: finalBusinessStages
+      inputContext: context.ioSchema.input || "No initial inputs defined",
+      activityContext: context.ioSchema.activity || "No core processing activity defined",
+      outputContext: context.ioSchema.output || "No output payloads defined",
+      timelineContext: context.chronology.textualContext || "Unmapped timeline track",
+      step: context.chronology.stepIndex || "0",
+      hasExceptionLoop: context.topology.hasSoftFailLoop,
+      guardrails: uniqueGuardrails
     };
   }
+
+  
+
   /**
    * ============================================================================
-   * SECTION 3: 100% DATA-DRIVEN TARGET MUTATION COMPILER (QWEN 3.5 9B BALANCED)
+   * UPDATED SECTION 3: DOMAIN-CENTRIC LIYECYCLE BLUEPRINT GENERATOR
+   * ============================================================================
+   */
+    /**
+   * ============================================================================
+   * COMPLETELY AGNOSTIC SECTION 3: ZERO HARDCODED COGNITIVE BIAS
+   * ============================================================================
+   */
+   /**
+   * ============================================================================
+   * TWO-PASS STRUCTURED COMPILER (AGNOSTIC & HIGH-VELOCITY)
    * ============================================================================
    */
   generateSemanticBlueprintAI(compiledJsonLedger, finalTargetFilePath, callback) {
-    let structuralPayload = "";
-    const businessLayersMap = new Map();
+    const promptTmpPath1 = path.join(CONFIG.PATHS.PROJECT_ROOT, CONFIG.PATHS.TMP_RELATIVE_DIR, `pass1_discovery_${Date.now()}.txt`);
+    const promptTmpPath2 = path.join(CONFIG.PATHS.PROJECT_ROOT, CONFIG.PATHS.TMP_RELATIVE_DIR, `pass2_serialization_${Date.now()}.txt`);
+
     
-    // Group entities programmatically by operational timeline tracking zones
+        // ------------------------------------------------------------------------
+    // PASS 1: FULL DATA MATRIX INGESTION (EXPOSING ALL RICH CONTEXT)
+    // ------------------------------------------------------------------------
+        // ------------------------------------------------------------------------
+    // HARDENED PASS 1 PAYLOAD INGESTION (STRUCTURALLY FORCING EXCEPTION SLOTS)
+    // ------------------------------------------------------------------------
+    let pass1Payload = "{\n";
     Object.keys(compiledJsonLedger).forEach(key => {
       const entityData = compiledJsonLedger[key];
-      const context = this.vectorIndex.get(key);
-      if (!context) return;
-
-      const contextualGroupName = context.chronology.groupLayerName || "Operational Specification Layers";
-
-      if (!businessLayersMap.has(contextualGroupName)) {
-        businessLayersMap.set(contextualGroupName, []);
-      }
-      businessLayersMap.get(contextualGroupName).push({ entityData, context });
+      pass1Payload += `  "${entityData.entity}": {\n`;
+      pass1Payload += `    "ingestion_inputs": "${entityData.inputContext}",\n`;
+      pass1Payload += `    "core_processing_activity": "${entityData.activityContext}",\n`;
+      pass1Payload += `    "output_payload_schema": "${entityData.outputContext}",\n`;
+      pass1Payload += `    "has_degraded_exception_loop": ${entityData.hasExceptionLoop},\n`;
+      pass1Payload += `    "governing_guardrail_policies": ${JSON.stringify(entityData.guardrails)},\n`;
+      // CRITICAL SKELETON FORCE: The model is forced to fill these out dynamically
+      pass1Payload += `    "REQUIRED_OUTPUT_STAGES": {\n`;
+      pass1Payload += `      "HAPPY_PATH_CHRONOLOGY": ["DEDUCE_START_STATE", "DEDUCE_MID_STATE", "DEDUCE_FINAL_STATE"],\n`;
+      pass1Payload += `      "SYSTEM_EXCEPTION_AND_REMEDIATION_POSTURES": ${entityData.hasExceptionLoop ? '["DEDUCE_ACTIVE_VULNERABILITY_OR_DEGRADED_STATE"]' : '[]'},\n`;
+      pass1Payload += `      "GUARDRAIL_RESTRICTION_AND_SAFETY_LOCKOUTS": ["DEDUCE_SECURITY_OR_IMMUTABILITY_STATE"]\n`;
+      pass1Payload += `    }\n`;
+      pass1Payload += `  },\n`;
     });
+    pass1Payload = pass1Payload.slice(0, -2) + "\n}";
 
-    // Native Node.js compiler loop formats formatting fences to prevent 9B layout cracking
-    businessLayersMap.forEach((assetsList, structuralLayerHeader) => {
-      structuralPayload += `\n# {{TRANSLATE_LAYER_HEADER: "${structuralLayerHeader}"}}\n\n`;
-      
-      assetsList.forEach(({ entityData }) => {
-        structuralPayload += `* **${entityData.entity}**\n`;
-        
-        entityData.compiledAssetLifecycleLedger.forEach(ledgerItem => {
-          let operationalCriteria = ledgerItem.functionalCriteria;
-          
-          if (ledgerItem.stage.includes("FINAL_MUTATION_COMMIT")) {
-            operationalCriteria = operationalCriteria.replace(/Governed by structural parameters: \[([\s\S]*?)\]/, (match, p1) => {
-              try {
-                return "Governed by active business guardrails: " + JSON.parse("[" + p1 + "]").map(policy => 
-                  Object.entries(policy).map(([k, v]) => `${k.replace(/_/g, ' ')}: ${v}`).join("; ")
-                ).join(" | ");
-              } catch (e) { return operationalCriteria; }
-            });
-          }
-          
-          structuralPayload += `  * \`• {{TERM_FOR: "\${operationalCriteria}"}}\`: ${operationalCriteria}\n`;
-        });
-        structuralPayload += `\n`;
-      });
-    });
+    const pass1Prompt = `[SYSTEM INTERFACE: ENTERPRISE STATE DISCOVERY]
+You are a Principal Business Systems Architect running a strict JSON structure mutation pass. 
+Your sole task is to analyze the data parameters provided inside each object and overwrite the placeholder strings inside the "REQUIRED_OUTPUT_STAGES" block with high-fidelity, upper-case business state keywords.
 
-    const promptTmpPath = path.join(CONFIG.PATHS.PROJECT_ROOT, CONFIG.PATHS.TMP_RELATIVE_DIR, `inference_prompt_${Date.now()}.txt`);
-    
-    // Strict dictionary token map prompt tailored for unsloth Qwen 3.5 context windows
-    const instructionPrompt = `[SYSTEM CONSTRAINTS INTERFACE]
-You are a precise text mutation engine. Process the document text below line by line.
+[BUSINESS CONTEXT ENVIRONMENT]
+- Core Domain: ${CONFIG.DOMAIN_CONTEXT.NAME}
+- Industry Niche: ${CONFIG.DOMAIN_CONTEXT.NICHE}
 
-[MUTATION INSTRUCTIONS]
-1. Locate "{{TRANSLATE_LAYER_HEADER: "LAYER_NAME"}}" and replace it with a clean corporate layer tier name containing an appropriate theme emoji (e.g., 🧱 User & Access Objects Group, 🗺️ Context & Curation Objects Group, 💳 Order & Transaction Objects Group, 📦 Supply Chain & Logistics Objects Group, 🛑 Post-Order & Exception Lifecycle Objects Group).
-2. Locate "{{TERM_FOR: "CONTEXT_TEXT"}}" and replace the entire double-brace tag container block with a concise, high-fidelity 1-2 word upper-case business domain state keyword (e.g., UNVERIFIED, ACTIVE, SUSPENDED, PROPOSED, INITIALIZED, VALIDATED, OUT_OF_BOUNDS, STAGED, RECONCILED, INVALIDATED, DRAFT, SUBMITTED, AUTHORIZED, APPROVED) deduced solely from the contextual clues inside the quotation marks.
-3. CRITICAL: Do not alter, rearrange, delete, or add any markdown asterisks, bullet indents, headers, or criteria details outside the two designated bracket formats.
+[MUTATION DIRECTIONS]
+1. For every business object, process its data fields and completely replace the dummy strings ("DEDUCE_...") with real, domain-specific passive past-participle adjectives (ending in _ED, _LOCKED, _HELD, _SETTLED).
+2. "HAPPY_PATH_CHRONOLOGY": Extract 3 progressive operational milestones from the inputs, activities, and schema outputs.
+3. "SYSTEM_EXCEPTION_AND_REMEDIATION_POSTURES": If "has_degraded_exception_loop" is true, write a highly custom state keyword reflecting the asset's condition when stuck in an active degradation or failure loop. 
+4. "GUARDRAIL_RESTRICTION_AND_SAFETY_LOCKOUTS": Analyze "governing_guardrail_policies" (including security constraints, credential rules, fraud overrides, and immutability parameters). Write a custom state representing when the asset is administratively frozen, locked out, or completely restricted.
+5. CRITICAL LINGUISTIC RESTRAINTS: 
+   * Maximum 1-3 words per state keyword. No active system verbs (e.g., do not use terms ending in _CALCULATED, _CHECKING).
+   * Do not reuse the exact same word (like LOCKED or SUSPENDED) everywhere. Custom-tailor the words to match the access, financial, or logistical nature of the asset payload.
+   * ANTI-LEAKAGE RULE: Do not use terms like MASKED, ENCRYPTED, or ANONYMIZED across all arrays. 
+
+[OUTPUT FORMAT SKELETON]
+Output must be a valid, flat JSON map matching this structure exactly:
+{
+  "Object Name": ["STATE_1", "STATE_2", "STATE_3", "STATE_4"]
+}
 
 [TARGET SOURCE TEXT]
-${structuralPayload}`;
+${pass1Payload}`;
 
-    fs.mkdirSync(path.dirname(promptTmpPath), { recursive: true });
-    fs.writeFileSync(promptTmpPath, instructionPrompt, 'utf8');
 
-    // Context allocation sized precisely to process 9B layers efficiently withoutvirtual swap thrashes
-    const execArgs = [
+
+
+
+
+
+
+
+    fs.mkdirSync(path.dirname(promptTmpPath1), { recursive: true });
+    fs.writeFileSync(promptTmpPath1, pass1Prompt, 'utf8');
+
+    const execArgsPass1 = [
       '-hf', CONFIG.MODEL.IDENTIFIER,
       '-ngl', CONFIG.MODEL.NGL,
       '--single-turn',
-      '-c', '8048', 
+      '-c', '4096', // Tight context for speed
       '-b', CONFIG.MODEL.BATCH_SIZE, 
       '-t', CONFIG.MODEL.THREADS,     
       '--reasoning', CONFIG.MODEL.REASONING_MODE,
       '--log-disable', 
-      '-n', CONFIG.MODEL.MAX_TOKENS,
-      '-f', promptTmpPath, 
-      '-o', finalTargetFilePath 
+      '-n', '2048',
+      '-f', promptTmpPath1
     ];
 
-    console.log(`\n🚀 Launching single-turn 9B context mutation sweep pass...`);
+    console.log(`\n⚡ Running Pass 1: Blazing-fast dynamic state name discovery...`);
     
-    execFile(CONFIG.MODEL.EXEC_BINARY, execArgs, { maxBuffer: 1024 * 1024 * 100 }, (error, stdout, stderr) => {
-      if (fs.existsSync(promptTmpPath)) fs.unlinkSync(promptTmpPath);
+    // Execute Pass 1 to discover state names
+    execFile(CONFIG.MODEL.EXEC_BINARY, execArgsPass1, { maxBuffer: 1024 * 1024 * 50 }, (error, stdout, stderr) => {
+      if (fs.existsSync(promptTmpPath1)) fs.unlinkSync(promptTmpPath1);
       if (error) return callback(error, null);
-      callback(null, finalTargetFilePath);
+
+      let discoveredStatesMap = {};
+      try {
+        // Strip any accidental text wrapping the model might output
+        const jsonStart = stdout.indexOf('{');
+        const jsonEnd = stdout.lastIndexOf('}') + 1;
+        discoveredStatesMap = JSON.parse(stdout.slice(jsonStart, jsonEnd));
+      } catch (parseErr) {
+        console.warn("⚠️ Pass 1 JSON parsing split-edge warning, recovering via fallback maps.");
+        discoveredStatesMap = {};
+      }
+
+      // ------------------------------------------------------------------------
+      // PASS 2: DETERMINISTIC BLUEPRINT SERIALIZATION
+      // ------------------------------------------------------------------------
+      let structuralPayload = "";
+      const businessLayersMap = new Map();
+      
+      Object.keys(compiledJsonLedger).forEach(key => {
+        const entityData = compiledJsonLedger[key];
+        const context = this.vectorIndex.get(key);
+        if (!context) return;
+
+        const contextualGroupName = context.chronology.groupLayerName || "Operational Specification Layers";
+        if (!businessLayersMap.has(contextualGroupName)) {
+          businessLayersMap.set(contextualGroupName, []);
+        }
+        businessLayersMap.get(contextualGroupName).push({ entityData, context });
+      });
+
+      businessLayersMap.forEach((assetsList, structuralLayerHeader) => {
+        structuralPayload += `\n# TARGET_LAYER: "${structuralLayerHeader}"\n\n`;
+        
+        assetsList.forEach(({ entityData }) => {
+          // Pull the dynamically generated states from our Pass 1 Map
+          const assignedStates = discoveredStatesMap[entityData.entity] || ["STAGED", "PROCESSING", "FINALIZED"];
+          
+          structuralPayload += `* **${entityData.entity}**\n`;
+          structuralPayload += `  [OBJECT_CONTEXT_START]\n`;
+          structuralPayload += `  - Operational Context: ${entityData.timelineContext} handling ${entityData.activityContext}.\n`;
+          structuralPayload += `  - Active Guardrails: ${JSON.stringify(entityData.guardrails)}\n`;
+          structuralPayload += `  [OBJECT_CONTEXT_END]\n`;
+          
+          // Print out the exact skeletal states for the model to define
+          assignedStates.forEach(state => {
+            structuralPayload += `  * \`• \${state}\`: [WRITE_DEFINITION_FOR_${state}]\n`;
+          });
+          structuralPayload += `\n`;
+        });
+      });
+
+      const pass2Prompt = `[SYSTEM INTERFACE: COMPILER TIER]
+You are an enterprise architecture blueprint engine. Your task is to fill out definitions inside the provided blueprint text.
+
+[MUTATION INSTRUCTIONS]
+1. Replace '# TARGET_LAYER: "LAYER_NAME"' with a corporate group header, prepending a highly relevant visual theme emoji matching the scope.
+2. Locate each tag formatted like '[WRITE_DEFINITION_FOR_STATE]'. Replace that specific token with a single high-fidelity corporate description sentence explaining how that specific state operates under the provided '[OBJECT_CONTEXT_START]' parameters.
+3. Clean the blueprint: Remove all '[OBJECT_CONTEXT_START]' and '[OBJECT_CONTEXT_END]' tags and their interior contents from the final output file.
+4. Do not alter, rearrange, or delete any markdown bullet indents, bold markings, or state names.
+
+[TARGET SOURCE TEXT]
+${structuralPayload}`;
+
+      fs.writeFileSync(promptTmpPath2, pass2Prompt, 'utf8');
+
+      const execArgsPass2 = [
+        '-hf', CONFIG.MODEL.IDENTIFIER,
+        '-ngl', CONFIG.MODEL.NGL,
+        '--single-turn',
+        '-c', '8048', 
+        '-b', CONFIG.MODEL.BATCH_SIZE, 
+        '-t', CONFIG.MODEL.THREADS,     
+        '--reasoning', CONFIG.MODEL.REASONING_MODE,
+        '--log-disable', 
+        '-n', CONFIG.MODEL.MAX_TOKENS,
+        '-f', promptTmpPath2, 
+        '-o', finalTargetFilePath 
+      ];
+
+      console.log(`🚀 Running Pass 2: Generating definitions for discovered states...`);
+      
+      execFile(CONFIG.MODEL.EXEC_BINARY, execArgsPass2, { maxBuffer: 1024 * 1024 * 100 }, (err2, stdout2, stderr2) => {
+        if (fs.existsSync(promptTmpPath2)) fs.unlinkSync(promptTmpPath2);
+        if (err2) return callback(err2, null);
+        callback(null, finalTargetFilePath);
+      });
     });
   }
+
+
+
 }
 /**
  * ============================================================================
@@ -269,6 +361,25 @@ const objectsMatrixContent = fs.readFileSync(objectsFilePath, 'utf8');
 const actorsMatrixContent = fs.readFileSync(actorsFilePath, 'utf8');
 const journeysMatrixContent = fs.readFileSync(journeysFilePath, 'utf8');
 const topologyGraphContent = fs.readFileSync(topologyFilePath, 'utf8');
+
+
+const interim =objectsMatrixContent.split('===')[1]
+const match = interim.match(/domain\s*:\s*(?<domain>.*?)\s*and\s*niche\s*:\s*(?<niche>.*?)\s*$/);
+
+if (match && match.groups) {
+  const domainName = match.groups.domain.trim();
+  const nicheName = match.groups.niche.trim();
+
+  CONFIG.DOMAIN_CONTEXT = {
+    NAME: domainName,
+    NICHE: nicheName
+  };
+
+  
+  
+  // Output: Hyperlocal Grocery Delivery
+}
+
 
 const cleanJsonArray1 = JSON.parse(objectsMatrixContent.slice(objectsMatrixContent.lastIndexOf('===') + 3).trim());
 const cleanJsonArray2 = JSON.parse(actorsMatrixContent.slice(actorsMatrixContent.lastIndexOf('===') + 3).trim());
