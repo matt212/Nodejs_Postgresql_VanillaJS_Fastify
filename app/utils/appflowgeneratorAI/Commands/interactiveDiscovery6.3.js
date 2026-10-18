@@ -638,9 +638,251 @@ function formatPromptInput(value) {
 // ${JSON.stringify(base.topologyGraphContent)}
 // `;
 
+
+// const pass1Prompt = `
+// You are a Business Process Terminology Specialist for a
+// domain-agnostic business process and swimlane generator.
+
+// TASK
+// Rewrite supplied generic technical behavior into realistic,
+// context-specific business process terminology.
+
+// For each supplied issue:
+// 1. Identify the exact affected node or nodes.
+// 2. Inspect each node's actual business purpose, actor, business
+//    object, connected steps, and existing field content.
+// 3. Determine what the behavior means in that specific business step.
+// 4. Replace generic technical wording with a concise, realistic
+//    business action appropriate to that step.
+// 5. For soft-failure issues, interpret the stated failure condition
+//    using the validation gate, business step, and remediation/retry
+//    transitions. Recommend a context-specific corrective action
+//    that addresses the discrepancy before the step is retried.   
+// 6. If the source does not establish the correct behavior, recommend
+//    an industry-practice alternative without presenting it as fact.
+// 7. Return the exact replacement text for the affected node and field.
+
+// ANALYSIS RULES
+// - Use KNOWN ISSUES TO REPHRASE to identify the supplied issue
+//   and its intended target nodes.
+// - Use GENERATED SWIMLANE / TOPOLOGY as the primary source for
+//   each node's actual content, purpose, and connections.
+// - Use BUSINESS OBJECTS, ACTOR RESPONSIBILITIES, and
+//   ACTOR-BASED BUSINESS JOURNEYS as supporting context.
+// - Analyze every affected node independently. The same generic
+//   phrase may require different replacements in different steps.
+// - Preserve the underlying business intent where it can be
+//   established from the source.
+// - Replace generic technical boilerplate with a specific business
+//   action only when that action is supported by the source or is
+//   clearly identified as an industry-practice recommendation.
+// - Do not assume that a phrase mentioning cache, defaults, retry,
+//   rollback, restoration, compensation, or allocation describes
+//   the correct business behavior.
+// - Do not invent addresses, cart snapshots, payment methods,
+//   reservations, approval processes, manual-review queues, teams,
+//   policies, business rules, or outcomes that the source does not
+//   establish.
+// - Do not infer that a previous state exists or should be restored
+//   unless the source supports that conclusion.
+// - Do not add a new actor, business object, process step, or
+//   transition merely to make a recommendation sound realistic.
+// - Do not use vague replacements such as "handle the error",
+//   "process the failure", or "apply appropriate recovery".
+// - Do not use implementation terminology in the replacement unless
+//   the target field genuinely requires technical behavior.
+// - Distinguish SOURCE_EVIDENCE from INDUSTRY_PRACTICE.
+// - If several business outcomes are plausible and the source does
+//   not establish which one applies, do not arbitrarily select one.
+//   Return clarification_needed explaining the missing decision.
+// - If no reliable replacement can be established, retain the
+//   original content and explain why clarification is required.
+// - Do not rewrite the entire swimlane. Only propose replacements
+//   for the supplied issue's exact target nodes and fields.
+// - Do not claim that any proposed replacement has already been
+//   applied.
+// - For "on soft fail state discrepancy trigger auto-remediation loop",
+//   treat "State Discrepancy" as the observed failure condition and
+//   the auto-remediation loop and retry edge as the existing recovery
+//   structure. Infer what business state or information needs to be
+//   corrected or verified for each affected step. Do not merely
+//   rename the discrepancy or repeat "trigger auto-remediation loop".
+// - Before generating replacement_content, independently determine the
+//   business action that should occur. Do not derive the proposed action
+//   from the wording of the original generic behavior. Use the original
+//   wording only to identify what needs review.
+
+
+// STRICT EVIDENCE AND REPLACEMENT RULES
+
+// - The source establishes the existing process context, not necessarily
+//   the correct alternate-path or hard-failure behavior.
+// - Generate replacement_content yourself. It is expected to contain
+//   new business terminology and behavior that may not appear verbatim
+//   anywhere in the source.
+// - Use the domain, business niche, business objects, actor
+//   responsibilities, business journeys, target step, and connected
+//   steps to determine an appropriate replacement.
+// - Prefer behavior supported by the source. When the source does not
+//   define the required behavior, use established industry practice
+//   to recommend a sensible, context-specific alternative.
+// - Mark a replacement SOURCE_EVIDENCE only when its substantive
+//   behavior is supported by the supplied artifacts.
+// - Mark a newly recommended behavior INDUSTRY_PRACTICE when it goes
+//   beyond what the source establishes.
+
+// - Do not invent supporting capabilities and present them as existing
+//   facts. The original generic behavior is the behavior being
+//   evaluated, not evidence that its underlying mechanism is valid.
+
+// - Do not preserve the original behavior by merely renaming it.
+//   For example, replacing "Apply Cached Profile Defaults" with
+//   "Restore User Profile from Last Valid Session" is not an adequate
+//   correction because it retains the same unsupported cached-state
+//   assumption.
+
+// - Do not default to cached data, previous sessions, saved state,
+//   historical values, defaults, or restoration merely because these
+//   mechanisms appear in the original label or seem convenient.
+
+// - For each alternate-path node, independently interpret the observed
+//   failure condition using the parent business step, validation gate,
+//   business object, actor responsibilities, and connected transitions.
+//   Determine what business condition must be corrected or verified
+//   before the original step can succeed.
+
+// - For the soft-failure issue "State Discrepancy", use the topology's
+//   failure condition, auto-remediation loop, and retry destination
+//   together. Infer the business meaning of the discrepancy separately
+//   for each affected step. Do not merely repeat the failure condition
+//   or rename the generic remediation loop.
+
+// - Generate a business-specific corrective action that addresses
+//   the inferred discrepancy. Do not assume the exact cause of the
+//   discrepancy is known when the source does not establish it.
+
+// - For hard failures, infer the appropriate business rejection or
+//   termination outcome. Recommend reversal, rollback, release, or
+//   compensation only when justified by the actual business effects.
+
+// - Do not invent supporting mechanisms, stored data, actors, policies,
+//   process steps, or transitions to make a recommendation possible.
+//   If the recommended action depends on an unestablished capability,
+//   prefer a viable alternative that does not depend on that capability,
+//   or explicitly identify the prerequisite.
+
+// - Do not treat user convenience or service continuity alone as
+//   justification for using potentially stale business data.
+
+// - If several materially different business actions remain plausible,
+//   choose the best-supported recommendation when possible and disclose
+//   its material assumption. Request clarification only when the missing
+//   decision materially prevents a defensible recommendation.
+
+
+// ALTERNATE-PATH DECISION TEST
+
+// Before accepting a proposed replacement, evaluate it against
+// these questions:
+
+// 1. Does it address the observed failure condition in the context
+//    of the specific business step?
+// 2. Does it enable the original business step to be retried safely,
+//    where retry is the existing transition?
+// 3. Does it depend on an unverified capability, historical state,
+//    cached data, or an assumed business outcome?
+// 4. Is it materially different from the original generic behavior,
+//    rather than a renamed version of the same mechanism?
+
+// Reject a proposed replacement that fails these tests and generate
+// a better-supported alternative.
+
+// Do not assume that every discrepancy has the same cause or that
+// every alternate path should use the same recovery strategy.
+// Do not select an action merely because it is technically possible.
+// Prefer the action that best fits the business purpose and available
+// process evidence.
+
+// The original behavior must not determine the replacement decision.
+// Use it only to locate the behavior requiring review.
+
+
+// NODE AND FIELD RULES
+// - Return one replacement for each exact affected node and field.
+// - Use the actual node ID from the topology. Never invent an ID.
+// - Use the actual target field specified by the issue.
+// - Copy existing_content from that node's actual target field.
+// - replacement_content must contain only the proposed field value,
+//   not an explanation or a description of the recommendation.
+// - If one issue affects three nodes, inspect and return three
+//   separate replacements when all three nodes exist.
+// - Do not combine multiple node IDs into a single replacement.
+// - Do not return unchanged fields or modify unrelated nodes.
+
+// DOMAIN:
+// ${JSON.stringify(CONFIG.DOMAIN_CONTEXT.NAME)}
+
+// BUSINESS NICHE:
+// ${JSON.stringify(CONFIG.DOMAIN_CONTEXT.NICHE)}
+
+// KNOWN ISSUES TO REPHRASE:
+// ${JSON.stringify(knownIssues)}
+
+// BUSINESS OBJECTS:
+// ${JSON.stringify(base.business_obj)}
+
+// ACTOR RESPONSIBILITIES, ROLES AND AUTHORIZATIONS:
+// ${JSON.stringify(base.actors_resp)}
+
+// ACTOR-BASED BUSINESS JOURNEYS:
+// ${JSON.stringify(base.actorsjourney)}
+
+// GENERATED SWIMLANE / TOPOLOGY:
+// ${JSON.stringify(base.topologyGraphContent)}
+
+// OUTPUT
+// Return valid JSON only. Do not include Markdown or text outside
+// the JSON object.
+
+// {
+//   "replacements": [
+//     {
+//       "original_issue": "",
+//       "node_id": "",
+//       "field": "",
+//       "existing_content": "",
+//       "replacement_content": "",
+//       "basis": "SOURCE_EVIDENCE",
+//       "assumptions": [],
+//       "clarification_needed": null
+//     }
+//   ]
+// }
+
+// OUTPUT RULES
+// - Return replacements in the same order as the supplied issues,
+//   preserving the listed node order within each issue.
+// - Use only node IDs and fields found in the supplied source.
+// - basis must be SOURCE_EVIDENCE or INDUSTRY_PRACTICE.
+// - Use SOURCE_EVIDENCE when the replacement follows from the
+//   supplied business process artifacts.
+// - Use INDUSTRY_PRACTICE only when the source does not define the
+//   behavior and a recommendation is being made.
+// - List material assumptions explicitly. Use an empty array when
+//   none are required.
+// - Use clarification_needed as null when the replacement is
+//   sufficiently supported. Otherwise, state the specific business
+//   decision or missing evidence needed.
+// - Never invent missing source content. If a node or field cannot
+//   be found, return an empty replacement_content and explain the
+//   problem in clarification_needed.
+// - Keep replacement_content concise, business-oriented, and
+//   suitable for direct use in the target swimlane field.
+// `;
 const knownIssues = [
   "each step alternate hit is always apply cache profile defaults",
-  "on multiple hard fail reverse system allocation state"
+  "on multiple hard fail reverse system allocation state",
+  "on soft fail state discrepancy trigger auto-remediation loop"
 ];
 
 const pass1Prompt = `
@@ -648,109 +890,86 @@ You are a Business Process Terminology Specialist for a
 domain-agnostic business process and swimlane generator.
 
 TASK
-Rewrite supplied generic technical behavior into realistic,
-context-specific business process terminology.
+Review each supplied issue and recommend concise, realistic
+business-process wording for the affected swimlane node(s).
 
-For each supplied issue:
-1. Identify the exact affected node or nodes.
-2. Inspect each node's actual business purpose, actor, business
-   object, connected steps, and existing field content.
-3. Determine what the behavior means in that specific business step.
-4. Replace generic technical wording with a concise, realistic
-   business action appropriate to that step.
-5. If the source does not establish the correct behavior, recommend
-   an industry-practice alternative without presenting it as fact.
-6. Return the exact replacement text for the affected node and field.
+Use the supplied domain, business niche, business objects,
+actor responsibilities, actor journeys, and topology together.
 
-ANALYSIS RULES
-- Use KNOWN ISSUES TO REPHRASE to identify the supplied issue
-  and its intended target nodes.
-- Use GENERATED SWIMLANE / TOPOLOGY as the primary source for
-  each node's actual content, purpose, and connections.
-- Use BUSINESS OBJECTS, ACTOR RESPONSIBILITIES, and
-  ACTOR-BASED BUSINESS JOURNEYS as supporting context.
-- Analyze every affected node independently. The same generic
-  phrase may require different replacements in different steps.
-- Preserve the underlying business intent where it can be
-  established from the source.
-- Replace generic technical boilerplate with a specific business
-  action only when that action is supported by the source or is
-  clearly identified as an industry-practice recommendation.
-- Do not assume that a phrase mentioning cache, defaults, retry,
-  rollback, restoration, compensation, or allocation describes
-  the correct business behavior.
-- Do not invent addresses, cart snapshots, payment methods,
-  reservations, approval processes, manual-review queues, teams,
-  policies, business rules, or outcomes that the source does not
-  establish.
-- Do not infer that a previous state exists or should be restored
-  unless the source supports that conclusion.
-- Do not add a new actor, business object, process step, or
-  transition merely to make a recommendation sound realistic.
-- Do not use vague replacements such as "handle the error",
-  "process the failure", or "apply appropriate recovery".
-- Do not use implementation terminology in the replacement unless
-  the target field genuinely requires technical behavior.
-- Distinguish SOURCE_EVIDENCE from INDUSTRY_PRACTICE.
-- If several business outcomes are plausible and the source does
-  not establish which one applies, do not arbitrarily select one.
-  Return clarification_needed explaining the missing decision.
-- If no reliable replacement can be established, retain the
-  original content and explain why clarification is required.
-- Do not rewrite the entire swimlane. Only propose replacements
-  for the supplied issue's exact target nodes and fields.
-- Do not claim that any proposed replacement has already been
-  applied.
+For each issue:
+1. Identify the exact affected node(s) and field(s).
+2. Understand each node's business purpose, associated object,
+   actor, validation gate, and connected transitions.
+3. Determine the most appropriate business action for that
+   specific node, using the available context.
+4. Return the exact replacement field value.
 
+DECISION RULES
 
-STRICT EVIDENCE AND REPLACEMENT RULES
+1. Treat the topology as evidence of the current process structure.
+   Use business objects, actor responsibilities, and journeys
+   to interpret the business meaning of each step.
 
-- The source establishes the existing process context, not necessarily
-  the correct alternate-path or hard-failure behavior.
-- Generate replacement_content yourself. It is expected to contain
-  new business terminology and behavior that may not appear verbatim
-  anywhere in the source.
-- Use the domain, business niche, business objects, actor
-  responsibilities, business journeys, target step, and connected
-  steps to determine an appropriate replacement.
-- Prefer behavior supported by the source. When the source does not
-  define the required behavior, use established industry practice
-  to recommend a sensible, context-specific alternative.
-- Mark a replacement SOURCE_EVIDENCE only when its substantive
-  behavior is supported by the supplied artifacts.
-- Mark a newly recommended behavior INDUSTRY_PRACTICE when it goes
-  beyond what the source establishes.
-- Do not invent supporting capabilities and then present them as
-  existing facts. For example, do not assume historical delivery
-  zones, saved inventory snapshots, payment authorization contexts,
-  manual-review queues, or recovery mechanisms exist.
-- You may recommend such a capability only when it is appropriate
-  for the business step. State the necessary assumption and ensure
-  the replacement does not misleadingly imply that the capability
-  already exists.
-- Do not simply rename a technical phrase while preserving an
-  unsupported behavior. Determine what the alternate path should
-  accomplish in the actual business process.
-- If several materially different behaviors are plausible and the
-  available context cannot justify selecting one, return an empty
-  replacement_content and explain the unresolved decision in
-  clarification_needed.
-- Preserve the exact target field specified by the issue. Do not
-  substitute a node label for an alternate-path or hard-failure field.
-- Copy existing_content exactly from the target node and field.
-  Generate replacement_content independently.
+2. Analyze every affected node independently. The same generic
+   issue can require different corrective actions at different
+   steps. Do not reuse one replacement merely because the
+   original labels are identical.
+
+3. The original label identifies what needs review; it does not
+   determine the replacement. Do not merely rename or paraphrase
+   the original mechanism.
+
+4. Do not automatically recommend cached data, saved defaults,
+   previous sessions, historical values, restoration, rollback,
+   or retry as the corrective action. Recommend these only when
+   the supplied context supports them.
+
+5. For a soft failure, interpret the stated condition
+   "State Discrepancy" in the context of the affected business
+   object, validation gate, and existing remediation/retry loop.
+   Recommend a business action that addresses the inconsistency
+   before the original step is retried.
+
+6. Do not assume the exact cause of a discrepancy when it is
+   not specified. Infer the most appropriate corrective action
+   from the available business context without inventing details.
+
+7. For a hard failure, recommend an appropriate business outcome
+   based on the failed step and process context. Reverse,
+   release, cancel, or compensate for system state only when
+   justified. Do not blindly reuse a generic rollback action.
+
+8. Prefer a concrete business action over vague wording such as
+   "resolve issue", "handle error", or "process exception".
+
+9. Do not invent actors, policies, permissions, data, stored
+   state, capabilities, business outcomes, or process steps.
+   A plausible industry-practice recommendation is allowed when
+   the source does not establish the behavior, but do not present
+   that recommendation as an existing system capability.
+
+10. When several actions are plausible, choose the best-supported
+    recommendation. Identify any material assumption. Request
+    clarification only when no defensible recommendation can be
+    selected from the available context.
+
+11. Before accepting a replacement, check that it:
+    - Addresses the issue in the specific business context.
+    - Fits the existing process transitions.
+    - Does not depend on unsupported data or capabilities.
+    - Is a meaningful corrective action, not a renamed original.
 
 NODE AND FIELD RULES
-- Return one replacement for each exact affected node and field.
-- Use the actual node ID from the topology. Never invent an ID.
-- Use the actual target field specified by the issue.
-- Copy existing_content from that node's actual target field.
-- replacement_content must contain only the proposed field value,
-  not an explanation or a description of the recommendation.
-- If one issue affects three nodes, inspect and return three
-  separate replacements when all three nodes exist.
-- Do not combine multiple node IDs into a single replacement.
-- Do not return unchanged fields or modify unrelated nodes.
+
+- Return one replacement per affected node and field.
+- Use only actual node IDs and fields present in the topology.
+- Copy existing_content exactly from the affected field.
+- Do not modify unrelated nodes or fields.
+- Keep replacement_content concise and suitable for a swimlane.
+- If a node or field cannot be identified, use an empty
+  replacement_content and explain the missing information.
+
+INPUT
 
 DOMAIN:
 ${JSON.stringify(CONFIG.DOMAIN_CONTEXT.NAME)}
@@ -758,7 +977,7 @@ ${JSON.stringify(CONFIG.DOMAIN_CONTEXT.NAME)}
 BUSINESS NICHE:
 ${JSON.stringify(CONFIG.DOMAIN_CONTEXT.NICHE)}
 
-KNOWN ISSUES TO REPHRASE:
+KNOWN ISSUES:
 ${JSON.stringify(knownIssues)}
 
 BUSINESS OBJECTS:
@@ -774,7 +993,8 @@ GENERATED SWIMLANE / TOPOLOGY:
 ${JSON.stringify(base.topologyGraphContent)}
 
 OUTPUT
-Return valid JSON only. Do not include Markdown or text outside
+
+Return valid JSON only. No Markdown or explanatory text outside
 the JSON object.
 
 {
@@ -785,32 +1005,26 @@ the JSON object.
       "field": "",
       "existing_content": "",
       "replacement_content": "",
-      "basis": "SOURCE_EVIDENCE",
+      "basis": "INDUSTRY_PRACTICE",
       "assumptions": [],
       "clarification_needed": null
     }
   ]
 }
 
-OUTPUT RULES
-- Return replacements in the same order as the supplied issues,
-  preserving the listed node order within each issue.
-- Use only node IDs and fields found in the supplied source.
+OUTPUT REQUIREMENTS
+
+- Preserve the order of the supplied issues and affected nodes.
 - basis must be SOURCE_EVIDENCE or INDUSTRY_PRACTICE.
-- Use SOURCE_EVIDENCE when the replacement follows from the
-  supplied business process artifacts.
-- Use INDUSTRY_PRACTICE only when the source does not define the
-  behavior and a recommendation is being made.
-- List material assumptions explicitly. Use an empty array when
-  none are required.
-- Use clarification_needed as null when the replacement is
-  sufficiently supported. Otherwise, state the specific business
-  decision or missing evidence needed.
-- Never invent missing source content. If a node or field cannot
-  be found, return an empty replacement_content and explain the
-  problem in clarification_needed.
-- Keep replacement_content concise, business-oriented, and
-  suitable for direct use in the target swimlane field.
+- Use SOURCE_EVIDENCE only when the supplied artifacts support
+  the recommended behavior.
+- Use INDUSTRY_PRACTICE when recommending behavior not explicitly
+  established by the source.
+- List material assumptions; otherwise use an empty array.
+- Use clarification_needed: null when no clarification is needed.
+- Never claim an assumption is an established fact.
+- Return the replacement field value, not an explanation,
+  inside replacement_content.
 `;
 
 
@@ -830,7 +1044,7 @@ OUTPUT RULES
       '-t', CONFIG.MODEL.THREADS,     
       '--reasoning', CONFIG.MODEL.REASONING_MODE,
       '--log-disable', 
-      '-n', '4096',
+      '-n', CONFIG.MODEL.MAX_TOKENS,
       '-f', promptTmpPath1,
        '-o', finalTargetFilePath 
     ];
