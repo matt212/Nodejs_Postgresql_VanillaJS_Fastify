@@ -961,7 +961,6 @@ DECISION RULES
     - Is a meaningful corrective action, not a renamed original.
     - Verifies that the exact substring up to the closing bracket \`]\` from existing_content is copied without modification as the prefix of replacement_content.
 
-
 NODE AND FIELD RULES
 
 - Return one replacement per affected node and field.
@@ -1009,9 +1008,6 @@ the JSON object.
       "field": "",
       "existing_content": "",
       "replacement_content": "",
-      "basis": "INDUSTRY_PRACTICE",
-      "assumptions": [],
-      "clarification_needed": null
     }
   ]
 }
