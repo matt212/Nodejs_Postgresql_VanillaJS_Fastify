@@ -1218,9 +1218,9 @@ const formattedDate = `${dd}-${mm}-${yy}_${hrsStr}_${min}`;
 // EXECUTION CALL INTERFACE (100% PURE SEPARATION):
 // ============================================================================
 let base = {
-    a: 'app/utils/appflowgeneratorAI/aiOutput/1-Final-Objects-for-Quick Commerce (Q-Commerce)_and_(Hyperlocal Grocery Delivery_2026-10-03T18-42-31-031Z.txt',
-    b: 'app/utils/appflowgeneratorAI/aiOutput/2.Final-Actors-for-Quick Commerce (Q-Commerce)_and_Hyperlocal Grocery Delivery_2026-10-03T19-22-16-404Z.txt',
-    c: 'app/utils/appflowgeneratorAI/aiOutput/3.Final-End-to-End-Actor-Journeys-2026-10-03T20-54-21-571Z.txt'
+    a: 'app/utils/appflowgeneratorAI/aiOutput/baseline/1-Final-Objects-for-Quick Commerce (Q-Commerce)_and_(Hyperlocal Grocery Delivery_2026-10-03T18-42-31-031Z.txt',
+    b: 'app/utils/appflowgeneratorAI/aiOutput/baseline/2.Final-Actors-for-Quick Commerce (Q-Commerce)_and_Hyperlocal Grocery Delivery_2026-10-03T19-22-16-404Z.txt',
+    c: 'app/utils/appflowgeneratorAI/aiOutput/baseline/3.Final-End-to-End-Actor-Journeys-2026-10-03T20-54-21-571Z.txt'
 };
 
 generateDeterministicBusinessFlowchart(base.a, base.b, base.c);
