@@ -27,7 +27,8 @@ let CONFIG = {
     STAGE_1_OBJECTS: "1-Final-Objects-",
     STAGE_2_ACTORS: "2.Final-Actors-",
     STAGE_3_JOURNEYS: "3.Final-End-to-End-Actor-Journeys-",
-    STAGE_4_TOPOLOGY: "6.swimlane_systems_architecture_map_14-10-26_04_09", 
+   // STAGE_4_TOPOLOGY: "6.swimlane_systems_architecture_map_14-10-26_04_09", 
+    STAGE_4_TOPOLOGY:"6.swimlane_systems_architecture_map_18-10-26_07_17",
     FILE_EXTENSION: ".txt"
   }
 };
