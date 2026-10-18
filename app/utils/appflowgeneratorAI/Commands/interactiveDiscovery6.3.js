@@ -959,6 +959,8 @@ DECISION RULES
     - Fits the existing process transitions.
     - Does not depend on unsupported data or capabilities.
     - Is a meaningful corrective action, not a renamed original.
+    - Verifies that the exact substring up to the closing bracket \`]\` from existing_content is copied without modification as the prefix of replacement_content.
+
 
 NODE AND FIELD RULES
 
@@ -967,8 +969,9 @@ NODE AND FIELD RULES
 - Copy existing_content exactly from the affected field.
 - Do not modify unrelated nodes or fields.
 - Keep replacement_content concise and suitable for a swimlane.
-- If a node or field cannot be identified, use an empty
-  replacement_content and explain the missing information.
+- You MUST extract the exact prefix from the beginning of existing_content up to and including the closing bracket (e.g., "🛑 [Step 5.1.3 Rollback]") and prepend it directly to your new business action inside replacement_content.
+- Do NOT alter the emojis, step numbers, hierarchy depth, or bracketed wording during extraction. Keep that prefix completely identical to how it appears in existing_content.
+
 
 INPUT
 
@@ -1139,6 +1142,10 @@ generateSemanticBlueprintAI(base, finalOutputPath, (err, targetSavedPath) => {
     console.error("❌ CRITICAL_INFERENCE_ERROR: GGUF pipeline compilation failed:", err);
     process.exit(1);
   }
+  let base = {
+    a: targetSavedPath,
+}
+loadclean(base);
   console.log(`\n🎉 SUCCESS: Dynamic Business Lifecycle Specification compiled and saved via local 9B GGUF to: ${targetSavedPath}`);
 });
 
@@ -1150,4 +1157,63 @@ function resolveLatestStageFile(directory, prefixPattern) {
 
   matchedFiles.sort((a, b) => fs.statSync(path.join(directory, b)).mtimeMs - fs.statSync(path.join(directory, a)).mtimeMs);
   return path.join(directory, matchedFiles[0]);
+}
+
+function loadclean(base) {
+    let CONFIG1 = {
+        PATHS: {
+            PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
+            OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/',
+        }
+    }
+
+    function extractAfterLastAssistant(rawContent) {
+        const marker = "Assistant:";
+        const lastIndex = rawContent.lastIndexOf(marker);
+        // If the marker isn't found at all, return an empty string or handle gracefully
+        if (lastIndex === -1) {
+            return "";
+        }
+        // Slice everything after the marker index + the length of "Assistant:"
+        return rawContent.slice(lastIndex + marker.length).trim();
+    }
+    const extract = (filePath) => {
+        const raw = fs.readFileSync(filePath, 'utf8');
+        return raw.trim();
+    };
+    const objectsData = extract(base.a);
+    let interim = JSON.parse(extractAfterLastAssistant(objectsData)).replacements
+    //console.log(interim)
+    const contentChanges = interim.map(item => {
+        const match = item.existing_content.match(/\[Step\s([\d.]+)/);
+        const step = match ? match[1] : null;
+        return {
+            step,
+            from: item.existing_content,
+            to: item.replacement_content,
+            statement: `UPDATE NODE Step ${step} TO "${item.replacement_content}"`,
+        };
+    });
+    const finalScript = contentChanges.map(item => item.statement).join('\n')
+    console.log(finalScript);
+    const now = new Date();
+    // 1. Extract date components (DD-MM-YY)
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    // 2. Extract 12-hour time components (HH:MMam/pm)
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Formats 0 to 12
+    const formattedHours = String(hours).padStart(2, '0');
+    // 3. Assemble with dashes and colons intact
+    const timestamp = `${day}-${month}-${year}_${formattedHours}:${minutes}${ampm}`;
+    // Result Example: "13-10-26_07:57pm"
+    const outputFileName = `clean6.3.1_cleanup_${timestamp}.md`;
+    const OUTPUT_DIR = path.join(CONFIG1.PATHS.PROJECT_ROOT, CONFIG1.PATHS.OUTPUT_RELATIVE_DIR);
+    const outputFilePath = path.join(OUTPUT_DIR, outputFileName);
+    // 7. Commit write configuration array output directly onto physical hardware disk
+    fs.writeFileSync(outputFilePath, finalScript, 'utf8');
 }
