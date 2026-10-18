@@ -1016,12 +1016,6 @@ OUTPUT REQUIREMENTS
 
 - Preserve the order of the supplied issues and affected nodes.
 - basis must be SOURCE_EVIDENCE or INDUSTRY_PRACTICE.
-- Use SOURCE_EVIDENCE only when the supplied artifacts support
-  the recommended behavior.
-- Use INDUSTRY_PRACTICE when recommending behavior not explicitly
-  established by the source.
-- List material assumptions; otherwise use an empty array.
-- Use clarification_needed: null when no clarification is needed.
 - Never claim an assumption is an established fact.
 - Return the replacement field value, not an explanation,
   inside replacement_content.
