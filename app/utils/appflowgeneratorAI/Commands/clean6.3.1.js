@@ -6,7 +6,8 @@ const path = require('path');
 let base = {
     a: 'app/utils/appflowgeneratorAI/aiOutput/8.6.3.Final-System-Architecture-Blueprint-Graph-.18-10-26_07:20pm.md',
 }
-loadclean(base);
+//loadclean(base);
+getmermaidcontent()
 function loadclean(base) {
     let CONFIG1 = {
         PATHS: {
@@ -66,3 +67,81 @@ function loadclean(base) {
    fs.writeFileSync(outputFilePath, finalScript, 'utf8');
 }
  
+
+function getmermaidcontent()
+{
+    let CONFIG1 = {
+        PATHS: {
+            PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
+            OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/',
+        }
+    }
+   let  STAGE_4_TOPOLOGY="6.swimlane_systems_architecture_map_18-10-26_07_17.md";
+    let OUTPUT_DIR = path.join(CONFIG1.PATHS.PROJECT_ROOT, CONFIG1.PATHS.OUTPUT_RELATIVE_DIR);
+    let outputFilePath = path.join(OUTPUT_DIR+"/baseline/", STAGE_4_TOPOLOGY);
+    console.log(outputFilePath)
+    let  objectsMatrixContent = fs.readFileSync(outputFilePath, 'utf8');
+     //console.log(objectsMatrixContent)
+     extractcontent(objectsMatrixContent)
+}
+
+function extractcontent(objectsMatrixContent)
+{
+    const mermaidContent = objectsMatrixContent
+
+    function extractNodesWithoutRegex(text) {
+    const lines = text.split('\n');
+    const results = [];
+    
+    // The specific node suffixes we want to look for
+    const targets = ['_alternate_path', '_degraded_alert', '_reject_scenario'];
+
+    for (let line of lines) {
+        line = line.trim();
+        
+        // Find if the current line contains one of our target node types
+        const matchedSuffix = targets.find(suffix => line.includes(suffix));
+        
+        // Skip lines that don't match or lines that are path definitions (containing arrows)
+        if (!matchedSuffix || line.includes('-->') || line.includes('.-.')) {
+            continue;
+        }
+
+        // Split by the opening character of the label block
+        let openChar = '';
+        if (line.includes('["')) openChar = '["';
+        else if (line.includes('("')) openChar = '("';
+        else if (line.includes('{"')) openChar = '{"';
+        
+        if (!openChar) continue;
+
+        const parts = line.split(openChar);
+        if (parts.length < 2) continue;
+
+        // Clean up the Node ID
+        const nodeId = parts[0].trim();
+
+        // Clean up the text content by removing the closing bracket/parenthesis/quotes
+        let content = parts[1].trim();
+        content = content.replace(/["'\])}]+\$/, ''); // Simple end-of-string character cleanup
+
+         while (content.endsWith('"') || content.endsWith(']') || content.endsWith(')') || content.endsWith('}')) {
+            content = content.slice(0, -1);
+        }
+
+        results.push({
+            node_id: nodeId,
+            existing_content: content
+        });
+    }
+
+    return results;
+    }
+
+// Execute Extraction
+    const extractedNodes = extractNodesWithoutRegex(mermaidContent);
+
+// Print Output
+     console.log(JSON.stringify({ existing_content: extractedNodes }, null, 2));
+
+}
