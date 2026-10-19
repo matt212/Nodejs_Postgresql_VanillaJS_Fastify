@@ -165,9 +165,9 @@ Target Engine: unsloth/Qwen3.5-9B-GGUF (Optimized context-matrix scanning).
 CRITICAL EXECUTION & FULL-COVERAGE BOUNDS
 ================================================================================
 - You are provided a full reference map in GENERATED SWIMLANE / TOPOLOGY STRING. Use this ONLY as structural context evidence to see how paths connect.
-- You are provided an array of exactly ${base.topologyExistingPreciseContent.length} specific elements needing updates inside TARGETS TO FIX.
+- You are provided an array of exactly ${JSON.parse(base.topologyExistingPreciseContent).existing_content.length} specific elements needing updates inside TARGETS TO FIX.
 - You MUST evaluate and return a replacement object for EVERY SINGLE element listed inside TARGETS TO FIX.
-- Your final "replacements" array MUST contain exactly ${base.topologyExistingPreciseContent.length} JSON objects matching the input array order. Truncating, skipping, or leaving out any target is a total execution failure.
+- Your final "replacements" array MUST contain exactly ${JSON.parse(base.topologyExistingPreciseContent).existing_content.length} JSON objects matching the input array order. Truncating, skipping, or leaving out any target is a total execution failure.
 
 ================================================================================
 STRICT TERMINOLOGY DECISION RULES
@@ -179,7 +179,8 @@ STRICT TERMINOLOGY DECISION RULES
 5. SOFT FAILURE RESOLUTION: For "Fault Isolation" or soft-fail loop steps, trace the upstream data validation rules in the topology context. Recommend a concrete business correction that resolves the inconsistency before the process loops back to the original step.
 6. HARD FAILURE OUTCOMES: For "Rollback" steps, recommend a localized, clear business termination outcome based on the failed phase. Reverse or cancel system states only in a way that makes business sense for that precise process step.
 7. BE CONCRETE: Avoid vague engineering terms like "resolve issue", "handle error", or "process exception". Use concrete, production-ready operational business phrases.
-8. NO DATA FABRICATION: Do not invent actors, policies, permissions, data, stored state, capabilities, business outcomes, or process steps. Industry-standard terminology may be used to flesh out context, but never present it as an existing system feature if undocumented.
+9. METADATA-Grounded INDUSTRY ALIGNMENT PATTERNS: For every node with an "_alternate_path" suffix, you MUST formulate a distinct operational fallback phrase. Analyze the specific "input", "activity", and "output" fields inside the "AVAILABLE BUSINESS OBJECT METADATA" array matching that step. Cross-reference this payload against standard, proven industry-niche practices for "${CONFIG.DOMAIN_CONTEXT.NAME} (${CONFIG.DOMAIN_CONTEXT.NICHE})". You are strictly FORBIDDEN from using developer code jargon (e.g., "parse", "payload") or fabricating cross-session database tracking engines . Instead, determine the real-world operational pattern used when primary verification fails 
+9. NO DATA FABRICATION: Do not invent actors, policies, permissions, data, stored state, capabilities, business outcomes, or process steps. Industry-standard terminology may be used to flesh out context, but never present it as an existing system feature if undocumented.
 
 ================================================================================
 NODE MAPPING & EXTRACTOR RULES
@@ -195,20 +196,11 @@ ${CONFIG.DOMAIN_CONTEXT.NAME}
 BUSINESS NICHE:
 ${CONFIG.DOMAIN_CONTEXT.NICHE}
 
-AVAILABLE BUSINESS OBJECT METADATA:
-${JSON.stringify(base.business_obj)}
-
-ACTOR RESPONSIBILITIES & AUTHORIZATIONS:
-${JSON.stringify(base.actors_resp)}
-
-ACTOR-BASED BUSINESS JOURNEYS:
-${JSON.stringify(base.actorsjourney)}
-
 GENERATED SWIMLANE / TOPOLOGY STRING (Reference Context Only - Do Not Modify Directly):
-${JSON.stringify(base.topologyGraphContent)}
+${base.topologyGraphContent}
 
-TARGETS TO FIX (Update and Output Exactly These ${base.topologyExistingPreciseContent.length} Items):
-${JSON.stringify(base.topologyExistingPreciseContent)}
+TARGETS TO FIX (Update and Output Exactly These ${JSON.parse(base.topologyExistingPreciseContent).existing_content.length} Items):
+${base.topologyExistingPreciseContent}
 
 ================================================================================
 OUTPUT SCHEMA REQUIREMENTS
@@ -228,6 +220,7 @@ OUTPUT SCHEMA REQUIREMENTS
   ]
 }
 `;
+
 
 
 
