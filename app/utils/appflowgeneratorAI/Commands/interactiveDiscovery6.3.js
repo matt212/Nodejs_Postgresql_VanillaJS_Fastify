@@ -17,6 +17,7 @@ let CONFIG = {
   MODEL: {
     EXEC_BINARY: 'llama-cli',
     IDENTIFIER: 'unsloth/Qwen3.5-9B-GGUF',
+    //IDENTIFIER: 'unsloth/Qwen3.5-9B-MTP-GGUF',
     NGL: '0',
     MAX_TOKENS: '8048',         
     BATCH_SIZE: '2048', 
@@ -159,7 +160,7 @@ const knownIssues = [
 let alternateCount=2;
 const pass1Prompt = `
 You are a Business Process Terminology Specialist specializing in deep structural mapping for a domain-agnostic business process and swimlane generator.
-Target Engine: unsloth/Qwen3.5-9B-GGUF (Optimized context-matrix scanning).
+Target Engine: unsloth/Qwen3.5-9B-MTP-GGUF (Optimized context-matrix scanning).
 
 ================================================================================
 CRITICAL EXECUTION & FULL-COVERAGE BOUNDS
