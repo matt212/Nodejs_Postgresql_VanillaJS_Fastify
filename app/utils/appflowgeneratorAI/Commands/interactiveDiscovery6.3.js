@@ -179,8 +179,10 @@ STRICT TERMINOLOGY DECISION RULES
 5. SOFT FAILURE RESOLUTION: For "Fault Isolation" or soft-fail loop steps, trace the upstream data validation rules in the topology context. Recommend a concrete business correction that resolves the inconsistency before the process loops back to the original step.
 6. HARD FAILURE OUTCOMES: For "Rollback" steps, recommend a localized, clear business termination outcome based on the failed phase. Reverse or cancel system states only in a way that makes business sense for that precise process step.
 7. BE CONCRETE: Avoid vague engineering terms like "resolve issue", "handle error", or "process exception". Use concrete, production-ready operational business phrases.
-9. METADATA-Grounded INDUSTRY ALIGNMENT PATTERNS: For every node with an "_alternate_path" suffix, you MUST formulate a distinct operational fallback phrase. Analyze the specific "input", "activity", and "output" fields inside the "AVAILABLE BUSINESS OBJECT METADATA" array matching that step. Cross-reference this payload against standard, proven industry-niche practices for "${CONFIG.DOMAIN_CONTEXT.NAME} (${CONFIG.DOMAIN_CONTEXT.NICHE})" and do not create new entity feature and functionality . You are strictly FORBIDDEN from using developer code jargon (e.g., "parse", "payload") or fabricating cross-session database tracking engines . Instead, determine the real-world operational pattern used when primary verification fails 
-9. NO DATA FABRICATION: Do not invent actors, policies, permissions, data, stored state, capabilities, business outcomes, or process steps. Industry-standard terminology may be used to flesh out context, but never present it as an existing system feature if undocumented.
+8. METADATA-DRIVEN MULTI-ALTERNATIVE SYNTHESIS: For every node with an "_alternate_path" suffix, you MUST analyze the specific "input", "activity", and "output" fields inside the "AVAILABLE BUSINESS OBJECT METADATA" array matching that step. Cross-reference this payload against standard, proven industry practices for "${CONFIG.DOMAIN_CONTEXT.NAME} (${CONFIG.DOMAIN_CONTEXT.NICHE})" without assuming new system infrastructure features or backend functionalities. You are strictly FORBIDDEN from using developer code jargon (like "parse", "payload") or fabricating cross-session database tracking engines. Instead, you MUST dynamically synthesize exactly 1 to 2 distinct, stateless operational alternate choices based on real-world industry standards for that specific data object. Every single option must remain strictly bounded to the core activity of the current node, operate entirely within the current transaction lifecycle, and be formatted cleanly inside the "alternative_options" array.
+9. METADATA-DRIVEN REMEDIATION LOOP SYNTHESIS: For every node with a "_degraded_alert" suffix, you MUST analyze the matching object's fields in the "AVAILABLE BUSINESS OBJECT METADATA". Cross-reference this against standard industry practices for "${CONFIG.DOMAIN_CONTEXT.NAME} (${CONFIG.DOMAIN_CONTEXT.NICHE})" without fabricating background database memory. Dynamically synthesize exactly 1 to 2 distinct, stateless operational remediation choices. Select the single best business fallback strategy to populate "replacement_content", and populate the remaining clean options inside the "alternative_options" array.
+10. METADATA-DRIVEN ROLLBACK OUTCOME SYNTHESIS: For every node with a "_reject_scenario" suffix, you MUST analyze the matching object's fields in the "AVAILABLE BUSINESS OBJECT METADATA". Cross-reference this against standard industry termination patterns for "${CONFIG.DOMAIN_CONTEXT.NAME} (${CONFIG.DOMAIN_CONTEXT.NICHE})" without assuming unstated infrastructure capabilities. Dynamically synthesize exactly 1 to 2 distinct, functional rollback or cancellation choices. Select the best business outcome to populate "replacement_content", and format all 3 to 4 clean variations inside the "alternative_options" array.
+11. NO DATA FABRICATION: Do not invent actors, policies, permissions, data, stored state, capabilities, business outcomes, or process steps. Industry-standard terminology may be used to flesh out context, but never present it as an existing system feature if undocumented.
 
 ================================================================================
 NODE MAPPING & EXTRACTOR RULES
@@ -195,6 +197,10 @@ ${CONFIG.DOMAIN_CONTEXT.NAME}
 
 BUSINESS NICHE:
 ${CONFIG.DOMAIN_CONTEXT.NICHE}
+
+
+AVAILABLE BUSINESS OBJECT METADATA:
+${JSON.stringify(base.business_obj)}
 
 GENERATED SWIMLANE / TOPOLOGY STRING (Reference Context Only - Do Not Modify Directly):
 ${base.topologyGraphContent}
@@ -216,7 +222,12 @@ OUTPUT SCHEMA REQUIREMENTS
       "field": "label",
       "existing_content": "EXACT_EXISTING_CONTENT_FROM_TARGETS_TO_FIX",
       "replacement_content": "EXTRACTED_PREFIX_INCLUDING_BRACKET Your Tailored Business Process Action Phrase"
-    }
+    "alternative_options": [
+        "EXTRACTED_PREFIX_INCLUDING_BRACKET Stateless Industry Alternative Option 1",
+        "EXTRACTED_PREFIX_INCLUDING_BRACKET Stateless Industry Alternative Option 2",
+      ]
+
+      }
   ]
 }
 `;
@@ -253,7 +264,7 @@ OUTPUT SCHEMA REQUIREMENTS
        
         callback(null, finalTargetFilePath);
       } catch (parseErr) {
-        console.warn("⚠️ JSON Extraction raw block mismatch, utilizing programmatic safety fallbacks.");
+        console.warn("⚠️ JSON Extraction raw block mismatch, utilizing programmatic safety fallbacks."+parseErr);
         discoveredStatesMap = {};
       }
 
