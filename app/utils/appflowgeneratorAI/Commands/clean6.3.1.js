@@ -108,7 +108,7 @@ function loadcleanAlternative_options(base) {
        
     const bracketIndex = item.existing_content.indexOf(']');
     if (bracketIndex !== -1) {
-      prefix = item.existing_content.substring(0, bracketIndex + 1).trim() + "\n";
+      prefix = item.existing_content.substring(0, bracketIndex + 1).trim() + " ";
     }
         const allChoices = [];
     if (item.replacement_content) {
@@ -120,7 +120,7 @@ function loadcleanAlternative_options(base) {
         allChoices.push(`${idx + 2}.${cleanPhrase(opt)}`);
       });
     }
-const compositeReplacementText = `${prefix}${allChoices.join('\n')}`;
+const compositeReplacementText = `${prefix}${allChoices.join('\\n')}`;
         return {
             step,
             from: item.existing_content,
@@ -164,10 +164,10 @@ function getmermaidcontent()
    let  STAGE_4_TOPOLOGY="6.swimlane_systems_architecture_map_18-10-26_07_17.md";
     let OUTPUT_DIR = path.join(CONFIG1.PATHS.PROJECT_ROOT, CONFIG1.PATHS.OUTPUT_RELATIVE_DIR);
     let outputFilePath = path.join(OUTPUT_DIR+"/baseline/", STAGE_4_TOPOLOGY);
-    console.log(outputFilePath)
+    //console.log(outputFilePath)
     let  objectsMatrixContent = fs.readFileSync(outputFilePath, 'utf8');
      //console.log(objectsMatrixContent)
-     extractcontent(objectsMatrixContent)
+  //   extractcontent(objectsMatrixContent)
 }
 
 function extractcontent(objectsMatrixContent)
