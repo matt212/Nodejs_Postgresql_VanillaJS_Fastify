@@ -1879,7 +1879,10 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
             }
             // --- PROCESS 5: UPDATE NODE TEXT ---
                         // --- PROCESS 5: UPDATE NODE TEXT ---
-            const matchUpdateNode = cmd.match(/^UPDATE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._\s-]+)\s+TO\s+["'](.*?)["']/i);
+            //const matchUpdateNode = cmd.match(/^UPDATE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._\s-]+)\s+TO\s+["'](.*?)["']/i);
+            // Replace your old regex line with this version:
+            const matchUpdateNode = cmd.match(/^UPDATE\s+NODE\s+(?:Step\s+)?([a-zA-Z0-9._\s-]+?)\s+TO\s+["']([^"'\n]+)/i);
+
             if (matchUpdateNode) {
                 console.group(`📝 [NODE OPTIMIZER] Processing UPDATE NODE Command`);
                 const [_, targetIdent, newFullLabel] = matchUpdateNode;
@@ -1913,38 +1916,66 @@ function executeMasterZeroReloadPipeline(rawInputText, currentCode) {
                 }
                 
                 // --- STEP 2: CODE DATA MODEL SYNC ---
-                const regexNode = new RegExp(`\\b(${targetNodeId})\\s*([\\[\\(\\{"']+.*?[\\s\\S]*?[\\]\\)\\}'"]+)`, 'g');
-                if (regexNode.test(workingCode)) {
-                    console.log(`💾 [SYNC SEQUENCE] Target identifier matched inside text data model configuration arrays.`);
-                    workingCode = workingCode.replace(regexNode, (m, id, wrappers) => {
-                        let op = '[', cl = ']';
-                        if (wrappers.includes('((')) {
-                            op = '(('; cl = '))';
-                        } else if (wrappers.includes('([')) {
-                            op = '(['; cl = '])';
-                        } else if (wrappers.includes('[[')) {
-                            op = '[['; cl = ']]';
-                        } else if (wrappers.includes('[(')) {
-                            op = '[('; cl = ')]';
-                        } else if (wrappers.includes('>')) {
-                            op = '>'; cl = ']';
-                        } else if (wrappers.includes('{{')) {
-                            op = '{{'; cl = '}}';
-                        } else if (wrappers.includes('[\\')) {
-                            op = '[\\'; cl = '/]';
-                        } else if (wrappers.includes('[/')) {
-                            op = '[/'; cl = '\\]';
-                        } else if (wrappers.includes('{')) {
-                            op = '{'; cl = '}';
-                        }
-                        const generatedModelString = `${id}${op}"${newFullLabel}"${cl}`;
-                        console.log(`📝 [SYNC SUCCESS] Replaced markdown layout strings with wrappers: "${wrappers}" ====> -> "${generatedModelString}"`);
-                        return generatedModelString;
-                    });
-                    hasChanges = true;
-                } else {
-                    console.error(`❌ [SYNC FAILURE] Could not find the declaration row for node variable key "${targetNodeId}" inside workingCode source metadata strings.`);
-                }
+                // const regexNode = new RegExp(`\\b(${targetNodeId})\\s*([\\[\\(\\{"']+.*?[\\s\\S]*?[\\]\\)\\}'"]+)`, 'g');
+                // if (regexNode.test(workingCode)) {
+                //     console.log(`💾 [SYNC SEQUENCE] Target identifier matched inside text data model configuration arrays.`);
+                //     workingCode = workingCode.replace(regexNode, (m, id, wrappers) => {
+                //         let op = '[', cl = ']';
+                //         if (wrappers.includes('((')) {
+                //             op = '(('; cl = '))';
+                //         } else if (wrappers.includes('([')) {
+                //             op = '(['; cl = '])';
+                //         } else if (wrappers.includes('[[')) {
+                //             op = '[['; cl = ']]';
+                //         } else if (wrappers.includes('[(')) {
+                //             op = '[('; cl = ')]';
+                //         } else if (wrappers.includes('>')) {
+                //             op = '>'; cl = ']';
+                //         } else if (wrappers.includes('{{')) {
+                //             op = '{{'; cl = '}}';
+                //         } else if (wrappers.includes('[\\')) {
+                //             op = '[\\'; cl = '/]';
+                //         } else if (wrappers.includes('[/')) {
+                //             op = '[/'; cl = '\\]';
+                //         } else if (wrappers.includes('{')) {
+                //             op = '{'; cl = '}';
+                //         }
+                //         const generatedModelString = `${id}${op}"${newFullLabel}"${cl}`;
+                //         console.log(`📝 [SYNC SUCCESS] Replaced markdown layout strings with wrappers: "${wrappers}" ====> -> "${generatedModelString}"`);
+                //         return generatedModelString;
+                //     });
+                //     hasChanges = true;
+                // } else {
+                //     console.error(`❌ [SYNC FAILURE] Could not find the declaration row for node variable key "${targetNodeId}" inside workingCode source metadata strings.`);
+                // }
+                // --- STEP 2: CODE DATA MODEL SYNC ---
+// This sdsd pattern matches the ID and greedily grabs everything up to the absolute end of the brackets on that line
+const regexNode = new RegExp(`\\b(${targetNodeId})\\s*([\\[\\(\\>\\{\\"\\'].+[\\]\\)\\}\\"\\']+)`, '');
+
+if (regexNode.test(workingCode)) {
+    console.log(`💾 [SYNC SEQUENCE] Target identifier matched inside text data model configuration arrays.`);
+    
+    workingCode = workingCode.replace(regexNode, (m, id, wrappers) => {
+        let op = '[', cl = ']';
+        if (wrappers.startsWith('((')) { op = '(('; cl = '))'; }
+        else if (wrappers.startsWith('([')) { op = '(['; cl = '])'; }
+        else if (wrappers.startsWith('[[')) { op = '[['; cl = ']]'; }
+        else if (wrappers.startsWith('[(')) { op = '[('; cl = ')]'; }
+        else if (wrappers.startsWith('>'))  { op = '>'; cl = ']'; }
+        else if (wrappers.startsWith('{{')) { op = '{{'; cl = '}}'; }
+        else if (wrappers.startsWith('[\\')) { op = '[\\'; cl = '/]'; }
+        else if (wrappers.startsWith('[/')) { op = '[/'; cl = '\\]'; }
+        else if (wrappers.startsWith('{'))  { op = '{'; cl = '}'; }
+        
+        const generatedModelString = `${id}${op}"${newFullLabel}"${cl}`;
+        console.log(`📝 [SYNC SUCCESS] Safely replaced entire markdown line layout.`);
+        return generatedModelString;
+    });
+    hasChanges = true;
+} else {
+    console.error(`❌ [SYNC FAILURE] Could not find the declaration row for node variable key "${targetNodeId}" inside workingCode source metadata strings.`);
+}
+
                 console.groupEnd();
                 continue;
             }

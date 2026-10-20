@@ -4,9 +4,11 @@ const path = require('path');
 
 
 let base = {
-    a: 'app/utils/appflowgeneratorAI/aiOutput/8.6.3.Final-System-Architecture-Blueprint-Graph-.18-10-26_07:20pm.md',
+    a: 'app/utils/appflowgeneratorAI/aiOutput/8.6.3.Final-System-Architecture-Blueprint-Graph-.20-10-26_02:54pm.md',
+    
 }
 //loadclean(base);
+loadcleanAlternative_options(base)
 getmermaidcontent()
 function loadclean(base) {
     let CONFIG1 = {
@@ -67,6 +69,89 @@ function loadclean(base) {
    fs.writeFileSync(outputFilePath, finalScript, 'utf8');
 }
  
+
+
+function loadcleanAlternative_options(base) {
+    let CONFIG1 = {
+        PATHS: {
+            PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
+            OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/',
+        }
+    }
+
+    function extractAfterLastAssistant(rawContent) {
+        const marker = "Assistant:";
+        const lastIndex = rawContent.lastIndexOf(marker);
+        // If the marker isn't found at all, return an empty string or handle gracefully
+        if (lastIndex === -1) {
+            return "";
+        }
+        // Slice everything after the marker index + the length of "Assistant:"
+        return rawContent.slice(lastIndex + marker.length).trim();
+    }
+    const extract = (filePath) => {
+        const raw = fs.readFileSync(filePath, 'utf8');
+        return raw.trim();
+    };
+    // 2. Helper to strip the bracket prefix from generated items to avoid repeating the emoji and step number
+    const cleanPhrase = (text) => {
+      const idx = text.indexOf(']');
+      return idx !== -1 ? text.substring(idx + 1).trim() : text.trim();
+    };
+    const objectsData = extract(base.a);
+    let interim = JSON.parse(extractAfterLastAssistant(objectsData)).replacements
+    //console.log(interim)
+     let prefix = "";
+    const contentChanges = interim.map(item => {
+        const match = item.existing_content.match(/\[Step\s([\d.]+)/);
+        const step = match ? match[1] : null;
+       
+    const bracketIndex = item.existing_content.indexOf(']');
+    if (bracketIndex !== -1) {
+      prefix = item.existing_content.substring(0, bracketIndex + 1).trim() + "\n";
+    }
+        const allChoices = [];
+    if (item.replacement_content) {
+      allChoices.push(`1.${cleanPhrase(item.replacement_content)}`);
+    }
+
+    if (item.alternative_options && Array.isArray(item.alternative_options)) {
+      item.alternative_options.forEach((opt, idx) => {
+        allChoices.push(`${idx + 2}.${cleanPhrase(opt)}`);
+      });
+    }
+const compositeReplacementText = `${prefix}${allChoices.join('\n')}`;
+        return {
+            step,
+            from: item.existing_content,
+            to: item.replacement_content,
+            statement: `UPDATE NODE Step ${step} TO  "${compositeReplacementText}"`,
+        };
+    });
+    const finalScript = contentChanges.map(item => item.statement).join('\n')
+    console.log(finalScript);
+    const now = new Date();
+    // 1. Extract date components (DD-MM-YY)
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = String(now.getFullYear()).slice(-2);
+    // 2. Extract 12-hour time components (HH:MMam/pm)
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Formats 0 to 12
+    const formattedHours = String(hours).padStart(2, '0');
+    // 3. Assemble with dashes and colons intact
+    const timestamp = `${day}-${month}-${year}_${formattedHours}:${minutes}${ampm}`;
+    // Result Example: "13-10-26_07:57pm"
+    const outputFileName = `clean6.3.1_Alternate_${timestamp}.md`;
+    const OUTPUT_DIR = path.join(CONFIG1.PATHS.PROJECT_ROOT, CONFIG1.PATHS.OUTPUT_RELATIVE_DIR);
+    const outputFilePath = path.join(OUTPUT_DIR, outputFileName);
+    // 7. Commit write configuration array output directly onto physical hardware disk
+   fs.writeFileSync(outputFilePath, finalScript, 'utf8');
+}
+
 
 function getmermaidcontent()
 {
