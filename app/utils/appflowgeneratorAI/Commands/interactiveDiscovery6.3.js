@@ -16,8 +16,8 @@ let CONFIG = {
   },
   MODEL: {
     EXEC_BINARY: 'llama-cli',
-    IDENTIFIER: 'unsloth/Qwen3.5-9B-GGUF',
-    //IDENTIFIER: 'unsloth/Qwen3.5-9B-MTP-GGUF',
+    //IDENTIFIER: 'unsloth/Qwen3.5-9B-GGUF',
+    IDENTIFIER: 'unsloth/Qwen3.5-9B-MTP-GGUF',
     NGL: '0',
     MAX_TOKENS: '8048',         
     BATCH_SIZE: '2048', 

@@ -1,7 +1,6 @@
-User:
 
 You are a Business Process Terminology Specialist specializing in deep structural mapping for a domain-agnostic business process and swimlane generator.
-Target Engine: unsloth/Qwen3.5-9B-GGUF (Optimized context-matrix scanning).
+Target Engine: unsloth/Qwen3.5-9B-MTP-GGUF (Optimized context-matrix scanning).
 
 ================================================================================
 CRITICAL EXECUTION & FULL-COVERAGE BOUNDS
@@ -220,6 +219,3 @@ OUTPUT SCHEMA REQUIREMENTS
       }
   ]
 }
-
-Assistant:
-
