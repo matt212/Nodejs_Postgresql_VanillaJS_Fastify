@@ -95,32 +95,30 @@ function loadcleanAlternative_options(base) {
     };
     // 2. Helper to strip the bracket prefix from generated items to avoid repeating the emoji and step number
     const cleanPhrase = (text) => {
-      const idx = text.indexOf(']');
-      return idx !== -1 ? text.substring(idx + 1).trim() : text.trim();
+        const idx = text.indexOf(']');
+        return idx !== -1 ? text.substring(idx + 1).trim() : text.trim();
     };
     const objectsData = extract(base.a);
     let interim = JSON.parse(extractAfterLastAssistant(objectsData)).replacements
     //console.log(interim)
-     let prefix = "";
+    let prefix = "";
     const contentChanges = interim.map(item => {
         const match = item.existing_content.match(/\[Step\s([\d.]+)/);
         const step = match ? match[1] : null;
-       
-    const bracketIndex = item.existing_content.indexOf(']');
-    if (bracketIndex !== -1) {
-      prefix = item.existing_content.substring(0, bracketIndex + 1).trim() + " ";
-    }
+        const bracketIndex = item.existing_content.indexOf(']');
+        if (bracketIndex !== -1) {
+            prefix = item.existing_content.substring(0, bracketIndex + 1).trim() + " ";
+        }
         const allChoices = [];
-    if (item.replacement_content) {
-      allChoices.push(`1.${cleanPhrase(item.replacement_content)}`);
-    }
-
-    if (item.alternative_options && Array.isArray(item.alternative_options)) {
-      item.alternative_options.forEach((opt, idx) => {
-        allChoices.push(`${idx + 2}.${cleanPhrase(opt)}`);
-      });
-    }
-const compositeReplacementText = `${prefix}${allChoices.join('\\n')}`;
+        if (item.replacement_content) {
+            allChoices.push(`1.${cleanPhrase(item.replacement_content)}`);
+        }
+        if (item.alternative_options && Array.isArray(item.alternative_options)) {
+            item.alternative_options.forEach((opt, idx) => {
+                allChoices.push(`${idx + 2}.${cleanPhrase(opt)}`);
+            });
+        }
+        const compositeReplacementText = `${prefix}${allChoices.join('\\n')}`;
         return {
             step,
             from: item.existing_content,
@@ -149,7 +147,7 @@ const compositeReplacementText = `${prefix}${allChoices.join('\\n')}`;
     const OUTPUT_DIR = path.join(CONFIG1.PATHS.PROJECT_ROOT, CONFIG1.PATHS.OUTPUT_RELATIVE_DIR);
     const outputFilePath = path.join(OUTPUT_DIR, outputFileName);
     // 7. Commit write configuration array output directly onto physical hardware disk
-   fs.writeFileSync(outputFilePath, finalScript, 'utf8');
+    fs.writeFileSync(outputFilePath, finalScript, 'utf8');
 }
 
 
