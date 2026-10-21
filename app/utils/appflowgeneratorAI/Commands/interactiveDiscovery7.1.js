@@ -823,36 +823,35 @@ function analyzeBusinessProcess(
   // business-object name appears in BOTH pieces of evidence.
   // Object overlap alone never proves an activity match.
   const getExplicitObjectOverlap = (
-    clause,
-    nodeLabel,
-    journeyObject = ""
-  ) => {
-    const clauseText = ` ${normalize(clause)} `;
-    const nodeText = ` ${normalize(nodeLabel)} `;
+  clause,
+  nodeLabel,
+  journeyObjects = []
+) => {
+  const clauseText = ` ${normalize(clause)} `;
+  const nodeText = ` ${normalize(nodeLabel)} `;
 
-    const candidateObjects = new Set(objectNames);
+  const candidateObjects = new Set([
+    ...objectNames,
+    ...(Array.isArray(journeyObjects)
+      ? journeyObjects.map(normalize)
+      : [])
+  ]);
 
-    if (journeyObject) {
-      candidateObjects.add(normalize(journeyObject));
+  for (const objectName of candidateObjects) {
+    if (!objectName || objectName.length < 3) continue;
+
+    const normalizedObject = ` ${normalize(objectName)} `;
+
+    if (
+      clauseText.includes(normalizedObject) &&
+      nodeText.includes(normalizedObject)
+    ) {
+      return normalize(objectName);
     }
+  }
 
-    for (const objectName of candidateObjects) {
-      if (!objectName || objectName.length < 3) {
-        continue;
-      }
-
-      const normalizedObject = ` ${objectName} `;
-
-      if (
-        clauseText.includes(normalizedObject) &&
-        nodeText.includes(normalizedObject)
-      ) {
-        return objectName;
-      }
-    }
-
-    return null;
-  };
+  return null;
+};
 
   // Initial thresholds for evaluation, not universal truths.
   // Tune them after reviewing the generated findings.
@@ -897,7 +896,7 @@ function analyzeBusinessProcess(
         const objectOverlap = getExplicitObjectOverlap(
           clause,
           node.label,
-          journey.object
+          journey.objects
         );
 
         const acceptedByText =
