@@ -805,19 +805,24 @@ function analyzeBusinessProcess(
   // Jaccard similarity: shared meaningful tokens divided
   // by the total distinct meaningful tokens.
   const similarity = (left, right) => {
-    const a = tokenSet(left);
-    const b = tokenSet(right);
+  const a = tokenSet(left);
+  const b = tokenSet(right);
 
-    if (!a.size || !b.size) return 0;
+  if (!a.size || !b.size) return 0;
 
-    const intersection = [...a].filter(
-      token => b.has(token)
-    ).length;
+  const intersection = [...a].filter(
+    token => b.has(token)
+  ).length;
 
-    const union = new Set([...a, ...b]).size;
+  const union = new Set([...a, ...b]).size;
+  const jaccard = intersection / union;
 
-    return union ? intersection / union : 0;
-  };
+  // Measures how much of the shorter description
+  // is covered by the longer description.
+  const overlap = intersection / Math.min(a.size, b.size);
+
+  return (0.6 * overlap) + (0.4 * jaccard);
+};
 
   // An object supports a match only when the same declared
   // business-object name appears in BOTH pieces of evidence.
