@@ -941,27 +941,36 @@ function analyzeBusinessProcess(
       // Keep the closest candidate for diagnostics only.
       if (!bestCandidate) {
         addFinding(
-          "JOURNEY_ACTION_NOT_MATCHED_TO_SWIMLANE",
-          "REVIEW",
-          `Journey clause '${clause}' has no Mermaid node that meets the matching evidence threshold. The closest candidate, if any, is diagnostic only.`,
-          [journey.sourcePath],
-          {
-            action: journey.action,
-            clause,
-            actor: journey.actor || null,
-            businessObject: journey.objects || [],
-            closestNode:
-              bestDiagnostic?.node.label ?? null,
-            closestNodeId:
-              bestDiagnostic?.node.id ?? null,
-            similarity: Number(
-              (bestDiagnostic?.textScore ?? 0).toFixed(3)
-            ),
-            possibleObjectOverlap:
-              bestDiagnostic?.objectOverlap ?? null,
-            possibleGap: false
-          }
-        );
+  "UNRESOLVED_JOURNEY_CLAUSE_CORRESPONDENCE",
+  "REVIEW",
+  `No Mermaid node could be linked confidently to journey clause '${clause}'. This is an unresolved correspondence, not proof that a business activity is missing.`,
+  [journey.sourcePath],
+  {
+    action: journey.action,
+    clause,
+    actor: journey.actor || null,
+    businessObjects: journey.objects || [],
+
+    candidateStatus: "UNRESOLVED",
+
+    closestCandidate: bestDiagnostic
+      ? {
+          nodeId: bestDiagnostic.node.id,
+          nodeLabel: bestDiagnostic.node.label,
+          textSimilarity: Number(
+            bestDiagnostic.textScore.toFixed(3)
+          ),
+          explicitObjectOverlap:
+            bestDiagnostic.objectOverlap
+        }
+      : null,
+
+    interpretation:
+      "The available evidence did not establish a sufficiently strong correspondence. Human review is required.",
+
+    missingActivityConfirmed: false
+  }
+);
 
         continue;
       }
@@ -994,6 +1003,7 @@ function analyzeBusinessProcess(
                 objectOverlap:
                   candidate.objectOverlap
               })),
+              candidateStatus: "AMBIGUOUS",
             possibleGap: false
           }
         );
