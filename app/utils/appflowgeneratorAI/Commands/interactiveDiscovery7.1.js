@@ -915,66 +915,181 @@ function analyzeBusinessProcess(
   // 9. Match journey actions to Mermaid nodes
   // ----------------------------------------------------------
 
-  const tokenSet = value =>
-    new Set(
-      normalize(value)
-        .split(" ")
-        .filter(token => token.length > 2)
-    );
+  
+  // ----------------------------------------------------------
+  // 9. Match journey narratives to Mermaid nodes
+  // ----------------------------------------------------------
 
+  // Ignore common words that add little meaning to activity matching.
+  const stopWords = new Set([
+    "the", "and", "for", "with", "from", "into", "onto",
+    "via", "its", "their", "this", "that", "then", "than",
+    "has", "have", "had", "are", "was", "were", "been",
+    "being", "is", "be", "as", "at", "by", "of", "to",
+    "a", "an", "in", "on", "or", "it", "which", "against",
+    "system", "outputs", "output", "input", "performs",
+    "perform", "executes", "execute", "initiates", "initiate"
+  ]);
+
+  const getMeaningfulTokens = value =>
+    normalize(value)
+      .split(" ")
+      .filter(token =>
+        token.length > 2 && !stopWords.has(token)
+      );
+
+  // Dice similarity is less punitive than Jaccard when one
+  // description contains additional context.
   const similarity = (left, right) => {
-    const a = tokenSet(left);
-    const b = tokenSet(right);
+    const a = new Set(getMeaningfulTokens(left));
+    const b = new Set(getMeaningfulTokens(right));
 
     if (!a.size || !b.size) return 0;
 
-    const intersection = [...a].filter(
-      token => b.has(token)
-    ).length;
+    let intersection = 0;
 
-    const union = new Set([...a, ...b]).size;
-
-    return intersection / union;
-  };
-
-  for (const journey of journeyActions) {
-    let bestMatch = null;
-    let bestScore = 0;
-
-    for (const node of mermaidNodes.values()) {
-      const score = similarity(
-        journey.action,
-        node.label
-      );
-
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = node;
-      }
+    for (const token of a) {
+      if (b.has(token)) intersection++;
     }
 
-    if (!bestMatch || bestScore < 0.45) {
-      addFinding(
-        "JOURNEY_ACTION_NOT_MATCHED_TO_SWIMLANE",
-        "REVIEW",
-        `Journey action '${journey.action}' has no sufficiently similar Mermaid node.`,
-        [journey.sourcePath],
-        {
-          action: journey.action,
-          closestNode: bestMatch?.label ?? null,
-          similarity: Number(bestScore.toFixed(2))
+    return (2 * intersection) / (a.size + b.size);
+  };
+
+  // Split each milestone narrative into smaller activity clauses.
+  // Keep the original milestone as the evidence source.
+  const splitIntoClauses = value =>
+    String(value ?? "")
+      .split(/[;]+/)
+      .map(clause => clause.trim())
+      .filter(clause => clause.length > 0);
+
+  const isExceptionDescription = value =>
+    /\b(alternate|alternative|retry|retrying|rollback|roll back|fault|failure|failed|reject|rejection|terminate|cancel|compensat|remediat)\b/i
+      .test(value);
+
+  const isExceptionNode = value =>
+    /\b(alternate|fault isolation|rollback|reject scenario|degraded|retry event|terminate session)\b/i
+      .test(value);
+
+  const MIN_MATCH_SCORE = 0.45;
+  const AMBIGUITY_GAP = 0.08;
+
+  for (const journey of journeyActions) {
+    const clauses = splitIntoClauses(journey.action);
+    const acceptedMatches = [];
+
+    for (const clause of clauses) {
+      const exceptionClause = isExceptionDescription(clause);
+      const candidates = [];
+
+      for (const node of mermaidNodes.values()) {
+        // Do not match ordinary business activities to
+        // exception/rollback nodes unless the clause describes
+        // an exception itself.
+        if (
+          isExceptionNode(node.label) &&
+          !exceptionClause
+        ) {
+          continue;
         }
+
+        const score = similarity(clause, node.label);
+
+        candidates.push({
+          node,
+          score
+        });
+      }
+
+      candidates.sort((a, b) => b.score - a.score);
+
+      const best = candidates[0];
+      const second = candidates[1];
+
+      if (!best || best.score < MIN_MATCH_SCORE) {
+        addFinding(
+          "JOURNEY_CLAUSE_NOT_MATCHED",
+          "REVIEW",
+          `No sufficiently strong Mermaid match found for journey clause: '${clause}'.`,
+          [journey.sourcePath],
+          {
+            journeyActionId: journey.id,
+            fullJourneyNarrative: journey.action,
+            clause,
+            closestNode: best?.node.label ?? null,
+            similarity: Number((best?.score ?? 0).toFixed(2))
+          }
+        );
+
+        continue;
+      }
+
+      // If two candidates are nearly tied, do not silently
+      // treat the highest score as a confirmed match.
+      if (
+        second &&
+        second.score >= MIN_MATCH_SCORE &&
+        best.score - second.score < AMBIGUITY_GAP
+      ) {
+        addFinding(
+          "AMBIGUOUS_JOURNEY_CLAUSE_MATCH",
+          "REVIEW",
+          `Multiple Mermaid nodes are similarly plausible for clause: '${clause}'.`,
+          [journey.sourcePath, best.node.line, second.node.line],
+          {
+            journeyActionId: journey.id,
+            clause,
+            candidates: [
+              {
+                nodeId: best.node.id,
+                label: best.node.label,
+                similarity: Number(best.score.toFixed(2))
+              },
+              {
+                nodeId: second.node.id,
+                label: second.node.label,
+                similarity: Number(second.score.toFixed(2))
+              }
+            ]
+          }
+        );
+
+        continue;
+      }
+
+      // This is a candidate correspondence based on text,
+      // not proof of semantic equivalence.
+      addEdge(
+        journey.id,
+        `mermaid:${best.node.id}`,
+        "CANDIDATE_CORRESPONDS_TO",
+        "crossSourceMatch",
+        JSON.stringify({
+          journeySource: journey.sourcePath,
+          clause,
+          mermaidSource: best.node.line,
+          similarity: Number(best.score.toFixed(2))
+        })
       );
-    }else {
-  addEdge(
-    journey.id,
-    `mermaid:${bestMatch.id}`,
-    "CORRESPONDS_TO",
-    "crossSourceMatch",
-    `${journey.sourcePath} -> ${bestMatch.line}`
-  );
-}
+
+      acceptedMatches.push({
+        clause,
+        mermaidNodeId: best.node.id,
+        mermaidLabel: best.node.label,
+        score: Number(best.score.toFixed(2))
+      });
+    }
+
+    // Record match coverage on the journey action node.
+    if (graph.nodes[journey.id]) {
+      graph.nodes[journey.id].attributes.matching = {
+        clauseCount: clauses.length,
+        candidateMatchCount: acceptedMatches.length,
+        matches: acceptedMatches
+      };
+    }
   }
+
 
   // ----------------------------------------------------------
   // 10. Review unclassified swimlanes
