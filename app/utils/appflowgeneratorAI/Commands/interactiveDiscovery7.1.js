@@ -770,6 +770,11 @@ function analyzeBusinessProcess(
 
   // These are generic language indicators, not domain-specific
   // business activities or an expected-activity checklist.
+  
+  // ----------------------------------------------------------
+  // 9. Match journey actions to Mermaid nodes
+  // ----------------------------------------------------------
+
   const EXCEPTION_TERMS = [
     "fail",
     "failure",
@@ -789,7 +794,6 @@ function analyzeBusinessProcess(
 
   const isExceptionActivity = value => {
     const normalized = normalize(value);
-
     return EXCEPTION_TERMS.some(term =>
       normalized.includes(term)
     );
@@ -802,71 +806,67 @@ function analyzeBusinessProcess(
         .filter(token => token.length > 2)
     );
 
-  // Jaccard similarity: shared meaningful tokens divided
-  // by the total distinct meaningful tokens.
+  // Similarity combines coverage of the shorter description
+  // with Jaccard similarity. It is a ranking signal, not proof.
   const similarity = (left, right) => {
-  const a = tokenSet(left);
-  const b = tokenSet(right);
+    const a = tokenSet(left);
+    const b = tokenSet(right);
 
-  if (!a.size || !b.size) return 0;
+    if (!a.size || !b.size) return 0;
 
-  const intersection = [...a].filter(
-    token => b.has(token)
-  ).length;
+    const intersection = [...a].filter(
+      token => b.has(token)
+    ).length;
 
-  const union = new Set([...a, ...b]).size;
-  const jaccard = intersection / union;
+    const union = new Set([...a, ...b]).size;
+    const jaccard = intersection / union;
+    const overlap = intersection / Math.min(a.size, b.size);
 
-  // Measures how much of the shorter description
-  // is covered by the longer description.
-  const overlap = intersection / Math.min(a.size, b.size);
+    return (0.6 * overlap) + (0.4 * jaccard);
+  };
 
-  return (0.6 * overlap) + (0.4 * jaccard);
-};
-
-  // An object supports a match only when the same declared
-  // business-object name appears in BOTH pieces of evidence.
-  // Object overlap alone never proves an activity match.
+  // Explicit object overlap is supporting evidence only.
+  // It must never independently establish an activity match.
   const getExplicitObjectOverlap = (
-  clause,
-  nodeLabel,
-  journeyObjects = []
-) => {
-  const clauseText = ` ${normalize(clause)} `;
-  const nodeText = ` ${normalize(nodeLabel)} `;
+    clause,
+    nodeLabel,
+    journeyObjects = []
+  ) => {
+    const clauseText = ` ${normalize(clause)} `;
+    const nodeText = ` ${normalize(nodeLabel)} `;
 
-  const candidateObjects = new Set([
-    ...objectNames,
-    ...(Array.isArray(journeyObjects)
-      ? journeyObjects.map(normalize)
-      : [])
-  ]);
+    const candidateObjects = new Set([
+      ...objectNames,
+      ...(Array.isArray(journeyObjects)
+        ? journeyObjects.map(normalize)
+        : [])
+    ]);
 
-  for (const objectName of candidateObjects) {
-    if (!objectName || objectName.length < 3) continue;
+    for (const objectName of candidateObjects) {
+      if (!objectName || objectName.length < 3) continue;
 
-    const normalizedObject = ` ${normalize(objectName)} `;
+      const normalizedObject = ` ${normalize(objectName)} `;
 
-    if (
-      clauseText.includes(normalizedObject) &&
-      nodeText.includes(normalizedObject)
-    ) {
-      return normalize(objectName);
+      if (
+        clauseText.includes(normalizedObject) &&
+        nodeText.includes(normalizedObject)
+      ) {
+        return normalize(objectName);
+      }
     }
-  }
 
-  return null;
-};
+    return null;
+  };
 
-  // Initial thresholds for evaluation, not universal truths.
-  // Tune them after reviewing the generated findings.
+  // These are conservative starting thresholds, not universal
+  // rules for every business domain.
   const MIN_TEXT_SCORE = 0.55;
   const MIN_TEXT_SCORE_WITH_OBJECT_OVERLAP = 0.40;
+  const MIN_DIAGNOSTIC_SCORE = 0.20;
   const AMBIGUITY_GAP = 0.08;
 
-  // A journey narrative can contain several semicolon-separated
-  // clauses. Preserve and evaluate each clause instead of
-  // discarding clauses that mention inputs or outputs.
+  // Preserve clause-level evidence while retaining the original
+  // milestone context in every finding.
   const splitJourneyClauses = action =>
     String(action ?? "")
       .split(/[;\n]+/)
@@ -877,77 +877,55 @@ function analyzeBusinessProcess(
     const clauses = splitJourneyClauses(journey.action);
 
     for (const clause of clauses) {
-      const journeyIsException =
-        isExceptionActivity(clause);
-
+      const journeyIsException = isExceptionActivity(clause);
       const candidates = [];
 
       for (const node of mermaidNodes.values()) {
-        const nodeIsException =
-          isExceptionActivity(node.label);
+        const nodeIsException = isExceptionActivity(node.label);
 
-        // Do not match a normal activity to an exception,
-        // rollback, or recovery node just because a few
-        // generic words happen to overlap.
+        // Do not match ordinary activities to exception/recovery
+        // nodes based on incidental word overlap.
         if (nodeIsException && !journeyIsException) {
           continue;
         }
 
-        
-const textScore = similarity(
-  clause,
-  node.label
-);
+        const textScore = similarity(clause, node.label);
 
-const objectOverlap = getExplicitObjectOverlap(
-  clause,
-  node.label,
-  journey.objects
-);
+        const objectOverlap = getExplicitObjectOverlap(
+          clause,
+          node.label,
+          journey.objects
+        );
 
-// Actor-to-lane alignment is supporting evidence only.
-// A different lane does not automatically invalidate a match.
-const actorLaneMatch = Boolean(
-  journey.actor &&
-  node.lane &&
-  normalize(journey.actor) === normalize(node.lane)
-);
+        // IMPORTANT:
+        // journey.actor describes the parent journey, not
+        // necessarily the actor responsible for this clause.
+        // Therefore, do not use it to award a lane-match bonus.
 
-// Keep the text score separate from the contextual score.
-// These bonuses rank candidates; they do not prove equivalence.
-const candidateRelevanceScore =
-  textScore +
-  (objectOverlap ? 0.10 : 0) +
-  (actorLaneMatch ? 0.05 : 0);
+        const acceptedByText =
+          textScore >= MIN_TEXT_SCORE;
 
-const acceptedByText =
-  textScore >= MIN_TEXT_SCORE;
+        const acceptedByObjectAndText =
+          Boolean(objectOverlap) &&
+          textScore >= MIN_TEXT_SCORE_WITH_OBJECT_OVERLAP;
 
-const acceptedByObjectAndText =
-  Boolean(objectOverlap) &&
-  textScore >= MIN_TEXT_SCORE_WITH_OBJECT_OVERLAP;
-
-candidates.push({
-  node,
-  textScore,
-  objectOverlap,
-  actorLaneMatch,
-  candidateRelevanceScore,
-  eligible:
-    acceptedByText ||
-    acceptedByObjectAndText
-});
-
+        candidates.push({
+          node,
+          textScore,
+          objectOverlap,
+          eligible:
+            acceptedByText || acceptedByObjectAndText
+        });
       }
 
-      // Rank by text evidence first. Object overlap is supporting
-      // evidence for eligibility, not a substitute for text.
+      // Rank primarily by textual evidence. Object overlap is
+      // only a tie-breaker and supporting evidence.
       candidates.sort(
-  (a, b) =>
-    b.candidateRelevanceScore -
-      a.candidateRelevanceScore ||
-    b.textScore - a.textScore
-);
+        (a, b) =>
+          b.textScore - a.textScore ||
+          Number(Boolean(b.objectOverlap)) -
+            Number(Boolean(a.objectOverlap))
+      );
 
       const eligibleCandidates = candidates.filter(
         candidate => candidate.eligible
@@ -956,100 +934,102 @@ candidates.push({
       const bestCandidate = eligibleCandidates[0] ?? null;
       const secondCandidate = eligibleCandidates[1] ?? null;
 
+      // A diagnostic candidate is exposed only when it has at
+      // least some textual relevance or explicit object overlap.
+      // It is never treated as a confirmed correspondence.
       const bestDiagnostic =
-  candidates.find(candidate => candidate.textScore > 0) ?? null;
+        candidates.find(
+          candidate =>
+            candidate.textScore >= MIN_DIAGNOSTIC_SCORE ||
+            Boolean(candidate.objectOverlap)
+        ) ?? null;
 
-      // No candidate passes the evidence threshold.
-      // Keep the closest candidate for diagnostics only.
+      const sharedFindingDetails = {
+        action: journey.action,
+        clause,
+        actor: journey.actor || null,
+        step: journey.step,
+        milestoneContext: journey.action,
+        sourcePath: journey.sourcePath,
+        businessObjects: journey.objects || [],
+        siblingClauses: clauses.filter(
+          sibling => sibling !== clause
+        )
+      };
+
+      // No candidate meets the evidence threshold.
+      // This means correspondence is unresolved, not that the
+      // business activity is missing from the process.
       if (!bestCandidate) {
         addFinding(
-  "UNRESOLVED_JOURNEY_CLAUSE_CORRESPONDENCE",
-  "REVIEW",
-  `No Mermaid node could be linked confidently to journey clause '${clause}'. This is an unresolved correspondence, not proof that a business activity is missing.`,
-  [journey.sourcePath],
-  {
- action: journey.action,
-  clause,
-  actor: journey.actor || null,
-  step: journey.step,
-  milestoneContext: journey.action,
-  sourcePath: journey.sourcePath,
-  businessObjects: journey.objects || [],
-  siblingClauses: clauses.filter(
-    sibling => sibling !== clause
-  ),
-    candidateStatus: "UNRESOLVED",
+          "UNRESOLVED_JOURNEY_CLAUSE_CORRESPONDENCE",
+          "REVIEW",
+          `No Mermaid node could be linked confidently to journey clause '${clause}'. This is an unresolved correspondence, not proof that a business activity is missing.`,
+          [journey.sourcePath],
+          {
+            ...sharedFindingDetails,
+            candidateStatus: "UNRESOLVED",
 
-    closestCandidate: bestDiagnostic
-  ? {
-      nodeId: bestDiagnostic.node.id,
-      nodeLabel: bestDiagnostic.node.label,
-      textSimilarity: Number(
-        bestDiagnostic.textScore.toFixed(3)
-      ),
-      explicitObjectOverlap:
-        bestDiagnostic.objectOverlap,
-      candidateRelevanceScore: Number(
-        bestDiagnostic.candidateRelevanceScore.toFixed(3)
-      ),
-      actorLaneMatch: bestDiagnostic.actorLaneMatch,
-      diagnosticOnly: true
-    }
-  : null,
+            closestCandidate: bestDiagnostic
+              ? {
+                  nodeId: bestDiagnostic.node.id,
+                  nodeLabel: bestDiagnostic.node.label,
+                  textSimilarity: Number(
+                    bestDiagnostic.textScore.toFixed(3)
+                  ),
+                  explicitObjectOverlap:
+                    bestDiagnostic.objectOverlap,
+                  diagnosticOnly: true
+                }
+              : null,
 
-    interpretation:
-      "The available evidence did not establish a sufficiently strong correspondence. Human review is required.",
+            interpretation:
+              "The available evidence did not establish a sufficiently strong correspondence. Human review is required.",
 
-    missingActivityConfirmed: false
-  }
-);
+            possibleGap: false,
+            missingActivityConfirmed: false
+          }
+        );
 
         continue;
       }
 
-      // If two candidates have similar text scores, do not
-      // arbitrarily select one. Ask for evidence-based review.
-      if (
-  secondCandidate &&
-  bestCandidate.candidateRelevanceScore -
-    secondCandidate.candidateRelevanceScore <
-    AMBIGUITY_GAP
-) {
+      // If the top two candidates have similar text scores,
+      // preserve the ambiguity instead of choosing arbitrarily.
+      const isAmbiguous =
+        Boolean(secondCandidate) &&
+        Math.abs(
+          bestCandidate.textScore -
+            secondCandidate.textScore
+        ) < AMBIGUITY_GAP;
+
+      if (isAmbiguous) {
         addFinding(
           "AMBIGUOUS_JOURNEY_TO_MERMAID_MATCH",
           "REVIEW",
           `Journey clause '${clause}' has multiple similarly scored Mermaid candidates. Confirm which node, if any, represents this activity.`,
           [journey.sourcePath],
           {
-            
-  action: journey.action,
-  clause,
-  actor: journey.actor || null,
-  step: journey.step,
-  milestoneContext: journey.action,
-  sourcePath: journey.sourcePath,
-  businessObjects: journey.objects || [],
-  siblingClauses: clauses.filter(
-    sibling => sibling !== clause
-  ),
-  
+            ...sharedFindingDetails,
+            candidateStatus: "AMBIGUOUS",
+
             candidates: eligibleCandidates
               .slice(0, 3)
               .map(candidate => ({
-  nodeId: candidate.node.id,
-  nodeLabel: candidate.node.label,
-  similarity: Number(
-    candidate.textScore.toFixed(3)
-  ),
-  objectOverlap:
-    candidate.objectOverlap,
-  candidateRelevanceScore: Number(
-    candidate.candidateRelevanceScore.toFixed(3)
-  ),
-  actorLaneMatch: candidate.actorLaneMatch
-})),
-              candidateStatus: "AMBIGUOUS",
-            possibleGap: false
+                nodeId: candidate.node.id,
+                nodeLabel: candidate.node.label,
+                textSimilarity: Number(
+                  candidate.textScore.toFixed(3)
+                ),
+                explicitObjectOverlap:
+                  candidate.objectOverlap
+              })),
+
+            interpretation:
+              "More than one Mermaid node meets the matching threshold, and the available textual evidence does not distinguish them confidently.",
+
+            possibleGap: false,
+            missingActivityConfirmed: false
           }
         );
 
@@ -1057,8 +1037,7 @@ candidates.push({
       }
 
       // Record a candidate relationship only after it passes
-      // the evidence checks. This is still a candidate link,
-      // not proof that the two activities are equivalent.
+      // the evidence checks. This is not proof of equivalence.
       addEdge(
         journey.id,
         `mermaid:${bestCandidate.node.id}`,
@@ -1067,8 +1046,7 @@ candidates.push({
         journey.sourcePath
       );
 
-      // Keep the matching rationale on the journey graph node
-      // so later stages can inspect the evidence and score.
+      // Preserve the matching rationale for downstream review.
       const journeyGraphNode = graph.nodes[journey.id];
 
       if (journeyGraphNode) {
@@ -1084,19 +1062,25 @@ candidates.push({
           clause,
           mermaidNodeId: bestCandidate.node.id,
           mermaidNodeLabel: bestCandidate.node.label,
+
           textSimilarity: Number(
             bestCandidate.textScore.toFixed(3)
           ),
+
           explicitObjectOverlap:
             bestCandidate.objectOverlap,
+
           matchingBasis: bestCandidate.objectOverlap
             ? "TEXT_AND_EXPLICIT_OBJECT_OVERLAP"
             : "TEXT_SIMILARITY",
-          relationshipStatus: "CANDIDATE"
+
+          relationshipStatus: "CANDIDATE",
+          equivalenceConfirmed: false
         });
       }
     }
   }
+
 
 
 
