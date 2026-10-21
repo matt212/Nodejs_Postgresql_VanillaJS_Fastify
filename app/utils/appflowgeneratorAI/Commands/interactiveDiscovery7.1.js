@@ -464,162 +464,7 @@ function analyzeBusinessProcess(
     firstJourneyAction: journeyActions[0] ?? null
   });
 
-  // const journeyActions = [];
-
-  // walk(actorJourneys, (record, sourcePath) => {
-  //   const action = getString(record, [
-  //     "actor_action",
-  //     "actorAction",
-  //     "system_activity",
-  //     "systemActivity",
-  //     "activity",
-  //     "activity_name",
-  //     "activityName",
-  //     "milestone_description",
-  //     "milestoneDescription",
-  //     "action_description",
-  //     "actionDescription",
-  //     "description",
-  //     "task"
-  //   ]);
-
-  //   if (!action) return;
-  //   if (/^\d+(?:\.\d+)*$/.test(action.trim())) return;
-
-  //   const actor = getString(record, [
-  //     "actor",
-  //     "actor_name",
-  //     "actorName",
-  //     "supporting_actor",
-  //     "supportingActor",
-  //     "role",
-  //     "role_name",
-  //     "roleName",
-  //     "participant"
-  //   ]);
-
-  //   const object = getString(record, [
-  //     "business_object",
-  //     "businessObject",
-  //     "business_object_name",
-  //     "businessObjectName",
-  //     "object_name",
-  //     "objectName"
-  //   ]);
-
-  //   const outcome = getString(record, [
-  //     "outcome",
-  //     "expected_outcome",
-  //     "expectedOutcome",
-  //     "result"
-  //   ]);
-
-  //   const decision = getString(record, [
-  //     "business_rule",
-  //     "businessRule",
-  //     "decision",
-  //     "condition",
-  //     "rule"
-  //   ]);
-
-  //   const actionId =
-  //     `journey-action:${normalize(action)}:${sourcePath}`;
-
-  //   addNode(
-  //     actionId,
-  //     "journeyAction",
-  //     action,
-  //     "actorJourneys",
-  //     sourcePath,
-  //     {
-  //       actor,
-  //       businessObject: object,
-  //       outcome,
-  //       decision
-  //     }
-  //   );
-
-  //   journeyActions.push({
-  //     id: actionId,
-  //     action,
-  //     actor,
-  //     object,
-  //     outcome,
-  //     decision,
-  //     sourcePath
-  //   });
-
-  //   if (actor) {
-  //     const actorId = `actor:${normalize(actor)}`;
-
-  //     addNode(
-  //       actorId,
-  //       "actor",
-  //       actor,
-  //       "actorJourneys",
-  //       sourcePath
-  //     );
-
-  //     addEdge(
-  //       actorId,
-  //       actionId,
-  //       "PERFORMS",
-  //       "actorJourneys",
-  //       sourcePath
-  //     );
-
-  //     if (!actorNames.has(normalize(actor))) {
-  //       addFinding(
-  //         "UNDECLARED_JOURNEY_ACTOR",
-  //         "REVIEW",
-  //         `Journey references actor '${actor}', which was not found in actor authorization data.`,
-  //         [sourcePath],
-  //         { actor }
-  //       );
-  //     }
-  //   }
-
-  //   if (object) {
-  //     const normalizedObject = normalize(object);
-  //     const objectId = `object:${normalizedObject}`;
-
-  //     addNode(
-  //       objectId,
-  //       "businessObject",
-  //       object,
-  //       "actorJourneys",
-  //       sourcePath
-  //     );
-
-  //     addEdge(
-  //       actionId,
-  //       objectId,
-  //       "USES_OR_AFFECTS",
-  //       "actorJourneys",
-  //       sourcePath
-  //     );
-
-  //     if (!objectNames.has(normalizedObject)) {
-  //       addFinding(
-  //         "UNDECLARED_BUSINESS_OBJECT",
-  //         "REVIEW",
-  //         `Journey references business object '${object}', but it was not found in the declared business-object input.`,
-  //         [sourcePath],
-  //         { businessObject: object }
-  //       );
-  //     }
-  //   }
-
-  //   if (!outcome) {
-  //     addFinding(
-  //       "JOURNEY_ACTION_WITHOUT_OUTCOME",
-  //       "REVIEW",
-  //       `Journey action '${action}' has no explicitly recognized outcome.`,
-  //       [sourcePath],
-  //       { action, actor, object }
-  //     );
-  //   }
-  // });
+  
 
   // ----------------------------------------------------------
   // 7. Parse Mermaid nodes, lanes and transitions
@@ -916,237 +761,284 @@ function analyzeBusinessProcess(
   // ----------------------------------------------------------
 
   
-  // ----------------------------------------------------------
-  // 9. Match journey narratives to Mermaid nodes
-  // ----------------------------------------------------------
+  
 
-  // Ignore common words that add little meaning to activity matching.
- 
+  
   // ----------------------------------------------------------
-  // 9. Classify journey clauses and match activities
+  // 9. Match journey actions to Mermaid nodes
   // ----------------------------------------------------------
 
-  const stopWords = new Set([
-    "the", "and", "for", "with", "from", "into", "via",
-    "this", "that", "then", "against", "their", "its",
-    "has", "have", "was", "were", "been", "being",
-    "are", "the", "system", "performs", "perform",
-    "executes", "execute", "outputs", "output"
-  ]);
+  // These are generic language indicators, not domain-specific
+  // business activities or an expected-activity checklist.
+  const EXCEPTION_TERMS = [
+    "fail",
+    "failure",
+    "exception",
+    "error",
+    "reject",
+    "retry",
+    "rollback",
+    "recover",
+    "compensat",
+    "remediat",
+    "discrepancy",
+    "fault",
+    "reverse",
+    "reversal"
+  ];
 
-  const tokens = value =>
-    normalize(value)
-      .split(" ")
-      .filter(token =>
-        token.length > 2 && !stopWords.has(token)
-      );
+  const isExceptionActivity = value => {
+    const normalized = normalize(value);
 
-  const diceSimilarity = (left, right) => {
-    const a = new Set(tokens(left));
-    const b = new Set(tokens(right));
+    return EXCEPTION_TERMS.some(term =>
+      normalized.includes(term)
+    );
+  };
+
+  const tokenSet = value =>
+    new Set(
+      normalize(value)
+        .split(" ")
+        .filter(token => token.length > 2)
+    );
+
+  // Jaccard similarity: shared meaningful tokens divided
+  // by the total distinct meaningful tokens.
+  const similarity = (left, right) => {
+    const a = tokenSet(left);
+    const b = tokenSet(right);
 
     if (!a.size || !b.size) return 0;
 
-    let common = 0;
-    for (const token of a) {
-      if (b.has(token)) common++;
-    }
+    const intersection = [...a].filter(
+      token => b.has(token)
+    ).length;
 
-    return (2 * common) / (a.size + b.size);
+    const union = new Set([...a, ...b]).size;
+
+    return union ? intersection / union : 0;
   };
 
-  // Classify only what the wording supports.
-  // Do not assume every clause is a business activity.
-  const classifyClause = clause => {
-    const text = clause.trim();
+  // An object supports a match only when the same declared
+  // business-object name appears in BOTH pieces of evidence.
+  // Object overlap alone never proves an activity match.
+  const getExplicitObjectOverlap = (
+    clause,
+    nodeLabel,
+    journeyObject = ""
+  ) => {
+    const clauseText = ` ${normalize(clause)} `;
+    const nodeText = ` ${normalize(nodeLabel)} `;
 
-    if (
-      /^(outputs?|returns?|produces?|generates?|results?\s+in|provides?\s+(?:the\s+)?(?:confirmed|updated|assigned|authenticated|unique)\b)/i
-        .test(text)
-    ) {
-      return "OUTPUT";
+    const candidateObjects = new Set(objectNames);
+
+    if (journeyObject) {
+      candidateObjects.add(normalize(journeyObject));
     }
 
-    if (
-      /^(receives?|retrieves?|reads?|loads?|imports?)\b/i
-        .test(text)
-    ) {
-      return "INPUT_OR_RETRIEVAL";
-    }
-
-    return "ACTIVITY_CANDIDATE";
-  };
-
-  // Extract the major step number from a Mermaid label.
-  // Example: "Step 3.1: Inventory check" -> "3"
-  const getMermaidStepNumber = label => {
-    const match = String(label ?? "").match(
-      /\bstep\s+(\d+)(?:\.\d+)*/i
-    );
-
-    return match ? match[1] : null;
-  };
-
-  const MIN_ACTIVITY_SCORE = 0.45;
-  const AMBIGUITY_GAP = 0.08;
-
-  for (const journey of journeyActions) {
-    const clauses = String(journey.action ?? "")
-      .split(/[;]+/)
-      .map(text => text.trim())
-      .filter(Boolean);
-
-    const matches = [];
-    const unmatchedActivities = [];
-    const nonActivityClauses = [];
-
-    for (const clause of clauses) {
-      const clauseType = classifyClause(clause);
-
-      // Outputs and input/retrieval descriptions remain evidence.
-      // They are not treated as missing Mermaid activities.
-      if (clauseType !== "ACTIVITY_CANDIDATE") {
-        nonActivityClauses.push({
-          clause,
-          type: clauseType
-        });
+    for (const objectName of candidateObjects) {
+      if (!objectName || objectName.length < 3) {
         continue;
       }
+
+      const normalizedObject = ` ${objectName} `;
+
+      if (
+        clauseText.includes(normalizedObject) &&
+        nodeText.includes(normalizedObject)
+      ) {
+        return objectName;
+      }
+    }
+
+    return null;
+  };
+
+  // Initial thresholds for evaluation, not universal truths.
+  // Tune them after reviewing the generated findings.
+  const MIN_TEXT_SCORE = 0.55;
+  const MIN_TEXT_SCORE_WITH_OBJECT_OVERLAP = 0.40;
+  const AMBIGUITY_GAP = 0.08;
+
+  // A journey narrative can contain several semicolon-separated
+  // clauses. Preserve and evaluate each clause instead of
+  // discarding clauses that mention inputs or outputs.
+  const splitJourneyClauses = action =>
+    String(action ?? "")
+      .split(/[;\n]+/)
+      .map(clause => clause.trim())
+      .filter(Boolean);
+
+  for (const journey of journeyActions) {
+    const clauses = splitJourneyClauses(journey.action);
+
+    for (const clause of clauses) {
+      const journeyIsException =
+        isExceptionActivity(clause);
 
       const candidates = [];
 
       for (const node of mermaidNodes.values()) {
-        const textScore = diceSimilarity(
+        const nodeIsException =
+          isExceptionActivity(node.label);
+
+        // Do not match a normal activity to an exception,
+        // rollback, or recovery node just because a few
+        // generic words happen to overlap.
+        if (nodeIsException && !journeyIsException) {
+          continue;
+        }
+
+        const textScore = similarity(
           clause,
           node.label
         );
 
-        // Use journey step order as supporting evidence.
-        // It is a bonus, not proof of equivalence.
-        const nodeStep = getMermaidStepNumber(node.label);
-        const sameStep =
-          journey.step != null &&
-          nodeStep != null &&
-          String(journey.step) === nodeStep;
-
-        const score = Math.min(
-          1,
-          textScore + (sameStep ? 0.20 : 0)
+        const objectOverlap = getExplicitObjectOverlap(
+          clause,
+          node.label,
+          journey.object
         );
+
+        const acceptedByText =
+          textScore >= MIN_TEXT_SCORE;
+
+        const acceptedByObjectAndText =
+          Boolean(objectOverlap) &&
+          textScore >=
+            MIN_TEXT_SCORE_WITH_OBJECT_OVERLAP;
 
         candidates.push({
           node,
           textScore,
-          score,
-          sameStep
+          objectOverlap,
+          eligible:
+            acceptedByText ||
+            acceptedByObjectAndText
         });
       }
 
-      candidates.sort((a, b) => b.score - a.score);
-
-      const best = candidates[0];
-      const second = candidates[1];
-
-      if (!best || best.score < MIN_ACTIVITY_SCORE) {
-        unmatchedActivities.push({
-          clause,
-          closestNode: best?.node.label ?? null,
-          score: Number((best?.score ?? 0).toFixed(2))
-        });
-
-        addFinding(
-          "UNMATCHED_ACTIVITY_CLAUSE",
-          "REVIEW",
-          `No sufficiently supported Mermaid match was found for activity candidate: '${clause}'. This does not prove that the activity is missing.`,
-          [journey.sourcePath],
-          {
-            journeyActionId: journey.id,
-            journeyStep: journey.step ?? null,
-            clause,
-            closestNode: best?.node.label ?? null,
-            similarity: Number((best?.score ?? 0).toFixed(2)),
-            possibleGap: false
-          }
-        );
-
-        continue;
-      }
-
-      if (
-        second &&
-        second.score >= MIN_ACTIVITY_SCORE &&
-        best.score - second.score < AMBIGUITY_GAP
-      ) {
-        addFinding(
-          "AMBIGUOUS_ACTIVITY_MATCH",
-          "REVIEW",
-          `More than one Mermaid node may correspond to activity: '${clause}'.`,
-          [
-            journey.sourcePath,
-            best.node.line,
-            second.node.line
-          ],
-          {
-            journeyActionId: journey.id,
-            clause,
-            candidates: [
-              {
-                nodeId: best.node.id,
-                label: best.node.label,
-                score: Number(best.score.toFixed(2)),
-                sameStep: best.sameStep
-              },
-              {
-                nodeId: second.node.id,
-                label: second.node.label,
-                score: Number(second.score.toFixed(2)),
-                sameStep: second.sameStep
-              }
-            ],
-            possibleGap: false
-          }
-        );
-
-        continue;
-      }
-
-      addEdge(
-        journey.id,
-        `mermaid:${best.node.id}`,
-        "CANDIDATE_CORRESPONDS_TO",
-        "crossSourceMatch",
-        JSON.stringify({
-          journeySource: journey.sourcePath,
-          clause,
-          mermaidSource: best.node.line,
-          textSimilarity: Number(best.textScore.toFixed(2)),
-          stepContextMatch: best.sameStep,
-          adjustedScore: Number(best.score.toFixed(2))
-        })
+      // Rank by text evidence first. Object overlap is supporting
+      // evidence for eligibility, not a substitute for text.
+      candidates.sort(
+        (a, b) => b.textScore - a.textScore
       );
 
-      matches.push({
-        clause,
-        mermaidNodeId: best.node.id,
-        mermaidLabel: best.node.label,
-        score: Number(best.score.toFixed(2)),
-        stepContextMatch: best.sameStep
-      });
-    }
+      const eligibleCandidates = candidates.filter(
+        candidate => candidate.eligible
+      );
 
-    // Preserve matching results and non-activity evidence.
-    if (graph.nodes[journey.id]) {
-      graph.nodes[journey.id].attributes.matching = {
-        activityClauseCount: clauses.filter(
-          clause =>
-            classifyClause(clause) === "ACTIVITY_CANDIDATE"
-        ).length,
-        candidateMatches: matches,
-        unmatchedActivities,
-        nonActivityClauses
-      };
+      const bestCandidate = eligibleCandidates[0] ?? null;
+      const secondCandidate = eligibleCandidates[1] ?? null;
+
+      const bestDiagnostic = candidates[0] ?? null;
+
+      // No candidate passes the evidence threshold.
+      // Keep the closest candidate for diagnostics only.
+      if (!bestCandidate) {
+        addFinding(
+          "JOURNEY_ACTION_NOT_MATCHED_TO_SWIMLANE",
+          "REVIEW",
+          `Journey clause '${clause}' has no Mermaid node that meets the matching evidence threshold. The closest candidate, if any, is diagnostic only.`,
+          [journey.sourcePath],
+          {
+            action: journey.action,
+            clause,
+            actor: journey.actor || null,
+            businessObject: journey.object || null,
+            closestNode:
+              bestDiagnostic?.node.label ?? null,
+            closestNodeId:
+              bestDiagnostic?.node.id ?? null,
+            similarity: Number(
+              (bestDiagnostic?.textScore ?? 0).toFixed(3)
+            ),
+            possibleObjectOverlap:
+              bestDiagnostic?.objectOverlap ?? null,
+            possibleGap: false
+          }
+        );
+
+        continue;
+      }
+
+      // If two candidates have similar text scores, do not
+      // arbitrarily select one. Ask for evidence-based review.
+      if (
+        secondCandidate &&
+        bestCandidate.textScore -
+          secondCandidate.textScore <
+          AMBIGUITY_GAP
+      ) {
+        addFinding(
+          "AMBIGUOUS_JOURNEY_TO_MERMAID_MATCH",
+          "REVIEW",
+          `Journey clause '${clause}' has multiple similarly scored Mermaid candidates. Confirm which node, if any, represents this activity.`,
+          [journey.sourcePath],
+          {
+            action: journey.action,
+            clause,
+            actor: journey.actor || null,
+            candidates: eligibleCandidates
+              .slice(0, 3)
+              .map(candidate => ({
+                nodeId: candidate.node.id,
+                nodeLabel: candidate.node.label,
+                similarity: Number(
+                  candidate.textScore.toFixed(3)
+                ),
+                objectOverlap:
+                  candidate.objectOverlap
+              })),
+            possibleGap: false
+          }
+        );
+
+        continue;
+      }
+
+      // Record a candidate relationship only after it passes
+      // the evidence checks. This is still a candidate link,
+      // not proof that the two activities are equivalent.
+      addEdge(
+        journey.id,
+        `mermaid:${bestCandidate.node.id}`,
+        "CANDIDATE_CORRESPONDS_TO",
+        "journeyToMermaidMatching",
+        journey.sourcePath
+      );
+
+      // Keep the matching rationale on the journey graph node
+      // so later stages can inspect the evidence and score.
+      const journeyGraphNode = graph.nodes[journey.id];
+
+      if (journeyGraphNode) {
+        if (
+          !Array.isArray(
+            journeyGraphNode.attributes.matchCandidates
+          )
+        ) {
+          journeyGraphNode.attributes.matchCandidates = [];
+        }
+
+        journeyGraphNode.attributes.matchCandidates.push({
+          clause,
+          mermaidNodeId: bestCandidate.node.id,
+          mermaidNodeLabel: bestCandidate.node.label,
+          textSimilarity: Number(
+            bestCandidate.textScore.toFixed(3)
+          ),
+          explicitObjectOverlap:
+            bestCandidate.objectOverlap,
+          matchingBasis: bestCandidate.objectOverlap
+            ? "TEXT_AND_EXPLICIT_OBJECT_OVERLAP"
+            : "TEXT_SIMILARITY",
+          relationshipStatus: "CANDIDATE"
+        });
+      }
     }
   }
+
 
 
 
