@@ -935,7 +935,8 @@ function analyzeBusinessProcess(
       const bestCandidate = eligibleCandidates[0] ?? null;
       const secondCandidate = eligibleCandidates[1] ?? null;
 
-      const bestDiagnostic = candidates[0] ?? null;
+      const bestDiagnostic =
+  candidates.find(candidate => candidate.textScore > 0) ?? null;
 
       // No candidate passes the evidence threshold.
       // Keep the closest candidate for diagnostics only.
