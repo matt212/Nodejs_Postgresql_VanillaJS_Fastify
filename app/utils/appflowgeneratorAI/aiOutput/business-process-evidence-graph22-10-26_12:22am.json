@@ -252,6 +252,522 @@
       ],
       "attributes": {}
     },
+    "journey-action:end user customer:step:1": {
+      "id": "journey-action:end user customer:step:1",
+      "type": "journeyAction",
+      "label": "Initiates 'User Account' registration with personal PII; IAM Security Officer validates identity verification inputs against policy; outputs authenticated session token and user context enabling subsequent access.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[0]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "1",
+        "narrative": "Initiates 'User Account' registration with personal PII; IAM Security Officer validates identity verification inputs against policy; outputs authenticated session token and user context enabling subsequent access.",
+        "businessObjects": [
+          "User Account"
+        ]
+      }
+    },
+    "journey-action:end user customer:step:2": {
+      "id": "journey-action:end user customer:step:2",
+      "type": "journeyAction",
+      "label": "Submits 'Geolocation Request' via mobile GPS coordinates; system performs service area validation and delivery zone mapping against 'Merchant Inventory Stock' locations; outputs confirmed delivery pin and applicable service fee.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[1]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "2",
+        "narrative": "Submits 'Geolocation Request' via mobile GPS coordinates; system performs service area validation and delivery zone mapping against 'Merchant Inventory Stock' locations; outputs confirmed delivery pin and applicable service fee.",
+        "businessObjects": [
+          "Geolocation Request",
+          "Merchant Inventory Stock"
+        ]
+      }
+    },
+    "journey-action:end user customer:step:3": {
+      "id": "journey-action:end user customer:step:3",
+      "type": "journeyAction",
+      "label": "Selects products to create 'Cart Item' inputs including SKU and quantity; system executes real-time inventory availability checks and price calculation logic; outputs updated cart state with confirmed stock levels.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[2]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "3",
+        "narrative": "Selects products to create 'Cart Item' inputs including SKU and quantity; system executes real-time inventory availability checks and price calculation logic; outputs updated cart state with confirmed stock levels.",
+        "businessObjects": [
+          "Cart Item"
+        ]
+      }
+    },
+    "journey-action:end user customer:step:4": {
+      "id": "journey-action:end user customer:step:4",
+      "type": "journeyAction",
+      "label": "Requests a 'Delivery Slot' based on preferred time window; Logistics Dispatcher validates courier availability data and allocates slot; outputs assigned pickup and delivery timestamps.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[3]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "4",
+        "narrative": "Requests a 'Delivery Slot' based on preferred time window; Logistics Dispatcher validates courier availability data and allocates slot; outputs assigned pickup and delivery timestamps.",
+        "businessObjects": [
+          "Delivery Slot"
+        ]
+      }
+    },
+    "journey-action:end user customer:step:5": {
+      "id": "journey-action:end user customer:step:5",
+      "type": "journeyAction",
+      "label": "Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[4]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "5",
+        "narrative": "Finalizes transaction by submitting 'Order Header' and 'Order Line Item' details including payment method; 'Payment Transaction' component processes fund transfer and generates digital invoice; outputs unique Order ID and confirmed receipt.",
+        "businessObjects": [
+          "Order Header",
+          "Order Line Item",
+          "Payment Transaction"
+        ]
+      }
+    },
+    "journey-action:end user customer:step:6": {
+      "id": "journey-action:end user customer:step:6",
+      "type": "journeyAction",
+      "label": "During transit, views 'Assigned Courier' details via app; Logistics Dispatcher executes route optimization and assigns active delivery task; outputs courier ID and real-time location updates.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[5]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "6",
+        "narrative": "During transit, views 'Assigned Courier' details via app; Logistics Dispatcher executes route optimization and assigns active delivery task; outputs courier ID and real-time location updates.",
+        "businessObjects": [
+          "Assigned Courier"
+        ]
+      }
+    },
+    "journey-action:end user customer:step:7": {
+      "id": "journey-action:end user customer:step:7",
+      "type": "journeyAction",
+      "label": "Upon arrival, provides 'Handover Receipt' input via digital signature and item count verification; Store Associate confirms quality check; outputs delivered status update and final payment capture confirmation.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[6]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "7",
+        "narrative": "Upon arrival, provides 'Handover Receipt' input via digital signature and item count verification; Store Associate confirms quality check; outputs delivered status update and final payment capture confirmation.",
+        "businessObjects": [
+          "Handover Receipt"
+        ]
+      }
+    },
+    "journey-action:end user customer:step:8": {
+      "id": "journey-action:end user customer:step:8",
+      "type": "journeyAction",
+      "label": "Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[7]"
+      ],
+      "attributes": {
+        "actor": "End-User Customer",
+        "step": "8",
+        "narrative": "Participates in post-order lifecycle by managing 'Loyalty Points Ledger' for redemptions, requesting 'Refund Claim' with damage evidence, or initiating 'Cancellation Request' before handover; Finance & Billing Agent validates claims and adjusts balances.",
+        "businessObjects": [
+          "Refund Claim",
+          "Loyalty Points Ledger",
+          "Cancellation Request"
+        ]
+      }
+    },
+    "journey-action:store associate:step:1": {
+      "id": "journey-action:store associate:step:1",
+      "type": "journeyAction",
+      "label": "Receives system-generated 'Pickup Manifest' input listing items to collect and store location coordinates; generates task list for store floor; outputs item verification log initiation.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[0]"
+      ],
+      "attributes": {
+        "actor": "Store Associate",
+        "step": "1",
+        "narrative": "Receives system-generated 'Pickup Manifest' input listing items to collect and store location coordinates; generates task list for store floor; outputs item verification log initiation.",
+        "businessObjects": [
+          "Pickup Manifest"
+        ]
+      }
+    },
+    "journey-action:store associate:step:2": {
+      "id": "journey-action:store associate:step:2",
+      "type": "journeyAction",
+      "label": "Scans 'Order Line Item' SKUs against physical shelf-space; validates item specifications and estimates weight; outputs collected items list and ready-for-pickup status flag.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[1]"
+      ],
+      "attributes": {
+        "actor": "Store Associate",
+        "step": "2",
+        "narrative": "Scans 'Order Line Item' SKUs against physical shelf-space; validates item specifications and estimates weight; outputs collected items list and ready-for-pickup status flag.",
+        "businessObjects": [
+          "Order Line Item"
+        ]
+      }
+    },
+    "journey-action:store associate:step:3": {
+      "id": "journey-action:store associate:step:3",
+      "type": "journeyAction",
+      "label": "Executes 'Merchant Inventory Stock' update by performing batch deduction and allocating shelf-space; outputs adjusted available quantity and updated stock status flags (e.g., In-Stock to Out-of-Stock).",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[2]"
+      ],
+      "attributes": {
+        "actor": "Store Associate",
+        "step": "3",
+        "narrative": "Executes 'Merchant Inventory Stock' update by performing batch deduction and allocating shelf-space; outputs adjusted available quantity and updated stock status flags (e.g., In-Stock to Out-of-Stock).",
+        "businessObjects": [
+          "Merchant Inventory Stock"
+        ]
+      }
+    },
+    "journey-action:store associate:step:4": {
+      "id": "journey-action:store associate:step:4",
+      "type": "journeyAction",
+      "label": "Validates 'Handover Receipt' input by comparing customer signature/digital confirmation against manifest item counts; performs quality check verification; outputs delivered status update and confirms final payment capture.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[3]"
+      ],
+      "attributes": {
+        "actor": "Store Associate",
+        "step": "4",
+        "narrative": "Validates 'Handover Receipt' input by comparing customer signature/digital confirmation against manifest item counts; performs quality check verification; outputs delivered status update and confirms final payment capture.",
+        "businessObjects": [
+          "Handover Receipt"
+        ]
+      }
+    },
+    "journey-action:logistics dispatcher:step:1": {
+      "id": "journey-action:logistics dispatcher:step:1",
+      "type": "journeyAction",
+      "label": "Processes 'Delivery Slot' input by analyzing customer requested time windows against real-time courier availability data; executes slot allocation and time-window enforcement logic; outputs assigned timestamps.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[0]"
+      ],
+      "attributes": {
+        "actor": "Logistics Dispatcher",
+        "step": "1",
+        "narrative": "Processes 'Delivery Slot' input by analyzing customer requested time windows against real-time courier availability data; executes slot allocation and time-window enforcement logic; outputs assigned timestamps.",
+        "businessObjects": [
+          "Delivery Slot"
+        ]
+      }
+    },
+    "journey-action:logistics dispatcher:step:2": {
+      "id": "journey-action:logistics dispatcher:step:2",
+      "type": "journeyAction",
+      "label": "Receives 'Order Header' and 'Assigned Courier' inputs; runs route optimization algorithms to minimize fleet idle time; outputs active delivery task and assigned courier ID.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[1]"
+      ],
+      "attributes": {
+        "actor": "Logistics Dispatcher",
+        "step": "2",
+        "narrative": "Receives 'Order Header' and 'Assigned Courier' inputs; runs route optimization algorithms to minimize fleet idle time; outputs active delivery task and assigned courier ID.",
+        "businessObjects": [
+          "Order Header",
+          "Assigned Courier"
+        ]
+      }
+    },
+    "journey-action:logistics dispatcher:step:3": {
+      "id": "journey-action:logistics dispatcher:step:3",
+      "type": "journeyAction",
+      "label": "Monitors 'Assigned Courier' status and 'Real-time Driver Location Data'; modifies courier assignment mapping or re-assigns upon deviation; outputs updated route parameters and enforcement of time-window constraints.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[2]"
+      ],
+      "attributes": {
+        "actor": "Logistics Dispatcher",
+        "step": "3",
+        "narrative": "Monitors 'Assigned Courier' status and 'Real-time Driver Location Data'; modifies courier assignment mapping or re-assigns upon deviation; outputs updated route parameters and enforcement of time-window constraints.",
+        "businessObjects": [
+          "Assigned Courier"
+        ]
+      }
+    },
+    "journey-action:logistics dispatcher:step:4": {
+      "id": "journey-action:logistics dispatcher:step:4",
+      "type": "journeyAction",
+      "label": "Validates 'Handover Receipt' completion from the courier perspective; removes inactive courier assignments from active queues; outputs cleared delivery task status.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[3]"
+      ],
+      "attributes": {
+        "actor": "Logistics Dispatcher",
+        "step": "4",
+        "narrative": "Validates 'Handover Receipt' completion from the courier perspective; removes inactive courier assignments from active queues; outputs cleared delivery task status.",
+        "businessObjects": [
+          "Handover Receipt"
+        ]
+      }
+    },
+    "journey-action:merchant inventory manager:step:1": {
+      "id": "journey-action:merchant inventory manager:step:1",
+      "type": "journeyAction",
+      "label": "Reviews 'Merchant Inventory Stock' input from local store database; performs reconciliation of system stock with physical counts; outputs batch deduction logs and stock status flags.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[0]"
+      ],
+      "attributes": {
+        "actor": "Merchant Inventory Manager",
+        "step": "1",
+        "narrative": "Reviews 'Merchant Inventory Stock' input from local store database; performs reconciliation of system stock with physical counts; outputs batch deduction logs and stock status flags.",
+        "businessObjects": [
+          "Merchant Inventory Stock"
+        ]
+      }
+    },
+    "journey-action:merchant inventory manager:step:2": {
+      "id": "journey-action:merchant inventory manager:step:2",
+      "type": "journeyAction",
+      "label": "Manages 'Order Line Item' line-level inventory reservations; updates shelf-space allocation rules based on SKU demand; outputs adjusted available quantity and stock status flags.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[1]"
+      ],
+      "attributes": {
+        "actor": "Merchant Inventory Manager",
+        "step": "2",
+        "narrative": "Manages 'Order Line Item' line-level inventory reservations; updates shelf-space allocation rules based on SKU demand; outputs adjusted available quantity and stock status flags.",
+        "businessObjects": [
+          "Order Line Item"
+        ]
+      }
+    },
+    "journey-action:merchant inventory manager:step:3": {
+      "id": "journey-action:merchant inventory manager:step:3",
+      "type": "journeyAction",
+      "label": "Handles 'Cancellation Request' triggers by executing inventory release logic; removes reserved stock holds upon validation; outputs released stock availability flags.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[2]"
+      ],
+      "attributes": {
+        "actor": "Merchant Inventory Manager",
+        "step": "3",
+        "narrative": "Handles 'Cancellation Request' triggers by executing inventory release logic; removes reserved stock holds upon validation; outputs released stock availability flags.",
+        "businessObjects": [
+          "Cancellation Request"
+        ]
+      }
+    },
+    "journey-action:merchant inventory manager:step:4": {
+      "id": "journey-action:merchant inventory manager:step:4",
+      "type": "journeyAction",
+      "label": "Creates 'Restock Orders' and 'New Inventory SKU Entries' to replenish shelf-space; removes expired or damaged batch records; outputs updated inventory levels and low-stock alerts.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[3]"
+      ],
+      "attributes": {
+        "actor": "Merchant Inventory Manager",
+        "step": "4",
+        "narrative": "Creates 'Restock Orders' and 'New Inventory SKU Entries' to replenish shelf-space; removes expired or damaged batch records; outputs updated inventory levels and low-stock alerts.",
+        "businessObjects": []
+      }
+    },
+    "journey-action:iam security officer:step:1": {
+      "id": "journey-action:iam security officer:step:1",
+      "type": "journeyAction",
+      "label": "Audits 'User Account' authentication credentials and 'Geolocation Request' authentications; enforces data privacy boundaries and validates identity verification steps; outputs security incident reports.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[0]"
+      ],
+      "attributes": {
+        "actor": "IAM Security Officer",
+        "step": "1",
+        "narrative": "Audits 'User Account' authentication credentials and 'Geolocation Request' authentications; enforces data privacy boundaries and validates identity verification steps; outputs security incident reports.",
+        "businessObjects": [
+          "User Account",
+          "Geolocation Request"
+        ]
+      }
+    },
+    "journey-action:iam security officer:step:2": {
+      "id": "journey-action:iam security officer:step:2",
+      "type": "journeyAction",
+      "label": "Reviews full audit trails of 'Create', 'Change', and 'Remove' actions across all actors; validates session token expiry logs; outputs compliance reports.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[1]"
+      ],
+      "attributes": {
+        "actor": "IAM Security Officer",
+        "step": "2",
+        "narrative": "Reviews full audit trails of 'Create', 'Change', and 'Remove' actions across all actors; validates session token expiry logs; outputs compliance reports.",
+        "businessObjects": []
+      }
+    },
+    "journey-action:iam security officer:step:3": {
+      "id": "journey-action:iam security officer:step:3",
+      "type": "journeyAction",
+      "label": "Executes 'Force Account Lockout' or 'Reset Authentication Credentials' operations for compromised users; removes expired session tokens and invalid role assignments; outputs updated user account status.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[2]"
+      ],
+      "attributes": {
+        "actor": "IAM Security Officer",
+        "step": "3",
+        "narrative": "Executes 'Force Account Lockout' or 'Reset Authentication Credentials' operations for compromised users; removes expired session tokens and invalid role assignments; outputs updated user account status.",
+        "businessObjects": [
+          "User Account"
+        ]
+      }
+    },
+    "journey-action:finance billing agent:step:1": {
+      "id": "journey-action:finance billing agent:step:1",
+      "type": "journeyAction",
+      "label": "Processes 'Payment Transaction' input (Order total, tax, fees) via secure gateway; validates fund transfer and generates receipt; outputs paid status flag and digital invoice record.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[0]"
+      ],
+      "attributes": {
+        "actor": "Finance & Billing Agent",
+        "step": "1",
+        "narrative": "Processes 'Payment Transaction' input (Order total, tax, fees) via secure gateway; validates fund transfer and generates receipt; outputs paid status flag and digital invoice record.",
+        "businessObjects": [
+          "Payment Transaction"
+        ]
+      }
+    },
+    "journey-action:finance billing agent:step:2": {
+      "id": "journey-action:finance billing agent:step:2",
+      "type": "journeyAction",
+      "label": "Evaluates 'Refund Claim' input including reason and evidence; performs claim validation and partial/full fund reversal; outputs refund approval and adjusted account balance.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[1]"
+      ],
+      "attributes": {
+        "actor": "Finance & Billing Agent",
+        "step": "2",
+        "narrative": "Evaluates 'Refund Claim' input including reason and evidence; performs claim validation and partial/full fund reversal; outputs refund approval and adjusted account balance.",
+        "businessObjects": [
+          "Refund Claim"
+        ]
+      }
+    },
+    "journey-action:finance billing agent:step:3": {
+      "id": "journey-action:finance billing agent:step:3",
+      "type": "journeyAction",
+      "label": "Manages 'Subscription Plan' input for recurring billing cycles; calculates fees and sets up automated billing; outputs active membership tier and priority delivery rights confirmation.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[2]"
+      ],
+      "attributes": {
+        "actor": "Finance & Billing Agent",
+        "step": "3",
+        "narrative": "Manages 'Subscription Plan' input for recurring billing cycles; calculates fees and sets up automated billing; outputs active membership tier and priority delivery rights confirmation.",
+        "businessObjects": [
+          "Subscription Plan"
+        ]
+      }
+    },
+    "journey-action:finance billing agent:step:4": {
+      "id": "journey-action:finance billing agent:step:4",
+      "type": "journeyAction",
+      "label": "Executes 'Loyalty Points Ledger' updates by calculating point accrual and redemption validation; modifies order total based on points used; outputs updated points balance and discounted total.",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[3]"
+      ],
+      "attributes": {
+        "actor": "Finance & Billing Agent",
+        "step": "4",
+        "narrative": "Executes 'Loyalty Points Ledger' updates by calculating point accrual and redemption validation; modifies order total based on points used; outputs updated points balance and discounted total.",
+        "businessObjects": [
+          "Loyalty Points Ledger"
+        ]
+      }
+    },
     "mermaid:node_step_p1_1": {
       "id": "mermaid:node_step_p1_1",
       "type": "mermaidNode",
@@ -752,6 +1268,714 @@
     }
   },
   "edges": [
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:1",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:1",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:1|USES_OR_AFFECTS|object:user account",
+      "from": "journey-action:end user customer:step:1",
+      "to": "object:user account",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:2",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:2",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:2|USES_OR_AFFECTS|object:geolocation request",
+      "from": "journey-action:end user customer:step:2",
+      "to": "object:geolocation request",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:2|USES_OR_AFFECTS|object:merchant inventory stock",
+      "from": "journey-action:end user customer:step:2",
+      "to": "object:merchant inventory stock",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:3",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:3",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:3|USES_OR_AFFECTS|object:cart item",
+      "from": "journey-action:end user customer:step:3",
+      "to": "object:cart item",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:4",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:4",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:4|USES_OR_AFFECTS|object:delivery slot",
+      "from": "journey-action:end user customer:step:4",
+      "to": "object:delivery slot",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:5",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:5",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[4]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:5|USES_OR_AFFECTS|object:order header",
+      "from": "journey-action:end user customer:step:5",
+      "to": "object:order header",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[4]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:5|USES_OR_AFFECTS|object:order line item",
+      "from": "journey-action:end user customer:step:5",
+      "to": "object:order line item",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[4]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:5|USES_OR_AFFECTS|object:payment transaction",
+      "from": "journey-action:end user customer:step:5",
+      "to": "object:payment transaction",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[4]"
+      ]
+    },
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:6",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:6",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[5]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:6|USES_OR_AFFECTS|object:assigned courier",
+      "from": "journey-action:end user customer:step:6",
+      "to": "object:assigned courier",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[5]"
+      ]
+    },
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:7",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:7",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[6]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:7|USES_OR_AFFECTS|object:handover receipt",
+      "from": "journey-action:end user customer:step:7",
+      "to": "object:handover receipt",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[6]"
+      ]
+    },
+    {
+      "key": "actor:end user customer|PERFORMS|journey-action:end user customer:step:8",
+      "from": "actor:end user customer",
+      "to": "journey-action:end user customer:step:8",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[7]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:8|USES_OR_AFFECTS|object:refund claim",
+      "from": "journey-action:end user customer:step:8",
+      "to": "object:refund claim",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[7]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:8|USES_OR_AFFECTS|object:loyalty points ledger",
+      "from": "journey-action:end user customer:step:8",
+      "to": "object:loyalty points ledger",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[7]"
+      ]
+    },
+    {
+      "key": "journey-action:end user customer:step:8|USES_OR_AFFECTS|object:cancellation request",
+      "from": "journey-action:end user customer:step:8",
+      "to": "object:cancellation request",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[0].chronological_milestones_and_data_inputs[7]"
+      ]
+    },
+    {
+      "key": "actor:store associate|PERFORMS|journey-action:store associate:step:1",
+      "from": "actor:store associate",
+      "to": "journey-action:store associate:step:1",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "journey-action:store associate:step:1|USES_OR_AFFECTS|object:pickup manifest",
+      "from": "journey-action:store associate:step:1",
+      "to": "object:pickup manifest",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "actor:store associate|PERFORMS|journey-action:store associate:step:2",
+      "from": "actor:store associate",
+      "to": "journey-action:store associate:step:2",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "journey-action:store associate:step:2|USES_OR_AFFECTS|object:order line item",
+      "from": "journey-action:store associate:step:2",
+      "to": "object:order line item",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "actor:store associate|PERFORMS|journey-action:store associate:step:3",
+      "from": "actor:store associate",
+      "to": "journey-action:store associate:step:3",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "journey-action:store associate:step:3|USES_OR_AFFECTS|object:merchant inventory stock",
+      "from": "journey-action:store associate:step:3",
+      "to": "object:merchant inventory stock",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "actor:store associate|PERFORMS|journey-action:store associate:step:4",
+      "from": "actor:store associate",
+      "to": "journey-action:store associate:step:4",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "journey-action:store associate:step:4|USES_OR_AFFECTS|object:handover receipt",
+      "from": "journey-action:store associate:step:4",
+      "to": "object:handover receipt",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[1].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "actor:logistics dispatcher|PERFORMS|journey-action:logistics dispatcher:step:1",
+      "from": "actor:logistics dispatcher",
+      "to": "journey-action:logistics dispatcher:step:1",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "journey-action:logistics dispatcher:step:1|USES_OR_AFFECTS|object:delivery slot",
+      "from": "journey-action:logistics dispatcher:step:1",
+      "to": "object:delivery slot",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "actor:logistics dispatcher|PERFORMS|journey-action:logistics dispatcher:step:2",
+      "from": "actor:logistics dispatcher",
+      "to": "journey-action:logistics dispatcher:step:2",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "journey-action:logistics dispatcher:step:2|USES_OR_AFFECTS|object:order header",
+      "from": "journey-action:logistics dispatcher:step:2",
+      "to": "object:order header",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "journey-action:logistics dispatcher:step:2|USES_OR_AFFECTS|object:assigned courier",
+      "from": "journey-action:logistics dispatcher:step:2",
+      "to": "object:assigned courier",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "actor:logistics dispatcher|PERFORMS|journey-action:logistics dispatcher:step:3",
+      "from": "actor:logistics dispatcher",
+      "to": "journey-action:logistics dispatcher:step:3",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "journey-action:logistics dispatcher:step:3|USES_OR_AFFECTS|object:assigned courier",
+      "from": "journey-action:logistics dispatcher:step:3",
+      "to": "object:assigned courier",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "actor:logistics dispatcher|PERFORMS|journey-action:logistics dispatcher:step:4",
+      "from": "actor:logistics dispatcher",
+      "to": "journey-action:logistics dispatcher:step:4",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "journey-action:logistics dispatcher:step:4|USES_OR_AFFECTS|object:handover receipt",
+      "from": "journey-action:logistics dispatcher:step:4",
+      "to": "object:handover receipt",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[2].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "actor:merchant inventory manager|PERFORMS|journey-action:merchant inventory manager:step:1",
+      "from": "actor:merchant inventory manager",
+      "to": "journey-action:merchant inventory manager:step:1",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "journey-action:merchant inventory manager:step:1|USES_OR_AFFECTS|object:merchant inventory stock",
+      "from": "journey-action:merchant inventory manager:step:1",
+      "to": "object:merchant inventory stock",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "actor:merchant inventory manager|PERFORMS|journey-action:merchant inventory manager:step:2",
+      "from": "actor:merchant inventory manager",
+      "to": "journey-action:merchant inventory manager:step:2",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "journey-action:merchant inventory manager:step:2|USES_OR_AFFECTS|object:order line item",
+      "from": "journey-action:merchant inventory manager:step:2",
+      "to": "object:order line item",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "actor:merchant inventory manager|PERFORMS|journey-action:merchant inventory manager:step:3",
+      "from": "actor:merchant inventory manager",
+      "to": "journey-action:merchant inventory manager:step:3",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "journey-action:merchant inventory manager:step:3|USES_OR_AFFECTS|object:cancellation request",
+      "from": "journey-action:merchant inventory manager:step:3",
+      "to": "object:cancellation request",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "actor:merchant inventory manager|PERFORMS|journey-action:merchant inventory manager:step:4",
+      "from": "actor:merchant inventory manager",
+      "to": "journey-action:merchant inventory manager:step:4",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[3].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "actor:iam security officer|PERFORMS|journey-action:iam security officer:step:1",
+      "from": "actor:iam security officer",
+      "to": "journey-action:iam security officer:step:1",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "journey-action:iam security officer:step:1|USES_OR_AFFECTS|object:user account",
+      "from": "journey-action:iam security officer:step:1",
+      "to": "object:user account",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "journey-action:iam security officer:step:1|USES_OR_AFFECTS|object:geolocation request",
+      "from": "journey-action:iam security officer:step:1",
+      "to": "object:geolocation request",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "actor:iam security officer|PERFORMS|journey-action:iam security officer:step:2",
+      "from": "actor:iam security officer",
+      "to": "journey-action:iam security officer:step:2",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "actor:iam security officer|PERFORMS|journey-action:iam security officer:step:3",
+      "from": "actor:iam security officer",
+      "to": "journey-action:iam security officer:step:3",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "journey-action:iam security officer:step:3|USES_OR_AFFECTS|object:user account",
+      "from": "journey-action:iam security officer:step:3",
+      "to": "object:user account",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[4].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "actor:finance billing agent|PERFORMS|journey-action:finance billing agent:step:1",
+      "from": "actor:finance billing agent",
+      "to": "journey-action:finance billing agent:step:1",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "journey-action:finance billing agent:step:1|USES_OR_AFFECTS|object:payment transaction",
+      "from": "journey-action:finance billing agent:step:1",
+      "to": "object:payment transaction",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[0]"
+      ]
+    },
+    {
+      "key": "actor:finance billing agent|PERFORMS|journey-action:finance billing agent:step:2",
+      "from": "actor:finance billing agent",
+      "to": "journey-action:finance billing agent:step:2",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "journey-action:finance billing agent:step:2|USES_OR_AFFECTS|object:refund claim",
+      "from": "journey-action:finance billing agent:step:2",
+      "to": "object:refund claim",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[1]"
+      ]
+    },
+    {
+      "key": "actor:finance billing agent|PERFORMS|journey-action:finance billing agent:step:3",
+      "from": "actor:finance billing agent",
+      "to": "journey-action:finance billing agent:step:3",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "journey-action:finance billing agent:step:3|USES_OR_AFFECTS|object:subscription plan",
+      "from": "journey-action:finance billing agent:step:3",
+      "to": "object:subscription plan",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[2]"
+      ]
+    },
+    {
+      "key": "actor:finance billing agent|PERFORMS|journey-action:finance billing agent:step:4",
+      "from": "actor:finance billing agent",
+      "to": "journey-action:finance billing agent:step:4",
+      "type": "PERFORMS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
+    {
+      "key": "journey-action:finance billing agent:step:4|USES_OR_AFFECTS|object:loyalty points ledger",
+      "from": "journey-action:finance billing agent:step:4",
+      "to": "object:loyalty points ledger",
+      "type": "USES_OR_AFFECTS",
+      "sources": [
+        "actorJourneys"
+      ],
+      "evidence": [
+        "$[5].chronological_milestones_and_data_inputs[3]"
+      ]
+    },
     {
       "key": "lane:iam security officer|CONTAINS|mermaid:node_step_p1_1",
       "from": "lane:iam security officer",

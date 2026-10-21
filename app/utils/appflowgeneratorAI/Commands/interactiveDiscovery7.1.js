@@ -356,162 +356,270 @@ function analyzeBusinessProcess(
   // 6. Actor journeys
   // ----------------------------------------------------------
 
+  // ----------------------------------------------------------
+  // 6. Actor journeys
+  // ----------------------------------------------------------
+
   const journeyActions = [];
 
-  walk(actorJourneys, (record, sourcePath) => {
-    const action = getString(record, [
-      "actor_action",
-      "actorAction",
-      "system_activity",
-      "systemActivity",
-      "activity",
-      "activity_name",
-      "activityName",
-      "milestone_description",
-      "milestoneDescription",
-      "action_description",
-      "actionDescription",
-      "description",
-      "task"
-    ]);
+  actorJourneys.forEach((journey, journeyIndex) => {
+    const actor = String(journey.actor_name ?? "").trim();
 
-    if (!action) return;
-    if (/^\d+(?:\.\d+)*$/.test(action.trim())) return;
+    const milestones = Array.isArray(
+      journey.chronological_milestones_and_data_inputs
+    )
+      ? journey.chronological_milestones_and_data_inputs
+      : [];
 
-    const actor = getString(record, [
-      "actor",
-      "actor_name",
-      "actorName",
-      "supporting_actor",
-      "supportingActor",
-      "role",
-      "role_name",
-      "roleName",
-      "participant"
-    ]);
+    milestones.forEach((milestone, milestoneIndex) => {
+      const narrative = String(
+        milestone.data_object_layer ?? ""
+      ).trim();
 
-    const object = getString(record, [
-      "business_object",
-      "businessObject",
-      "business_object_name",
-      "businessObjectName",
-      "object_name",
-      "objectName"
-    ]);
+      if (!narrative) return;
 
-    const outcome = getString(record, [
-      "outcome",
-      "expected_outcome",
-      "expectedOutcome",
-      "result"
-    ]);
+      const sourcePath =
+        `$[${journeyIndex}].chronological_milestones_and_data_inputs[${milestoneIndex}]`;
 
-    const decision = getString(record, [
-      "business_rule",
-      "businessRule",
-      "decision",
-      "condition",
-      "rule"
-    ]);
+      const step = String(milestone.step ?? "");
 
-    const actionId =
-      `journey-action:${normalize(action)}:${sourcePath}`;
+      const actionId =
+        `journey-action:${normalize(actor)}:step:${normalize(step)}`;
 
-    addNode(
-      actionId,
-      "journeyAction",
-      action,
-      "actorJourneys",
-      sourcePath,
-      {
+      // Find declared business objects explicitly mentioned
+      // in this milestone narrative.
+      const mentionedObjects = Object.values(graph.nodes).filter(
+        node =>
+          node.type === "businessObject" &&
+          normalize(narrative).includes(normalize(node.label))
+      );
+
+      const objectNamesForMilestone = [
+        ...new Set(mentionedObjects.map(node => node.label))
+      ];
+
+      addNode(
+        actionId,
+        "journeyAction",
+        narrative,
+        "actorJourneys",
+        sourcePath,
+        {
+          actor,
+          step,
+          narrative,
+          businessObjects: objectNamesForMilestone
+        }
+      );
+
+      journeyActions.push({
+        id: actionId,
+        action: narrative,
         actor,
-        businessObject: object,
-        outcome,
-        decision
-      }
-    );
+        step,
+        objects: objectNamesForMilestone,
+        sourcePath
+      });
 
-    journeyActions.push({
-      id: actionId,
-      action,
-      actor,
-      object,
-      outcome,
-      decision,
-      sourcePath
+      // Link journey action to its declared actor.
+      if (actor) {
+        const actorId = `actor:${normalize(actor)}`;
+
+        if (actorNames.has(normalize(actor))) {
+          addEdge(
+            actorId,
+            actionId,
+            "PERFORMS",
+            "actorJourneys",
+            sourcePath
+          );
+        } else {
+          addFinding(
+            "UNDECLARED_JOURNEY_ACTOR",
+            "REVIEW",
+            `Journey actor '${actor}' is not declared in actor authorization data.`,
+            [sourcePath],
+            { actor, step }
+          );
+        }
+      }
+
+      // Link the journey action to each explicitly mentioned
+      // business object.
+      for (const objectNode of mentionedObjects) {
+        addEdge(
+          actionId,
+          objectNode.id,
+          "USES_OR_AFFECTS",
+          "actorJourneys",
+          sourcePath
+        );
+      }
     });
-
-    if (actor) {
-      const actorId = `actor:${normalize(actor)}`;
-
-      addNode(
-        actorId,
-        "actor",
-        actor,
-        "actorJourneys",
-        sourcePath
-      );
-
-      addEdge(
-        actorId,
-        actionId,
-        "PERFORMS",
-        "actorJourneys",
-        sourcePath
-      );
-
-      if (!actorNames.has(normalize(actor))) {
-        addFinding(
-          "UNDECLARED_JOURNEY_ACTOR",
-          "REVIEW",
-          `Journey references actor '${actor}', which was not found in actor authorization data.`,
-          [sourcePath],
-          { actor }
-        );
-      }
-    }
-
-    if (object) {
-      const normalizedObject = normalize(object);
-      const objectId = `object:${normalizedObject}`;
-
-      addNode(
-        objectId,
-        "businessObject",
-        object,
-        "actorJourneys",
-        sourcePath
-      );
-
-      addEdge(
-        actionId,
-        objectId,
-        "USES_OR_AFFECTS",
-        "actorJourneys",
-        sourcePath
-      );
-
-      if (!objectNames.has(normalizedObject)) {
-        addFinding(
-          "UNDECLARED_BUSINESS_OBJECT",
-          "REVIEW",
-          `Journey references business object '${object}', but it was not found in the declared business-object input.`,
-          [sourcePath],
-          { businessObject: object }
-        );
-      }
-    }
-
-    if (!outcome) {
-      addFinding(
-        "JOURNEY_ACTION_WITHOUT_OUTCOME",
-        "REVIEW",
-        `Journey action '${action}' has no explicitly recognized outcome.`,
-        [sourcePath],
-        { action, actor, object }
-      );
-    }
   });
+
+  console.log("JOURNEY EXTRACTION CHECK:", {
+    journeyCount: actorJourneys.length,
+    journeyActions: journeyActions.length,
+    firstJourneyAction: journeyActions[0] ?? null
+  });
+
+  // const journeyActions = [];
+
+  // walk(actorJourneys, (record, sourcePath) => {
+  //   const action = getString(record, [
+  //     "actor_action",
+  //     "actorAction",
+  //     "system_activity",
+  //     "systemActivity",
+  //     "activity",
+  //     "activity_name",
+  //     "activityName",
+  //     "milestone_description",
+  //     "milestoneDescription",
+  //     "action_description",
+  //     "actionDescription",
+  //     "description",
+  //     "task"
+  //   ]);
+
+  //   if (!action) return;
+  //   if (/^\d+(?:\.\d+)*$/.test(action.trim())) return;
+
+  //   const actor = getString(record, [
+  //     "actor",
+  //     "actor_name",
+  //     "actorName",
+  //     "supporting_actor",
+  //     "supportingActor",
+  //     "role",
+  //     "role_name",
+  //     "roleName",
+  //     "participant"
+  //   ]);
+
+  //   const object = getString(record, [
+  //     "business_object",
+  //     "businessObject",
+  //     "business_object_name",
+  //     "businessObjectName",
+  //     "object_name",
+  //     "objectName"
+  //   ]);
+
+  //   const outcome = getString(record, [
+  //     "outcome",
+  //     "expected_outcome",
+  //     "expectedOutcome",
+  //     "result"
+  //   ]);
+
+  //   const decision = getString(record, [
+  //     "business_rule",
+  //     "businessRule",
+  //     "decision",
+  //     "condition",
+  //     "rule"
+  //   ]);
+
+  //   const actionId =
+  //     `journey-action:${normalize(action)}:${sourcePath}`;
+
+  //   addNode(
+  //     actionId,
+  //     "journeyAction",
+  //     action,
+  //     "actorJourneys",
+  //     sourcePath,
+  //     {
+  //       actor,
+  //       businessObject: object,
+  //       outcome,
+  //       decision
+  //     }
+  //   );
+
+  //   journeyActions.push({
+  //     id: actionId,
+  //     action,
+  //     actor,
+  //     object,
+  //     outcome,
+  //     decision,
+  //     sourcePath
+  //   });
+
+  //   if (actor) {
+  //     const actorId = `actor:${normalize(actor)}`;
+
+  //     addNode(
+  //       actorId,
+  //       "actor",
+  //       actor,
+  //       "actorJourneys",
+  //       sourcePath
+  //     );
+
+  //     addEdge(
+  //       actorId,
+  //       actionId,
+  //       "PERFORMS",
+  //       "actorJourneys",
+  //       sourcePath
+  //     );
+
+  //     if (!actorNames.has(normalize(actor))) {
+  //       addFinding(
+  //         "UNDECLARED_JOURNEY_ACTOR",
+  //         "REVIEW",
+  //         `Journey references actor '${actor}', which was not found in actor authorization data.`,
+  //         [sourcePath],
+  //         { actor }
+  //       );
+  //     }
+  //   }
+
+  //   if (object) {
+  //     const normalizedObject = normalize(object);
+  //     const objectId = `object:${normalizedObject}`;
+
+  //     addNode(
+  //       objectId,
+  //       "businessObject",
+  //       object,
+  //       "actorJourneys",
+  //       sourcePath
+  //     );
+
+  //     addEdge(
+  //       actionId,
+  //       objectId,
+  //       "USES_OR_AFFECTS",
+  //       "actorJourneys",
+  //       sourcePath
+  //     );
+
+  //     if (!objectNames.has(normalizedObject)) {
+  //       addFinding(
+  //         "UNDECLARED_BUSINESS_OBJECT",
+  //         "REVIEW",
+  //         `Journey references business object '${object}', but it was not found in the declared business-object input.`,
+  //         [sourcePath],
+  //         { businessObject: object }
+  //       );
+  //     }
+  //   }
+
+  //   if (!outcome) {
+  //     addFinding(
+  //       "JOURNEY_ACTION_WITHOUT_OUTCOME",
+  //       "REVIEW",
+  //       `Journey action '${action}' has no explicitly recognized outcome.`,
+  //       [sourcePath],
+  //       { action, actor, object }
+  //     );
+  //   }
+  // });
 
   // ----------------------------------------------------------
   // 7. Parse Mermaid nodes, lanes and transitions
@@ -857,7 +965,15 @@ function analyzeBusinessProcess(
           similarity: Number(bestScore.toFixed(2))
         }
       );
-    }
+    }else {
+  addEdge(
+    journey.id,
+    `mermaid:${bestMatch.id}`,
+    "CORRESPONDS_TO",
+    "crossSourceMatch",
+    `${journey.sourcePath} -> ${bestMatch.line}`
+  );
+}
   }
 
   // ----------------------------------------------------------
@@ -983,12 +1099,26 @@ const parsedActorJourneys =
     ? JSON.parse(actorJourneys)
     : actorJourneys;
 
-console.log("VALIDATOR FUNCTION ENTRY:", {
+console.log("INPUT SHAPE CHECK:", {
   businessObjectsIsArray: Array.isArray(businessObjects),
   actorAuthorizationsIsArray: Array.isArray(actorAuthorizations),
   actorJourneysIsArray: Array.isArray(parsedActorJourneys),
-  mermaidMarkdownType: typeof mermaidMarkdown
+  journeyCount: Array.isArray(parsedActorJourneys)
+    ? parsedActorJourneys.length
+    : null,
+  firstJourneyKeys: Object.keys(parsedActorJourneys?.[0] ?? {}),
+  firstMilestone:
+    parsedActorJourneys?.[0]
+      ?.chronological_milestones_and_data_inputs?.[0]
 });
+
+
+// console.log("VALIDATOR FUNCTION ENTRY:", {
+//   businessObjectsIsArray: Array.isArray(businessObjects),
+//   actorAuthorizationsIsArray: Array.isArray(actorAuthorizations),
+//   actorJourneysIsArray: Array.isArray(parsedActorJourneys),
+//   mermaidMarkdownType: typeof mermaidMarkdown
+// });
 const result = analyzeBusinessProcess(
   businessObjects,
   actorAuthorizations,
@@ -996,11 +1126,11 @@ const result = analyzeBusinessProcess(
   mermaidMarkdown
 );
 
-console.log("Business process analysis:", result.status);
-console.table(result.summary);
+// console.log("Business process analysis:", result.status);
+// console.table(result.summary);
 
-console.log("\nFindings:");
-console.dir(result.findings, { depth: null });
+// console.log("\nFindings:");
+// console.dir(result.findings, { depth: null });
 
 fs.writeFileSync(
   path.join(OUTPUT_DIR.replace("/baseline",""), "business-process-evidence-graph"+getdates()+".json"),
@@ -1021,7 +1151,7 @@ fs.writeFileSync(
   ),
   "utf8"
 );
-console.log(JSON.stringify(result, null, 2));
+//console.log(JSON.stringify(result, null, 2));
 
 
 
