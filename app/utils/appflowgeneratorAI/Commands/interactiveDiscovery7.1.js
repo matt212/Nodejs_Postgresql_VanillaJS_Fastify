@@ -921,83 +921,124 @@ function analyzeBusinessProcess(
   // ----------------------------------------------------------
 
   // Ignore common words that add little meaning to activity matching.
+ 
+  // ----------------------------------------------------------
+  // 9. Classify journey clauses and match activities
+  // ----------------------------------------------------------
+
   const stopWords = new Set([
-    "the", "and", "for", "with", "from", "into", "onto",
-    "via", "its", "their", "this", "that", "then", "than",
-    "has", "have", "had", "are", "was", "were", "been",
-    "being", "is", "be", "as", "at", "by", "of", "to",
-    "a", "an", "in", "on", "or", "it", "which", "against",
-    "system", "outputs", "output", "input", "performs",
-    "perform", "executes", "execute", "initiates", "initiate"
+    "the", "and", "for", "with", "from", "into", "via",
+    "this", "that", "then", "against", "their", "its",
+    "has", "have", "was", "were", "been", "being",
+    "are", "the", "system", "performs", "perform",
+    "executes", "execute", "outputs", "output"
   ]);
 
-  const getMeaningfulTokens = value =>
+  const tokens = value =>
     normalize(value)
       .split(" ")
       .filter(token =>
         token.length > 2 && !stopWords.has(token)
       );
 
-  // Dice similarity is less punitive than Jaccard when one
-  // description contains additional context.
-  const similarity = (left, right) => {
-    const a = new Set(getMeaningfulTokens(left));
-    const b = new Set(getMeaningfulTokens(right));
+  const diceSimilarity = (left, right) => {
+    const a = new Set(tokens(left));
+    const b = new Set(tokens(right));
 
     if (!a.size || !b.size) return 0;
 
-    let intersection = 0;
-
+    let common = 0;
     for (const token of a) {
-      if (b.has(token)) intersection++;
+      if (b.has(token)) common++;
     }
 
-    return (2 * intersection) / (a.size + b.size);
+    return (2 * common) / (a.size + b.size);
   };
 
-  // Split each milestone narrative into smaller activity clauses.
-  // Keep the original milestone as the evidence source.
-  const splitIntoClauses = value =>
-    String(value ?? "")
-      .split(/[;]+/)
-      .map(clause => clause.trim())
-      .filter(clause => clause.length > 0);
+  // Classify only what the wording supports.
+  // Do not assume every clause is a business activity.
+  const classifyClause = clause => {
+    const text = clause.trim();
 
-  const isExceptionDescription = value =>
-    /\b(alternate|alternative|retry|retrying|rollback|roll back|fault|failure|failed|reject|rejection|terminate|cancel|compensat|remediat)\b/i
-      .test(value);
+    if (
+      /^(outputs?|returns?|produces?|generates?|results?\s+in|provides?\s+(?:the\s+)?(?:confirmed|updated|assigned|authenticated|unique)\b)/i
+        .test(text)
+    ) {
+      return "OUTPUT";
+    }
 
-  const isExceptionNode = value =>
-    /\b(alternate|fault isolation|rollback|reject scenario|degraded|retry event|terminate session)\b/i
-      .test(value);
+    if (
+      /^(receives?|retrieves?|reads?|loads?|imports?)\b/i
+        .test(text)
+    ) {
+      return "INPUT_OR_RETRIEVAL";
+    }
 
-  const MIN_MATCH_SCORE = 0.45;
+    return "ACTIVITY_CANDIDATE";
+  };
+
+  // Extract the major step number from a Mermaid label.
+  // Example: "Step 3.1: Inventory check" -> "3"
+  const getMermaidStepNumber = label => {
+    const match = String(label ?? "").match(
+      /\bstep\s+(\d+)(?:\.\d+)*/i
+    );
+
+    return match ? match[1] : null;
+  };
+
+  const MIN_ACTIVITY_SCORE = 0.45;
   const AMBIGUITY_GAP = 0.08;
 
   for (const journey of journeyActions) {
-    const clauses = splitIntoClauses(journey.action);
-    const acceptedMatches = [];
+    const clauses = String(journey.action ?? "")
+      .split(/[;]+/)
+      .map(text => text.trim())
+      .filter(Boolean);
+
+    const matches = [];
+    const unmatchedActivities = [];
+    const nonActivityClauses = [];
 
     for (const clause of clauses) {
-      const exceptionClause = isExceptionDescription(clause);
+      const clauseType = classifyClause(clause);
+
+      // Outputs and input/retrieval descriptions remain evidence.
+      // They are not treated as missing Mermaid activities.
+      if (clauseType !== "ACTIVITY_CANDIDATE") {
+        nonActivityClauses.push({
+          clause,
+          type: clauseType
+        });
+        continue;
+      }
+
       const candidates = [];
 
       for (const node of mermaidNodes.values()) {
-        // Do not match ordinary business activities to
-        // exception/rollback nodes unless the clause describes
-        // an exception itself.
-        if (
-          isExceptionNode(node.label) &&
-          !exceptionClause
-        ) {
-          continue;
-        }
+        const textScore = diceSimilarity(
+          clause,
+          node.label
+        );
 
-        const score = similarity(clause, node.label);
+        // Use journey step order as supporting evidence.
+        // It is a bonus, not proof of equivalence.
+        const nodeStep = getMermaidStepNumber(node.label);
+        const sameStep =
+          journey.step != null &&
+          nodeStep != null &&
+          String(journey.step) === nodeStep;
+
+        const score = Math.min(
+          1,
+          textScore + (sameStep ? 0.20 : 0)
+        );
 
         candidates.push({
           node,
-          score
+          textScore,
+          score,
+          sameStep
         });
       }
 
@@ -1006,36 +1047,45 @@ function analyzeBusinessProcess(
       const best = candidates[0];
       const second = candidates[1];
 
-      if (!best || best.score < MIN_MATCH_SCORE) {
+      if (!best || best.score < MIN_ACTIVITY_SCORE) {
+        unmatchedActivities.push({
+          clause,
+          closestNode: best?.node.label ?? null,
+          score: Number((best?.score ?? 0).toFixed(2))
+        });
+
         addFinding(
-          "JOURNEY_CLAUSE_NOT_MATCHED",
+          "UNMATCHED_ACTIVITY_CLAUSE",
           "REVIEW",
-          `No sufficiently strong Mermaid match found for journey clause: '${clause}'.`,
+          `No sufficiently supported Mermaid match was found for activity candidate: '${clause}'. This does not prove that the activity is missing.`,
           [journey.sourcePath],
           {
             journeyActionId: journey.id,
-            fullJourneyNarrative: journey.action,
+            journeyStep: journey.step ?? null,
             clause,
             closestNode: best?.node.label ?? null,
-            similarity: Number((best?.score ?? 0).toFixed(2))
+            similarity: Number((best?.score ?? 0).toFixed(2)),
+            possibleGap: false
           }
         );
 
         continue;
       }
 
-      // If two candidates are nearly tied, do not silently
-      // treat the highest score as a confirmed match.
       if (
         second &&
-        second.score >= MIN_MATCH_SCORE &&
+        second.score >= MIN_ACTIVITY_SCORE &&
         best.score - second.score < AMBIGUITY_GAP
       ) {
         addFinding(
-          "AMBIGUOUS_JOURNEY_CLAUSE_MATCH",
+          "AMBIGUOUS_ACTIVITY_MATCH",
           "REVIEW",
-          `Multiple Mermaid nodes are similarly plausible for clause: '${clause}'.`,
-          [journey.sourcePath, best.node.line, second.node.line],
+          `More than one Mermaid node may correspond to activity: '${clause}'.`,
+          [
+            journey.sourcePath,
+            best.node.line,
+            second.node.line
+          ],
           {
             journeyActionId: journey.id,
             clause,
@@ -1043,22 +1093,23 @@ function analyzeBusinessProcess(
               {
                 nodeId: best.node.id,
                 label: best.node.label,
-                similarity: Number(best.score.toFixed(2))
+                score: Number(best.score.toFixed(2)),
+                sameStep: best.sameStep
               },
               {
                 nodeId: second.node.id,
                 label: second.node.label,
-                similarity: Number(second.score.toFixed(2))
+                score: Number(second.score.toFixed(2)),
+                sameStep: second.sameStep
               }
-            ]
+            ],
+            possibleGap: false
           }
         );
 
         continue;
       }
 
-      // This is a candidate correspondence based on text,
-      // not proof of semantic equivalence.
       addEdge(
         journey.id,
         `mermaid:${best.node.id}`,
@@ -1068,27 +1119,35 @@ function analyzeBusinessProcess(
           journeySource: journey.sourcePath,
           clause,
           mermaidSource: best.node.line,
-          similarity: Number(best.score.toFixed(2))
+          textSimilarity: Number(best.textScore.toFixed(2)),
+          stepContextMatch: best.sameStep,
+          adjustedScore: Number(best.score.toFixed(2))
         })
       );
 
-      acceptedMatches.push({
+      matches.push({
         clause,
         mermaidNodeId: best.node.id,
         mermaidLabel: best.node.label,
-        score: Number(best.score.toFixed(2))
+        score: Number(best.score.toFixed(2)),
+        stepContextMatch: best.sameStep
       });
     }
 
-    // Record match coverage on the journey action node.
+    // Preserve matching results and non-activity evidence.
     if (graph.nodes[journey.id]) {
       graph.nodes[journey.id].attributes.matching = {
-        clauseCount: clauses.length,
-        candidateMatchCount: acceptedMatches.length,
-        matches: acceptedMatches
+        activityClauseCount: clauses.filter(
+          clause =>
+            classifyClause(clause) === "ACTIVITY_CANDIDATE"
+        ).length,
+        candidateMatches: matches,
+        unmatchedActivities,
+        nonActivityClauses
       };
     }
   }
+
 
 
   // ----------------------------------------------------------
