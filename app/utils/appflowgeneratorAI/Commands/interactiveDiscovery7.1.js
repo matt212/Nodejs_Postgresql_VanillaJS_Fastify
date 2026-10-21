@@ -893,40 +893,61 @@ function analyzeBusinessProcess(
           continue;
         }
 
-        const textScore = similarity(
-          clause,
-          node.label
-        );
+        
+const textScore = similarity(
+  clause,
+  node.label
+);
 
-        const objectOverlap = getExplicitObjectOverlap(
-          clause,
-          node.label,
-          journey.objects
-        );
+const objectOverlap = getExplicitObjectOverlap(
+  clause,
+  node.label,
+  journey.objects
+);
 
-        const acceptedByText =
-          textScore >= MIN_TEXT_SCORE;
+// Actor-to-lane alignment is supporting evidence only.
+// A different lane does not automatically invalidate a match.
+const actorLaneMatch = Boolean(
+  journey.actor &&
+  node.lane &&
+  normalize(journey.actor) === normalize(node.lane)
+);
 
-        const acceptedByObjectAndText =
-          Boolean(objectOverlap) &&
-          textScore >=
-            MIN_TEXT_SCORE_WITH_OBJECT_OVERLAP;
+// Keep the text score separate from the contextual score.
+// These bonuses rank candidates; they do not prove equivalence.
+const candidateRelevanceScore =
+  textScore +
+  (objectOverlap ? 0.10 : 0) +
+  (actorLaneMatch ? 0.05 : 0);
 
-        candidates.push({
-          node,
-          textScore,
-          objectOverlap,
-          eligible:
-            acceptedByText ||
-            acceptedByObjectAndText
-        });
+const acceptedByText =
+  textScore >= MIN_TEXT_SCORE;
+
+const acceptedByObjectAndText =
+  Boolean(objectOverlap) &&
+  textScore >= MIN_TEXT_SCORE_WITH_OBJECT_OVERLAP;
+
+candidates.push({
+  node,
+  textScore,
+  objectOverlap,
+  actorLaneMatch,
+  candidateRelevanceScore,
+  eligible:
+    acceptedByText ||
+    acceptedByObjectAndText
+});
+
       }
 
       // Rank by text evidence first. Object overlap is supporting
       // evidence for eligibility, not a substitute for text.
       candidates.sort(
-        (a, b) => b.textScore - a.textScore
-      );
+  (a, b) =>
+    b.candidateRelevanceScore -
+      a.candidateRelevanceScore ||
+    b.textScore - a.textScore
+);
 
       const eligibleCandidates = candidates.filter(
         candidate => candidate.eligible
@@ -947,24 +968,34 @@ function analyzeBusinessProcess(
   `No Mermaid node could be linked confidently to journey clause '${clause}'. This is an unresolved correspondence, not proof that a business activity is missing.`,
   [journey.sourcePath],
   {
-    action: journey.action,
-    clause,
-    actor: journey.actor || null,
-    businessObjects: journey.objects || [],
-
+ action: journey.action,
+  clause,
+  actor: journey.actor || null,
+  step: journey.step,
+  milestoneContext: journey.action,
+  sourcePath: journey.sourcePath,
+  businessObjects: journey.objects || [],
+  siblingClauses: clauses.filter(
+    sibling => sibling !== clause
+  ),
     candidateStatus: "UNRESOLVED",
 
     closestCandidate: bestDiagnostic
-      ? {
-          nodeId: bestDiagnostic.node.id,
-          nodeLabel: bestDiagnostic.node.label,
-          textSimilarity: Number(
-            bestDiagnostic.textScore.toFixed(3)
-          ),
-          explicitObjectOverlap:
-            bestDiagnostic.objectOverlap
-        }
-      : null,
+  ? {
+      nodeId: bestDiagnostic.node.id,
+      nodeLabel: bestDiagnostic.node.label,
+      textSimilarity: Number(
+        bestDiagnostic.textScore.toFixed(3)
+      ),
+      explicitObjectOverlap:
+        bestDiagnostic.objectOverlap,
+      candidateRelevanceScore: Number(
+        bestDiagnostic.candidateRelevanceScore.toFixed(3)
+      ),
+      actorLaneMatch: bestDiagnostic.actorLaneMatch,
+      diagnosticOnly: true
+    }
+  : null,
 
     interpretation:
       "The available evidence did not establish a sufficiently strong correspondence. Human review is required.",
@@ -979,31 +1010,44 @@ function analyzeBusinessProcess(
       // If two candidates have similar text scores, do not
       // arbitrarily select one. Ask for evidence-based review.
       if (
-        secondCandidate &&
-        bestCandidate.textScore -
-          secondCandidate.textScore <
-          AMBIGUITY_GAP
-      ) {
+  secondCandidate &&
+  bestCandidate.candidateRelevanceScore -
+    secondCandidate.candidateRelevanceScore <
+    AMBIGUITY_GAP
+) {
         addFinding(
           "AMBIGUOUS_JOURNEY_TO_MERMAID_MATCH",
           "REVIEW",
           `Journey clause '${clause}' has multiple similarly scored Mermaid candidates. Confirm which node, if any, represents this activity.`,
           [journey.sourcePath],
           {
-            action: journey.action,
-            clause,
-            actor: journey.actor || null,
+            
+  action: journey.action,
+  clause,
+  actor: journey.actor || null,
+  step: journey.step,
+  milestoneContext: journey.action,
+  sourcePath: journey.sourcePath,
+  businessObjects: journey.objects || [],
+  siblingClauses: clauses.filter(
+    sibling => sibling !== clause
+  ),
+  
             candidates: eligibleCandidates
               .slice(0, 3)
               .map(candidate => ({
-                nodeId: candidate.node.id,
-                nodeLabel: candidate.node.label,
-                similarity: Number(
-                  candidate.textScore.toFixed(3)
-                ),
-                objectOverlap:
-                  candidate.objectOverlap
-              })),
+  nodeId: candidate.node.id,
+  nodeLabel: candidate.node.label,
+  similarity: Number(
+    candidate.textScore.toFixed(3)
+  ),
+  objectOverlap:
+    candidate.objectOverlap,
+  candidateRelevanceScore: Number(
+    candidate.candidateRelevanceScore.toFixed(3)
+  ),
+  actorLaneMatch: candidate.actorLaneMatch
+})),
               candidateStatus: "AMBIGUOUS",
             possibleGap: false
           }
