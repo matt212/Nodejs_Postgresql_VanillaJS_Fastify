@@ -944,7 +944,7 @@ function analyzeBusinessProcess(
             action: journey.action,
             clause,
             actor: journey.actor || null,
-            businessObject: journey.object || null,
+            businessObject: journey.objects || [],
             closestNode:
               bestDiagnostic?.node.label ?? null,
             closestNodeId:
