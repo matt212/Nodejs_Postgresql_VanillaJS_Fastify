@@ -1,0 +1,16 @@
+{
+  "status": "NO_FINDINGS",
+  "summary": {
+    "businessObjectDeclarations": 15,
+    "declaredActors": 6,
+    "journeyActions": 0,
+    "mermaidNodes": 27,
+    "mermaidTransitions": 38,
+    "graphNodes": 54,
+    "graphEdges": 61,
+    "totalFindings": 0,
+    "errors": 0,
+    "reviews": 0
+  },
+  "findings": []
+}
