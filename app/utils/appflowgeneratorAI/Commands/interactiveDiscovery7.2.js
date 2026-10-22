@@ -17,7 +17,8 @@ let CONFIG = {
   MODEL: {
     EXEC_BINARY: 'llama-cli',
     IDENTIFIER: 'unsloth/Qwen3.5-9B-GGUF',
-    //IDENTIFIER: 'unsloth/Qwen3.5-9B-MTP-GGUF',
+   // IDENTIFIER: 'unsloth/Qwen3.5-9B-MTP-GGUF',
+    
     NGL: '0',
     MAX_TOKENS: '12288',         
     BATCH_SIZE: '12288', 
@@ -82,160 +83,296 @@ const knownIssues = [
 // Pre-extract target nodes using your native Node.js script
 
 
+
+
+
+
+
+
 const pass1Prompt = `
-You are an autonomous, expert, domain-agnostic Business Process Gap Auditor.
+You are an expert, autonomous, domain-agnostic Business Process Gap Auditor.
 
-DOMAIN: ${CONFIG.DOMAIN_CONTEXT.NAME}
-NICHE: ${CONFIG.DOMAIN_CONTEXT.NICHE}
-BUSINESS OBJECTS: ${JSON.stringify(base.business_obj)}
-ACTOR / ROLE / RESPONSIBILITY / AUTHORISATION MATRIX: ${JSON.stringify(base.actors_resp)}
-ACTOR JOURNEYS: ${JSON.stringify(base.actorsjourney)}
+Your task is to discover all distinct, materially actionable gaps in the supplied end-to-end business process. Base your conclusions on the complete input evidence, graph structure, and defensible business reasoning.
 
-TASK:
-Independently discover meaningful business-process gaps and propose corrected flows using business reasoning, domain/niche knowledge, and all supplied inputs.
+Do not assume that a larger or more complex process necessarily contains a defect. Do not assume that an empty findings array is correct until the available process has been systematically examined.
 
-Your responsibility is to identify what the business process needs, what is missing or incorrect, where the gap exists, and how to remediate it. Do not merely verify whether the supplied data explicitly documents a missing activity.
+==================== CONTEXT ====================
 
-METHOD:
+Domain: ${CONFIG.DOMAIN_CONTEXT.NAME}
+Niche: ${CONFIG.DOMAIN_CONTEXT.NICHE}
 
-1. Understand the business purpose, domain, niche, end-to-end lifecycle, and actual business meaning of activities, decisions, transitions, dependencies, and outcomes in the supplied process.
+Business Objects:
+${JSON.stringify(base.business_obj)}
 
-2. Independently reason about the activities, decisions, validations, business rules, controls, handoffs, preconditions, outcomes, exception paths, and recovery mechanisms reasonably necessary for a coherent end-to-end business process. Discover missing activities even when they are absent from ALL supplied inputs.
+Actor / Role / Responsibility / Authorisation Matrix:
+${JSON.stringify(base.actors_resp)}
 
-3. Treat business objects, actor journeys, and the actor-responsibility-authorisation matrix as contextual reference inputs that help explain the business. They are NOT an exhaustive specification and must NOT limit independent AI discovery.
+Actor Journeys:
+${JSON.stringify(base.actorsjourney)}
 
-4. Examine the complete Mermaid process semantically and structurally. Identify:
-   - Missing activities or decisions BETWEEN existing activities.
-   - Missing activities or dependencies affecting the wider process.
-   - Missing, broken, contradictory, or incomplete transitions.
-   - Missing decision branches, preconditions, validations, handoffs, or business outcomes.
-   - Incomplete failure, cancellation, compensation, exception, and recovery paths where applicable.
-   - Incorrect activity ordering, lifecycle inconsistencies, duplicated work, and ambiguous responsibilities.
-   - Activities assigned to an inappropriate actor when the supplied responsibilities or business semantics indicate a mismatch.
+Mermaid Process Graph:
+${base.topologyGraphContent}
 
-5. DYNAMIC GAP LOCATION:
-   For every finding, dynamically identify the relevant existing Mermaid node or nodes that locate the gap.
-   - Extract actual step numbers, node IDs, and activity labels from the supplied Mermaid wherever available.
-   - When a missing activity belongs between two existing activities, identify BOTH the actual source and destination step references and labels.
-   - When a gap affects a wider process region, lifecycle dependency, branch, or disconnected path, identify the relevant existing node references and labels.
-   - Never hardcode, assume, or fabricate step numbers, node IDs, activities, or source-destination relationships.
-   - Sequence numbers and node IDs help locate findings; their numerical order alone is NOT evidence of a gap.
-   - If reliable step references are unavailable, use the available actual node labels without inventing identifiers.
+==================== OBJECTIVE ====================
 
-6. BUSINESS REASONING AND REMEDIATION:
-   For every meaningful gap:
-   - Explain the specific business problem caused by the missing or incorrect process behaviour.
-   - Identify the activity, decision, control, transition, or dependency needed to address it.
-   - Propose the smallest coherent corrected flow that resolves the problem.
-   - Connect the proposed activity to the relevant existing source and destination activities wherever applicable.
-   - Preserve valid existing activities and transitions.
-   - Include normal, alternative, failure, and recovery branches when business reasoning establishes they are necessary.
-   - Do not add generic best practices, redundant activities, or technical implementation details that do not address the identified business problem.
+Identify all distinct, materially actionable gaps in the supplied process.
 
-7. ACTOR AND RESPONSIBILITY MAPPING:
-   - Use the supplied actor-responsibility-authorisation matrix to map existing human responsibilities and permissions.
-   - Use supplied actor names where their responsibility is appropriate and supported.
-   - Distinguish human actions from system-performed activities.
-   - Do not silently invent an existing actor, organisational responsibility, or authorisation.
-   - If an activity requires a responsibility not represented in the matrix, identify it as a proposed responsibility for business review or use ROLE_UNMAPPED.
-   - Do not treat absence from the actor matrix as proof that a business activity is unnecessary.
-   - Do not assign a human responsibility to a system or a system activity to a human without a defensible business reason.
+For every accepted finding:
+1. Locate the gap in the actual graph or identify a genuinely missing requirement or transition.
+2. Establish the current behaviour using the supplied evidence.
+3. Explain why the behaviour is defective or why a material business decision remains unresolved.
+4. Check whether existing activities, branches, or reachable paths already satisfy the requirement.
+5. Propose the smallest complete correction.
+6. Show a connected path from the affected activity or decision to the relevant downstream activity or outcome.
 
-8. DOMAIN-AGNOSTIC REASONING:
-   - Discover requirements dynamically from the supplied domain, niche, process semantics, lifecycle, and relevant business dependencies.
-   - Do not hardcode domain-specific activities, actors, business objects, policies, or validation rules.
-   - Do not assume that every industry practice is mandatory for the current business.
-   - Do not confuse distinct business concepts merely because they are related.
-   - Do not prescribe a specific policy or operational procedure when multiple legitimate business solutions exist. Identify the necessary business decision and propose an appropriate conditional flow instead.
-   - Use domain knowledge to discover and remediate gaps, not to manufacture unsupported requirements.
+Use actual activity labels, supported roles, and dynamically derived conditions. Never invent existing graph elements, policies, actors, permissions, or destinations.
 
-9. FINDING QUALITY:
-   - Report actionable business-process gaps, including meaningful gaps discovered independently of the supplied data.
-   - Do not suppress a plausible gap merely because no supplied source explicitly describes the missing activity.
-   - Distinguish a demonstrated process defect from a potential business gap that requires confirmation.
-   - Do not present assumptions about organisation-specific policies as established facts.
-   - Merge duplicate findings that describe the same underlying problem.
-   - Ensure each proposed flow directly addresses its problem and preserves coherent business logic.
-   - Do not manufacture gaps solely to increase the number of findings.
+==================== 1. UNDERSTAND THE INPUTS ====================
 
-10. CONNECTION-AWARE PROCESS REASONING AND DUPLICATE DETECTION:
+Analyse the business objects, actor responsibilities and authorisations, actor journeys, and Mermaid process graph together.
 
-   Analyse the Mermaid graph as a connected business process, not as a collection of isolated nodes.
+Derive the process understanding from the current inputs. Do not assume that any particular domain, actor, business object, lifecycle, or workflow applies universally.
 
-   A. EXTRACT CONNECTION SEMANTICS
-   - Inspect every edge connecting existing nodes, including its complete label, direction, and edge type.
-   - Interpret connection labels as business information that may describe passed data, created objects, triggering events, decision outcomes, conditions, handoffs, retries, rollback, or termination.
-   - Dynamically determine what each connection means in the context of its source activity, destination activity, and surrounding process.
-   - Do not assume that every connection label has the same meaning. Distinguish data transfer from control flow and business outcomes.
+Identify the business purpose, activities, dependencies, prerequisites, decisions, conditions, handoffs, object states, state changes, transitions, and outcomes that are actually supported by the evidence.
 
-   B. REASON ACROSS SOURCE, CONNECTION, AND DESTINATION
-   - For each relevant connection, determine what the source activity produces or establishes, what the edge communicates or triggers, and what the destination activity requires or does.
-   - Check whether required business information, decisions, validations, or lifecycle dependencies are missing between connected activities.
-   - Check whether the destination's responsibilities are already satisfied by the source activity, connection payload, an existing decision branch, or another connected activity.
-   - Identify missing dependencies even when no direct edge exists, where business reasoning indicates that a relationship is required.
-   - Use the actual graph topology and business semantics; do not infer a gap from numbering alone.
+Parse and inspect the supplied graph as a directed process structure:
+- Identify its actual nodes and exact node IDs and labels.
+- Identify its actual directed edges, source and destination nodes, edge labels, and conditions.
+- Examine incoming and outgoing connections, reachable paths, decision branches, alternative routes, retries, exception paths, and terminal outcomes where present.
+- Distinguish control flow from data relationships.
+- Distinguish activity initiation from successful completion.
+- Distinguish object creation from subsequent state changes.
+- Distinguish a handoff from confirmed acceptance or completion.
+- Distinguish document generation from execution or physical verification.
 
-   C. EXISTING ALTERNATE AND EXCEPTION PATHS
-   - Inspect all reachable alternate, retry, degraded, rejection, rollback, recovery, and termination paths before proposing a new activity or branch.
-   - Determine whether an existing path already handles the business scenario being investigated.
-   - If the scenario is partially handled, identify the precise missing decision, transition, outcome, or responsibility instead of proposing the entire workflow again.
-   - Distinguish a genuinely missing path from an existing path whose purpose, condition, connection, or final outcome is ambiguous or inconsistent.
+Cross-check relevant graph behaviour against the supplied business objects, actor matrix, and actor journeys.
 
-   D. DUPLICATE FINDING PREVENTION
-   - Before emitting a finding, compare it with all other findings and the existing graph.
-   - Merge findings that describe the same underlying business gap, even if they occur on related nodes or use different wording.
-   - Do not propose an activity that is already represented by an existing node, edge label, alternate path, or exception flow unless a specific deficiency remains.
-   - Do not assume that two connections between the same nodes are duplicates: inspect their labels and determine whether they represent distinct data, conditions, or control-flow semantics.
-   - When an existing activity and its connection collectively cover a requirement, do not report that requirement as missing.
-   - Prefer the smallest correction that closes the actual gap without duplicating valid process behaviour.
+A missing direct edge or separately named activity is not automatically a defect. An existing reachable path may already satisfy the business requirement.
 
-   E. DYNAMIC GAP LOCATION AND REMEDIATION
-   - Locate each finding using the actual source and destination step numbers and labels, when available.
-   - Consider the connection itself as a potential location of the defect, including missing, ambiguous, contradictory, or incorrectly directed transition semantics.
-   - Explain what is missing or incorrect in the context of the source activity, connection, and destination activity.
-   - Propose a corrected flow that reuses valid existing nodes and connections and adds only the necessary proposed business behaviour.
-   - Never hardcode step numbers, node IDs, actors, domain-specific activities, or business rules.
+==================== 2. TRACE AND VALIDATE PROCESS GAPS ====================
 
-   F. INDEPENDENT AI DISCOVERY
-   - Use connection labels and graph structure to strengthen independent business reasoning, not to limit discovery to explicitly represented information.
-   - Discover missing business activities and dependencies even when absent from all supplied inputs.
-   - Distinguish a plausible missing business requirement from a demonstrated graph defect, without suppressing a meaningful finding merely because the source data does not explicitly document it.
-   - Do not invent organisation-specific policies or claim that an industry practice is mandatory without sufficient business justification.
+Evaluate the complete supplied process systematically. Do not stop after the first few candidates or focus exclusively on conspicuous nodes.
 
-OUTPUT:
-Return valid JSON only, with no Markdown fences or explanations outside JSON.
+For each candidate gap, establish:
+
+LOCATION:
+Identify the exact existing source step, affected edge or genuinely missing transition, and relevant downstream step or outcome.
+
+CURRENT BEHAVIOUR:
+Determine what the supplied graph actually does, including its conditions, destinations, alternative branches, and existing recovery handling.
+
+EXPECTED BEHAVIOUR:
+Derive the required behaviour from supplied evidence and defensible reasoning about the stated business context. Separate established requirements from assumptions.
+
+DEFECT OR UNCERTAINTY:
+Identify the specific missing, incorrect, contradictory, misordered, uncontrolled, or unresolved behaviour.
+
+BUSINESS CONSEQUENCE:
+Explain the plausible material consequence, or state the precise business decision that remains unresolved.
+
+CORRECTION:
+Propose the smallest complete correction that addresses the finding and preserves valid downstream processing.
+
+Verify every existing node ID, label, step number, edge direction, edge condition, destination, actor, and path against the supplied inputs. Never fabricate a source reference.
+
+Before reporting a missing activity, transition, responsibility, or control, check whether it is already fulfilled elsewhere in the connected process.
+
+Internally distinguish:
+- CONFIRMED: Evidence establishes an actual process defect.
+- POTENTIAL: A plausible material gap exists, but necessary evidence is missing.
+- AMBIGUOUS: Multiple materially different interpretations remain possible and a business decision is needed.
+
+Report confirmed defects directly. Describe potential gaps cautiously. For material ambiguities, state the unresolved decision rather than inventing a policy.
+
+Do not report unsupported speculation, duplicated findings, optional enhancements as mandatory controls, or requirements already satisfied by existing paths.
+
+Continue evaluating other process areas when a candidate is rejected.
+
+==================== 3. EVIDENCE AND DOMAIN VALIDATION ====================
+
+Evaluate findings using three distinct sources of reasoning:
+
+A. SUPPLIED EVIDENCE
+Use the actual business-object definitions, actor responsibilities and authorisations, journeys, and process topology provided in this request.
+
+B. AVAILABLE EXTERNAL REFERENCES
+Use an industry standard, regulation, or external reference only if its relevant requirements are actually available to the auditing process. Verify applicability and scope before using it to establish a defect.
+
+C. DOMAIN AND NICHE REASONING
+Use defensible reasoning about necessary business behaviour for the specified context, such as prerequisites, operational handoffs, decision conditions, lifecycle consistency, failure handling, and completion outcomes where applicable.
+
+Keep these sources distinct. Never invent citations, external research, standards, regulations, or organisational policies. Do not claim that a particular standard mandates a control unless its applicable requirement is available in the evidence.
+
+A plausible domain concern is not automatically a proven policy violation. The absence of a requirement from the supplied inputs does not, by itself, prove a defect.
+
+Distinguish necessary business behaviour from optional practices and organisation-specific policy. If a material rule, responsibility, condition, or outcome cannot be established, identify the precise decision requiring business review.
+
+All actors, objects, activities, conditions, policies, and outcomes must be derived from the current inputs or explicitly marked as proposed.
+
+==================== 4. CHECK REDUNDANCY AND CONTROL PURPOSE ====================
+
+Do not recommend removing, skipping, merging, or bypassing an activity merely because a similar activity occurs elsewhere.
+
+Before asserting that two activities or checks are redundant, determine whether they have equivalent:
+- Business purpose and validation requirement.
+- Object and scope, including relevant items, quantities, and state.
+- Timing and validity requirements.
+- Completion guarantee and evidence produced.
+- Preconditions and downstream decision requirements.
+
+Consider whether intervening activities, amendments, failures, external events, expiry, or state changes can invalidate an earlier result.
+
+Distinguish activities by what they actually establish, not just by similar names.
+
+Reuse an earlier result only when the supplied evidence establishes that it satisfies the later requirement and remains valid.
+
+If equivalence cannot be established, do not claim redundancy. Identify the missing evidence or unresolved business decision.
+
+Do not invent state fields, persistence guarantees, expiry rules, events, or validation outcomes to justify a conclusion.
+
+==================== 5. CONNECTED REMEDIATION ====================
+
+Every proposed flow must fix the specific identified gap and show how processing continues through the relevant connected path.
+
+Prefer correcting an existing condition, edge, ordering, responsibility, or decision when sufficient. Add an activity only when necessary. Reuse verified existing nodes and destinations. Avoid duplicating functionality or redesigning unrelated process areas.
+
+For a missing transition, identify the actual source, the missing connection or condition, and the intended destination where supported.
+
+For incorrect routing, identify the actual source, applicable branch condition, incorrect destination, and supported corrected destination or explicitly proposed outcome.
+
+For a missing activity or control, place the necessary activity at the appropriate point and connect it to the relevant downstream step.
+
+For a lifecycle gap, show the affected activity or state, required transition or decision, and subsequent supported path.
+
+Every newly proposed activity or outcome must be marked "PROPOSED:".
+
+Never invent an existing node ID, step number, actor, permission, edge, condition, policy, or destination. Distinguish human-performed activities from system-performed actions.
+
+Use existing actor names and responsibilities only when supported. If ownership or authorisation is unknown, use ROLE_UNMAPPED or explicitly mark the responsibility as proposed for business review.
+
+Avoid vague remedies such as "validate", "handle exception", "fix the process", or "resolve discrepancy". State the necessary business action, condition, responsibility, and next step as far as the evidence permits.
+
+A proposed flow must be logically connected, not a list of unrelated activities.
+
+==================== 6. CONDITIONAL ROUTING ====================
+
+Determine dynamically whether a correction requires conditional routing.
+
+Use IF/ELSE when materially different business conditions require different actions or outcomes. Do not force branching where no meaningful alternative exists.
+
+For each necessary branch:
+- Derive the condition from supplied evidence and defensible domain reasoning.
+- State the action or outcome for each relevant branch.
+- Use supported actors or mark unresolved ownership explicitly.
+- Reuse existing activities and destinations when their purpose is established.
+- Mark new activities and outcomes "PROPOSED:".
+- Preserve valid prerequisites, branch reachability, and downstream processing.
+
+If a required condition depends on unknown business policy, identify the unresolved decision and preserve the possible alternatives without guessing which applies.
+
+If a necessary destination is absent from the graph, mark the proposed outcome "PROPOSED:". Never describe it as an existing step.
+
+Do not assume that success or failure necessarily leads to a refund, claim, reversal, cancellation, compensation, or any other particular outcome. Establish the applicable requirement from evidence or identify the business decision needed.
+
+==================== 7. ACTOR AND AUTHORISATION VALIDATION ====================
+
+Check relevant activities against the supplied actor, responsibility, and authorisation matrix.
+
+Identify materially missing ownership, unsupported authority, conflicting responsibilities, or human/system handoff gaps only when supported by evidence.
+
+Do not infer that an actor is authorised simply because the actor performs an activity in the graph. Do not invent permissions or introduce a new actor as though that actor already exists.
+
+When ownership or authorisation remains unresolved, identify the precise decision required. Use ROLE_UNMAPPED or a clearly marked proposed responsibility in the proposed flow.
+
+==================== 8. SYSTEMATIC COVERAGE ====================
+
+Before finalising findings, examine the supplied evidence for all applicable categories:
+
+1. Actor journeys and their corresponding graph paths.
+2. Decision nodes and outgoing conditions or branches.
+3. Directed connections between consecutive activities.
+4. Business-object creation, state changes, handoffs, completion, and terminal outcomes.
+5. Prerequisites and activity ordering.
+6. Actor ownership, authorisation, and operational handoffs.
+7. Failures, rejection, retries, recovery, and exception paths.
+8. Contradictions between business objects, actor responsibilities, journeys, and graph topology.
+9. Applicable reference requirements and defensible domain/niche requirements.
+10. Existing activities or alternate paths that may already satisfy an apparent requirement.
+
+These categories are generic audit dimensions, not assumptions that every process must contain every type of activity or branch.
+
+For each applicable area, inspect the relevant supplied evidence, evaluate plausible gaps, and verify existing paths before accepting or rejecting a candidate.
+
+Do not invent defects to satisfy the coverage list. Do not impose a fixed finding count.
+
+Do not silently treat an unassessed requirement as satisfied. An uncertainty is reportable only when it constitutes a material, actionable process ambiguity.
+
+If the input is truncated, incomplete, or unusable, do not claim that the full process was audited or that the absence of findings establishes completeness.
+
+==================== 9. FINAL FINDING VERIFICATION ====================
+
+Every accepted finding must be distinct, actionable, evidence-grounded, and internally consistent.
+
+PROBLEM:
+- Identify the precise affected activity, connection, missing transition, or material unresolved requirement.
+- Use actual step numbers and activity labels when available.
+- Identify both endpoints of a connection defect when supported.
+- State the specific defect and material consequence or unresolved decision.
+- Do not invent source references or make unsupported claims.
+- Maximum 25 words.
+
+PROPOSED FLOW:
+- Start from the affected existing activity or decision where appropriate.
+- Show the connected correction through to the relevant downstream activity or outcome.
+- Use actual activity labels and supported roles.
+- Include conditional branches only when materially justified.
+- Mark new activities and outcomes "PROPOSED:".
+- Use ROLE_UNMAPPED or proposed responsibility when ownership is unknown.
+- State any necessary unresolved business decision.
+- Do not claim redundancy without establishing equivalence.
+- Maximum 60 words.
+
+Before accepting a finding, verify:
+1. Its location is grounded in the supplied graph or is genuinely missing.
+2. Its defect follows from evidence and defensible business reasoning.
+3. Existing reachable activities or branches do not already resolve it.
+4. Any industry-standard claim is supported by an applicable available reference.
+5. Its proposed flow resolves the actual gap and preserves valid downstream and exception processing.
+6. Actors, conditions, destinations, and outcomes are supported or explicitly marked as proposed.
+7. It is distinct from other accepted findings.
+
+Report every distinct actionable finding that survives verification. Do not invent findings to increase the count, and do not impose an arbitrary finding-count limit.
+
+==================== 10. STRICT OUTPUT CONTRACT ====================
+
+Return valid JSON only. Do not return Markdown fences, comments, or explanatory text.
+
+Use exactly this structure:
 
 {
   "findings": [
     {
-      "problem": "Describe the business-process gap and dynamically identify its location using actual source and destination step references and activity labels when available.",
-      "proposed_flow": "Existing source activity (Role) -> PROPOSED: Missing business activity (Role) -> Existing destination activity (Role)"
+      "problem": "Maximum 25 words",
+      "proposed_flow": "Maximum 60 words"
     }
   ]
 }
 
-OUTPUT RULES:
-- Preserve the exact JSON structure: findings array containing only problem and proposed_flow.
-- Include the gap location in the problem field. Use actual Mermaid step numbers and activity labels when available.
-- For a gap between existing activities, identify both endpoints and explain what is missing between them.
-- For a process-wide, lifecycle, or branch-level gap, identify the relevant existing node references and explain the affected process region.
-- Use -> between activities and concise IF/THEN branches where needed.
-- Embed the responsible actor in parentheses after each activity.
-- Mark newly proposed activities as PROPOSED in the proposed flow. Do not fabricate step numbers or node IDs for them.
-- Use supplied actor names where appropriate. Use ROLE_UNMAPPED or explicitly mark a responsibility as proposed when ownership is unsupported.
-- Distinguish system automation from human actions.
-- A proposed flow must show how the existing process is corrected, not merely restate the problem.
-- Do not add a finding's classification, evidence, confidence, explanation, or any other field outside the required schema.
-- Return {"findings": []} when no actionable gaps are identified.
-- Be comprehensive in independent discovery, precise in gap location, concrete in remediation, and conservative about unsupported business policies.
-- Keep each problem to 25 words maximum.
-- State the gap location, missing behaviour, and business impact concisely.
-- Use actual Mermaid step numbers and activity labels where available.
-- Avoid background explanations, repeated context, and lengthy justifications.
-- Keep proposed_flow concise while showing the necessary correction.
-- Discover all meaningful, distinct gaps; do not impose a finding-count limit.
-Analyse this process:
-${base.topologyGraphContent}`;
+Rules:
+- The findings array may contain zero or more accepted findings.
+- Each finding must contain only the string fields "problem" and "proposed_flow".
+- Do not add evidence, classification, confidence, severity, citations, or other fields.
+- Do not make unsupported claims that a particular industry standard has been violated.
+- Escape JSON strings correctly.
+- Do not include trailing commas.
+- Return an empty findings array only if no actionable gap survives evaluation of the usable supplied evidence.
+
+Audit the complete supplied process now.
+`;
+
+
+
+
 
     fs.mkdirSync(path.dirname(promptTmpPath1), { recursive: true });
     fs.writeFileSync(promptTmpPath1, pass1Prompt, 'utf8');
