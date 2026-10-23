@@ -12,8 +12,11 @@ const MODEL_PASS_CONFIG = {
   //model: 'Qwen/Qwen3-8B-GGUF:Q4_K_M',
   //12 minutes for first run 
   model: 'unsloth/Qwen3.5-9B-GGUF', 
-  //13 minutes for first run
-  ngl: '0',
+ //13 minutes for first run
+ // model: 'unsloth/Qwen3.5-0.8B-GGUF', 
+ //13 minutes for first run
+ 
+ ngl: '0',
   threads: '6',   
   tokens: '1524'
 };
@@ -206,10 +209,16 @@ Each object in the array must strictly follow this key structure:
       console.log(`\n📦 [Iteration #${iterationCount}] Running object structural generation...`);
       assistantOutput = await getBusinessObjects(USER_BUSINESS_INPUT, domainData, userFeedback, assistantOutput);
       
+
+let bases=assistantOutput.split("Assistant:\n");
+let redlime=bases.length > 1 ? bases[1].trim() : "";
+let parsedJson = JSON.parse(redlime);
+  let assistantOutput1 = JSON.stringify(parsedJson, null, 2);
+
       // Write current state immediately to a review text file for user inspection
       const reviewFilePath = path.join(OUTPUT_DIR, 'current-objects-review.txt');
       fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-      fs.writeFileSync(reviewFilePath, `=== CURRENT DATA MATRIX DRAFT ===\n\n${assistantOutput}`, 'utf8');
+      fs.writeFileSync(reviewFilePath, `=== CURRENT DATA MATRIX DRAFT ===\n\n${assistantOutput1}`, 'utf8');
       
       console.log(`\n--- CURRENT CORE DRAFT LINKED ---`);
       console.log(assistantOutput);
@@ -229,12 +238,10 @@ Each object in the array must strictly follow this key structure:
 
 // 2. Safely grab the text after the marker and trim off any starting/trailing empty spaces
 const assistantContent1 = parts1.length > 1 ? parts1[1].trim() : "";
+let parsedJson = JSON.parse(assistantContent1);
+  let assistantOutput1 = JSON.stringify(parsedJson, null, 2);
 
-// Output the extracted markdown list
-console.log(assistantContent1);
-
-
-      fs.writeFileSync(reviewFilePath1, `=== Final DATA MATRIX for domain :${domainData.domain} and niche :(${domainData.niche}  ===\n\n${assistantContent1}`, 'utf8');
+      fs.writeFileSync(reviewFilePath1, `=== Final DATA MATRIX for domain :${domainData.domain} and niche :${domainData.niche}  ===\n\n${assistantOutput1}`, 'utf8');
       
       console.log(`\n--- Final CORE  LINKED ---`);
       console.log(assistantOutput);
