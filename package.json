@@ -7,7 +7,6 @@
     "test": "test"
   },
   "dependencies": {
-    "@agntk/search": "^1.2.7",
     "@fastify/compress": "^9.1.1",
     "@fastify/cors": "^11.3.0",
     "@fastify/helmet": "^13.1.0",
@@ -20,6 +19,7 @@
     "@node-minify/core": "^6.2.0",
     "@node-minify/html-minifier": "^11.0.0",
     "@node-minify/uglify-es": "^6.2.0",
+    "@purili/web-search": "^0.1.0",
     "ajv-keywords": "^5.1.0",
     "async": "^3.2.0",
     "autocannon": "^2.0.1",
