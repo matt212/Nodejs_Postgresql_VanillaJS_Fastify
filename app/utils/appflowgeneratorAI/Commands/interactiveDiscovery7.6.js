@@ -76,65 +76,164 @@ function formatPromptInput(value) {
 
 const pass1Prompt = `
 
-You are a domain-agnostic business analyst.
-
-DOMAIN: ${CONFIG.DOMAIN_CONTEXT.NAME}
-NICHE: ${CONFIG.DOMAIN_CONTEXT.NICHE}
-
 OBJECTIVE
 
-Identify the business objects required to operate this business from initiation to completion.
+Discover the business operating model and derive its business objects in chronological order, from business establishment through operational execution and conclusion.
 
-First understand what the business provides, how it operates, and how it delivers its intended business outcome. Then derive the business objects from that operating model.
+The discovery process must be domain-agnostic. Derive the operating model, participants, lifecycle stages, business objects, and their relationships from the supplied ${CONFIG.DOMAIN_CONTEXT.NAME} and ${CONFIG.DOMAIN_CONTEXT.NICHE}. Do not assume a particular industry, transaction type, operating mechanism, or business process.
 
-For each business object, identify:
+STEP 1 — UNDERSTAND THE BUSINESS
 
-- name
-- businessPurpose
-- processStage
-- whyItIsNeeded
-- lifecycleRole
-- necessity: essential, conditional, or unknown
-- evidenceSummary
-- sourceIds
-- confidence: high, medium, or low
+Determine:
 
-RULES
+- What the business exists to provide, achieve, solve, or enable.
+- Who or what receives the value produced by the business.
+- Who participates in establishing, operating, supporting, governing, or benefiting from the business.
+- How value is created, exchanged, funded, or monetized, where applicable.
+- What distinguishes this particular niche from the broader domain.
 
-1. Do not use a predetermined industry-specific object checklist.
-2. Do not assume the business uses products, inventory, orders, payments, delivery, or any other particular mechanism.
-3. Identify business objects, not activities, screens, software modules, database tables, or technical components.
-4. Include relevant objects that exist before the main transaction and objects created during exceptions or closure.
-5. Sequence objects according to their participation in the end-to-end business process, not the order in which they are discovered.
-6. Distinguish essential objects from those needed only for particular operating models.
-7. Use supplied research evidence where available. Clearly distinguish evidence-backed findings from inference.
-8. Do not fabricate source references or claim that an object is universally mandatory without sufficient justification.
-9. Identify important evidence gaps instead of guessing.
+Do not assume that every business has an external customer, direct revenue, physical products, or a conventional buying and selling transaction.
 
-OUTPUT
+STEP 2 — DISCOVER THE OPERATING MODEL
 
-Return valid JSON only, using this structure:
+Determine how this particular business becomes operational and produces its intended outcomes.
+
+Ask:
+
+- What must exist or be established before the business can operate?
+- What initiates its principal business processes?
+- Which participants can initiate or influence those processes?
+- What information, resources, relationships, rights, permissions, commitments, or conditions are needed?
+- What major business stages occur, and what causes movement between them?
+- What decisions, dependencies, and constraints determine what can happen next?
+- How does the business produce and confirm its intended outcomes?
+- What alternative operating models materially change the required business objects?
+
+Derive the stages and their order from the business itself. Do not force the business into a predefined lifecycle template.
+
+STEP 3 — DERIVE BUSINESS OBJECTS
+
+Identify the business objects needed to establish, enable, execute, control, and conclude the discovered operating model.
+
+For every candidate object, determine:
+
+- What meaningful business concept does it represent?
+- Why does the business need it?
+- At what point does it first become necessary?
+- What event, condition, decision, or dependency causes it to be created or used?
+- What must already exist before it can be established?
+- How does it participate in subsequent stages?
+- What changes during its lifecycle?
+- What constitutes its completion, closure, continuation, or other valid end state?
+- Is it essential across the supported operating model, conditional on a particular model or circumstance, or not yet confirmed?
+
+Identify business concepts, not merely the activities performed on them. Do not confuse business objects with screens, software modules, database tables, technical components, or implementation choices.
+
+STEP 4 — COVER THE COMPLETE LIFECYCLE
+
+Starting with the earliest business prerequisites, trace the operating model through its actual sequence of events and dependencies.
+
+Consider, where relevant:
+
+- Pre-existing business foundations and operational readiness.
+- Initiating events, requests, needs, or commitments.
+- Assessment, validation, authorization, and decisions.
+- Preparation, coordination, and resource readiness.
+- Core business execution and changes in business state.
+- Exceptions, disputes, failures, recovery, and cancellation.
+- Confirmation of outcomes and conclusion.
+- Settlement, continuing obligations, retention, support, or follow-up after conclusion.
+
+These are areas to investigate, not mandatory stages. Include only those supported by the discovered operating model.
+
+STEP 5 — VALIDATE AND SEQUENCE
+
+Before producing the result:
+
+- Ensure the operating model is coherent and the object list supports it.
+- Sequence objects by their earliest meaningful participation in the derived lifecycle.
+- Preserve dependencies between objects and identify unresolved dependencies.
+- Distinguish essential objects from conditional or uncertain ones.
+- Check for missing prerequisites, unexplained transitions, incomplete outcomes, and relevant exception paths.
+- Avoid duplicate objects and unsupported assumptions.
+- Distinguish evidence-backed findings from inference.
+- Record material uncertainties and evidence gaps rather than inventing facts.
+- Do not claim universal necessity or complete coverage without sufficient justification.
+
+
+FINAL OUTPUT
+
+First discover and provide the business operating model, including its value proposition, participants, value creation and monetization where applicable, and the lifecycle derived from the supplied domain and niche.
+
+Then provide the chronological business object list, including each object's purpose, necessity, first lifecycle stage, dependencies, lifecycle role, evidence status, and confidence.
+
+Finally, provide alternative operating models or outcomes, assumptions, unresolved dependencies, and evidence gaps where relevant.
+
+OUTPUT JSON STRUCTURE
+
+Return exactly one JSON object with the following structure:
 
 {
-  "domain": "string",
-  "niche": "string",
-  "businessObjects": [
+  "business_operating_model": {
+    "value_proposition": "string",
+    "participants": ["string"],
+    "value_creation_monetization": {
+      "creation_mechanism": "string",
+      "monetization_streams": ["string"]
+    },
+    "distinctive_niche": "string"
+  },
+  "derived_lifecycle": [
     {
-      "sequence": 1,
-      "name": "string",
-      "businessPurpose": "string",
-      "processStage": "string",
-      "whyItIsNeeded": "string",
-      "lifecycleRole": "string",
-      "necessity": "essential",
-      "evidenceSummary": "string",
-      "sourceIds": [],
-      "confidence": "medium"
+      "stage": "string",
+      "description": "string",
+      "trigger": "string"
     }
   ],
-  "evidenceGaps": [],
-  "sources": []
+  "business_objects": [
+    {
+      "object_name": "string",
+      "purpose": "string",
+      "necessity": "Essential | Conditional | Uncertain",
+      "first_stage": "string",
+      "dependencies": ["string"],
+      "lifecycle_role": "string",
+      "evidence_status": "string",
+      "confidence_score": 0.0
+    }
+  ],
+  "alternative_models_assumptions_gaps": {
+    "alternative_operating_models": [
+      {
+        "model_name": "string",
+        "description": "string",
+        "impact": "string"
+      }
+    ],
+    "key_assumptions": ["string"],
+    "unresolved_dependencies": ["string"],
+    "evidence_gaps": ["string"]
+  }
 }
+
+STRUCTURE RULES
+
+- Keep the exact JSON keys and value types specified above.
+- Discover all business content dynamically from the supplied domain and niche.
+- Do not assume that any example business object, participant, lifecycle stage, or monetization stream must exist.
+- Include only relevant participants and business concepts supported by the discovered operating model.
+- Sequence lifecycle stages and business objects chronologically.
+- Use empty arrays when no applicable items are identified.
+- Represent unknown information honestly; do not invent facts or evidence.
+- Set confidence_score to a numeric value between 0 and 1.
+- Use Essential, Conditional, or Uncertain according to the evidence and operating-model dependencies.
+- Do not add keys outside the specified structure.
+- Ensure all braces, brackets, strings, and commas are valid JSON syntax.
+
+OUTPUT FORMAT
+
+Return raw JSON only. The first character must be { and the last character must be }. Do not include Markdown code fences such as \`\`\`json or \`\`\`, introductory text, explanations, or any text outside the JSON object.
+
 `;
 
     fs.mkdirSync(path.dirname(promptTmpPath1), { recursive: true });
