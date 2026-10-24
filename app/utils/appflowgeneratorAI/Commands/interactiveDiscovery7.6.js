@@ -12,7 +12,7 @@ let CONFIG = {
     PROJECT_ROOT: path.resolve(__dirname, '../../../../'),
     OUTPUT_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/aiOutput/baseline/',
     TMP_RELATIVE_DIR: 'app/utils/appflowgeneratorAI/promptFile',
-    EXPORT_PREFIX: '7.4. RAW Gaps Finding-'
+    EXPORT_PREFIX: '7.6 Business Objects'
   },
   MODEL: {
     EXEC_BINARY: 'llama-cli',
@@ -346,7 +346,7 @@ generateSemanticBlueprintAI(base, finalOutputPath, (err, targetSavedPath) => {
   let base = {
     a: targetSavedPath,
 }
-  loadclean(base);
+  //loadclean(base);
   console.log(`\n🎉 SUCCESS: Dynamic Business Lifecycle Specification compiled and saved via local 9B GGUF to: ${targetSavedPath}`);
 });
 
